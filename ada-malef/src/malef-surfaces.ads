@@ -38,7 +38,13 @@ private with Ada.Finalization;
 --
 package Malef.Surfaces is
 
-   type Surface_Type is private;
+   type Surface_Type is tagged private;
+
+   --
+   -- This procedure doesn't belong to the API.
+   -- This procedure prints the object onto the screen.
+   --
+   procedure Debug_Put (Object : Surface_Type);
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
@@ -57,11 +63,40 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                    := Shared_Null_Surface'Access;
       end record;
 
+   --
+   -- @param Object
+   -- The object to initialize.
+   --
    overriding procedure Initialize (Object : in out Surface_Type);
+
+   --
+   -- @param Object
+   -- The object to adjust.
+   --
    overriding procedure Adjust     (Object : in out Surface_Type);
+
+   --
+   -- @param Object
+   -- The object to finalize.
+   --
    overriding procedure Finalize   (Object : in out Surface_Type);
 
+   --
+   -- This procedure adds to the reference counter.
+   --
+   -- @param Item
+   -- A not null shared surface access to increase its counter.
+   --
    procedure Reference   (Item : not null Shared_Surface_Access);
+
+   --
+   -- This procedure substracts from the reference counter, and if it reaches
+   -- zero it is freed.
+   --
+   -- @param Item
+   -- A not null shared suraface access to decrease its counter. It will freed
+   -- if it reaches 0.
+   --
    procedure Unreference (Item : not null Shared_Surface_Access);
                      
 end Malef.Surfaces;

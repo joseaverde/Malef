@@ -45,40 +45,6 @@ limited with Malef.Surfaces;
 --
 package Malef is
 
-   ---============-----------------------============---
-  ---============-- O P E R A T I O N S --============---
-   ---============-----------------------============---
-
-   --====-------------------------------------====--
-   --====-- INITIALIZATION AND FINALIZATION --====--
-   --====-------------------------------------====--
-   --
-   -- This functions are a MUST when using this library for everything to work.
-   -- TODO: Now they don't requiere any parameter, but they will in the future.
-   --
-
-   -- This procedure initialises the Malef package, you MUST run this function
-   -- to initialize the terminal/console and start working with it. Some
-   -- functions won't work unless they have been initialized first and an error
-   -- will be raised.
-   --
-   -- @exception Malef.Exceptions.Initialization_Error
-   -- This exception is raised if it has already been initialized.
-   --
-   procedure Initialize;
-
-   --
-   -- This procedure finalises the Malef package.
-   --
-   -- @exception Malef.Exceptions.Initialization_Error
-   -- This exceptions is raised if it hasn't been initialized yet.
-   --
-   procedure Finalize;
-
-   --
-   -- This function returns whether the library has been initialized.
-   --
-   function Is_Initialized return Boolean;
 
    ---============-------------============---
   ---============-- T Y P E S --============---
@@ -335,6 +301,55 @@ package Malef is
    -- Don't look at this, you can't do anything with it.
    type Shared_Surface_Access is private;
 
+
+
+
+   ---============-----------------------============---
+  ---============-- O P E R A T I O N S --============---
+   ---============-----------------------============---
+
+   --====-------------------------------------====--
+   --====-- INITIALIZATION AND FINALIZATION --====--
+   --====-------------------------------------====--
+   --
+   -- This functions are a MUST when using this library for everything to work.
+   -- TODO: Now they don't requiere any parameter, but they will in the future.
+   --
+
+   type Operating_System_Kind is (GNU_Linux_OS, Windows_OS, Nix_OS, Other_OS);
+
+   type Initialization_Information_Type is
+      record
+         Operating_System  : Operating_System_Kind;
+         Is_Ansi_Compliant : Boolean;
+         Supported_Styles  : Style_Array;
+      end record;
+
+   -- This procedure initialises the Malef package, you MUST run this function
+   -- to initialize the terminal/console and start working with it. Some
+   -- functions won't work unless they have been initialized first and an error
+   -- will be raised.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if it has already been initialized.
+   --
+   procedure Initialize (Info : Initialization_Information_Type);
+
+   --
+   -- This procedure finalises the Malef package.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exceptions is raised if it hasn't been initialized yet.
+   --
+   procedure Finalize;
+
+   --
+   -- This function returns whether the library has been initialized.
+   --
+   function Is_Initialized return Boolean;
+
+
+
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
@@ -457,6 +472,33 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 
    -- Whether the library has been initialized.
    Has_Been_Initialized : Boolean := False;
+
+   -- The information of the current system.
+   Current_Info :  Initialization_Information_Type
+                := Initialization_Information_Type'(
+                     Operating_System  => GNU_Linux_OS,
+                     Is_Ansi_Compliant => True,
+                     Supported_Styles  => (others => True));
+
+
+   --====---------------------====--
+   --====-- SYSTEM SPECIFIC --====--
+   --====---------------------====--
+   --
+   -- There are certain functions and procedures that are different in
+   -- different operating systems / consoles and systems, thus we use access
+   -- types to such functions and procedures and asign them at initialization
+   -- time. That way we don't have to recompile the library for every available
+   -- system out there.
+   --
+
+   -- This is a bare procedure without any arguments.
+   type Procedure_Access_Bare is access procedure;
+
+
+   -- This is the procedure that prepares the terminal.
+   Prepare_Terminal : Procedure_Access_Bare;
+   Restore_Terminal : Procedure_Access_Bare;
 
 end Malef;
 

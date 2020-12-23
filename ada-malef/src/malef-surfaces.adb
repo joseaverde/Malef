@@ -26,11 +26,47 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
 with System.Atomic_Counters;
 
 
 package body Malef.Surfaces is
+
+   procedure Debug_Put (Object : Surface_Type) is
+      Surface : constant Shared_Surface_Access := Object.Reference;
+      procedure Move (R : Row_Type; C : Col_Type) is
+         R_Str : constant String := R'Image;
+         C_Str : constant String := C'Image;
+      begin
+         Ada.Text_IO.Put(ASCII.ESC & '[' &
+                           R_Str(R_Str'First + 1 .. R_Str'Last) & ';' &
+                           C_Str(C_Str'FIrst + 1 .. C_Str'Last) & 'H');
+      end Move;
+      Char : Char_Type;
+   begin
+
+      for Row in Surface.Grid'Range(1) loop
+         Move(Surface.Position.Row + Row, Surface.Position.Col);
+         for Col in Surface.Grid'Range(2) loop
+            Char := Surface.Grid(Row, Col).Char;
+            if Char = (0, 0, 0, 0) then
+               Move(Surface.Position.Row + Row, Surface.Position.Col+Col+1);
+            else
+               for C of Char loop
+                  Ada.Text_IO.Put(Character'Val(C));
+               end loop;
+            end if;
+         end loop;
+      end loop;
+
+   end Debug_Put;
+            
+
+
+--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+--*--*- private -*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
 
    overriding

@@ -1,0 +1,82 @@
+V "GNAT Lib v2020"
+M P W=b
+A -gnatA
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_NESTED_FINALIZATION
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U test_1%b		test_1.adb		d9ad4016 NE OO SU
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W malef%s		malef.adb		malef.ali
+W malef.surfaces%s	malef-surfaces.adb	malef-surfaces.ali
+Z system.soft_links%s	s-soflin.adb		s-soflin.ali
+Z system.standard_library%s  s-stalib.adb	s-stalib.ali
+Z system.unsigned_types%s  s-unstyp.ads		s-unstyp.ali
+
+D ada.ads		20200613090934 76789da1 ada%s
+D a-except.ads		20200613090933 a7106115 ada.exceptions%s
+D a-finali.ads		20200613090933 bf4f806b ada.finalization%s
+D a-stream.ads		20200613090934 119b8fb3 ada.streams%s
+D a-tags.ads		20200613090934 edddc8f0 ada.tags%s
+D a-unccon.ads		20200613090934 0e9b276f ada.unchecked_conversion%s
+D malef.ads		20201223222202 686c1ca0 malef%s
+D malef-surfaces.ads	20201223215105 6a4b82dc malef.surfaces%s
+D system.ads		20200613090937 4635ec04 system%s
+D s-atocou.ads		20200613090935 b45c2d8d system.atomic_counters%s
+D s-exctab.ads		20200613090935 54135002 system.exception_table%s
+D s-finmas.ads		20200613090936 7811a767 system.finalization_masters%s
+D s-finroo.ads		20200613090936 4ff27390 system.finalization_root%s
+D s-memory.ads		20200613090936 597d6634 system.memory%s
+D s-parame.ads		20200613090936 4752c4cb system.parameters%s
+D s-secsta.ads		20200613090936 9b3ab94b system.secondary_stack%s
+D s-soflin.ads		20200613090936 a7318a92 system.soft_links%s
+D s-stache.ads		20200613090936 a37c21ec system.stack_checking%s
+D s-stalib.ads		20200613090936 6b7a13f2 system.standard_library%s
+D s-stalib.adb		20200613090932 f2fe2716 system.standard_library%b
+D s-stoele.ads		20200613090936 2dc34a04 system.storage_elements%s
+D s-stopoo.ads		20200613090936 e9fa2dd8 system.storage_pools%s
+D s-stposu.ads		20200613090936 e251976f system.storage_pools.subpools%s
+D s-stratt.ads		20200613090936 9a2744e9 system.stream_attributes%s
+D s-traent.ads		20200613090936 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20200613090936 5ecf7212 system.unsigned_types%s
+D test_1.adb		20201223222521 db8ade6a test_1%b
+G a e
+G c Z b b [test_1 standard 4 11 none]
+G r s surface_type [test_1 standard 4 11 none] [surface_typeIP malef__surfaces 60 9 none]
+G r f surface_type [test_1 standard 4 11 none] [initialize malef__surfaces 70 25 none]
+G r c none [test_1 standard 4 11 none] [initialize malef 336 14 none]
+G r c none [test_1 standard 4 11 none] [debug_put malef__surfaces 47 14 none]
+X 7 malef.ads
+46K9*Malef 503e10 27|1w6 2r6 5r14 8r4 8r30 9r52
+190A9*Style_Array(boolean)<182E9>
+319n35*GNU_Linux_OS{319E9} 27|9r58
+321R9*Initialization_Information_Type 326e17 27|8r36
+323e10*Operating_System{319E9} 27|9m31
+324b10*Is_Ansi_Compliant{boolean} 27|10m31
+325a10*Supported_Styles{190A9} 27|11m31
+336U14*Initialize 27|8s10
+336r26 Info{321R9} 27|8r22
+X 8 malef-surfaces.ads
+39K15*Surfaces 102e19 27|2w12 5r20
+41R9*Surface_Type<3|43R9> 64e17 27|5r29
+47U14*Debug_Put 27|12s12
+X 9 system.ads
+67M9*Address
+X 14 s-memory.ads
+53V13*Alloc{9|67M9} 103i<c,__gnat_malloc>22
+68U14*Free 104i<c,__gnat_free>22
+76V13*Realloc{9|67M9} 105i<c,__gnat_realloc>22
+X 20 s-stalib.adb
+93U14 Break_Start 94i<c,__gnat_break_start>22
+X 27 test_1.adb
+4U11*Test_1 4b11 14l5 14t11
+5r4 Surface{8|41R9} 12r4
+

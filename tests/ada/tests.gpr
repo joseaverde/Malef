@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                             M A L E F . A D B                             --
+--                             T E S T S . G P R                             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                   G P R                                   --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,84 +26,20 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Exceptions;
-with Malef.Surfaces.Driver;
+with "../../malef.gpr";
 
-with Malef.Linux;
-with Malef.Windows;
+project Tests is
 
-package body Malef is
+   for Source_Dirs use ("src");
+   for Object_Dir  use  "obj";
+   for Exec_Dir    use  "bin";
+   for Main        use ("test_1.adb");
 
-   procedure Initialize (Info : Initialization_Information_Type) is
-   begin
+   package Linker is
+      for Switches ("Ada") use ("-lgmem");
+   end Linker;
 
-      if Has_Been_Initialized then
-         raise Malef.Exceptions.Initialization_Error with
-         "The Malef library has already been initialized!";
-      end if;
-
-      Has_Been_Initialized := True;
-
-      -- We set up the information.
-      Current_Info := Info;
-
-      -- We retrieve the required functions and procedures for it to work in
-      -- the given system with the given information.
-      case Info.Operating_System is
-         when GNU_Linux_OS =>
-            Prepare_Terminal := Malef.Linux.Prepare_Terminal'Access;
-         when Windows_OS =>
-            Prepare_Terminal := Malef.Windows.Prepare_Terminal'Access;
-         when others =>
-            -- TODO
-            Prepare_Terminal := Malef.Linux.Prepare_Terminal'Access;
-      end case;
-      
-      -- Finally prepare the terminal depending on the operating system.
-      Prepare_Terminal.all;
-
-   end Initialize;
-
-
-   procedure Finalize is
-   begin
-
-      if not Has_Been_Initialized then
-         raise Malef.Exceptions.Initialization_Error with
-         "The Malef library hasn't been initialized yet!";
-      end if;
-
-      Has_Been_Initialized := False;
-
-   end Finalize;
-
-
-   function Is_Initialized return Boolean is
-   begin
-
-      return Has_Been_Initialized;
-
-   end Is_Initialized;
-
-
-
-
---*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
---*--*- private -*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
---*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
-
-
-
-   function Get_Shared_Surface (Object : Malef.Surfaces.Surface_Type)
-                                return Shared_Surface_Access is
-   begin
-
-      return Malef.Surfaces.Driver.Get_Reference (Object => Object);
-
-   end Get_Shared_Surface;
-
-
-end Malef;
+end Tests;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

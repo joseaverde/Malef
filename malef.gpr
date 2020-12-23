@@ -69,8 +69,10 @@ project Malef is
    
    Ada_API := ("Malef",
                "Malef.Exceptions",
+               "Malef.Linux",
                "Malef.Surfaces",
-               "Malef.Surfaces.Driver"); -- TODO: Remove
+               "Malef.Surfaces.Driver",
+               "Malef.Windows"); -- TODO: Remove
    C_API   := ();
 
    API      := Ada_API;
