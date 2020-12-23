@@ -1,0 +1,58 @@
+notes = "Pre release"
+
+# The name of the crate this release belongs to.
+name = "malef"
+
+# A one-line description about the package.
+description = "Malef is a terminal handling library."
+
+# A long long description abouth the package.
+long-description = "Malef is a terminal handling library written in Ada with bindings to other programming languages like C and Python3. It replaces the NCurses library with a more Adaish interface. It uses ANSI Escape Sequences as much as possible, but it can also handle other kinds of terminals/consoles."
+
+# The version of the package.
+version = "0.0.0"
+
+# The authors, maintainer and maintainers' logins.
+authors = ["José Antonio Verde Jiménez"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@pm.me>"]
+maintainers-logins = ["joseaverde"]
+
+
+# Information about the package's licence.
+licenses = ["GPL 3.0"]
+website = "https://github.com/joseaverde/malef"
+tags = ["sdk", "ansi", "terminal", "console"]
+
+
+# Information about package's inside.
+project-files = ["malef.gpr"]
+
+
+# We map the names of external variables in the .gpr project file.
+[gpr-externals]
+MALEF_COMPILE_CHECKS   = ["enabled", "disabled"]
+MALEF_RUNTIME_CHECKS   = ["enabled", "disabled"]
+MALEF_STYLE_CHECKS     = ["enabled", "disabled"]
+MALEF_CONTRACTS        = ["enabled", "disabled"]
+MALEF_ALIRE_BUILT      = ["enabled", "disabled"]
+MALEF_BUILD_MODE       = ["debug", "optimize"]
+MALEF_OPERATING_SYSTEM = ["linux", "windows", "nix"]
+
+MALEF_C_API_COMPILATION = ["enabled", "disabled"]
+
+
+# How to built it depends on the operating system.
+[gpr-set-externals.'case(os)']
+'linux' = { MALEF_OPERATING_SYSTEM = "linux" }
+'windows' = { MALEF_OPERATING_SYSTEM = "windows" }
+'...' = { MALEF_OPERATING_SYSTEM = "nix" }
+
+
+[gpr-set-externals]
+MALEF_ALIRE_BUILT = "enabled"
+
+
+# Actions to do before compiling.
+# [[actions.'case(os)'.linux]]
+# type = post-fetch pre-build post-build test
+# command = [<commands>]
