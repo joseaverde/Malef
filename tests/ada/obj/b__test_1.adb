@@ -3,25 +3,34 @@ pragma Ada_95;
 pragma Source_File_Name (ada_main, Spec_File_Name => "b__test_1.ads");
 pragma Source_File_Name (ada_main, Body_File_Name => "b__test_1.adb");
 pragma Suppress (Overflow_Check);
+with Ada.Exceptions;
 
 package body ada_main is
 
-   E073 : Short_Integer; pragma Import (Ada, E073, "system__os_lib_E");
-   E005 : Short_Integer; pragma Import (Ada, E005, "ada__exceptions_E");
-   E011 : Short_Integer; pragma Import (Ada, E011, "system__soft_links_E");
-   E023 : Short_Integer; pragma Import (Ada, E023, "system__exception_table_E");
-   E038 : Short_Integer; pragma Import (Ada, E038, "ada__containers_E");
-   E068 : Short_Integer; pragma Import (Ada, E068, "ada__io_exceptions_E");
-   E053 : Short_Integer; pragma Import (Ada, E053, "ada__strings_E");
-   E055 : Short_Integer; pragma Import (Ada, E055, "ada__strings__maps_E");
-   E059 : Short_Integer; pragma Import (Ada, E059, "ada__strings__maps__constants_E");
-   E043 : Short_Integer; pragma Import (Ada, E043, "interfaces__c_E");
-   E025 : Short_Integer; pragma Import (Ada, E025, "system__exceptions_E");
-   E079 : Short_Integer; pragma Import (Ada, E079, "system__object_reader_E");
-   E048 : Short_Integer; pragma Import (Ada, E048, "system__dwarf_lines_E");
-   E019 : Short_Integer; pragma Import (Ada, E019, "system__soft_links__initialize_E");
-   E037 : Short_Integer; pragma Import (Ada, E037, "system__traceback__symbolic_E");
-   E097 : Short_Integer; pragma Import (Ada, E097, "ada__tags_E");
+   E077 : Short_Integer; pragma Import (Ada, E077, "system__os_lib_E");
+   E010 : Short_Integer; pragma Import (Ada, E010, "ada__exceptions_E");
+   E015 : Short_Integer; pragma Import (Ada, E015, "system__soft_links_E");
+   E027 : Short_Integer; pragma Import (Ada, E027, "system__exception_table_E");
+   E042 : Short_Integer; pragma Import (Ada, E042, "ada__containers_E");
+   E072 : Short_Integer; pragma Import (Ada, E072, "ada__io_exceptions_E");
+   E057 : Short_Integer; pragma Import (Ada, E057, "ada__strings_E");
+   E059 : Short_Integer; pragma Import (Ada, E059, "ada__strings__maps_E");
+   E063 : Short_Integer; pragma Import (Ada, E063, "ada__strings__maps__constants_E");
+   E047 : Short_Integer; pragma Import (Ada, E047, "interfaces__c_E");
+   E029 : Short_Integer; pragma Import (Ada, E029, "system__exceptions_E");
+   E083 : Short_Integer; pragma Import (Ada, E083, "system__object_reader_E");
+   E052 : Short_Integer; pragma Import (Ada, E052, "system__dwarf_lines_E");
+   E023 : Short_Integer; pragma Import (Ada, E023, "system__soft_links__initialize_E");
+   E041 : Short_Integer; pragma Import (Ada, E041, "system__traceback__symbolic_E");
+   E103 : Short_Integer; pragma Import (Ada, E103, "ada__tags_E");
+   E111 : Short_Integer; pragma Import (Ada, E111, "ada__streams_E");
+   E119 : Short_Integer; pragma Import (Ada, E119, "system__file_control_block_E");
+   E118 : Short_Integer; pragma Import (Ada, E118, "system__finalization_root_E");
+   E116 : Short_Integer; pragma Import (Ada, E116, "ada__finalization_E");
+   E115 : Short_Integer; pragma Import (Ada, E115, "system__file_io_E");
+   E008 : Short_Integer; pragma Import (Ada, E008, "ada__calendar_E");
+   E006 : Short_Integer; pragma Import (Ada, E006, "ada__calendar__delays_E");
+   E109 : Short_Integer; pragma Import (Ada, E109, "ada__text_io_E");
 
    Sec_Default_Sized_Stacks : array (1 .. 1) of aliased System.Secondary_Stack.SS_Stack (System.Parameters.Runtime_Default_Sec_Stack_Size);
 
@@ -29,6 +38,34 @@ package body ada_main is
    Local_Interrupt_States : constant String := "";
 
    Is_Elaborated : Boolean := False;
+
+   procedure finalize_library is
+   begin
+      E109 := E109 - 1;
+      declare
+         procedure F1;
+         pragma Import (Ada, F1, "ada__text_io__finalize_spec");
+      begin
+         if E109 = 0 then
+            F1;
+         end if;
+      end;
+      declare
+         procedure F2;
+         pragma Import (Ada, F2, "system__file_io__finalize_body");
+      begin
+         E115 := E115 - 1;
+         if E115 = 0 then
+            F2;
+         end if;
+      end;
+      declare
+         procedure Reraise_Library_Exception_If_Any;
+            pragma Import (Ada, Reraise_Library_Exception_If_Any, "__gnat_reraise_library_exception_if_any");
+      begin
+         Reraise_Library_Exception_If_Any;
+      end;
+   end finalize_library;
 
    procedure adafinal is
       procedure s_stalib_adafinal;
@@ -121,75 +158,113 @@ package body ada_main is
 
       Runtime_Initialize (1);
 
-      Finalize_Library_Objects := null;
+      Finalize_Library_Objects := finalize_library'access;
 
-      if E005 = 0 then
+      if E010 = 0 then
          Ada.Exceptions'Elab_Spec;
       end if;
-      if E011 = 0 then
+      if E015 = 0 then
          System.Soft_Links'Elab_Spec;
       end if;
-      if E023 = 0 then
+      if E027 = 0 then
          System.Exception_Table'Elab_Body;
       end if;
-      E023 := E023 + 1;
-      if E038 = 0 then
+      E027 := E027 + 1;
+      if E042 = 0 then
          Ada.Containers'Elab_Spec;
       end if;
-      E038 := E038 + 1;
-      if E068 = 0 then
+      E042 := E042 + 1;
+      if E072 = 0 then
          Ada.Io_Exceptions'Elab_Spec;
       end if;
-      E068 := E068 + 1;
-      if E053 = 0 then
+      E072 := E072 + 1;
+      if E057 = 0 then
          Ada.Strings'Elab_Spec;
       end if;
-      E053 := E053 + 1;
-      if E055 = 0 then
+      E057 := E057 + 1;
+      if E059 = 0 then
          Ada.Strings.Maps'Elab_Spec;
       end if;
-      E055 := E055 + 1;
-      if E059 = 0 then
+      E059 := E059 + 1;
+      if E063 = 0 then
          Ada.Strings.Maps.Constants'Elab_Spec;
       end if;
-      E059 := E059 + 1;
-      if E043 = 0 then
+      E063 := E063 + 1;
+      if E047 = 0 then
          Interfaces.C'Elab_Spec;
       end if;
-      E043 := E043 + 1;
-      if E025 = 0 then
+      E047 := E047 + 1;
+      if E029 = 0 then
          System.Exceptions'Elab_Spec;
       end if;
-      E025 := E025 + 1;
-      if E079 = 0 then
+      E029 := E029 + 1;
+      if E083 = 0 then
          System.Object_Reader'Elab_Spec;
       end if;
-      E079 := E079 + 1;
-      if E048 = 0 then
+      E083 := E083 + 1;
+      if E052 = 0 then
          System.Dwarf_Lines'Elab_Spec;
       end if;
-      E048 := E048 + 1;
-      if E073 = 0 then
+      E052 := E052 + 1;
+      if E077 = 0 then
          System.Os_Lib'Elab_Body;
       end if;
-      E073 := E073 + 1;
-      if E019 = 0 then
+      E077 := E077 + 1;
+      if E023 = 0 then
          System.Soft_Links.Initialize'Elab_Body;
       end if;
-      E019 := E019 + 1;
-      E011 := E011 + 1;
-      if E037 = 0 then
+      E023 := E023 + 1;
+      E015 := E015 + 1;
+      if E041 = 0 then
          System.Traceback.Symbolic'Elab_Body;
       end if;
-      E037 := E037 + 1;
-      E005 := E005 + 1;
-      if E097 = 0 then
+      E041 := E041 + 1;
+      E010 := E010 + 1;
+      if E103 = 0 then
          Ada.Tags'Elab_Spec;
       end if;
-      if E097 = 0 then
+      if E103 = 0 then
          Ada.Tags'Elab_Body;
       end if;
-      E097 := E097 + 1;
+      E103 := E103 + 1;
+      if E111 = 0 then
+         Ada.Streams'Elab_Spec;
+      end if;
+      E111 := E111 + 1;
+      if E119 = 0 then
+         System.File_Control_Block'Elab_Spec;
+      end if;
+      E119 := E119 + 1;
+      if E118 = 0 then
+         System.Finalization_Root'Elab_Spec;
+      end if;
+      E118 := E118 + 1;
+      if E116 = 0 then
+         Ada.Finalization'Elab_Spec;
+      end if;
+      E116 := E116 + 1;
+      if E115 = 0 then
+         System.File_Io'Elab_Body;
+      end if;
+      E115 := E115 + 1;
+      if E008 = 0 then
+         Ada.Calendar'Elab_Spec;
+      end if;
+      if E008 = 0 then
+         Ada.Calendar'Elab_Body;
+      end if;
+      E008 := E008 + 1;
+      if E006 = 0 then
+         Ada.Calendar.Delays'Elab_Body;
+      end if;
+      E006 := E006 + 1;
+      if E109 = 0 then
+         Ada.Text_Io'Elab_Spec;
+      end if;
+      if E109 = 0 then
+         Ada.Text_Io'Elab_Body;
+      end if;
+      E109 := E109 + 1;
    end adainit;
 
    procedure Ada_Main_Program;

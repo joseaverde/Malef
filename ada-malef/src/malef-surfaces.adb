@@ -61,7 +61,15 @@ package body Malef.Surfaces is
       end loop;
 
    end Debug_Put;
+
             
+   function Get_Reference (Object : in Surface_Type)
+                           return Shared_Surface_Access is
+   begin
+
+      return Object.Reference;
+
+   end Get_Reference;
 
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-

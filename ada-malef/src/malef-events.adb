@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                     M A L E F - W I N D O W S . A D B                     --
+--                      M A L E F - E V E N T S . A D B                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,32 +26,23 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Exceptions;
+package body Malef.Events is
 
-package body Malef.Windows is
+   protected body Event_Handler is
 
-   procedure Prepare_Terminal is
-   -- procedure C_Driver_Set_Up_Console;
-   -- pragma Import (C, C_Driver_Set_Up_Console, "setupConsole");
-   -- 
-   -- procedure C_Driver_Set_Console_Title (Title : Interfaces.C.Char_Array);
-   begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Prepare_Terminal;
+      procedure Update_Terminal_Size is
+      begin
 
+         Malef.Get_Terminal_Size (R => Height,
+                                  C => Width);
 
-   procedure Restore_Terminal is
-   begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Restore_Terminal;
+         -- TODO: Has_Resized := True;
 
-end Malef.Windows;
+      end Update_Terminal_Size;
+
+   end Event_Handler;
+
+end Malef.Events;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

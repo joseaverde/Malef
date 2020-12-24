@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                     M A L E F - W I N D O W S . A D B                     --
+--                     M A L E F - W R A P P E R . A D S                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,32 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Exceptions;
+--
+-- @summary
+--
+--
+-- @description
+--
+package Malef.Wrapper is
 
-package body Malef.Windows is
-
-   procedure Prepare_Terminal is
-   -- procedure C_Driver_Set_Up_Console;
-   -- pragma Import (C, C_Driver_Set_Up_Console, "setupConsole");
-   -- 
-   -- procedure C_Driver_Set_Console_Title (Title : Interfaces.C.Char_Array);
-   begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Prepare_Terminal;
-
-
-   procedure Restore_Terminal is
-   begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Restore_Terminal;
-
-end Malef.Windows;
+end Malef.Wrapper;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

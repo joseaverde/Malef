@@ -1,2 +1,11 @@
 # Alire
 alire/
+
+# binaries and objects
+bin/
+obj/
+
+# Others
+*.o
+*.ali
+gmem.out

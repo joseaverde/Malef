@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---             M A L E F - S U R F A C E S - D R I V E R . A D B             --
+--                      M A L E F - E V E N T S . A D S                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,17 +26,32 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package body Malef.Surfaces.Driver is
+--
+-- @summary
+-- This child package contains events and event handling.
+--
+-- @description
+-- Events are functions and procedures that are executed every time a Signal
+-- or Interrupt is raised.
+--
+package Malef.Events is
 
-   function Get_Reference (Object : in Surface_Type)
-                           return Shared_Surface_Access is
-   begin
+   --
+   -- This protected `something' contains functions that are executed when a
+   -- specific signal or interruption is raisd.
+   --
+   protected Event_Handler is
 
-      return Object.Reference;
+      --
+      -- This procedure updates the terminal size. It also resizes the main
+      -- surface. This procedure is raised automatically every time a signal
+      -- SIGWINCH is raised.
+      --
+      procedure Update_Terminal_Size;
+      pragma Interrupt_Handler (Update_Terminal_Size);
+   end Event_Handler;
 
-   end Get_Reference;
-
-end Malef.Surfaces.Driver;
+end Malef.Events;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

@@ -26,6 +26,9 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Interrupts;
+with Ada.Interrupts.Names;
+
 --
 -- @summary
 -- These are Linux specific functions.
@@ -36,6 +39,8 @@
 -- implementation.
 --
 private package Malef.Linux is
+
+   pragma Elaborate_Body (Malef.Linux);
 
    --
    -- This procedure prepares the terminal.
@@ -52,6 +57,43 @@ private package Malef.Linux is
    -- This exception is raised if the terminal couldn't be restored.
    --
    procedure Restore_Terminal;
+
+   --
+   -- This function gets the full path of a programme similarly to `which'.
+   --
+   -- @return
+   -- It returns the path without the last name, e.g:
+   -- If you wanted to find `ls', then `/usr/bin' would be returned.
+   -- In case nothing is found, "" is returned.
+   --
+   function Get_Path (Programme_Name : String)
+                      return String;
+
+   --
+   -- This function returns the number of columns and rows a terminal has. It
+   -- needs the Ioctl function to exist, thus in Windows it will always return
+   -- 80x24.
+   --
+   procedure Get_Terminal_Size (Rows : out Row_Type;
+                                Cols : out Col_Type);
+
+   --
+   -- This procedure changes the terminal title.
+   --
+   -- @param Name
+   -- The name of the terminal.
+   --
+   procedure Set_Title (Name : String);
+
+   -- This is the path for `stty', in case it doesn't exist the PATH would be
+   -- `/stty'.
+   Stty_PATH : constant String := Get_Path("stty") & '/' & "stty";
+
+   -- Similarly to Stty_PATH, this is the PATH for `tput'.
+   Tput_PATH : constant String := Get_Path("tput") & '/' & "tput";
+
+   SIGWINCH : constant Ada.Interrupts.Interrupt_ID
+            := Ada.Interrupts.Names.SIGWINCH;
 
 end Malef.Linux;
 

@@ -325,10 +325,14 @@ package Malef is
          Supported_Styles  : Style_Array;
       end record;
 
+   --
    -- This procedure initialises the Malef package, you MUST run this function
    -- to initialize the terminal/console and start working with it. Some
    -- functions won't work unless they have been initialized first and an error
    -- will be raised.
+   --
+   -- @param Info
+   -- The system specific information.
    --
    -- @exception Malef.Exceptions.Initialization_Error
    -- This exception is raised if it has already been initialized.
@@ -348,6 +352,68 @@ package Malef is
    --
    function Is_Initialized return Boolean;
 
+
+
+   --====-----------------------------------====--
+   --====-- TERMINAL CONTROL AND HANDLING --====--
+   --====-----------------------------------====--
+   --
+   -- This part contains functions and procedures for terminal control and
+   -- handling, most of them are part of event handlers.
+   --
+
+   --
+   -- This returns the height of the terminal.
+   --
+   -- @return
+   -- Returns the height of the terminal.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if Malef hasn't been properly initialized.
+   --
+   function Get_Height return Row_Type;
+
+   --
+   -- This returns the width of the terminal.
+   --
+   -- @return
+   -- Returns the width of the terminal.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if Malef hasn't been properly initialized.
+   --
+   function Get_Width return Col_Type;
+
+   --
+   -- This procedure creates a new page, that is, adds enough lines to the
+   -- terminal without removing what was before.
+   -- 
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if it hasn't been properly initialized.
+   --
+   procedure New_Page;
+
+   --
+   -- This procedure changes the title of the terminal.
+   --
+   -- @param Name
+   -- The new name.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if Malef hasn't been properly initialized.
+   --
+   procedure Set_Title (Name : String);
+
+   --
+   -- This function updates the terminal size.
+   --
+   -- @return
+   -- Returns whether the terminal size has been updated.
+   --
+   -- @exception Malef.Exceptions.Initialization_Error
+   -- This exception is raised if it hasn't been properly initialized.
+   --
+   function Update_Terminal_Size return Boolean;
 
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
@@ -480,6 +546,10 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                      Is_Ansi_Compliant => True,
                      Supported_Styles  => (others => True));
 
+   -- The size of the terminal.
+   Height : Row_Type := 80;
+   Width  : Col_Type := 24;
+
 
    --====---------------------====--
    --====-- SYSTEM SPECIFIC --====--
@@ -492,13 +562,26 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- system out there.
    --
 
+   ----------------
+   -- OPERATIONS --
+   ----------------
+
    -- This is a bare procedure without any arguments.
    type Procedure_Access_Bare is access procedure;
 
+   -- This is a procedure with out arguments row and column.
+   type Procedure_Access_Row_Col is access procedure (R : out Row_Type;
+                                                      C : out Col_Type);
+   
+   -- This is a procedure with out argument String.
+   type Procedure_Access_String is access procedure (S : String);
 
    -- This is the procedure that prepares the terminal.
-   Prepare_Terminal : Procedure_Access_Bare;
-   Restore_Terminal : Procedure_Access_Bare;
+   Prepare_Terminal   : Procedure_Access_Bare;
+   Restore_Terminal   : Procedure_Access_Bare;
+   Get_Terminal_Size  : Procedure_Access_Row_Col;
+   Terminal_Set_Title : Procedure_Access_String;
+
 
 end Malef;
 

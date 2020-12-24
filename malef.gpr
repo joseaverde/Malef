@@ -68,15 +68,25 @@ project Malef is
    --====-====-----------====-====--
    
    Ada_API := ("Malef",
+               "Malef.Events",
                "Malef.Exceptions",
                "Malef.Linux",
                "Malef.Surfaces",
-               "Malef.Surfaces.Driver",
                "Malef.Windows"); -- TODO: Remove
    C_API   := ();
 
    API      := Ada_API;
    Src_Dirs := ("ada-malef/src");
+
+   case Operating_System is
+      when "linux" =>
+         Src_Dirs := Src_Dirs & ("ada-malef/src/linux");
+      when "windows" =>
+         Src_Dirs := Src_Dirs & ("ada-malef/src/windows");
+      when others =>
+         Src_Dirs := Src_Dirs & ("ada-malef/src/linux");
+   end case;
+
    case C_API_Compilation is
       when "enabled" =>
          API := API & C_API;
@@ -112,6 +122,7 @@ project Malef is
       when "enabled" =>
          Compile_Checks_Switches :=
            ("-gnatwa",  -- All warnings
+            "-gnatwM",  -- Remove the warning for assigned but not used.
             "-gnatwL",  -- Except elaboration warnings.
             "-gnatVa",  -- All validity checks
             "-gnatwe"); -- Warnings as errors

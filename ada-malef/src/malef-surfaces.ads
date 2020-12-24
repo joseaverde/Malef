@@ -46,6 +46,21 @@ package Malef.Surfaces is
    --
    procedure Debug_Put (Object : Surface_Type);
 
+
+   --
+   -- This function returns the Shared_Surface_Access a Surface_Type is
+   -- pointing to.
+   --
+   -- @param Object
+   -- The object to retrieve the Shared_Surface_Access from.
+   --
+   -- @return
+   -- The shared surface access.
+   --
+   function Get_Reference (Object : in Surface_Type)
+                           return Shared_Surface_Access;
+
+
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
