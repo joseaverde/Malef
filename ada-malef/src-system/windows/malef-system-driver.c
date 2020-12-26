@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *                                                                           * 
- *                M A L E F - W I N D O W S - D R I V E R . C                * 
+ *                 M A L E F - S Y S T E M - D R I V E R . C                 * 
  *                                                                           * 
  *                                 M A L E F                                 * 
  *                                                                           * 
@@ -35,7 +35,6 @@
 
 // We check if we are compiling it for Windows or for other operating system
 // that way we can leave a empty implementation in other operating systems.
-#ifdef MALEF_COMPILE_FOR_WINDOWS
 
 #include <windows.h>
 
@@ -104,36 +103,6 @@ void _malef_setConsoleTitle (const char* title) {
 
 }
 
-
-#else
-
-
-void _malef_setupConsole ( void ) {
-   return;
-}
-
-
-void _malef_restoreConsole ( void ) {
-   return;
-}
-
-
-void _malef_getConsoleScreenSize ( short *rows, short *cols ) {
-
-   *rows = 24;
-   *cols = 80;
-
-}
-
-
-void _malef_setConsoleTitle ( const char* title ){
-
-   return;
-
-}
-
-
-#endif//MALEF_COMPILE_FOR_WINDOWS
 
 ///=======================/////////////////////////=========================///
 //=======================// E N D   O F   F I L E //=========================//

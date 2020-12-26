@@ -26,14 +26,11 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Interrupts;
 with Ada.Text_IO;
-with Malef.Events;
 with Malef.Exceptions;
+with Malef.System;
 with Malef.Surfaces;
 
-with Malef.Linux;
-with Malef.Windows;
 
 package body Malef is
 
@@ -42,7 +39,7 @@ package body Malef is
    --====-------------------------------------====--
 
    -- TODO: Lock it for multitasking
-   procedure Initialize (Info : Initialization_Information_Type) is
+   procedure Initialize is
    begin
 
       if Has_Been_Initialized then
@@ -50,54 +47,22 @@ package body Malef is
          "The Malef library has already been initialized!";
       end if;
 
-      -- We set up the information.
-      Current_Info := Info;
-
-      -- We retrieve the required functions and procedures for it to work in
-      -- the given system with the given information.
-      case Info.Operating_System is
-         when GNU_Linux_OS =>
-            Prepare_Terminal   := Malef.Linux.Prepare_Terminal 'Access;
-            Restore_Terminal   := Malef.Linux.Restore_Terminal 'Access;
-            Get_Terminal_Size  := Malef.Linux.Get_Terminal_Size'Access;
-            Terminal_Set_Title := Malef.Linux.Set_Title        'Access;
-         when Windows_OS =>
-            Prepare_Terminal   := Malef.Windows.Prepare_Console 'Access;
-            Restore_Terminal   := Malef.Windows.Restore_Console 'Access;
-            Get_Terminal_Size  := Malef.Windows.Get_Console_Size'Access;
-            Terminal_Set_Title := Malef.Windows.Set_Title       'Access;
-         when others =>
-            -- TODO
-            Prepare_Terminal   := Malef.Linux.Prepare_Terminal 'Access;
-            Restore_Terminal   := Malef.Linux.Restore_Terminal 'Access;
-            Get_Terminal_Size  := Malef.Linux.Get_Terminal_Size'Access;
-            Terminal_Set_Title := Malef.Linux.Set_Title        'Access;
-      end case;
       
       -- We prepare the terminal depending on the operating system.
-      Prepare_Terminal.all;
+      Malef.System.Initialize;
+      Malef.System.Prepare_Terminal;
 
       -- We then get the size of the terminal.
-      Get_Terminal_Size.all(R => Height,
-                            C => Width);
+      Malef.System.Get_Terminal_Size(Rows => Height,
+                                     Cols => Width);
 
-      -- Then it's time for events.
-      case Info.Operating_System is
-         when GNU_Linux_OS =>
-            Ada.Interrupts.Attach_Handler(
-               New_Handler => Malef.Events.Event_Handler.
-                                 Update_Terminal_Size'Access,
-               Interrupt   => Malef.Linux.SIGWINCH);
-         when Windows_OS =>
-            null;
-         when others =>
-            null; -- TODO
-      end case;
+      -- TODO: We update the main surface.
 
       -- Finally we tell the user the terminal has been initialized.
       Has_Been_Initialized := True;
 
-      -- We then prepare a new page for the terminal.
+      -- TODO: Let the user add it.
+      -- We prepare a new page for the terminal.
       New_Page;
 
    end Initialize;
@@ -111,18 +76,9 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      -- We restore the terminal.
-      Restore_Terminal.all;
-
-      -- We then detach the event handlers.
-      case Current_Info.Operating_System is
-         when GNU_Linux_OS =>
-            Ada.Interrupts.Detach_Handler(Interrupt => Malef.Linux.SIGWINCH);
-         when Windows_OS =>
-            null;
-         when others =>
-            null; -- TODO
-      end case;
+      -- We restore the terminal and finalize everything.
+      Malef.System.Restore_Terminal;
+      Malef.System.Finalize;
 
       -- TODO: Move the cursor down.
 
@@ -196,7 +152,7 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      Terminal_Set_Title.all (S => Name);
+      Malef.System.Set_Title (Name => Name);
 
    end Set_Title;
 
@@ -211,8 +167,8 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      Get_Terminal_Size.all(R => New_Height,
-                            C => New_Width);
+      Malef.System.Get_Terminal_Size(Rows => New_Height,
+                                     Cols => New_Width);
 
       if New_Height /= Height or New_Width /= Width then
          Height := New_Height;

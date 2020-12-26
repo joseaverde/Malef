@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                     M A L E F - W I N D O W S . A D B                     --
+--                      M A L E F - S Y S T E M . A D B                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -28,9 +28,31 @@
 
 with Interfaces.C;
 
-package body Malef.Windows is
 
-   procedure Prepare_Console is
+package body Malef.System is
+
+
+   --====-----------------------------------====--
+   --====-- INITIALIZATION / FINALIZATION --====--
+   --====-----------------------------------====--
+
+   procedure Initialize is
+   begin
+
+      null;
+
+   end Initialize;
+
+
+   procedure Finalize is
+   begin
+
+      null;
+
+   end Finalize;
+
+
+   procedure Prepare_Terminal is
       procedure C_Driver_Prepare_Console;
       pragma Import (C,
                      C_Driver_Prepare_Console,
@@ -39,10 +61,10 @@ package body Malef.Windows is
 
       C_Driver_Prepare_Console;
 
-   end Prepare_Console;
+   end Prepare_Terminal;
 
 
-   procedure Restore_Console IS
+   procedure Restore_Terminal is
       procedure C_Driver_Restore_Console;
       pragma Import (C,
                      C_Driver_Restore_Console,
@@ -51,27 +73,33 @@ package body Malef.Windows is
 
       C_Driver_Restore_Console;
 
-   end Restore_Console;
+   end Restore_Terminal;
 
 
-   procedure Get_Console_Size (Rows : out Row_Type;
+
+   --====------------------------------====--
+   --====-- TERMINAL/CONSOLE CONTROL --====--
+   --====------------------------------====--
+
+
+   procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type) is
-      procedure C_Driver_Get_Console_Screen_Size(rows: out Interfaces.C.short;
-                                                 cols: out Interfaces.C.short);
+      procedure C_Driver_Get_Console_Screen_Size(Rows: out Interfaces.C.short;
+                                                 Cols: out Interfaces.C.short);
       pragma Import (C,
                      C_Driver_Get_Console_Screen_Size,
                      "_malef_getConsoleScreenSize");
-
-      c_rows, c_cols : Interfaces.C.short;
+      C_Rows, C_Cols : Interfaces.C.short;
    begin
 
-      C_Driver_Get_Console_Screen_Size (rows => c_rows,
-                                        cols => c_cols);
+      C_Driver_Get_Console_Screen_Size (Rows => C_Rows,
+                                        Cols => C_Cols);
 
-      Rows := Row_Type (c_rows);
-      Cols := Col_Type (c_cols);
+      Rows := Row_Type (C_Rows);
+      Cols := Col_Type (C_Cols);
 
-   end Get_Console_Size;
+
+   end Get_Terminal_Size;
 
 
    procedure Set_Title (Name : String) is
@@ -81,12 +109,12 @@ package body Malef.Windows is
                      "_malef_setConsoleTitle");
    begin
 
-      C_Driver_Set_Console_Title(Interfaces.C.To_C(Name));
+      C_Driver_Set_Console_Title (Interfaces.C.To_C(Name));
 
    end Set_Title;
 
 
-end Malef.Windows;
+end Malef.System;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

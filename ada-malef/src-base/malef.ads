@@ -313,31 +313,18 @@ package Malef is
    --====-------------------------------------====--
    --
    -- This functions are a MUST when using this library for everything to work.
-   -- TODO: Now they don't requiere any parameter, but they will in the future.
+   -- You can use surfaces and work with them before initializing the library,
+   -- but some functions require the library to be initialized.
    --
 
-   type Operating_System_Kind is (GNU_Linux_OS, Windows_OS, Nix_OS, Other_OS);
-
-   type Initialization_Information_Type is
-      record
-         Operating_System  : Operating_System_Kind;
-         Is_Ansi_Compliant : Boolean;
-         Supported_Styles  : Style_Array;
-      end record;
-
    --
-   -- This procedure initialises the Malef package, you MUST run this function
-   -- to initialize the terminal/console and start working with it. Some
-   -- functions won't work unless they have been initialized first and an error
-   -- will be raised.
-   --
-   -- @param Info
-   -- The system specific information.
+   -- This function prepares the terminal with operating system specific
+   -- functions.
    --
    -- @exception Malef.Exceptions.Initialization_Error
    -- This exception is raised if it has already been initialized.
    --
-   procedure Initialize (Info : Initialization_Information_Type);
+   procedure Initialize;
 
    --
    -- This procedure finalises the Malef package.
@@ -358,8 +345,8 @@ package Malef is
    --====-- TERMINAL CONTROL AND HANDLING --====--
    --====-----------------------------------====--
    --
-   -- This part contains functions and procedures for terminal control and
-   -- handling, most of them are part of event handlers.
+   -- This part contains functions and procedures to interact with the terminal
+   -- or the console directly.
    --
 
    --
@@ -539,48 +526,9 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- Whether the library has been initialized.
    Has_Been_Initialized : Boolean := False;
 
-   -- The information of the current system.
-   Current_Info :  Initialization_Information_Type
-                := Initialization_Information_Type'(
-                     Operating_System  => GNU_Linux_OS,
-                     Is_Ansi_Compliant => True,
-                     Supported_Styles  => (others => True));
-
    -- The size of the terminal.
    Height : Row_Type := 80;
    Width  : Col_Type := 24;
-
-
-   --====---------------------====--
-   --====-- SYSTEM SPECIFIC --====--
-   --====---------------------====--
-   --
-   -- There are certain functions and procedures that are different in
-   -- different operating systems / consoles and systems, thus we use access
-   -- types to such functions and procedures and asign them at initialization
-   -- time. That way we don't have to recompile the library for every available
-   -- system out there.
-   --
-
-   ----------------
-   -- OPERATIONS --
-   ----------------
-
-   -- This is a bare procedure without any arguments.
-   type Procedure_Access_Bare is access procedure;
-
-   -- This is a procedure with out arguments row and column.
-   type Procedure_Access_Row_Col is access procedure (R : out Row_Type;
-                                                      C : out Col_Type);
-   
-   -- This is a procedure with out argument String.
-   type Procedure_Access_String is access procedure (S : String);
-
-   -- This is the procedure that prepares the terminal.
-   Prepare_Terminal   : Procedure_Access_Bare;
-   Restore_Terminal   : Procedure_Access_Bare;
-   Get_Terminal_Size  : Procedure_Access_Row_Col;
-   Terminal_Set_Title : Procedure_Access_String;
 
 
 end Malef;

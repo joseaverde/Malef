@@ -6,9 +6,7 @@ Malef is a terminal/console-handling library written in Ada.
 ## Description
 Malef is an open source and free library written in Ada (with some parts
 written in C) that works similarly to the Ncurses library but with a new data
-type called _Surfaces_. It will be able to check where you are running the
-programme and use the required and best packages to accomplish what you are
-trying to do.
+type called _Surfaces_.
 
 ## Bindings
 The Malef library will have bindings for other programming languages like C or

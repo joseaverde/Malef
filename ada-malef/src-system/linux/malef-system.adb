@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                       M A L E F - L I N U X . A D B                       --
+--                      M A L E F - S Y S T E M . A D B                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,13 +26,85 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Directories;
-with Ada.Environment_Variables;
+with Ada.Interrupts;
+with Ada.Interrupts.Names;
+with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;
 with GNAT.OS_Lib;
+with Interfaces.C;
+with Malef.Events;
 with Malef.Exceptions;
+with Malef.System_Utils;
 
-package body Malef.Linux is
+package body Malef.System is
+
+   type String_Access is access all String;
+
+   procedure Free is new Ada.Unchecked_Deallocation(String, String_Access);
+
+   Stty_Path : String_Access := new String'("/bin/stty");
+   Tput_Path : String_Access := new String'("/bin/tput");
+
+   --====-----------------------------------====--
+   --====-- INITIALIZATION / FINALIZATION --====--
+   --====-----------------------------------====--
+
+   procedure Initialize is
+      Found_Stty_Path : constant String := Malef.System_Utils.Get_Path(
+                           Programme_Name                 => "stty",
+                           PATH_Environment_Variable_Name => "PATH",
+                           Default_PATHS                  => "/usr/bin:" &
+                                                             "/bin");
+      Found_Tput_Path : constant String := Malef.System_Utils.Get_Path(
+                           Programme_Name                 => "tput",
+                           PATH_Environment_Variable_Name => "PATH",
+                           Default_PATHS                  => "/usr/bin:"&
+                                                             "/bin");
+   begin
+
+      -- We seach the paths for `stty' and `tput'.
+      if Found_Stty_Path = "" then
+         raise Malef.Exceptions.Initialization_Error with
+         "`stty' not found in PATH, couldn't initialize the terminal!";
+      end if;
+
+      if Found_Tput_Path = "" then
+         raise Malef.Exceptions.Initialization_Error with
+         "`tput' not found in PATH, couldn't initialize the terminal!";
+      end if;
+
+      if Stty_Path /= null then
+         Free(Stty_Path);
+      end if;
+
+      if Tput_Path /= null then
+         Free(Tput_Path);
+      end if;
+
+      Stty_Path := new String'(Found_Stty_Path & '/' & "stty");
+      Tput_Path := new String'(Found_Tput_Path & '/' & "tput");
+
+      -- We attach all the interrupt handlers.
+      Ada.Interrupts.Attach_Handler(
+         New_Handler => Malef.Events.Event_Handler.
+                              Update_Terminal_Size'Access,
+         Interrupt   => Ada.Interrupts.Names.SIGWINCH);
+
+   end Initialize;
+
+
+   procedure Finalize is
+   begin
+
+      -- We detach the event handlers.
+      Ada.Interrupts.Detach_Handler(Interrupt=>Ada.Interrupts.Names.SIGWINCH);
+
+      -- We free the PATHS.
+      Free(Stty_Path);
+      Free(Tput_Path);
+
+   end Finalize;
+
 
    procedure Prepare_Terminal is
       Exit_Status    : Integer;
@@ -66,7 +138,7 @@ package body Malef.Linux is
    begin
 
       -- We run `stty -echo'
-      GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+      GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                         Args                   => Arguments_Stty,
                         Output_File_Descriptor => GNAT.OS_Lib.Standout,
                         Return_Code            => Exit_Status);
@@ -74,7 +146,7 @@ package body Malef.Linux is
          -- In case the `stty' command fails, we try to fix any kind of damage
          -- received by the terminal with a `stty sane'. We also free the
          -- arguments and let the user know that there has been an error.
-         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                            Args                   => Arguments_Stty_Sane,
                            Output_File_Descriptor => GNAT.OS_Lib.Standout,
                            Return_Code            => Exit_Status);
@@ -92,7 +164,7 @@ package body Malef.Linux is
       end if;
 
       -- We then run `tput civis'
-      GNAT.OS_Lib.Spawn(Program_Name           => Tput_PATH,
+      GNAT.OS_Lib.Spawn(Program_Name           => Tput_PATH.all,
                         Args                   => Arguments_Tput,
                         Output_File_Descriptor => GNAT.OS_Lib.Standout,
                         Return_Code            => Exit_Status);
@@ -101,12 +173,12 @@ package body Malef.Linux is
          -- `stty' with the oposite command and try to fix the terminal in any
          -- case with `stty sane'. We then free the arguments and raise an
          -- initialization error.
-         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                            Args                   => Arguments_Fix_Stty,
                            Output_File_Descriptor => GNAT.OS_Lib.Standout,
                            Return_Code            => Exit_Status);
 
-         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                            Args                   => Arguments_Stty_Sane,
                            Output_File_Descriptor => GNAT.OS_Lib.Standout,
                            Return_Code            => Exit_Status);
@@ -158,21 +230,21 @@ package body Malef.Linux is
    begin
 
       -- We run `stty echo'
-      GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+      GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                         Args                   => Arguments_Stty,
                         Output_File_Descriptor => GNAT.OS_Lib.Standout,
                         Return_Code            => Exit_Status);
 
       if Exit_Status /= 0 then
          -- Couldn't finalize successfuly, thus we try to sane the terminal.
-         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH,
+         GNAT.OS_Lib.Spawn(Program_Name           => Stty_PATH.all,
                            Args                   => Arguments_Stty_Sane,
                            Output_File_Descriptor => GNAT.OS_Lib.Standout,
                            Return_Code            => Exit_Status);
       end if;
 
       -- We run the last command `tput cnorm'.
-      GNAT.OS_Lib.Spawn(Program_Name           => Tput_PATH,
+      GNAT.OS_Lib.Spawn(Program_Name           => Tput_PATH.all,
                         Args                   => Arguments_Tput,
                         Output_File_Descriptor => GNAT.OS_Lib.Standout,
                         Return_Code            => Buffer);
@@ -190,51 +262,72 @@ package body Malef.Linux is
 
 
 
-   function Get_Path (Programme_Name : String)
-                      return String is
-      PATH  : constant String := Ada.Environment_Variables.Value("PATH");
-      First : Positive := PATH'First;
-      Last  : Positive := PATH'First;
+   --====------------------------------====--
+   --====-- TERMINAL/CONSOLE CONTROL --====--
+   --====------------------------------====--
 
-      Searcher  : Ada.Directories.Search_Type;
-      Dir_Entry : Ada.Directories.Directory_Entry_Type;
+   procedure Get_Terminal_Size (Rows : out Row_Type;
+                                Cols : out Col_Type) is
+      --
+      -- This is the `winsize' type found in <sys/ioctl.h> header from the C
+      -- programming language. It's used to store the terminal size.
+      --
+      -- @field ws_row
+      -- The number of rows the terminal has.
+      --
+      -- @field ws_col
+      -- The number of columns the terminal has.
+      --
+      -- @field ws_xpixel
+      -- TODO: Search information about this field.
+      --
+      -- @field ws_ypixel
+      -- TODO: Search information about this field.
+      --
+      type winsize is
+         record
+            -- The number of rows the terminal has.
+            ws_row    : Interfaces.C.unsigned_short;
+            ws_col    : Interfaces.C.unsigned_short;
+            ws_xpixel : Interfaces.C.unsigned_short;
+            ws_ypixel : Interfaces.C.unsigned_short;
+         end record
+      with Convention => C;
+
+      --
+      -- The Ioctl function is used to get the size of the terminal. It's
+      -- imported from C and it isn't available on Windows, that's why we have
+      -- a separate package.
+      --
+      -- @param Fd
+      -- It's the file descriptor: 1 is for standard output.
+      --
+      -- @param Request
+      -- The request we are asking to IOCTL.
+      --
+      -- @param Struct
+      -- The struct where the information will be retrieved.
+      --
+      function Ioctl (Fd      : Interfaces.C.int;
+                      Request : Interfaces.C.unsigned_long;
+                      Struct  : out Winsize)
+                      return Interfaces.C.int;
+      pragma Import (C, Ioctl, "ioctl");
+
+      TIOCGWINSZ : constant Interfaces.C.unsigned_long := 16#5413#;
+
+      Ws   : Winsize;
+      Temp : Interfaces.C.int;
    begin
 
-      while Last <= PATH'Last loop
-         if PATH(Last) = ':' or Last = PATH'Last then
-            Last := Last - 1;
-            Find_In_Path:
-               declare
-               begin
-                  Ada.Directories.Start_Search(Search    => Searcher,
-                                               Directory => PATH(First..Last),
-                                               Pattern   => Programme_Name);
-                  while Ada.Directories.More_Entries(Search => Searcher) loop
-                     Ada.Directories.Get_Next_Entry(
-                        Search          => Searcher,
-                        Directory_Entry => Dir_Entry);
-                     if Ada.Directories.Simple_Name(Dir_Entry) = Programme_Name
-                     then
-                        return PATH(First .. Last) & '/';
-                     end if;
-                  end loop;
-               end Find_In_Path;
-            Last  := Last + 1;
-            First := Last + 1;
-         end if;
-         Last := Last + 1;
-      end loop;
+      Temp := Ioctl (Fd      => 1,
+                     Request => TIOCGWINSZ,
+                     Struct  => Ws);
 
-      -- Couldn't find the commands, we return this so the Windows part doesn't
-      -- become stupid. No error is raised until real initialization.
-      return "";
+      Rows := Row_Type(Ws.ws_row);
+      Cols  := Col_Type(Ws.ws_col);
 
-   end Get_Path;
-            
-
-   -- This procedure is separate so it doesn't get stupid in Windows.
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type) is separate;
+   end Get_Terminal_Size;
 
 
    procedure Set_Title (Name : String) is
@@ -244,7 +337,8 @@ package body Malef.Linux is
 
    end Set_Title;
 
-end Malef.Linux;
+
+end Malef.System;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

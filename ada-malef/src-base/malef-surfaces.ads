@@ -44,6 +44,9 @@ package Malef.Surfaces is
    -- This procedure doesn't belong to the API.
    -- This procedure prints the object onto the screen.
    --
+   -- @param Object
+   -- The object to put.
+   --
    procedure Debug_Put (Object : Surface_Type);
 
 
