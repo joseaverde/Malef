@@ -62,10 +62,10 @@ package body Malef is
             Get_Terminal_Size  := Malef.Linux.Get_Terminal_Size'Access;
             Terminal_Set_Title := Malef.Linux.Set_Title        'Access;
          when Windows_OS =>
-            Prepare_Terminal   := Malef.Windows.Prepare_Terminal 'Access;
-            Restore_Terminal   := Malef.Windows.Restore_Terminal 'Access;
-         -- Get_Terminal_Size  := Malef.Windows.Get_Terminal_Size'Access;
-         -- Terminal_Set_Title := Malef.Windows.Set_Title        'Access;
+            Prepare_Terminal   := Malef.Windows.Prepare_Console 'Access;
+            Restore_Terminal   := Malef.Windows.Restore_Console 'Access;
+            Get_Terminal_Size  := Malef.Windows.Get_Console_Size'Access;
+            Terminal_Set_Title := Malef.Windows.Set_Title       'Access;
          when others =>
             -- TODO
             Prepare_Terminal   := Malef.Linux.Prepare_Terminal 'Access;

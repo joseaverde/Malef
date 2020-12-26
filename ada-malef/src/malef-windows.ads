@@ -32,23 +32,40 @@
 --
 -- @description
 --
-package Malef.Windows is
+private package Malef.Windows is
 
    --
-   -- This procedure prepares the terminal.
+   -- This procedure prepares the console.
    --
-   -- @exception Malef.Exception.Initialization_Error
-   -- This exception is raised if the console couldn't be prepared.
-   --
-   procedure Prepare_Terminal;
+   procedure Prepare_Console;
 
    --
-   -- This procedure cleans up and restores the terminal.
+   -- This procedure cleans up and restores the console.
    --
-   -- @exception Malef.Exceptions.Initialization_Error
-   -- This exception is raised if the console couldn't be restored.
+   procedure Restore_Console;
+
+
    --
-   procedure Restore_Terminal;
+   -- This function returns the number of columns and rows the console has got.
+   -- It needs the Windows API to be available, thus in Linux it will always
+   -- return 80x24 (the default Console size).
+   --
+   -- @param Rows
+   -- The number of rows.
+   --
+   -- @param Cols
+   -- The number of cols.
+   --
+   procedure Get_Console_Size (Rows : out Row_Type;
+                                Cols : out Col_Type);
+
+   --
+   -- This procedure changes the console title.
+   --
+   -- @param Name
+   -- The new Console name.
+   --
+   procedure Set_Title (Name : String);
 
 end Malef.Windows;
 

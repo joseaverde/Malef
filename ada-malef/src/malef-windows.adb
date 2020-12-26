@@ -26,30 +26,65 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Exceptions;
+with Interfaces.C;
 
 package body Malef.Windows is
 
-   procedure Prepare_Terminal is
-   -- procedure C_Driver_Set_Up_Console;
-   -- pragma Import (C, C_Driver_Set_Up_Console, "setupConsole");
-   -- 
-   -- procedure C_Driver_Set_Console_Title (Title : Interfaces.C.Char_Array);
+   procedure Prepare_Console is
+      procedure C_Driver_Prepare_Console;
+      pragma Import (C,
+                     C_Driver_Prepare_Console,
+                     "_malef_setupConsole");
    begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Prepare_Terminal;
+
+      C_Driver_Prepare_Console;
+
+   end Prepare_Console;
 
 
-   procedure Restore_Terminal is
+   procedure Restore_Console IS
+      procedure C_Driver_Restore_Console;
+      pragma Import (C,
+                     C_Driver_Restore_Console,
+                     "_malef_restoreConsole");
    begin
-      null; -- TODO
-   exception
-      when others =>
-         raise Malef.Exceptions.Initialization_Error;
-   end Restore_Terminal;
+
+      C_Driver_Restore_Console;
+
+   end Restore_Console;
+
+
+   procedure Get_Console_Size (Rows : out Row_Type;
+                                Cols : out Col_Type) is
+      procedure C_Driver_Get_Console_Screen_Size(rows: out Interfaces.C.short;
+                                                 cols: out Interfaces.C.short);
+      pragma Import (C,
+                     C_Driver_Get_Console_Screen_Size,
+                     "_malef_getConsoleScreenSize");
+
+      c_rows, c_cols : Interfaces.C.short;
+   begin
+
+      C_Driver_Get_Console_Screen_Size (rows => c_rows,
+                                        cols => c_cols);
+
+      Rows := Row_Type (c_rows);
+      Cols := Col_Type (c_cols);
+
+   end Get_Console_Size;
+
+
+   procedure Set_Title (Name : String) is
+      procedure C_Driver_Set_Console_Title (Title : Interfaces.C.Char_Array);
+      pragma Import (C,
+                     C_Driver_Set_Console_Title,
+                     "_malef_setConsoleTitle");
+   begin
+
+      C_Driver_Set_Console_Title(Interfaces.C.To_C(Name));
+
+   end Set_Title;
+
 
 end Malef.Windows;
 
