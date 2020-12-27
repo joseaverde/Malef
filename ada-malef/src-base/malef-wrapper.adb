@@ -26,8 +26,7 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-function Malef.Wrapper (Parameters    : Parameters_Type;
-                        User_Function : User_Function_Type)
+function Malef.Wrapper (Parameters : Parameters_Type)
                         return Return_Type is
    Return_Value : Return_Type;
 begin

@@ -35,20 +35,16 @@
 -- @param Parameters
 -- The parameters the user has to enter (it's a record type).
 --
--- @param User_Function
--- The user defined function which is executed inside the wrapper.
---
 -- @return
 -- It returns another record type.
 --
 generic
    type Parameters_Type (<>) is private;
    type Return_Type is private;
-   type User_Function_Type is access function (Parameters : Parameters_Type)
-                                               return Return_Type;
-function Malef.Wrapper (Parameters    : Parameters_Type;
-                        User_Function : User_Function_Type)
-                  return Return_Type;
+   User_Function: access function (Parameters : Parameters_Type)
+                                   return Return_Type;
+function Malef.Wrapper (Parameters : Parameters_Type)
+                        return Return_Type;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
