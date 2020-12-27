@@ -34,11 +34,12 @@ with Malef.Surfaces;
 
 package body Malef is
 
+
    --====-------------------------------------====--
    --====-- INITIALIZATION AND FINALIZATION --====--
    --====-------------------------------------====--
 
-   -- TODO: Lock it for multitasking
+   Initialize_Lock : Boolean := False;
    procedure Initialize is
    begin
 
@@ -47,7 +48,12 @@ package body Malef is
          "The Malef library has already been initialized!";
       end if;
 
-      
+      while Initialize_Lock loop
+         null;
+      end loop;
+
+      Initialize_Lock := True;
+
       -- We prepare the terminal depending on the operating system.
       Malef.System.Initialize;
       Malef.System.Prepare_Terminal;
@@ -61,9 +67,7 @@ package body Malef is
       -- Finally we tell the user the terminal has been initialized.
       Has_Been_Initialized := True;
 
-      -- TODO: Let the user add it.
-      -- We prepare a new page for the terminal.
-      New_Page;
+      Initialize_Lock := False;
 
    end Initialize;
 
@@ -138,7 +142,7 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      -- TODO: Use IO package.
+      -- TODO: Use IO package or system packages.
       Ada.Text_IO.New_Line(Ada.Text_IO.Count(Height));
 
    end New_Page;

@@ -4,7 +4,7 @@
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                               G E N E R I C                               --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,8 +26,31 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package body Malef.Wrapper is
+function Malef.Wrapper (Parameters    : Parameters_Type;
+                        User_Function : User_Function_Type)
+                        return Return_Type is
+   Return_Value : Return_Type;
+begin
 
+   if User_Function = null then
+      raise Constraint_Error with
+      "The function is null!";
+   end if;
+
+   Initialize;
+
+   Return_Value := User_Function.all(Parameters => Parameters);
+
+   Finalize;
+
+   return Return_Value;
+
+exception
+   when others =>
+      if Has_Been_Initialized then
+         Finalize;
+      end if;
+      raise Constraint_Error;
 end Malef.Wrapper;
 
 ---=======================-------------------------=========================---

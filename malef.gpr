@@ -71,7 +71,8 @@ project Malef is
                "Malef.Events",
                "Malef.Exceptions",
                "Malef.Surfaces",
-               "Malef.System");
+               "Malef.System",
+               "Malef.Wrapper");
    C_API   := ();
 
    API      := Ada_API;

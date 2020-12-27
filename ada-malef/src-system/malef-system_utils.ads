@@ -31,9 +31,12 @@
 -- This package contains functions used and shared by all systems.
 --
 -- @description
--- TODO: Give a better description.
+-- The functions contained in this package are meant to be used by the
+-- Malef.System package. The functions contained here are system specific but
+-- common functions used by all the Malef.System implementations depening on
+-- the system.
 --
-package Malef.System_utils is
+private package Malef.System_utils is
 
    --
    -- This function returns the directory where a programme is located
