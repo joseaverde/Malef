@@ -40,6 +40,25 @@ package Malef.Surfaces is
 
    type Surface_Type is tagged private;
 
+
+   -- TODO: Replace this function.
+   --
+   -- This function creates a surface of a given number of rows and columns.
+   --
+   -- @param Rows
+   -- The number of rows the surface has.
+   --
+   -- @param Cols
+   -- The number of columns the new surface will have.
+   --
+   -- @return
+   -- The surface itself.
+   --
+   function Create (Rows : Row_Type;
+                    Cols : Col_Type)
+                    return Surface_Type;
+
+   -- TODO: Replace this function
    --
    -- This procedure doesn't belong to the API.
    -- This procedure prints the object onto the screen.

@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - E V E N T S . A D B                      --
+--                      M A L E F - C O L O R S . A D S                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,25 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Systems;
+--
+-- @summary
+--
+--
+-- @description
+--
+package Malef.Colors is
 
-package body Malef.Events is
-
-   protected body Event_Handler is
-
-      procedure Update_Terminal_Size is
-      begin
-
-         Malef.Systems.Get_Terminal_Size (Rows => Height,
-                                          Cols => Width);
-
-         -- TODO: Has_Resized := True;
-
-      end Update_Terminal_Size;
-
-   end Event_Handler;
-
-end Malef.Events;
+end Malef.Colors;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

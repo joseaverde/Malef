@@ -71,20 +71,20 @@ project Malef is
                "Malef.Events",
                "Malef.Exceptions",
                "Malef.Surfaces",
-               "Malef.System",
+               "Malef.Systems",
                "Malef.Wrapper");
    C_API   := ();
 
    API      := Ada_API;
-   Src_Dirs := ("ada-malef/src-base", "ada-malef/src-system");
+   Src_Dirs := ("ada-malef/src-base", "ada-malef/src-systems");
 
    case Operating_System is
       when "linux" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-system/linux");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux");
       when "windows" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-system/windows");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows");
       when others =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-system/linux");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux");
    end case;
 
    case C_API_Compilation is

@@ -84,6 +84,15 @@ package body Malef.System_utils is
    end Get_Path;
 
 
+   function To_String (C : Color_Component_Type)
+                       return String is
+   begin
+
+      return Color_Components_Strings(C);
+
+   end To_String;
+
+
 end Malef.System_utils;
 
 ---=======================-------------------------=========================---

@@ -28,7 +28,7 @@
 
 with Ada.Text_IO;
 with Malef.Exceptions;
-with Malef.System;
+with Malef.Systems;
 with Malef.Surfaces;
 
 
@@ -55,12 +55,12 @@ package body Malef is
       Initialize_Lock := True;
 
       -- We prepare the terminal depending on the operating system.
-      Malef.System.Initialize;
-      Malef.System.Prepare_Terminal;
+      Malef.Systems.Initialize;
+      Malef.Systems.Prepare_Terminal;
 
       -- We then get the size of the terminal.
-      Malef.System.Get_Terminal_Size(Rows => Height,
-                                     Cols => Width);
+      Malef.Systems.Get_Terminal_Size(Rows => Height,
+                                      Cols => Width);
 
       -- TODO: We update the main surface.
 
@@ -81,8 +81,8 @@ package body Malef is
       end if;
 
       -- We restore the terminal and finalize everything.
-      Malef.System.Restore_Terminal;
-      Malef.System.Finalize;
+      Malef.Systems.Restore_Terminal;
+      Malef.Systems.Finalize;
 
       -- TODO: Move the cursor down.
 
@@ -156,7 +156,7 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      Malef.System.Set_Title (Name => Name);
+      Malef.Systems.Set_Title (Name => Name);
 
    end Set_Title;
 
@@ -171,8 +171,8 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      Malef.System.Get_Terminal_Size(Rows => New_Height,
-                                     Cols => New_Width);
+      Malef.Systems.Get_Terminal_Size(Rows => New_Height,
+                                      Cols => New_Width);
 
       if New_Height /= Height or New_Width /= Width then
          Height := New_Height;

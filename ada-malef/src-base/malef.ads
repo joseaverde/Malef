@@ -68,8 +68,8 @@ package Malef is
    --
    -- Finally we have the common 3-bytes (24 bits) RGB colours.
    --
-   -- Hoever this library supports for 32-bits-colour applications, the RGBA is
-   -- used (A stands for Alpha which is opacity). And those colours are
+   -- However this library supports for 32-bits-colour applications, the RGBA
+   -- is used (A stands for Alpha which is opacity). And those colours are
    -- converted directly into the colours supported by the system. That way we
    -- don't have to declare different types for different systems, only a
    -- global one is needed, and is the one to be converted). The transparency
@@ -125,7 +125,7 @@ package Malef is
    --====-- STYLES --====--
    --====------------====--
    --
-   -- Heare we will declare the style types.
+   -- Here we will declare the style types.
    -- There are certain styles which aren't supported by default by certain
    -- consoles or terminals, so their effect we will try to recreate the same
    -- effect in library. For example: Doubly_Underline will be put as a single
@@ -225,7 +225,7 @@ package Malef is
    -- This is the default format.
    Default_Format :  constant Format_Type
                   := Format_Type'(Foreground_Color => (255, 255, 255, 255),
-                                  Background_Color => (  0,   0,   0,   0),
+                                  Background_Color => (  0,   0,   0, 255),
                                   Styles           => (others => False));
 
 

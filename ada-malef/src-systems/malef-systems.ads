@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D S                      --
+--                     M A L E F - S Y S T E M S . A D S                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -42,9 +42,9 @@
 -- (some of the functions may work in systems like Linux before initialization
 -- but are fatal in systems like Windows).
 --
-private package Malef.System is
+private package Malef.Systems is
 
-   pragma Elaborate_Body (Malef.System);
+   pragma Elaborate_Body (Malef.Systems);
 
    --====-----------------------------------====--
    --====-- INITIALIZATION / FINALIZATION --====--
@@ -101,6 +101,21 @@ private package Malef.System is
    --====------------------------------====--
 
    --
+   -- This function returns the string needed to put a certain format onto the
+   -- screen.
+   --
+   -- @param Format
+   -- The format to convert into a string.
+   --
+   -- @return
+   -- It returns the String you need to print onto the screen to put such
+   -- Format. It returns "" if to put the format a string can't be put, but a
+   -- function must be called.
+   --
+   function Get_Format (Format : Format_Type)
+                        return String;
+
+   --
    -- This function returns the number of columns and rows the terminal
    -- currently has got. Keep in mind most of the terminals/consoles out there
    -- start with a fixed size of 80x24 (80 columns, 24 rows).
@@ -123,7 +138,8 @@ private package Malef.System is
    --
    procedure Set_Title (Name : String);
 
-end Malef.System;
+
+end Malef.Systems;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

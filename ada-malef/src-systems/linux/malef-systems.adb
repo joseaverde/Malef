@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D B                      --
+--                     M A L E F - S Y S T E M S . A D B                     --
 --                               ( L I N U X )                               --
 --                                                                           --
 --                                 M A L E F                                 --
@@ -37,7 +37,7 @@ with Malef.Events;
 with Malef.Exceptions;
 with Malef.System_Utils;
 
-package body Malef.System is
+package body Malef.Systems is
 
    type String_Access is access all String;
 
@@ -266,6 +266,29 @@ package body Malef.System is
    --====------------------------------====--
    --====-- TERMINAL/CONSOLE CONTROL --====--
    --====------------------------------====--
+   
+
+   -- IDEA: Make it inline, call the best function that can return the Format
+   --       Use Dim/Bright styles if needed.
+   function Get_Format (Format : Format_Type)
+                        return String is
+      function To_String (C : Color_Component_Type) return String
+       renames Malef.System_Utils.To_String;
+   begin
+
+      -- TODO: This function only returns colours, optimize it.
+
+      return ASCII.ESC & '[' &
+               "38;2;" & To_String(Format.Foreground_Color(R)) & ';' &
+                         To_String(Format.Foreground_Color(G)) & ';' &
+                         To_String(Format.Foreground_Color(B)) & ';' &
+               "48;2;" & To_String(Format.Background_Color(R)) & ';' &
+                         To_String(Format.Background_Color(G)) & ';' &
+                         To_String(Format.Background_Color(B)) &
+             'm';
+
+   end Get_Format;
+
 
    procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type) is
@@ -339,7 +362,7 @@ package body Malef.System is
    end Set_Title;
 
 
-end Malef.System;
+end Malef.Systems;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
