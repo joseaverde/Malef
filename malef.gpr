@@ -68,6 +68,7 @@ project Malef is
    --====-====-----------====-====--
    
    Ada_API := ("Malef",
+               "Malef.Colors",
                "Malef.Events",
                "Malef.Exceptions",
                "Malef.Surfaces",

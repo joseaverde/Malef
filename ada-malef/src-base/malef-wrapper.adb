@@ -49,6 +49,7 @@ exception
       if Has_Been_Initialized then
          Finalize;
       end if;
+      -- TODO: Continue exception chain
       raise Constraint_Error;
 end Malef.Wrapper;
 

@@ -26,6 +26,7 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Colors;
 private with Ada.Finalization;
 
 --
@@ -81,6 +82,7 @@ package Malef.Surfaces is
    --
    function Get_Reference (Object : in Surface_Type)
                            return Shared_Surface_Access;
+
 
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
