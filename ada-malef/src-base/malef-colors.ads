@@ -7,7 +7,7 @@
 --                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -56,15 +56,15 @@ package Malef.Colors is
                              Col     :     Col_Type;
                              Color   : out Color_Type);
 
-   function  Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type)
-                             return Color_Type;
+   function Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
+                            Row     : Row_Type;
+                            Col     : Col_Type)
+                            return Color_Type;
 
-   function  Get_Background (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type)
-                             return Color_Type;
+   function Get_Background (Surface : Malef.Surfaces.Surface_Type;
+                            Row     : Row_Type;
+                            Col     : Col_Type)
+                            return Color_Type;
 
 
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;

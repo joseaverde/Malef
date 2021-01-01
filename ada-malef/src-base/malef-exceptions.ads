@@ -7,7 +7,7 @@
 --                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -39,6 +39,15 @@ package Malef.Exceptions is
    -- This exception is raised when any issue happens during initialization or
    -- finalization of a specific part of a package.
    Initialization_Error : exception;
+
+   -- This exception is raised whenever the user is trying to index somthing
+   -- out of its bounds.
+   Bounds_Error : exception;
+
+   -- This exception is raised whenever the user is trying to use a null or
+   -- not-initialised surface, i.e. the Shared_Null_Surface a.k.a
+   -- "THE NULL SURFACE".
+   Null_Surface_Error : exception;
 
 end Malef.Exceptions;
 

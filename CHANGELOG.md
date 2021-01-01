@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2021-01-01
+### Added
+- Added Malef.Color API without documentation, yet (It will be bundled in the next patch).
+- Added implementation for Malef.Color API.
+- Added more exceptions
+
+### Fixed
+- Fixed date ranges in header files and some dev-tools.
+
+
 ## [0.0.1] - 2020-12-27
 ### Fixed
 - Fixed Malef.Wrapper
+
 
 ## [0.0.0] - 2020-12-27
 ### Added

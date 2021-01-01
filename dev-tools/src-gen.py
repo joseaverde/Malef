@@ -9,7 +9,7 @@
  #                         P Y T H O N   S C R I P T                         # 
  #                                                                           # 
  #---------------------------------------------------------------------------# 
- #     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     # 
+ #  Copyright (c) 2020-2021 José Antonio Verde Jiménez All Rights Reserved   # 
  #---------------------------------------------------------------------------# 
  # This file is part of Malef.                                               # 
  #                                                                           # 
@@ -44,7 +44,7 @@ HEADER = """
 {kind}
                                                                            
 ---------------------------------------------------------------------------
-     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     
+     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     
 ---------------------------------------------------------------------------
  This file is part of Malef.                                               
                                                                            

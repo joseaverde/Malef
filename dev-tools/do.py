@@ -9,7 +9,7 @@
  #                         P Y T H O N   S C R I P T                         # 
  #                                                                           # 
  #---------------------------------------------------------------------------# 
- #     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     # 
+ #  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  # 
  #---------------------------------------------------------------------------# 
  # This file is part of Malef.                                               # 
  #                                                                           # 
@@ -137,7 +137,8 @@ def _commit():
         print("You can commit!")
         print("Remember to check:")
         for t in ["It compiles for all systems",
-                  "You've added a description"]:
+                  "You've added a description",
+                  "The date range has been updated in all modified files",]:
             print(" \033[33m+\033[0m %s" % t)
 
 
@@ -169,24 +170,25 @@ def main():
         usage()
         return 1;
 
-    if sys.argv[1] not in commands.keys():
-        usage()
-        return 2;
+    for arg in sys.argv[1:]:
+        if arg not in commands.keys():
+            usage()
+            return 2;
 
-    cmd = commands[sys.argv[1]]
+        cmd = commands[arg]
 
-    if isinstance(cmd, str):
-        print("\033[2m%s\033[0m" % cmd)
-        os.system(cmd)
-    elif isinstance(cmd, list):
-        for c in cmd:
-            if isinstance(c, str):
-                print("\033[2m%s\033[0m" % c)
-                os.system(c)
-            else:
-                c()
-    else:
-        cmd()
+        if isinstance(cmd, str):
+            print("\033[2m%s\033[0m" % cmd)
+            os.system(cmd)
+        elif isinstance(cmd, list):
+            for c in cmd:
+                if isinstance(c, str):
+                    print("\033[2m%s\033[0m" % c)
+                    os.system(c)
+                else:
+                    c()
+        else:
+            cmd()
 
     return 0;
 

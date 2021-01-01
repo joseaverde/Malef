@@ -8,7 +8,7 @@
 --                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -88,6 +88,9 @@ package body Malef.Systems is
    begin
 
       -- TODO: Call external function.
+      if Format = Default_Format then
+         return "";
+      end if;
       return "";
 
    end Get_Format;
