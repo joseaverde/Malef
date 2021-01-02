@@ -32,6 +32,17 @@ with Malef.Surfaces;
 
 package body Malef.Colors is
 
+
+   --============-----------------------============--
+  ---============-- COLOUR OPERATIONS --============---
+   --============-----------------------============--
+
+
+   --====----------------====--
+   --====-- GET COLOUR --====--
+   --====----------------====--
+
+
    procedure Get_Foreground (Surface :     Malef.Surfaces.Surface_Type;
                              Row     :     Row_Type;
                              Col     :     Col_Type;
@@ -100,6 +111,9 @@ package body Malef.Colors is
    end Get_Background;
 
 
+   --====----------------====--
+   --====-- SET COLOUR --====--
+   --====----------------====--
 
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
                              Row     : Row_Type;
@@ -254,6 +268,13 @@ package body Malef.Colors is
 
 
 
+   --============------------------------------============--
+  ---============-- CURSOR COLOUR OPERATIONS --============---
+   --============------------------------------============--
+
+   --====----------------====--
+   --====-- GET COLOUR --====--
+   --====----------------====--
 
    procedure Get_Cursor_Foreground (Surface :     Malef.Surfaces.Surface_Type;
                                     Color   : out Color_Type) is
@@ -295,6 +316,9 @@ package body Malef.Colors is
    end Get_Cursor_Background;
 
 
+   --====----------------====--
+   --====-- SET COLOUR --====--
+   --====----------------====--
 
    procedure Set_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type;
                                     Color   : Color_Type) is
@@ -315,6 +339,43 @@ package body Malef.Colors is
 
    end Set_Cursor_Background;
 
+
+
+   --============-----------------------============--
+  ---============-- COLOUR OPERATIONS --============---
+   --============-----------------------============--
+
+
+   --====-----------------====--
+   --====-- GET PALETTE --====--
+   --====-----------------====--
+
+   procedure Get_Palette (Palette : out Palette_Type) is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, couldn't retrieve the " &
+         "Palette!";
+      end if;
+
+      Palette := Current_Palette;
+
+   end Get_Palette;
+
+
+   function Get_Palette return Palette_Type is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, couldn't retrieve the " &
+         "Palette!";
+      end if;
+
+      return Current_Palette;
+
+   end Get_Palette;
 
 
 
@@ -343,34 +404,6 @@ package body Malef.Colors is
 
    end Set_Palette;
 
-
-
-   procedure Get_Palette (Palette : out Palette_Type) is
-   begin
-
-      if not Has_Been_Initialized then
-         raise Malef.Exceptions.Initialization_Error with
-         "The library hasn't been initialized yet, couldn't retrieve the " &
-         "Palette!";
-      end if;
-
-      Palette := Current_Palette;
-
-   end Get_Palette;
-
-
-   function Get_Palette return Palette_Type is
-   begin
-
-      if not Has_Been_Initialized then
-         raise Malef.Exceptions.Initialization_Error with
-         "The library hasn't been initialized yet, couldn't retrieve the " &
-         "Palette!";
-      end if;
-
-      return Current_Palette;
-
-   end Get_Palette;
 
 end Malef.Colors;
 
