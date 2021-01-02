@@ -315,6 +315,63 @@ package body Malef.Colors is
 
    end Set_Cursor_Background;
 
+
+
+
+   procedure Set_Palette (Palette : in Palette_Type) is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, cannot change the Palette!";
+      end if;
+
+      Current_Palette := Palette;
+
+   end Set_Palette;
+
+
+   procedure Set_Palette (Kind : Palette_Kind) is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, cannot change the Palette!";
+      end if;
+
+      Current_Palette := Palettes(Kind);
+
+   end Set_Palette;
+
+
+
+   procedure Get_Palette (Palette : out Palette_Type) is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, couldn't retrieve the " &
+         "Palette!";
+      end if;
+
+      Palette := Current_Palette;
+
+   end Get_Palette;
+
+
+   function Get_Palette return Palette_Type is
+   begin
+
+      if not Has_Been_Initialized then
+         raise Malef.Exceptions.Initialization_Error with
+         "The library hasn't been initialized yet, couldn't retrieve the " &
+         "Palette!";
+      end if;
+
+      return Current_Palette;
+
+   end Get_Palette;
+
 end Malef.Colors;
 
 ---=======================-------------------------=========================---

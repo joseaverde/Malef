@@ -28,7 +28,7 @@
 -------------------------------------------------------------------------------
 
 with Interfaces.C;
-
+with Malef.Colors;
 
 package body Malef.Systems is
 
@@ -40,7 +40,16 @@ package body Malef.Systems is
    procedure Initialize is
    begin
 
-      null;
+      -- We prepare some components from the library.
+      -- We first set the `Has_Been_Initialized' variable to True while we
+      -- call some functions that require Malef to be initialised.
+      Has_Been_Initialized := True;
+
+      -- TODO: Get the system's palette.
+      Malef.Colors.Set_Palette(Malef.Colors.Windows_10_Console);
+
+      -- We restore the previous state of the `Has_Been_Initialize' variable.
+      Has_Been_Initialized := False;
 
    end Initialize;
 
@@ -48,7 +57,9 @@ package body Malef.Systems is
    procedure Finalize is
    begin
 
-      null;
+      -- TODO: Share this function for all systems.
+      -- We restore some library components to a previous state.
+      Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
 
    end Finalize;
 

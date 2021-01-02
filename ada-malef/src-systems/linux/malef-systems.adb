@@ -8,7 +8,7 @@
 --                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -33,6 +33,7 @@ with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;
 with GNAT.OS_Lib;
 with Interfaces.C;
+with Malef.Colors;
 with Malef.Events;
 with Malef.Exceptions;
 with Malef.System_Utils;
@@ -91,6 +92,17 @@ package body Malef.Systems is
                               Update_Terminal_Size'Access,
          Interrupt   => Ada.Interrupts.Names.SIGWINCH);
 
+      -- Finally we prepare some components of the library.
+      -- We set the `Has_Been_Initialized' variable to True temporarly so we
+      -- can call some functions with private parts from the components.
+      Has_Been_Initialized := True;
+
+      -- TODO: Get the best colour for each distro.
+      Malef.Colors.Set_Palette(Malef.Colors.xterm);
+
+      -- We restore the `Has_Been_Initialized' variable.
+      Has_Been_Initialized := False;
+
    end Initialize;
 
 
@@ -103,6 +115,10 @@ package body Malef.Systems is
       -- We free the PATHS.
       Free(Stty_Path);
       Free(Tput_Path);
+
+      -- We finally change the components from the library back to a default
+      -- state.
+      Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
 
    end Finalize;
 
@@ -250,8 +266,10 @@ package body Malef.Systems is
                         Output_File_Descriptor => GNAT.OS_Lib.Standout,
                         Return_Code            => Buffer);
 
+      -- Finally we free everything and restore the original colour.
       Exit_Status := Exit_Status + Buffer;
       Free;
+      Ada.Text_IO.Put(ASCII.ESC & "[0m");
 
       if Exit_Status /= 0 then
          raise Malef.Exceptions.Initialization_Error with

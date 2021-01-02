@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2021-01-02
+### Added
+- Added the Palette type.
+- Added different palettes.
+- Added system specific palettes.
+
+### Fixed
+- Fixed copyright notice in every source file.
+
 ## [0.1.0] - 2021-01-01
 ### Added
 - Added Malef.Color API without documentation, yet (It will be bundled in the next patch).
