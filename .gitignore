@@ -9,3 +9,6 @@ obj/
 *.o
 *.ali
 gmem.out
+
+# For debugging right now
+py-malef/

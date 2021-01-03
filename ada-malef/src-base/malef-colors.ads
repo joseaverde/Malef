@@ -329,7 +329,7 @@ package Malef.Colors is
                             Cyan    => ( 44, 181, 233, 255),
                             White   => (204, 204, 204, 255)),
                   True  => (Black   => (128, 128, 128, 255),
-                            Red     => (255, 255,   0, 255),
+                            Red     => (255,   0,   0, 255),
                             Green   => (  0, 255,   0, 255),
                             Yellow  => (255, 255,   0, 255),
                             Blue    => (  0,   0, 255, 255),
@@ -536,7 +536,8 @@ package Malef.Colors is
    --
    -- @exception Malef.Exceptions.Bounds_Error
    -- This exceptions is raised if trying to change the colour in any position
-   -- out of the Surfaces's ranges.
+   -- out of the Surfaces's ranges. It's also raised if any or both of the `TO'
+   -- parameters is lower than the `FROM' one.
    --
    procedure Set_Foreground (Surface  : Malef.Surfaces.Surface_Type;
                              From_Row : Row_Type;
@@ -572,7 +573,8 @@ package Malef.Colors is
    --
    -- @exception Malef.Exceptions.Bounds_Error
    -- This exceptions is raised if trying to change the colour in any position
-   -- out of the Surfaces's ranges.
+   -- out of the Surfaces's ranges. It's also raised if any or both of the `TO'
+   -- parameters is lower than the `FROM' one.
    --
    procedure Set_Background (Surface  : Malef.Surfaces.Surface_Type;
                              From_Row : Row_Type;

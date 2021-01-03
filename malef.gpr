@@ -32,7 +32,7 @@ project Malef is
    --====-====- EXTERNAL -====-====--
    --====-====------------====-====--
    
-   type OS_Kind is ("linux", "windows", "nix");
+   type OS_Kind is ("linux", "windows", "windows-cmd", "nix");
    Operating_System : OS_Kind := External ("MALEF_OPERATING_SYSTEM",
                                            "linux");
 
@@ -59,7 +59,7 @@ project Malef is
 
 
    C_API_Compilation : Enabled_Kind := External ("MALEF_C_API_COMPILATION",
-                                                 "disabled");
+                                                 "enabled");
 
 
 
@@ -74,24 +74,34 @@ project Malef is
                "Malef.Surfaces",
                "Malef.Systems",
                "Malef.Wrapper");
-   C_API   := ();
 
-   API      := Ada_API;
+   C_API   := ("C_Malef",
+               "C_Malef.Colors",
+               "C_Malef.Surfaces");
+
+   API := Ada_API;
+
    Src_Dirs := ("ada-malef/src-base", "ada-malef/src-systems");
 
    case Operating_System is
       when "linux" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux",
+                                 "ada-malef/src-systems/shared/ansi");
       when "windows" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows",
+                                 "ada-malef/src-systems/shared/ansi");
+      when "windows-cmd" =>
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows",
+                                 "ada-malef/src-systems/shared/cmd");
       when others =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux");
+         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux",
+                                 "ada-malef/src-systems/shared/ansi");
    end case;
 
    case C_API_Compilation is
       when "enabled" =>
          API := API & C_API;
-         Src_Dirs := Src_Dirs & "c-malef/src";
+         Src_Dirs := Src_Dirs & "c-malef/src-base";
       when others    => null;
    end case;
 

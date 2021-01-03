@@ -127,12 +127,20 @@ package body Malef.Surfaces is
 
    end Debug_Put;
 
-            
+
    function Get_Reference (Object : in Surface_Type)
                            return Shared_Surface_Access is
    begin
 
       return Object.Reference;
+
+   exception
+      when others =>
+         -- In case the object reference couldn't be retrieved, it means it's
+         -- null. We don't raise any errors because it may be the fault of the
+         -- library itself. We can't change the value because we are in "IN"
+         -- mode.
+         return Shared_Null_Surface'Access;
 
    end Get_Reference;
 

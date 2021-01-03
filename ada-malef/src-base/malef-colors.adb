@@ -185,6 +185,11 @@ package body Malef.Colors is
          "position is out of bounds!";
       end if;
 
+      if To_Row < From_Row or To_Col < From_Col then
+         raise Malef.Exceptions.Null_Surface_Error with
+         "Cannot change the colours because the range is invalid!";
+      end if;
+
       for Row in Row_Type range From_Row .. To_Row loop
          for Col in Col_Type range From_Col .. To_Col loop
             Reference.Grid(Row, Col).Format.Foreground_Color := Color;
@@ -218,6 +223,11 @@ package body Malef.Colors is
          raise Malef.Exceptions.Bounds_Error with
          "Cannot change the colour of the given block because the `TO' " &
          "position is out of bounds!";
+      end if;
+
+      if To_Row < From_Row or To_Col < From_Col then
+         raise Malef.Exceptions.Null_Surface_Error with
+         "Cannot change the colours because the range is invalid!";
       end if;
 
       for Row in Row_Type range From_Row .. To_Row loop
