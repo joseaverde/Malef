@@ -10,5 +10,3 @@ obj/
 *.ali
 gmem.out
 
-# For debugging right now
-py-malef/

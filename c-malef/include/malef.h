@@ -32,7 +32,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef uint8_t *_malef_color_p;
 typedef uint8_t malef_color_t[4];
 
 typedef enum _malef_colorKind_t {
@@ -46,7 +45,6 @@ typedef enum _malef_colorKind_t {
    malef_WHITE   = 7
 } malef_colorKind_t;
 
-typedef malef_color_t *_malef_palette_p;
 typedef malef_color_t malef_palette_t[2][8];
 
 typedef enum _malef_paletteKind_t {
@@ -77,7 +75,6 @@ typedef enum _malef_style_t {
    malef_DOUBLY_UNDERLINE = 9
 } malef_style_t;
 
-typedef bool *_malef_style_arr_p;
 typedef bool malef_style_arr[10];
 
 
@@ -89,7 +86,6 @@ typedef struct _malef_cursor_t {
 } malef_cursor_t;
 
 
-typedef uint8_t *_malef_char_p;
 typedef uint8_t *malef_char_t[4];
 
 typedef malef_char_t *malef_str_t;
