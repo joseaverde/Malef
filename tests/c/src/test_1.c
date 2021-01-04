@@ -5,16 +5,19 @@
 int main() {
 
    malef_row_t height;
-   malef_col_t width;
+   malef_row_t width;
 
    malef_initialize();
    malef_newPage();
    malef_setTitle ("test_1.c: Testing Malef!");
-   height = malef_getHeight();
-   width  = malef_getWidth();
+   if (malef_getHeight (&height) != malef_NO_ERROR) return 1;
+   if (malef_getWidth (&width) != malef_NO_ERROR) return 2;
    // This part won't be executed because everytime the terminal is resized a
    // signal is raised and catched by a handler which changes the current size.
-   if (malef_updateTerminalSize()) {
+
+   bool is_updated;
+   if (malef_updateTerminalSize(&is_updated) != malef_NO_ERROR) return 3;
+   if (is_updated) {
       printf("The terminal has been resized!\n");
    }
    malef_finalize();

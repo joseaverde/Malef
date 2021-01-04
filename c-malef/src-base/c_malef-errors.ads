@@ -26,15 +26,37 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Exceptions;
+
 --
 -- @summary
 --
 --
 -- @description
 --
-package C_malef.Errors is
+package C_Malef.Errors is
 
-end C_malef.Errors;
+   pragma Elaborate_Body (C_Malef.Errors);
+
+   procedure Push (Ada_Exception : Ada.Exceptions.Exception_Occurrence);
+
+   procedure Pop;
+   pragma Export (C, Pop, "malef_catchError");
+
+   function Flying_Exception return bool;
+   pragma Export (C, Flying_Exception, "malef_isFlyingError");
+
+   function Get_Name return chars_ptr;
+   pragma Export (C, Get_Name, "malef_getErrorName");
+
+   function Get_Message return chars_ptr;
+   pragma Export (C, Get_Message, "malef_getErrorMessage");
+
+private
+
+   Last_Exception : Ada.Exceptions.Exception_Occurrence;
+
+end C_Malef.Errors;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

@@ -77,6 +77,7 @@ project Malef is
 
    C_API   := ("C_Malef",
                "C_Malef.Colors",
+               "C_Malef.Errors",
                "C_Malef.Surfaces");
 
    API := Ada_API;

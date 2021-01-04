@@ -39,6 +39,19 @@ with Malef;
 --
 package C_malef is
 
+   type Error_Kind is (Ada_Error,
+                       No_Error,
+                       Initialization_Error,
+                       Bounds_Error,
+                       Null_Surface_Error);
+   for Error_Kind use
+      (Ada_Error            => -1,
+       No_Error             =>  0,
+       Initialization_Error =>  1,
+       Bounds_Error         =>  2,
+       Null_Surface_Error   =>  3);
+   pragma Convention (C, Error_Kind);
+
    type Color_Component_Type is mod 256;
    for Color_Component_Type'Size use 8;
    pragma Convention (C, Color_Component_Type);
@@ -104,35 +117,40 @@ package C_malef is
    type Str_Type is array (unsigned range <>) of Char_Type;
    pragma Convention (C, Str_Type);
 
-   procedure Initialize;
+   function Initialize return Error_Kind;
    pragma Export (C, Initialize, "malef_initialize");
 
-   procedure Finalize;
+   function Finalize return Error_Kind;
    pragma Export (C, Finalize, "malef_finalize");
 
    function Is_Initialized return bool;
    pragma Export (C, Is_Initialized, "malef_isInitialized");
 
-   function Get_Height return Row_Type;
+   function Get_Height (Height : out Row_Type)
+                        return Error_Kind;
    pragma Export (C, Get_Height, "malef_getHeight");
 
-   function Get_Width return Col_Type;
+   function Get_Width (Width : out Col_Type)
+                       return Error_Kind;
    pragma Export (C, Get_Width, "malef_getWidth");
 
-   procedure New_Page;
+   function New_Page return Error_Kind;
    pragma Export (C, New_Page, "malef_newPage");
 
-   procedure Set_Title (Name : chars_ptr);
+   function Set_Title (Name : chars_ptr)
+                       return Error_Kind;
    pragma Export (C, Set_Title, "malef_setTitle");
 
-   function Update_Terminal_Size return bool;
+   function Update_Terminal_Size (Is_Updated : out bool)
+                                  return Error_Kind;
    pragma Export (C, Update_Terminal_Size, "malef_updateTerminalSize");
 
    type Wrapped_Function is access function (Args: void_ptr) return void_ptr;
    pragma Convention (C, Wrapped_Function);
-   function Wrapper (Func : Wrapped_Function;
-                     Args : void_ptr)
-                     return void_ptr;
+   function Wrapper (Func    : Wrapped_Function;
+                     Args    : void_ptr;
+                     Ret_Val : out void_ptr)
+                     return Error_Kind;
    pragma Export (C, Wrapper, "malef_wrapper");
 
 end C_malef;

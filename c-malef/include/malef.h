@@ -32,6 +32,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef enum _malef_error_t {
+   malef_ADA_ERROR            = -1,
+   malef_NO_ERROR             =  0,
+   malef_INITIALIZATION_ERROR =  1,
+   malef_BOUNDS_ERROR         =  2,
+   malef_NULL_SURFACE_ERROR   =  3
+} malef_error_t;
+
+
 typedef uint8_t malef_color_t[4];
 
 typedef enum _malef_colorKind_t {
@@ -95,16 +104,22 @@ typedef struct _malef_surface_t {
 } malef_surface_t;
 
 
-extern void        malef_initialize         (void);
-extern void        malef_finalize           (void);
-extern bool        malef_isInitialized      (void);
-extern malef_row_t malef_getHeight          (void);
-extern malef_col_t malef_getWidth           (void);
-extern void        malef_newPage            (void);
-extern void        malef_setTitle           (char*);
-extern bool        malef_updateTerminalSize (void);
-extern void*       malef_wrapper            (void (*)(void*),
-                                             void*);
+extern void  malef_catchError      (void);
+extern bool  malef_isFlyingError   (void);
+extern char* malef_getErrorName    (void);
+extern char* malef_getErrorMessage (void);
+
+extern malef_error_t malef_initialize         (void);
+extern malef_error_t malef_finalize           (void);
+extern bool          malef_isInitialized      (void);
+extern malef_error_t malef_getHeight          (malef_row_t* height); /*OUT*/
+extern malef_error_t malef_getWidth           (malef_col_t* width); /*OUT*/
+extern malef_error_t malef_newPage            (void);
+extern malef_error_t malef_setTitle           (const char* titleName); /*IN*/
+extern malef_error_t malef_updateTerminalSize (bool* is_updated); /*OUT*/
+extern malef_error_t malef_wrapper            (void (*function)(void*),
+                                               void*  params,   /*IN*/
+                                               void*  ret_val); /*OUT*/
 
 extern malef_surface_t malef_createSurface    (malef_col_t,
                                                malef_row_t);

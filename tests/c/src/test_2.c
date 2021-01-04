@@ -14,6 +14,7 @@ int main (void) {
    char name[512];
    scanf("%s", name);
 
-   malef_wrapper(wrappedMain, (void*)name);
+   void* ret;
+   malef_wrapper(wrappedMain, (void*)name, &ret);
 
 }

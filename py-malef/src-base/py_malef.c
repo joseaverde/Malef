@@ -42,9 +42,13 @@ PyDoc_STRVAR (pyMalef_initialize_doc,
               "This function intializes Malef.");
 def pyMalef_initialize (PyObject *self, PyObject *args) {
 
-   malef_initialize ();
-   // TODO: Check for errors
-   Py_RETURN_NONE;
+   malef_error_t err = malef_initialize ();
+
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      Py_RETURN_NONE;
+   }
 }
 
 
@@ -52,10 +56,13 @@ PyDoc_STRVAR (pyMalef_finalize_doc,
               "This function finalizes Malef.");
 def pyMalef_finalize (PyObject *self, PyObject *args) {
 
-   malef_finalize ();
-   // TODO: Check for errors
-   Py_RETURN_NONE;
+   malef_error_t err = malef_finalize ();
 
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      Py_RETURN_NONE;
+   }
 }
 
 
@@ -64,6 +71,7 @@ PyDoc_STRVAR (pyMalef_isInitialized_doc,
               "initialized.");
 def pyMalef_isInitialized (PyObject *self, PyObject *args) {
    
+   // This function will never raise an error.
    if (malef_isInitialized ()) {
       Py_RETURN_TRUE;
    } else {
@@ -76,11 +84,14 @@ PyDoc_STRVAR (pyMalef_getHeight_doc,
               "This function returns the height of the screen.");
 def pyMalef_getHeight (PyObject *self, PyObject *args) {
 
-   malef_row_t height = malef_getHeight ();
-   // TODO: Check for errors
+   malef_row_t height;
+   malef_error_t err = malef_getHeight (&height);
 
-   return PyLong_FromUnsignedLong (height);
-
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      return PyLong_FromUnsignedLong (height);
+   }
 }
 
 
@@ -88,11 +99,14 @@ PyDoc_STRVAR (pyMalef_getWidth_doc,
               "This function returns the width of the screen.");
 def pyMalef_getWidth (PyObject *self, PyObject *args) {
 
-   malef_col_t width = malef_getWidth ();
-   // TODO: Check for errors
+   malef_col_t width;
+   malef_error_t err = malef_getWidth (&width);
 
-   return PyLong_FromUnsignedLong (width);
-
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      return PyLong_FromUnsignedLong (width);
+   }
 }
 
 
@@ -100,10 +114,13 @@ PyDoc_STRVAR (pyMalef_newPage_doc,
               "This function moves the terminal down.");
 def pyMalef_newPage (PyObject *self, PyObject *args) {
 
-   malef_newPage ();
-   // TODO: Check for errors;
-   Py_RETURN_NONE;
+   malef_error_t err = malef_newPage ();
 
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      Py_RETURN_NONE;
+   }
 }
 
 
@@ -120,9 +137,13 @@ def pyMalef_setTitle (PyObject *self, PyObject *args) {
          return NULL;
    }
 
-   // TODO: Check for errors;
-   Py_RETURN_NONE;
+   malef_error_t err = malef_setTitle (title_name);
 
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      Py_RETURN_NONE;
+   }
 }
 
 
@@ -131,12 +152,18 @@ PyDoc_STRVAR (pyMalef_updateTerminalSize_doc,
               "initialized.");
 def pyMalef_updateTerminalSize (PyObject *self, PyObject *args) {
 
-   if (malef_updateTerminalSize ()) {
-      Py_RETURN_TRUE;
-   } else {
-      Py_RETURN_FALSE;
-   }
+   bool is_updated;
+   malef_error_t err = malef_updateTerminalSize (&is_updated);
 
+   if (_pyMalef_raiseException(err)) {
+      return NULL;
+   } else {
+      if (is_updated) {
+         Py_RETURN_TRUE;
+      } else {
+         Py_RETURN_FALSE;
+      }
+   }
 }
 
 
@@ -265,34 +292,6 @@ static struct PyModuleDef pyMalefModule = {
 
 
 
-static inline bool _pyMalef_addObject (PyObject*   module,
-                                       PyObject*   object,
-                                       const char* name) {
-   // We keep track of the referenced exceptions so far, so we can unreference
-   // them if anything goes wrong.
-   static PyObject * _pyMalef_referencedExceptions[1] = {NULL};
-   static int _pyMalef_numberReferencedExceptions = 0;
-
-   _pyMalef_referencedExceptions[_pyMalef_numberReferencedExceptions] = object;
-   _pyMalef_numberReferencedExceptions++;
-   if (PyModule_AddObject (module, name, object) < 0) {
-      for (int exception = 0;
-               exception < _pyMalef_numberReferencedExceptions;
-               exception++) {
-         Py_XDECREF (_pyMalef_referencedExceptions[exception]);
-         Py_CLEAR   (_pyMalef_referencedExceptions[exception]);
-         _pyMalef_referencedExceptions[exception] = NULL;
-      }
-      Py_DECREF (module);
-      _pyMalef_numberReferencedExceptions = 0;
-      _pyMalef_finalizeUtils ();
-      return false;
-   }
-
-   return true;
-}
-
-
 PyMODINIT_FUNC PyInit_malef (void) {
 
    PyObject *module = PyModule_Create (&pyMalefModule);
@@ -301,14 +300,9 @@ PyMODINIT_FUNC PyInit_malef (void) {
    }
 
    _pyMalef_initializeUtils ();
-
-   pyMalef_InitializationError = PyErr_NewException
-                                    ("malef.InitializationError", NULL, NULL);
-
-   if (!_pyMalef_addObject(module,
-                           pyMalef_InitializationError,
-                           "Initialization_Error")
-      ) return NULL;
+   if (!_pyMalef_initializeExceptions (module)) {
+      return NULL;
+   }
 
    return module;
 

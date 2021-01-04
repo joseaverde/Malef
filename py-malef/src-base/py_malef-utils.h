@@ -33,7 +33,7 @@
 static PyObject *_pyMalef_sharedEmptyTuple;
 
 
-static void _pyMalef_initializeUtils (void) {
+static inline void _pyMalef_initializeUtils (void) {
 
    _pyMalef_sharedEmptyTuple = PyTuple_New (0); // length = 0
    Py_INCREF (_pyMalef_sharedEmptyTuple);
@@ -41,7 +41,7 @@ static void _pyMalef_initializeUtils (void) {
 }
 
 
-static void _pyMalef_finalizeUtils (void) {
+static inline void _pyMalef_finalizeUtils (void) {
 
    Py_DECREF (_pyMalef_sharedEmptyTuple);
 

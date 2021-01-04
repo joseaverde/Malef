@@ -26,9 +26,63 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package body C_malef.Errors is
+package body C_Malef.Errors is
 
-end C_malef.Errors;
+
+   procedure Push (Ada_Exception : Ada.Exceptions.Exception_Occurrence) is
+   begin
+
+      Ada.Exceptions.Save_Occurrence(Target => Last_Exception,
+                                     Source => Ada_Exception);
+
+   end Push;
+
+
+   procedure Pop is
+   begin
+
+      Ada.Exceptions.Save_Occurrence(Target => Last_Exception,
+                                     Source => Ada.Exceptions.Null_Occurrence);
+
+   end Pop;
+
+
+   use type Ada.Exceptions.Exception_Id;
+   function Flying_Exception return bool is
+   begin
+
+      return (if Ada.Exceptions.Exception_Identity(Last_Exception) =
+                 Ada.Exceptions.Exception_Identity(Ada.Exceptions.
+                                                   Null_Occurrence)
+               then False
+               else True);
+
+   end Flying_Exception;
+
+
+   function Get_Name return chars_ptr is
+   begin
+
+      -- TODO: Remind user to free exception message.
+      return New_String (Ada.Exceptions.Exception_Name(Last_Exception));
+
+   end Get_Name;
+
+
+   function Get_Message return chars_ptr is
+   begin
+
+      -- TODO: Remind user to free exception message.
+      return New_String (Ada.Exceptions.Exception_Message(Last_Exception));
+
+   end Get_Message;
+
+begin
+
+   Ada.Exceptions.Save_Occurrence(Target => Last_Exception,
+                                  Source => Ada.Exceptions.Null_Occurrence);
+
+end C_Malef.Errors;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
