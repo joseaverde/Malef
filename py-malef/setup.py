@@ -51,7 +51,7 @@ def main ():
           author       = "José Antonio Verde Jiménez",
           author_email = "joseaverde@pm.me",
           ext_modules  = [Extension(name         = "malef",
-                                    sources      = ["src-base/malef.c"],
+                                    sources      = ["src-base/py_malef.c"],
                                     include_dirs = ["../c-malef/include"],
                                     library_dirs = ["../alire/build/lib-linux"],
                                     libraries    = ["Malef"])

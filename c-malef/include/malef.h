@@ -26,8 +26,8 @@
  *                                                                           * 
 \*****************************************************************************/
 
-#ifndef MALEF_MALEF_H
-#define MALEF_MALEF_H
+#ifndef C_MALEF_H
+#define C_MALEF_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -145,7 +145,7 @@ extern void malef_getPaletteKind       (malef_paletteKind_t,
 extern void malef_setPalette           (malef_palette_t);
 extern void malef_setPaletteKind       (malef_paletteKind_t);
 
-#endif//MALEF_MALEF_H
+#endif//C_MALEF_H
 
 ///=======================/////////////////////////=========================///
 //=======================// E N D   O F   F I L E //=========================//

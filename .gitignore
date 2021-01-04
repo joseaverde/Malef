@@ -9,4 +9,5 @@ obj/
 *.o
 *.ali
 gmem.out
-
+build
+__pycache__

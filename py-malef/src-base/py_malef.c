@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *                                                                           * 
- *                               M A L E F . C                               * 
+ *                            P Y _ M A L E F . C                            * 
  *                                                                           * 
  *                                 M A L E F                                 * 
  *                                                                           * 
@@ -30,6 +30,8 @@
 #include <Python.h>
 
 #include "malef.h"
+#include "py_malef-exceptions.h"
+#include "py_malef-utils.h"
 
 #ifndef def
 #define def static PyObject *
@@ -109,7 +111,16 @@ PyDoc_STRVAR (pyMalef_setTitle_doc,
               "This function sets the terminal title.");
 def pyMalef_setTitle (PyObject *self, PyObject *args) {
 
-   // TODO: Check for errors and actually do it.
+   const char *title_name;
+
+   // We parse the arguments to get a string.
+   if (!PyArg_ParseTuple(args, "s", &title_name)) {
+         // We raise an exception if it couldn't parse the string from the
+         // tuple.
+         return NULL;
+   }
+
+   // TODO: Check for errors;
    Py_RETURN_NONE;
 
 }
@@ -129,14 +140,58 @@ def pyMalef_updateTerminalSize (PyObject *self, PyObject *args) {
 }
 
 
+
 PyDoc_STRVAR (pyMalef_wrapper_doc,
               "This function wraps another function and executes it, in " \
               "any exception or unhandled errors and restores the terminal");
 def pyMalef_wrapper (PyObject *self, PyObject *args) {
+   // Due to the types of the python objects and many other problems, this
+   // function will NOT call the malef_wrapper function. It will be completely
+   // written in C with Python types.
+   // However we will try to avoid Python calls as much as possible is faster
+   // to call C functions from the Malef API.
 
-   // TODO: Check for errors and actually do it.
-   Py_RETURN_NONE;
+   PyObject *function_to_wrap;
+   PyObject *arguments_to_wrap;
+   PyObject *_temp;
+   PyObject *return_value;
 
+   if (!PyArg_ParseTuple(args, "O|O", &function_to_wrap, &_temp)) {
+      return NULL;
+   }
+
+   arguments_to_wrap = PyTuple_GetSlice(args, 1, PyObject_Length(args));
+
+   if (pyMalef_initialize (NULL, _pyMalef_sharedEmptyTuple) == NULL) {
+      // Initialization_Error must have been raised by this function.
+      return NULL;
+   }
+
+   // We call the function with its arguments.
+   if (arguments_to_wrap == NULL) {
+      return_value = PyObject_Call (function_to_wrap,
+                                    _pyMalef_sharedEmptyTuple,
+                                    NULL);
+   } else {
+      return_value = PyObject_Call (function_to_wrap, arguments_to_wrap, NULL);
+   }
+
+   // We try to finalize the library.
+   if (pyMalef_finalize(NULL, _pyMalef_sharedEmptyTuple) == NULL) {
+      if (return_value == NULL) {
+         // This means there has been a critical error in the library, we raise
+         // an new exception: TODO.
+         return NULL;
+      } else {
+         // The initialization exxception must have raised in the other
+         // function.
+         return NULL;
+      }
+   }
+
+   // Finally we check the return_value.
+   // TODO: Increase reference
+   return return_value;
 }
 
 
@@ -208,9 +263,54 @@ static struct PyModuleDef pyMalefModule = {
    pyMalefMethods,   // The "METHOD TABLE".
 };
 
+
+
+static inline bool _pyMalef_addObject (PyObject*   module,
+                                       PyObject*   object,
+                                       const char* name) {
+   // We keep track of the referenced exceptions so far, so we can unreference
+   // them if anything goes wrong.
+   static PyObject * _pyMalef_referencedExceptions[1] = {NULL};
+   static int _pyMalef_numberReferencedExceptions = 0;
+
+   _pyMalef_referencedExceptions[_pyMalef_numberReferencedExceptions] = object;
+   _pyMalef_numberReferencedExceptions++;
+   if (PyModule_AddObject (module, name, object) < 0) {
+      for (int exception = 0;
+               exception < _pyMalef_numberReferencedExceptions;
+               exception++) {
+         Py_XDECREF (_pyMalef_referencedExceptions[exception]);
+         Py_CLEAR   (_pyMalef_referencedExceptions[exception]);
+         _pyMalef_referencedExceptions[exception] = NULL;
+      }
+      Py_DECREF (module);
+      _pyMalef_numberReferencedExceptions = 0;
+      _pyMalef_finalizeUtils ();
+      return false;
+   }
+
+   return true;
+}
+
+
 PyMODINIT_FUNC PyInit_malef (void) {
 
-   return PyModule_Create (&pyMalefModule);
+   PyObject *module = PyModule_Create (&pyMalefModule);
+   if (module == NULL) {
+      return NULL;
+   }
+
+   _pyMalef_initializeUtils ();
+
+   pyMalef_InitializationError = PyErr_NewException
+                                    ("malef.InitializationError", NULL, NULL);
+
+   if (!_pyMalef_addObject(module,
+                           pyMalef_InitializationError,
+                           "Initialization_Error")
+      ) return NULL;
+
+   return module;
 
 }
 
