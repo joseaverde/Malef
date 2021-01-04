@@ -286,7 +286,8 @@ package Malef is
    for Char_Component_Type'Size use 8;
 
    --
-   -- This type is this library's character type.
+   -- This type is this library's character type. It's used to store unicode.
+   -- TODO: Conversors.
    --
    type Char_Type is array (Positive range 1 .. 4) of Char_Component_Type;
    pragma Pack (Char_Type);

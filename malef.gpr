@@ -102,7 +102,7 @@ project Malef is
    case C_API_Compilation is
       when "enabled" =>
          API := API & C_API;
-         Src_Dirs := Src_Dirs & "c-malef/src-base";
+         Src_Dirs := Src_Dirs & ("c-malef/src-base", "c-malef/include");
       when others    => null;
    end case;
 

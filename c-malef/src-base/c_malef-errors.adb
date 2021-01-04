@@ -63,7 +63,9 @@ package body C_Malef.Errors is
    function Get_Name return chars_ptr is
    begin
 
-      -- TODO: Remind user to free exception message.
+      if not Flying_Exception then
+         return New_String ("NO_ERROR");
+      end if;
       return New_String (Ada.Exceptions.Exception_Name(Last_Exception));
 
    end Get_Name;
@@ -72,7 +74,9 @@ package body C_Malef.Errors is
    function Get_Message return chars_ptr is
    begin
 
-      -- TODO: Remind user to free exception message.
+      if not Flying_Exception then
+         return New_String ("No errors!");
+      end if;
       return New_String (Ada.Exceptions.Exception_Message(Last_Exception));
 
    end Get_Message;

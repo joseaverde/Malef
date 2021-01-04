@@ -31,6 +31,7 @@
 
 #include "malef.h"
 #include "py_malef-utils.h"
+#include <strlib.h>
 
 static PyObject *pyMalef_LibraryError;
 static PyObject *pyMalef_InitializationError;

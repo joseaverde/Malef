@@ -28,6 +28,12 @@ int main (void) {
          printf ("Trying to free both strings..."); delay(250); printf("\n");
          free (name);
          free (message);
+
+         printf("Trying to get another error message...\n");
+         name = malef_getErrorName ();
+         message = malef_getErrorMessage ();
+         printf ("Name    : %s\nMessage : %s\n", name, message);
+         
       } else {
          printf ("The error hasn't been detected by the library, aborting!\n");
          return 2;
