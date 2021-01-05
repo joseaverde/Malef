@@ -7,6 +7,10 @@ int main() {
    malef_row_t height;
    malef_row_t width;
 
+   malef_declareSurface (surface);
+   // This is the same as:
+   // malef_surface_t surface = malef_getNullSurface ();
+
    malef_initialize();
    malef_newPage();
    malef_setTitle ("test_1.c: Testing Malef!");
@@ -15,6 +19,7 @@ int main() {
    // This part won't be executed because everytime the terminal is resized a
    // signal is raised and catched by a handler which changes the current size.
 
+   _malef_debugPutSurface(surface);
    bool is_updated;
    if (malef_updateTerminalSize(&is_updated) != malef_NO_ERROR) return 3;
    if (is_updated) {

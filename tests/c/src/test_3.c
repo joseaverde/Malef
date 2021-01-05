@@ -2,7 +2,8 @@
 
 int main (void) {
 
-   malef_surface_t mySurface = malef_createSurface (10, 10);
+   malef_declareSurface (mySurface);
+   mySurface = malef_createSurface (10, 10);
 
    malef_initialize ();
    malef_newPage ();

@@ -1,11 +1,11 @@
 #include "malef.h"
 #include <stdio.h>
 
-void wrappedMain (void* name) {
+void* wrappedMain (void* name) {
 
    printf("Hello %s!\n", (char*)name);
 
-   return;
+   return NULL;
 }
 
 int main (void) {

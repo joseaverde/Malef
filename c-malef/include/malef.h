@@ -222,10 +222,27 @@ typedef struct _malef_surface_t {
 
 
 
-
 /*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*\
  *|||||||||||||||||||||||||||| F U N C T I O N S ||||||||||||||||||||||||||||*|
 \*|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*/
+
+
+// These are the parameters in the functions, this only tells the user how to
+// pass the parameters when calling those functions
+#  ifdef out
+#     define _malef_temp_out out
+#     define out * /*out*/
+#  else
+#     define out * /*out*/
+#  endif
+
+#  ifdef in
+#     define _malef_temp_in in
+#     define in /*in*/
+#  else
+#     define in /*in*/
+#  endif
+
 
     ///////////////////////////////////////////////////////////////////////
     //---------- ERROR FUNCTIONS ----------------------------------------//
@@ -277,34 +294,152 @@ malef_getErrorMessage (void);
     //---------- MALEF FUNCTIONS ----------------------------------------//
     ///////////////////////////////////////////////////////////////////////
 
+/*
+ * This function initializes the library, it can only be initialized once, if
+ * you want to initialize it again you must finalize it first. You can work
+ * with surfaces and types before initialization but you can't do certain IO
+ * functions that require it to be initialized. Most of the following functions
+ * requiere initialization.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: If there was any error during the
+ *                                initialization of the library or if it was
+ *                                already initialized.
+ */
 extern malef_error_t
 malef_initialize (void);
 
+/*
+ * This function finalizes the library and everything. It must have been
+ * initialized before finalization.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: If there was any problem during the
+ *                                finalization of the library or if it wasn't
+ *                                initialized before calling the function.
+ */
 extern malef_error_t
 malef_finalize (void);
 
+/*
+ * This function doesn't raise any error and doesn't requiere the library to be
+ * initialized. It returns whether the library has been initialized or not.
+ *
+ * @return
+ * Whether it has been initialized or not.
+ */
 extern bool
 malef_isInitialized (void);
 
+/*
+ * This function returns (to the parameter) the height of the current terminal
+ * or console, but it needs the terminal to be initialized. If there was any
+ * errors, the parameter isn't modified.
+ *
+ * @param height
+ * (OUT) The height of the terminal.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: This exception is raised if the library was
+ *                                not initialized.
+ */
 extern malef_error_t
-malef_getHeight (malef_row_t* height); /*OUT*/
+malef_getHeight (malef_row_t out height);
 
+/*
+ * This function returns (to the parameter) the width of the current terminal
+ * or console, but it needs it to be initialized first, otherwise the parameter
+ * doesn't change.
+ *
+ * @param width
+ * (OUT) The width of the terminal.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: This exception is raised if the library was
+ *                                not initialized.
+ */
 extern malef_error_t
-malef_getWidth (malef_col_t* width); /*OUT*/
+malef_getWidth (malef_col_t out width);
 
+/*
+ * This function moves everything there was on the terminal before execution
+ * up so that the user can work on a free space.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: This exception is raised if the library was
+ *                                not initialized.
+ */
 extern malef_error_t
 malef_newPage (void);
 
+/*
+ * This function changes the title of the terminal, it's imposible to retrieve
+ * it and it will be set this title during execution (even if the library is
+ * finalized). TODO: Find a way to recover it.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: This exception is raised if the library was
+ *                                not initialized.
+ */
 extern malef_error_t
-malef_setTitle (const char* titleName); /*IN*/
+malef_setTitle (const char* in titleName);
 
+/*
+ * This function updates the terminal size and returns whether it has changed,
+ * in some systems like linux this will be done automatically by signals, so it
+ * will always return false. However in Windows, (for now XXX) you have to call
+ * it to check if it has changed.
+ *
+ * @param
+ * (OUT) Whether the terminal size has been updated.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: The library must be initialized to call this
+ *                                function.
+ */
 extern malef_error_t
-malef_updateTerminalSize (bool* is_updated); /*OUT*/
+malef_updateTerminalSize (bool out is_updated);
 
+/*
+ * This is a wrapper, you can give your function and parameters and be sure
+ * that the finalization and initialization functions will be called
+ * automatically. And any unhandled exception (by the library) will be caught
+ * and returned. This way you can be sure that the terminal recovers after
+ * finalization.
+ *
+ * @param function
+ * The function you want to call, it must have at least one parameter that will
+ * be passed automatically to the function.
+ *
+ * @param params
+ * (IN) The parameters you want to pass to the function. This might be a
+ *      pointer to a struct with all the parameters.
+ *
+ * @param ret_val
+ * (OUT) This is the return value of your function, if your function returns
+ *       nothing just return NULL.
+ */
 extern malef_error_t
-malef_wrapper (void (*function)(void*),
-               void*  params,   /*IN*/
-               void*  ret_val); /*OUT*/
+malef_wrapper (void* (*function)(void*),
+               void* in  params,
+               void  out ret_val);
+
+/*
+ * This function returns a null surface, remember to initialize all your
+ * surfaces with this before even using them.
+ *
+ * @return
+ * A null surface.
+ */
+extern malef_surface_t
+malef_getNullSurface (void);
+
+/*
+ * This is basically a short-cut so you don't remember to initialize always a
+ * surface with this.
+ */
+#define malef_declareSurface(name) malef_surface_t name = \
+                                    malef_getNullSurface ()
 
 
 
@@ -351,6 +486,19 @@ extern void malef_getPaletteKind       (malef_paletteKind_t,
                                         malef_palette_t);
 extern void malef_setPalette           (malef_palette_t);
 extern void malef_setPaletteKind       (malef_paletteKind_t);
+
+
+#  ifdef _malef_temp_out
+#     define out _malef_temp_out
+#  else
+#     undef out
+#  endif
+
+#  ifdef _malef_temp_in
+#     define in _malef_temp_in
+#  else
+#     undef in
+#  endif
 
 #endif//C_MALEF_H
 

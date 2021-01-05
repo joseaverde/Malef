@@ -1,0 +1,24 @@
+# We make sure every extension corresponds to a certain file type.
+# This file was created because in statistics C++ was the language for the C
+# header (".h") files. (If I ever write a C++, I will use ".hh" extension or
+# ".hpp".
+
+
+# The Ada programming language.
+# We add the `gpr' files for syntax highlighting in GitHub.
+*.adb             linguistic-language=Ada
+*.ads             linguistic-language=Ada
+*.separate.adb    linguistic-language=Ada
+*.gpr             linguistic-language=Ada
+
+
+# The C programming language.
+.c                linguistic-language=C
+.h                linguistic-language=C
+
+
+# The Python3 programming language.
+.py               linguistic-language=Python
+
+
+# END OF FILE #

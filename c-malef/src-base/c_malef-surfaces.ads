@@ -39,7 +39,7 @@ package C_Malef.Surfaces is
 
    type Surface_Type is
       record
-         Object : Malef.Surfaces.Surface_Type;
+         Object : Malef.Surfaces.Surface_Type := Malef.Surfaces.Null_Surface;
       end record;
    pragma Convention (C, Surface_Type);
 
@@ -54,6 +54,8 @@ package C_Malef.Surfaces is
    procedure Debug_Put (Object : Surface_Type);
    pragma Export (C, Debug_Put, "_malef_debugPutSurface");
 
+   function Get_Null_Surface return Surface_Type;
+   pragma Export (C, Get_Null_Surface, "malef_getNullSurface");
 
 end C_Malef.Surfaces;
 

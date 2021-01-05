@@ -26,6 +26,7 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+
 package body C_Malef.Surfaces is
 
    function Create (Rows : Row_Type;
@@ -60,6 +61,18 @@ package body C_Malef.Surfaces is
       Object.Object.Debug_Put;
 
    end Debug_Put;
+
+
+   function Get_Null_Surface return Surface_Type is
+   begin
+
+      -- Due to the Object been a controlled type, trying to finalize the last
+      -- Shared_Surface_Type it was pointing to will yield to a very nasty
+      -- error, thus we must assing it without raising the attention of the
+      -- Controlled types.
+      return Surface_Type'(Object => Malef.Surfaces.Null_Surface);
+
+   end Get_Null_Surface;
 
 end C_Malef.Surfaces;
 

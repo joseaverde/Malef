@@ -246,38 +246,99 @@ package C_Malef is
    --============-------------------------============--
   ---============-- O P E R A T I O N S --============---
    --============-------------------------============--
+   --
+   -- Almost all operations (which are functions) return the error code with
+   -- which the function has exited, but certain functions that don't require
+   -- it.
+   --
 
 
+   --
+   -- This function initializes the library.
+   --
    function Initialize return Error_Kind;
    pragma Export (C, Initialize, "malef_initialize");
 
+   --
+   -- This function finalizes the library
+   --
    function Finalize return Error_Kind;
    pragma Export (C, Finalize, "malef_finalize");
 
+   --
+   -- This function checks if the library is initialized.
+   --
+   -- @return
+   -- Whether it has been intialized.
+   --
    function Is_Initialized return bool;
    pragma Export (C, Is_Initialized, "malef_isInitialized");
 
+   --
+   -- This functionn gets the height of the terminal.
+   --
+   -- @param Height
+   -- The height of the terminal.
+   --
    function Get_Height (Height : out Row_Type)
                         return Error_Kind;
    pragma Export (C, Get_Height, "malef_getHeight");
 
+   --
+   -- This function gets the width of the terminal.
+   --
+   -- @param Width
+   -- The width of the terminal.
+   --
    function Get_Width (Width : out Col_Type)
                        return Error_Kind;
    pragma Export (C, Get_Width, "malef_getWidth");
 
+   --
+   -- This function adds enough blank lines to move everything up and allow for
+   -- a clean space.
+   --
    function New_Page return Error_Kind;
    pragma Export (C, New_Page, "malef_newPage");
 
+   --
+   -- This function changes the title of the terminal.
+   --
+   -- @param Name
+   -- The new title.
+   --
    function Set_Title (Name : chars_ptr)
                        return Error_Kind;
    pragma Export (C, Set_Title, "malef_setTitle");
 
+   --
+   -- This function updates the terminal size.
+   --
+   -- @param Is_Updated
+   -- Whether the size has been changed.
+   --
    function Update_Terminal_Size (Is_Updated : out bool)
                                   return Error_Kind;
    pragma Export (C, Update_Terminal_Size, "malef_updateTerminalSize");
 
+
    type Wrapped_Function is access function (Args: void_ptr) return void_ptr;
    pragma Convention (C, Wrapped_Function);
+
+   --
+   -- This function wraps other functions and protects them from any critical
+   -- error or exception. It's not that useful in C, only if you want to be
+   -- sure everything closes accordingly.
+   --
+   -- @param Func
+   -- The function to execute
+   --
+   -- @param Args
+   -- The arguments to give to the function.
+   --
+   -- @param Ret_Val
+   -- The return value of the function.
+   --
    function Wrapper (Func    : Wrapped_Function;
                      Args    : void_ptr;
                      Ret_Val : out void_ptr)

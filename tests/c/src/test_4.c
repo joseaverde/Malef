@@ -4,8 +4,8 @@
 
 int main (void) {
 
-   malef_surface_t surface;
-   malef_surface_t colours;
+   malef_declareSurface (surface);
+   malef_declareSurface (colours);
    malef_palette_t palette;
    malef_col_t     col;
 

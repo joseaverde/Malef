@@ -10,7 +10,7 @@ description = "Malef is a terminal handling library."
 long-description = "Malef is a terminal handling library written in Ada with bindings to other programming languages like C and Python3. It replaces the NCurses library with a more Adaish interface. It uses ANSI Escape Sequences as much as possible, but it can also handle other kinds of terminals/consoles."
 
 # The version of the package.
-version = "0.1.2"
+version = "0.2.0"
 
 # The authors, maintainer and maintainers' logins.
 authors = ["José Antonio Verde Jiménez"]
