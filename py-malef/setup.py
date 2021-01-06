@@ -45,17 +45,20 @@ def _get_version () -> str:
 
 
 def main ():
+    src_base = Extension(name      = "malef",
+                         sources   = ["src-base/py_malef.c"],
+                         include_dirs = ["../c-malef/include"],
+                         #define_macros = [(name, value)]
+                         #undef_macros = []
+                         library_dirs = ["../alire/build/lib-linux"],
+                         libraries    = ["Malef"],
+                         runtime_library_dirs = ["../alire/build/lib-linux"])
     setup(name         = "malef",
           version      = _get_version(),
           description  = "MALEF",
           author       = "José Antonio Verde Jiménez",
           author_email = "joseaverde@pm.me",
-          ext_modules  = [Extension(name         = "malef",
-                                    sources      = ["src-base/py_malef.c"],
-                                    include_dirs = ["../c-malef/include"],
-                                    library_dirs = ["../alire/build/lib-linux"],
-                                    libraries    = ["Malef"])
-                         ])
+          ext_modules  = [src_base])
 
 
 if __name__ == "__main__":

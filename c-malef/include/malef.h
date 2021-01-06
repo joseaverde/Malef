@@ -256,7 +256,7 @@ typedef struct _malef_surface_t {
  * function will return true.
  */
 extern void
-malef_catchError (void);
+malef_catchError ( void );
 
 /*
  * This function checks whether an error has been `thrown' and is flying
@@ -266,7 +266,7 @@ malef_catchError (void);
  * It returns whether a an error has been thrown.
  */
 extern bool 
-malef_isFlyingError (void);
+malef_isFlyingError ( void );
 
 /*
  * This function gets the last error name and returns it. Keep in mind you
@@ -276,7 +276,7 @@ malef_isFlyingError (void);
  * A pointer to an allocated string with the name of the error.
  */
 extern char*
-malef_getErrorName (void);
+malef_getErrorName ( void );
 
 /*
  * This function gets the last error message describing the `thrown' error and
@@ -286,7 +286,7 @@ malef_getErrorName (void);
  * A pointer to an allocated string with the message of the error.
  */
 extern char*
-malef_getErrorMessage (void);
+malef_getErrorMessage ( void );
 
 
 
@@ -307,7 +307,7 @@ malef_getErrorMessage (void);
  *                                already initialized.
  */
 extern malef_error_t
-malef_initialize (void);
+malef_initialize ( void );
 
 /*
  * This function finalizes the library and everything. It must have been
@@ -319,7 +319,7 @@ malef_initialize (void);
  *                                initialized before calling the function.
  */
 extern malef_error_t
-malef_finalize (void);
+malef_finalize ( void );
 
 /*
  * This function doesn't raise any error and doesn't requiere the library to be
@@ -329,7 +329,7 @@ malef_finalize (void);
  * Whether it has been initialized or not.
  */
 extern bool
-malef_isInitialized (void);
+malef_isInitialized ( void );
 
 /*
  * This function returns (to the parameter) the height of the current terminal
@@ -344,7 +344,7 @@ malef_isInitialized (void);
  *                                not initialized.
  */
 extern malef_error_t
-malef_getHeight (malef_row_t out height);
+malef_getHeight ( malef_row_t out height );
 
 /*
  * This function returns (to the parameter) the width of the current terminal
@@ -359,7 +359,7 @@ malef_getHeight (malef_row_t out height);
  *                                not initialized.
  */
 extern malef_error_t
-malef_getWidth (malef_col_t out width);
+malef_getWidth ( malef_col_t out width );
 
 /*
  * This function moves everything there was on the terminal before execution
@@ -370,7 +370,7 @@ malef_getWidth (malef_col_t out width);
  *                                not initialized.
  */
 extern malef_error_t
-malef_newPage (void);
+malef_newPage ( void );
 
 /*
  * This function changes the title of the terminal, it's imposible to retrieve
@@ -382,7 +382,7 @@ malef_newPage (void);
  *                                not initialized.
  */
 extern malef_error_t
-malef_setTitle (const char* in titleName);
+malef_setTitle ( const char* in titleName );
 
 /*
  * This function updates the terminal size and returns whether it has changed,
@@ -398,7 +398,7 @@ malef_setTitle (const char* in titleName);
  *                                function.
  */
 extern malef_error_t
-malef_updateTerminalSize (bool out is_updated);
+malef_updateTerminalSize ( bool out is_updated );
 
 /*
  * This is a wrapper, you can give your function and parameters and be sure
@@ -420,9 +420,9 @@ malef_updateTerminalSize (bool out is_updated);
  *       nothing just return NULL.
  */
 extern malef_error_t
-malef_wrapper (void* (*function)(void*),
-               void* in  params,
-               void  out ret_val);
+malef_wrapper ( void* (*function)(void*),
+                void* in  params,
+                void  out ret_val );
 
 /*
  * This function returns a null surface, remember to initialize all your
@@ -432,7 +432,7 @@ malef_wrapper (void* (*function)(void*),
  * A null surface.
  */
 extern malef_surface_t
-malef_getNullSurface (void);
+malef_getNullSurface ( void );
 
 /*
  * This is basically a short-cut so you don't remember to initialize always a

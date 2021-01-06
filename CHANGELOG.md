@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2021-01-06
+### Fixed
+- Fixed format in C header
+- Fixed format in Python3 implementation
+
 ## [0.2.0] - 2021-01-05
 ### Added
 - Added C binding for the functions declared in version **0.0.X**.
@@ -14,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added working (but unclean) binding of Python3 for the functions declared in version **0.0.X** but the Surface_Type.
 - Added documentation for the C binding and C header file.
 - Added more tests (all working).
+
 
 ## [0.1.2] - 2021-01-02
 ### Added

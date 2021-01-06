@@ -40,7 +40,7 @@ import os
 import sys
 
 
-dirs = ["ada-malef"]
+dirs = ["ada-malef", "c-malef", "py-malef"]
 temp = dirs.copy()
 
 while len(temp) != 0:
@@ -50,6 +50,70 @@ while len(temp) != 0:
     temp += _
 
 del temp
+
+def _lines():
+    sources = []
+    for d in dirs:
+        sources += filter(lambda f: os.path.isfile(f) and
+                                    f.split('.')[-1] in ["ads", "adb", "c",
+                                                         "h", "py", "gpr"],
+                          [os.path.join(d, f) for f in os.listdir(d)])
+
+    data = {}
+    max_size = 0
+    max_lines = 0
+    max_len = 0
+    for source in sources:
+        size = os.stat(source).st_size
+        file = open(source, 'r')
+        lines = file.read().count('\n')
+        file.close()
+        del file
+        data.update({source: (size, lines)})
+
+        if size > max_size:
+            max_size = size
+        if lines > max_lines:
+            max_lines = lines
+        if len(source) > max_len:
+            max_len = len(source)
+
+    total_size = 0
+    total_lines = 0
+    _max_size = len(str(max_size)) + 1
+    _max_lines = len(str(max_lines)) + 1
+    _max_len = max_len + 1
+    for source in data:
+        size, lines = data[source]
+        total_size += size
+        total_lines += lines
+
+        source = source + (_max_len - len(source)) * ' '
+        print("\033[36;1m%s\033[0m: " % source, end="")
+
+        size = str(size)
+        lines = str(lines)
+        size = (_max_size - len(size)) * ' ' + size
+        lines = (_max_lines - len(lines)) * ' ' + lines
+        print("size =\033[31m%s\033[0mB  "\
+              "lines=\033[32m%s\033[0m" % (size, lines))
+
+    print()
+    print("\033[36;1mTOTAL\033[0m:")
+    
+    def get_size (size):
+        n = 0
+        while size / (1024**n) > 1:
+            n += 1
+        if n != 0:
+            n -= 1
+
+        units = ["B", "KiB", "MiB", "GiB"]
+        return (size / (1024 ** n), units[n])
+
+    print("\tSIZE  = \033[31m%d\033[0m%s" % get_size(total_size))
+    print("\tLINES = \033[32m%d\033[0m" % total_lines)
+
 
 def _todo():
     TODO = {}
@@ -154,6 +218,7 @@ commands = {
         "docs": "gnatdoc -bplwPmalef --enable-build",
         "todo": _todo,
         "commit": _commit,
+        "lines": _lines,
 }
 
 

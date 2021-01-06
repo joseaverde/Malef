@@ -26,25 +26,48 @@
  *                                                                           * 
 \*****************************************************************************/
 
+
+
 #ifndef PY_MALEF_UTILS_H
 #define PY_MALEF_UTILS_H
 
 
+/*###########################################################################*\
+ *###########################  V A R I A B L E S  ###########################*
+\*###########################################################################*/
+
+
+/*
+ * This is an empty tuple, it's used throughout the library when there are no
+ * arguments to pass to a function.
+ */
 static PyObject *_pyMalef_sharedEmptyTuple;
 
 
-static inline void _pyMalef_initializeUtils (void) {
 
-   _pyMalef_sharedEmptyTuple = PyTuple_New (0); // length = 0
-   Py_INCREF (_pyMalef_sharedEmptyTuple);
+/*###########################################################################*\
+ *###########################  F U N C T I O N S  ###########################*
+\*###########################################################################*/
 
+/*
+ * This function initializes all the utils from this library.
+ */
+static inline void
+_pyMalef_initializeUtils ( void ) {
+
+   // We initialize an empty tuple.
+   _pyMalef_sharedEmptyTuple = PyTuple_New ( 0 ); // length = 0
+   Py_INCREF ( _pyMalef_sharedEmptyTuple );
 }
 
 
-static inline void _pyMalef_finalizeUtils (void) {
+/*
+ * This function finalizes all the utils from this library.
+ */
+static inline void
+_pyMalef_finalizeUtils ( void ) {
 
-   Py_DECREF (_pyMalef_sharedEmptyTuple);
-
+   Py_DECREF ( _pyMalef_sharedEmptyTuple );
 }
 
 
