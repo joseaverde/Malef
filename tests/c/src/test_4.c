@@ -10,7 +10,7 @@ int main (void) {
    malef_col_t     col;
 
    malef_getPaletteKind (malef_UBUNTU, palette);
-   surface = malef_createSurface (10, 10);
+   malef_createSurface (10, 10, surface);
 
    malef_setSurfaceForeground (surface,  1, 10,  1, 10,
                                palette[true][malef_GREEN]);
@@ -25,7 +25,7 @@ int main (void) {
    malef_setSurfaceBackground (surface, 10, 10, 10, 10,
                                palette[true ][malef_BLUE]);
 
-   colours = malef_createSurface (2, 16);
+   malef_createSurface (2, 16, colours);
    col = 1;
    for (int brightness =  false;
             brightness <= true;

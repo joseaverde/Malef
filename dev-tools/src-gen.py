@@ -146,16 +146,24 @@ def main():
         bottom = '\\' + '*'*77 + '/'
         shebang = ""
 
-    elif ext in ["py"]:
+    elif ext in ["py", "awk"]:
         if ext == "py":
             header_kind = center("P Y T H O N   S C R I P T")
             body = """"""
+            shebang = "#!/usr/bin/env  python3\n" \
+                      "# *-* encoding=utf8 *-*\n"
+        elif ext == "awk":
+            header_kind = center("A W K   S C R I P T")
+            body = "BEGIN {\n\n" \
+                   "}\n\n\n" \
+                   "END {\n\n"   \
+                   "}\n\n"
+            shebang = "#!/usr/bin/awk -f\n"
         comment = '#'
         wrapper = " #"
         top    = '#' + '='*77 + '#'
         bottom = top
-        shebang = "#!/usr/bin/env  python3\n" \
-                  "# *-* encoding=utf8 *-*\n"
+
 
     else:
         print(ext + ": Unknown extension!",

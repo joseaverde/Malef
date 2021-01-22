@@ -26,32 +26,45 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+--with C_Malef.Errors;
+--with Ada.Text_IO;
 
 package body C_Malef.Surfaces is
 
-   function Create (Rows : Row_Type;
-                    Cols : Col_Type)
-                    return Surface_Type is
+   function Create (Rows    : Row_Type;
+                    Cols    : Col_Type;
+                    Surface : in out Surface_Type)
+                    return Error_Kind is
    begin
 
-      return New_Surface : Surface_Type
-      do
-         New_Surface.Object := Malef.Surfaces.Create(
-            Rows => Malef.Row_Type(Rows),
-            Cols => Malef.Col_Type(Cols));
-      end return;
+      -- This might raise a very nasty exception if the surface isn't either
+      -- null or other surface.
+      Surface.Object := Malef.Surfaces.Create(Rows => Malef.Row_Type(Rows),
+                                              Cols => Malef.Col_Type(Cols));
 
+      return No_Error;
+
+-- exception
+--    when Ada_Exception : others =>
+--       C_Malef.Errors.Push(Ada_Exception);
+--       return Ada_Error;
    end Create;
 
 
-   procedure Destroy (Object : Surface_Type) is
+   function Destroy (Object : in out Surface_Type)
+                     return Error_Kind is
    begin
 
-      -- TODO: Unreference it, maybe pragma Export under Malef.Surfaces and
-      --       pragma Import here.
-      -- Unreference(Object);
-      null;
+      -- This is enough to destroy a surface, controlled types and finalization
+      -- function will take care of the rest.
+      Object := Get_Null_Surface;
 
+      return No_Error;
+
+-- exception
+--    when Ada_Exception : others =>
+--       C_Malef.Errors.Push(Ada_Exception);
+--       return Ada_Error;
    end Destroy;
 
 
@@ -64,13 +77,15 @@ package body C_Malef.Surfaces is
 
 
    function Get_Null_Surface return Surface_Type is
+      Object : constant Malef.Surfaces.Surface_Type
+             := Malef.Surfaces.Null_Surface;
    begin
 
       -- Due to the Object been a controlled type, trying to finalize the last
       -- Shared_Surface_Type it was pointing to will yield to a very nasty
       -- error, thus we must assing it without raising the attention of the
       -- Controlled types.
-      return Surface_Type'(Object => Malef.Surfaces.Null_Surface);
+      return Surface_Type'(Object => Object);
 
    end Get_Null_Surface;
 

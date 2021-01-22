@@ -424,6 +424,37 @@ malef_wrapper ( void* (*function)(void*),
                 void* in  params,
                 void  out ret_val );
 
+
+
+    ///////////////////////////////////////////////////////////////////////
+    //---------- SURFACES FUNCTIONS -------------------------------------//
+    ///////////////////////////////////////////////////////////////////////
+
+
+/*
+ * This function is used to create a surface. Sizes lower than 1 aren't
+ * allowed due to Ada's type checking.
+ */
+extern malef_error_t
+malef_createSurface ( malef_col_t     cols,
+                      malef_row_t     rows,
+                      malef_surface_t surface);
+
+
+/*
+ * This
+ */
+extern malef_error_t
+malef_destroySurface ( malef_surface_t surface );
+
+
+/*
+ *
+ */
+extern void
+_malef_debugPutSurface ( malef_surface_t surface );
+
+
 /*
  * This function returns a null surface, remember to initialize all your
  * surfaces with this before even using them.
@@ -446,12 +477,6 @@ malef_getNullSurface ( void );
     ///////////////////////////////////////////////////////////////////////
     //---------- COLOUR FUNCTIONS ---------------------------------------//
     ///////////////////////////////////////////////////////////////////////
-
-
-extern malef_surface_t malef_createSurface    (malef_col_t,
-                                               malef_row_t);
-extern void malef_destroySurface   (malef_surface_t);
-extern void _malef_debugPutSurface (malef_surface_t);
 
 extern void malef_getSurfaceForeground (malef_surface_t,
                                         malef_row_t,

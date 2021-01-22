@@ -111,7 +111,7 @@ def _lines():
         units = ["B", "KiB", "MiB", "GiB"]
         return (size / (1024 ** n), units[n])
 
-    print("\tSIZE  = \033[31m%d\033[0m%s" % get_size(total_size))
+    print("\tSIZE  = \033[31m%.4f\033[0m%s" % get_size(total_size))
     print("\tLINES = \033[32m%d\033[0m" % total_lines)
 
 
@@ -206,6 +206,9 @@ def _commit():
             print(" \033[33m+\033[0m %s" % t)
 
 
+_ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
+             os.listdir("c-malef/src-base")))
+
 commands = {
         "linux": "gprbuild -p -Pmalef",
         "windows": "wine gprbuild -p -Pmalef "
@@ -215,7 +218,7 @@ commands = {
                           "-XMALEF_OPERATING_SYSTEM=windows",
                           "cp alire/build/lib-windows/libMalef.dll "
                           "tests/ada/bin/"],
-        "docs": "gnatdoc -bplwPmalef --enable-build",
+        "docs": "gnatdoc -bplwPmalef --enable-build --ignore-files=%s"%_,
         "todo": _todo,
         "commit": _commit,
         "lines": _lines,

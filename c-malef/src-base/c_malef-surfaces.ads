@@ -36,19 +36,20 @@ with Malef.Surfaces;
 --
 package C_Malef.Surfaces is
 
-
    type Surface_Type is
       record
          Object : Malef.Surfaces.Surface_Type := Malef.Surfaces.Null_Surface;
       end record;
    pragma Convention (C, Surface_Type);
 
-   function Create (Rows : Row_Type;
-                    Cols : Col_Type)
-                    return Surface_Type;
+   function Create (Rows    : Row_Type;
+                    Cols    : Col_Type;
+                    Surface : in out Surface_Type)
+                    return Error_Kind;
    pragma Export (C, Create, "malef_createSurface");
 
-   procedure Destroy (Object : Surface_Type);
+   function Destroy (Object : in out Surface_Type)
+                     return Error_Kind;
    pragma Export (C, Destroy, "malef_destroySurface");
 
    procedure Debug_Put (Object : Surface_Type);

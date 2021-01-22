@@ -41,7 +41,7 @@ project Tests is
                         "test_4.c");
 
    package Linker is
-      for Switches ("Ada") use ("-lgmem");
+   --   for Switches ("C") use ("-L/ada/lib", "-lgmem");
    end Linker;
 
 end Tests;
