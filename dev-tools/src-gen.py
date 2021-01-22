@@ -100,11 +100,11 @@ def main():
         _ += c + ' '
     header_filename = center(_[:-1])
 
-    if ext in ["adb", "ads", "gpr"]:
+    if ext in ["adb", "ads", "gpr", "ada"]:
         if ext == "adb":
             header_kind = center("B O D Y")
             body = "package body {pkg} is\n" \
-                   "\n"                 \
+                   "\n"                      \
                    "end {pkg};\n";
         elif ext == "ads":
             header_kind = center("S P E C")
@@ -116,6 +116,13 @@ def main():
             header_kind = center("G P R")
             body = "project {pkg} is\n" \
                    "\n"                 \
+                   "end {pkg};\n"
+        elif ext == "ada":
+            header_kind = center("M A I N");
+            body = "procedure {pkg} is\n" \
+                   "\n"                   \
+                   "begin\n"              \
+                   "\n"                   \
                    "end {pkg};\n"
 
         _ = base_name.split('.')[0]
@@ -146,7 +153,7 @@ def main():
         bottom = '\\' + '*'*77 + '/'
         shebang = ""
 
-    elif ext in ["py", "awk"]:
+    elif ext in ["py", "awk", "sh"]:
         if ext == "py":
             header_kind = center("P Y T H O N   S C R I P T")
             body = """"""
@@ -159,6 +166,10 @@ def main():
                    "END {\n\n"   \
                    "}\n\n"
             shebang = "#!/usr/bin/awk -f\n"
+        elif ext == "sh":
+            header_kind = center("B A S H   S C R I P T")
+            body = ""
+            shebang = "#!/bin/bash\n"
         comment = '#'
         wrapper = " #"
         top    = '#' + '='*77 + '#'

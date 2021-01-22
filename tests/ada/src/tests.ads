@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                             T E S T S . G P R                             --
+--                             T E S T S . A D S                             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,18 +26,29 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "../../malef.gpr";
 
-project Tests is
+package Tests is
 
-   for Source_Dirs use ("src");
-   for Object_Dir  use  "obj";
-   for Exec_Dir    use  "../bin";
-   for Main        use ("main.adb");
+   TAB : constant Character := Character'Val(16#09#);
 
-   package Builder is
-      for Executable ("main.adb") use "tests-ada";
-   end Builder;
+   type Unit_Type is access function return String;
+   type Proc_Type is access procedure;
+
+   procedure Safe_Run (Unit : Unit_Type);
+
+   procedure Start (Pkg : String := "<>");
+
+   procedure Test (Unit     : Unit_Type;
+                   Name     : String;
+                   Expected : String  := "<>";
+                   Time_It  : Boolean := True);
+
+   procedure Wait (Text : String);
+
+   procedure Wrap (Proc : Proc_Type;
+                   Name : String);
+
+   Avoid_Delays : Boolean := False;
 
 end Tests;
 

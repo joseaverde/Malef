@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                             T E S T S . G P R                             --
+--                        T E S T _ M A L E F . A D S                        --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,20 +26,19 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "../../malef.gpr";
+package Test_Malef is
 
-project Tests is
+   procedure Main;
 
-   for Source_Dirs use ("src");
-   for Object_Dir  use  "obj";
-   for Exec_Dir    use  "../bin";
-   for Main        use ("main.adb");
+   function Initialize     return String;
+   function Finalize       return String;
+   function Is_Initialized return String;
+   function Get_Height     return String;
+   function Get_Width      return String;
+   function New_Page       return String;
+   function Set_Title      return String;
 
-   package Builder is
-      for Executable ("main.adb") use "tests-ada";
-   end Builder;
-
-end Tests;
+end Test_Malef;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

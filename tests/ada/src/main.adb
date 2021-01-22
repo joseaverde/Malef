@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                             T E S T S . G P R                             --
+--                              M A I N . A D B                              --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  M A I N                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,20 +26,21 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "../../malef.gpr";
+with Malef;
+with Test_Malef;
+with Tests;
 
-project Tests is
+procedure Main is
+begin
 
-   for Source_Dirs use ("src");
-   for Object_Dir  use  "obj";
-   for Exec_Dir    use  "../bin";
-   for Main        use ("main.adb");
+   Tests.Start;
+   Tests.Wrap (Test_Malef.Main'Access, "Malef");
 
-   package Builder is
-      for Executable ("main.adb") use "tests-ada";
-   end Builder;
+   if Malef.Is_Initialized then
+      Malef.Finalize;
+   end if;
 
-end Tests;
+end Main;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
