@@ -29,18 +29,18 @@
 #ifndef PY_MALEF_SURFACES_H
 #define PY_MALEF_SURFACES_H
 
-#include "malef.h"
+#include "Malef.h"
 
 typedef struct {
    PyObject_HEAD
-   malef_surface_t surface;
-} _pyMalef_surfaceStruct;
+   malef_surface_t surface ;
+} _pyMalef_surfaceStruct ;
 
 
 static void
 _pyMalef_tp_dealloc ( PyObject* object ) {
 
-   malef_destroySurface;
+   malef_destroySurface ;
 
 }
 

@@ -94,6 +94,7 @@ package body Tests is
 
       if Avoid_Delays and not Time_It then
          Put_Line ("skipped" & TAB & "Name");
+         return;
       end if;
       Start := Ada.Calendar.Clock;
       Try:

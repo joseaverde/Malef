@@ -175,6 +175,14 @@ def main():
         top    = '#' + '='*77 + '#'
         bottom = top
 
+    elif filename == "Makefile":
+        header_kind = center("M A K E F I L E")
+        body = ""
+        shebang = "#!/usr/bin/make -f\n"
+        comment = '#'
+        wrapper = " #"
+        top     = '#' + '='*77 + '#'
+        bottom  = top
 
     else:
         print(ext + ": Unknown extension!",

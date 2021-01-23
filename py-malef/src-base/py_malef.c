@@ -29,7 +29,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "malef.h"
+#include "Malef.h"
 
 #include "py_malef-exceptions.h"
 
@@ -42,16 +42,16 @@
 PyDoc_STRVAR (pyMalef_initialize_doc,
 "This function initializes the Malef library. It must be initialized in order"\
 " to run certain IO functions or functions that requiere it to be initialized"\
-". In case it wasn't initialized, an error would be raised");
+". In case it wasn't initialized, an error would be raised") ;
 static PyObject*
 pyMalef_initialize ( PyObject *self, PyObject *args ) {
 
-   malef_error_t err = malef_initialize ();
+   malef_error_t err = malef_initialize () ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
-      Py_RETURN_NONE;
+      Py_RETURN_NONE ;
    }
 }
 static const PyMethodDef
@@ -60,22 +60,22 @@ pyMalef_initialize_method = {
    pyMalef_initialize,
    METH_VARARGS,
    pyMalef_initialize_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_finalize_doc,
 "This function finalizes and restores the terminal. It raises an exception in"\
 " case the library wasn't already initialized or if there was a fatal error " \
-"in the library.");
+"in the library.") ;
 static PyObject*
 pyMalef_finalize ( PyObject *self, PyObject *args ) {
 
-   malef_error_t err = malef_finalize ();
+   malef_error_t err = malef_finalize () ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
-      Py_RETURN_NONE;
+      Py_RETURN_NONE ;
    }
 }
 static const PyMethodDef
@@ -84,19 +84,19 @@ pyMalef_finalize_method = {
    pyMalef_finalize,
    METH_VARARGS,
    pyMalef_finalize_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_isInitialized_doc,
-"This function returns whether the Malef library has been initialized.");
+"This function returns whether the Malef library has been initialized.") ;
 static PyObject*
 pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
 
    // This function will never raise an error.
    if ( malef_isInitialized () ) {
-      Py_RETURN_TRUE;
+      Py_RETURN_TRUE ;
    } else {
-      Py_RETURN_FALSE;
+      Py_RETURN_FALSE ;
    }
 }
 static const PyMethodDef
@@ -105,22 +105,22 @@ pyMalef_isInitialized_method = {
    pyMalef_isInitialized,
    METH_VARARGS,
    pyMalef_isInitialized_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_getHeight_doc,
 "This function returns the height of the terminal/console. It must have been "\
-"initialized (the library) in order for it to work.");
+"initialized (the library) in order for it to work.") ;
 static PyObject*
 pyMalef_getHeight ( PyObject *self, PyObject *args ) {
 
-   malef_row_t height;
-   malef_error_t err = malef_getHeight ( &height );
+   malef_row_t height ;
+   malef_error_t err = malef_getHeight ( &height ) ;
 
    if ( _pyMalef_raiseException (err) ) {
       return NULL;
    } else {
-      return PyLong_FromUnsignedLong ( height );
+      return PyLong_FromUnsignedLong ( height ) ;
    }
 }
 static const PyMethodDef
@@ -129,22 +129,22 @@ pyMalef_getHeight_method = {
    pyMalef_getHeight,
    METH_VARARGS,
    pyMalef_getHeight_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_getWidth_doc,
 "This function returns the width of the terminal/console. The library must "  \
-"have been initialized in order for it to work.");
+"have been initialized in order for it to work.") ;
 static PyObject*
 pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 
-   malef_col_t width;
-   malef_error_t err = malef_getHeight ( &width );
+   malef_col_t width ;
+   malef_error_t err = malef_getHeight ( &width ) ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
-      return PyLong_FromUnsignedLong ( width );
+      return PyLong_FromUnsignedLong ( width ) ;
    }
 }
 static const PyMethodDef
@@ -153,22 +153,22 @@ pyMalef_getWidth_method = {
    pyMalef_getWidth,
    METH_VARARGS,
    pyMalef_getWidth_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_newPage_doc,
 "This function prepares a clean environment for the terminal application by " \
 "moving the old text up. It raises an error if the library hasn't been "      \
-"initialized.");
+"initialized.") ;
 static PyObject*
 pyMalef_newPage ( PyObject *self, PyObject *args ) {
 
-   malef_error_t err = malef_newPage ();
+   malef_error_t err = malef_newPage () ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
-      Py_RETURN_NONE;
+      Py_RETURN_NONE ;
    }
 }
 static const PyMethodDef
@@ -177,31 +177,31 @@ pyMalef_newPage_method = {
    pyMalef_newPage,
    METH_VARARGS,
    pyMalef_newPage_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_setTitle_doc,
 "This function changes the title of the terminal/console. This new title will"\
 " remain even if the library has been finalized. It will return when the "    \
 "programme is terminated. It raises an exception if the library hasn't been " \
-"initialized.");
+"initialized.") ;
 static PyObject*
 pyMalef_setTitle ( PyObject *self, PyObject *args ) {
 
-   const char *title_name;
+   const char *title_name ;
 
    // We parse the arguments to get a string.
    if ( ! PyArg_ParseTuple ( args, "s", &title_name ) ) {
       // We raise an exception if it couldn't parse the string from the tuple.
-      return NULL;
+      return NULL ;
    }
 
-   malef_error_t err = malef_setTitle ( title_name );
+   malef_error_t err = malef_setTitle ( title_name ) ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
-      Py_RETURN_NONE;
+      Py_RETURN_NONE ;
    }
 }
 static const PyMethodDef
@@ -210,26 +210,26 @@ pyMalef_setTitle_method = {
    pyMalef_setTitle,
    METH_VARARGS,
    pyMalef_setTitle_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_updateTerminalSize_doc,
 "This function updates the terminal size and it returns whether the size has "\
 "changed. However in systems like Linux, the size will be automatically "     \
-"updated, so it will always return `False'.");
+"updated, so it will always return `False'.") ;
 static PyObject*
 pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
 
-   bool is_updated;
-   malef_error_t err = malef_updateTerminalSize ( &is_updated );
+   bool is_updated ;
+   malef_error_t err = malef_updateTerminalSize ( &is_updated ) ;
 
    if ( _pyMalef_raiseException (err) ) {
-      return NULL;
+      return NULL ;
    } else {
       if ( is_updated ) {
-         Py_RETURN_TRUE;
+         Py_RETURN_TRUE ;
       } else {
-         Py_RETURN_FALSE;
+         Py_RETURN_FALSE ;
       }
    }
 }
@@ -239,14 +239,14 @@ pyMalef_updateTerminalSize_method = {
    pyMalef_updateTerminalSize,
    METH_VARARGS,
    pyMalef_updateTerminalSize_doc
-};
+} ;
 
 
 PyDoc_STRVAR (pyMalef_wrapper_doc,
 "This function wraps another function to make sure everything is cleaned if " \
 "any error was raised during the execution of the function. After clean up "  \
 "the same errors will be raised again. You can pass one (or none) argument "  \
-"to your wrapped function -- whose return value will be returned as well ");
+"to your wrapped function -- whose return value will be returned as well ") ;
 static PyObject*
 pyMalef_wrapper ( PyObject *self, PyObject *args ) {
    // Due to the types of the Python objects and many other problems, this
@@ -255,13 +255,13 @@ pyMalef_wrapper ( PyObject *self, PyObject *args ) {
    // However I will try to avoid Python calls as much as possible throughout
    // this implementation, because C functions are way faster than Python ones.
 
-   PyObject *function_to_wrap;
-   PyObject *arguments_to_wrap;
-   PyObject *return_value;
+   PyObject *function_to_wrap ;
+   PyObject *arguments_to_wrap ;
+   PyObject *return_value ;
 
    if ( ! PyArg_ParseTuple ( args, "O|O", &function_to_wrap,
                                           &arguments_to_wrap ) ) {
-      return NULL;
+      return NULL ;
    }
 
    if ( pyMalef_initialize ( NULL, _pyMalef_sharedEmptyTuple) == NULL ) {
@@ -269,31 +269,31 @@ pyMalef_wrapper ( PyObject *self, PyObject *args ) {
       // It could have been faster to check whether it has been initialized,
       // but in that case we wouldn't be able to catch wrong initialization
       // exceptions.
-      return NULL;
+      return NULL ;
    }
 
    // We call the function with its parameters.
    if ( arguments_to_wrap == NULL ) {
-      arguments_to_wrap = _pyMalef_sharedEmptyTuple;
+      arguments_to_wrap = _pyMalef_sharedEmptyTuple ;
    }
-   return_value = PyObject_Call ( function_to_wrap, arguments_to_wrap, NULL );
+   return_value = PyObject_Call ( function_to_wrap, arguments_to_wrap, NULL ) ;
 
    // We try to finalize the library.
    if ( pyMalef_finalize ( NULL, _pyMalef_sharedEmptyTuple ) == NULL ) {
       if ( return_value == NULL ) {
          // This means there has been a fatal error in the library, we raise
          // a new exception.
-         _pyMalef_raiseException ( malef_ADA_ERROR );
-         return NULL;
+         _pyMalef_raiseException ( malef_ADA_ERROR ) ;
+         return NULL ;
       } else {
          // The initialization exception must have been raised in the other
          // function.
-         return NULL;
+         return NULL ;
       }
    }
 
    // Finally we return the value. TODO: Increase reference?
-   return return_value;
+   return return_value ;
 }
 static const PyMethodDef
 pyMalef_wrapper_method = {
@@ -301,7 +301,7 @@ pyMalef_wrapper_method = {
    pyMalef_wrapper,
    METH_VARARGS,
    pyMalef_wrapper_doc
-};
+} ;
 
 
 
@@ -322,7 +322,7 @@ pyMalefMethods[] = {
    pyMalef_updateTerminalSize_method,
    pyMalef_wrapper_method,
    {NULL, NULL, 0, NULL}
-};
+} ;
 
 
 
@@ -331,7 +331,7 @@ pyMalefMethods[] = {
 \*###########################################################################*/
 
 PyDoc_STRVAR (pyMalefDocs,
-"TODO: If you read this, it means I forgot to add documentation xd.");
+"TODO: If you read this, it means I forgot to add documentation xd.") ;
 
 
 
@@ -348,7 +348,7 @@ pyMalefModule = {
                            // -1 because it keeps state in global variables,
                            // that way Malef is shared among modules.
    pyMalefMethods          // The "METHOD TABLE"
-};
+} ;
 
 
 
@@ -362,15 +362,15 @@ PyInit_malef ( void ) {
 
    PyObject *module = PyModule_Create ( &pyMalefModule );
    if ( module == NULL ) {
-      return NULL;
+      return NULL ;
    }
 
-   _pyMalef_initializeUtils ();
+   _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
-      return NULL;
+      return NULL ;
    }
 
-   return module;
+   return module ;
 }
 
 

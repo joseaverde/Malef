@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *                                                                           * 
- *                      P Y _ M A L E F - U T I L S . H                      * 
+ *                               T E S T S . H                               * 
  *                                                                           * 
  *                                 M A L E F                                 * 
  *                                                                           * 
@@ -26,52 +26,33 @@
  *                                                                           * 
 \*****************************************************************************/
 
+#ifndef TESTS_H
+#define TESTS_H
+
+#include "Malef.h"
+#include <stdbool.h>
+
+char*
+tests_newString ( const char* old ) ;
+
+void
+tests_start ( const char* pkg ) ;
+
+void
+tests_test ( char *(*unit)(void),
+             const char *name,
+             const char *expected,
+             bool        time_it ) ;
+
+void
+tests_wait ( const char* text ) ;
+
+void
+wrap ( void (*proc)(void),
+       const char* name ) ;
 
 
-#ifndef PY_MALEF_UTILS_H
-#define PY_MALEF_UTILS_H
-
-
-/*###########################################################################*\
- *###########################  V A R I A B L E S  ###########################*
-\*###########################################################################*/
-
-
-/*
- * This is an empty tuple, it's used throughout the library when there are no
- * arguments to pass to a function.
- */
-static PyObject *_pyMalef_sharedEmptyTuple ;
-
-
-
-/*###########################################################################*\
- *###########################  F U N C T I O N S  ###########################*
-\*###########################################################################*/
-
-/*
- * This function initializes all the utils from this library.
- */
-static inline void
-_pyMalef_initializeUtils ( void ) {
-
-   // We initialize an empty tuple.
-   _pyMalef_sharedEmptyTuple = PyTuple_New ( 0 ) ; // length = 0
-   Py_INCREF ( _pyMalef_sharedEmptyTuple ) ;
-}
-
-
-/*
- * This function finalizes all the utils from this library.
- */
-static inline void
-_pyMalef_finalizeUtils ( void ) {
-
-   Py_DECREF ( _pyMalef_sharedEmptyTuple ) ;
-}
-
-
-#endif//PY_MALEF_UTILS_H
+#endif//TESTS_H
 
 ///=======================/////////////////////////=========================///
 //=======================// E N D   O F   F I L E //=========================//

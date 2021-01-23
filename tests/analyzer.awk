@@ -241,7 +241,9 @@ END {
          printf "   \033[36mPACKAGE\033[0m: \033[33m%s\033[0m\n", package ;
          # We loop thtough all tests.
          for ( t = 0 ; t < packages[language][p]["count"] ; t++ ) {
-            printf "      %s", title[packages[language][p][t]["status"]];
+            printf "      \033[36mNAME\033[0m=%s\n",
+                   packages[language][p][t]["name"] ;
+            printf "         %s", title[packages[language][p][t]["status"]];
             switch (packages[language][p][t]["status"]) {
                case "passed":
                   if ( packages[language][p][t]["time"] != -1 ) {
@@ -256,13 +258,12 @@ END {
                   break ;
                default:
                   printf "\t\033[36;2mEXPECTED\033[0m=%s" \
-                         "\t\033[36;2mGOT\033[0m=%s\t",
+                         "\t\033[36;2mGOT\033[0m=%s",
                          packages[language][p][t]["expected"],
                          packages[language][p][t]["got"] ;
                   break ;
             }
-            printf "\t\033[36mNAME\033[0m=%s\n",
-                   packages[language][p][t]["name"] ;
+            printf "\n" ;
          }
          printf "\n" ;
       }

@@ -29,7 +29,7 @@
 #ifndef PY_MALEF_EXCEPTIONS_H
 #define PY_MALEF_EXCEPTIONS_H
 
-#include "malef.h"
+#include "Malef.h"
 #include "py_malef-utils.h"
 #include <string.h>
 
@@ -46,7 +46,7 @@
  * This exception is raised when there is a fatal error or an unknown error in
  * the library.
  */
-static PyObject *pyMalef_LibraryError;
+static PyObject *pyMalef_LibraryError ;
 
 /*
  * This exception is raised when trying to access uninitialized functions or
@@ -54,17 +54,17 @@ static PyObject *pyMalef_LibraryError;
  * finalize an uninitialized library. It can also be raised if there is a
  * problem during initialization.
  */
-static PyObject *pyMalef_InitializationError;
+static PyObject *pyMalef_InitializationError ;
 
 /*
  * This exception is raised when trying to access any position out of bounds.
  */
-static PyObject *pyMalef_BoundsError;
+static PyObject *pyMalef_BoundsError ;
 
 /*
  * This exception is raised when trying to modify a null surface.
  */
-static PyObject *pyMalef_NullSurfaceError;
+static PyObject *pyMalef_NullSurfaceError ;
 
 
 
@@ -85,16 +85,16 @@ _pyMalef_err2exception ( malef_error_t err ) {
 
    switch ( err ) {
       case malef_NO_ERROR:
-         return NULL;                        break;
+         return NULL ;                        break ;
       case malef_INITIALIZATION_ERROR:
-         return pyMalef_InitializationError; break;
+         return pyMalef_InitializationError ; break ;
       case malef_BOUNDS_ERROR:
-         return pyMalef_BoundsError;         break;
+         return pyMalef_BoundsError ;         break ;
       case malef_NULL_SURFACE_ERROR:
-         return pyMalef_NullSurfaceError;    break;
+         return pyMalef_NullSurfaceError ;    break ;
       case malef_ADA_ERROR:
       default:
-         return pyMalef_LibraryError;        break;
+         return pyMalef_LibraryError ;        break ;
    }
 }
 
@@ -109,45 +109,45 @@ _pyMalef_err2exception ( malef_error_t err ) {
 static bool
 _pyMalef_raiseException ( malef_error_t err ) {
 
-   PyObject *exception = _pyMalef_err2exception ( err );
-   char *name;
-   char *message;
-   char *long_message;
+   PyObject *exception = _pyMalef_err2exception ( err ) ;
+   char *name ;
+   char *message ;
+   char *long_message ;
 
    if ( exception == NULL ) {
       // It means no exception has been raised.
-      return false;
+      return false ;
    } else {
       if ( exception == pyMalef_LibraryError ) {
          // If it's a library error, we make sure to put all the information
          // retrieved from the error in a longer message with the ada exception
          // name.
-         name = malef_getErrorName ();
-         message = malef_getErrorMessage ();
+         name = malef_getErrorName () ;
+         message = malef_getErrorMessage () ;
          long_message = (char*)malloc (
                               ( strlen ( name ) + strlen ( message ) + 8 ) *
-                              sizeof(char) );
+                              sizeof(char) ) ;
 
-         strcpy ( long_message, name );
-         strcat ( long_message, ": " );
-         strcat ( long_message, message );
+         strcpy ( long_message, name ) ;
+         strcat ( long_message, ": " ) ;
+         strcat ( long_message, message ) ;
 
-         PyErr_SetString ( exception, message );
+         PyErr_SetString ( exception, message ) ;
 
-         free ( name );
-         free ( message );
-         free ( long_message );
+         free ( name ) ;
+         free ( message ) ;
+         free ( long_message ) ;
       } else {
          // Otherwise, we only copy the error message.
-         message = malef_getErrorMessage ();
-         PyErr_SetString ( exception, message );
-         free ( message );
+         message = malef_getErrorMessage () ;
+         PyErr_SetString ( exception, message ) ;
+         free ( message ) ;
       }
       // Finally we `catch' the error from C and return there has been an
       // error.
-      malef_catchError ();
+      malef_catchError () ;
 
-      return true;
+      return true ;
    }
 }
 
@@ -171,32 +171,32 @@ _pyMalef_addException ( PyObject*   module,
                         const char* name ) {
    // We keep track of the added exceptions so far, so we can unreference them
    // in case anything goes wrong.
-   static PyObject *referenced_exceptions[_pyMalef_ERROR_COUNT] = {NULL};
-   static int referenced_exceptions_number = 0;
+   static PyObject *referenced_exceptions[_pyMalef_ERROR_COUNT] = {NULL} ;
+   static int referenced_exceptions_number = 0 ;
 
    // We add the new exception and increase the number of exceptions.
-   referenced_exceptions[referenced_exceptions_number++] = exception;
+   referenced_exceptions[referenced_exceptions_number++] = exception ;
 
    if ( PyModule_AddObject ( module, name, exception ) < 0 ) {
       // If an error occurs during the implementation of the exception into the
       // module, we have to unreference and clear them to free memory.
       for ( int e = 0; e < referenced_exceptions_number; e++ ) {
-         Py_XDECREF ( referenced_exceptions[e] );
-         Py_CLEAR ( referenced_exceptions[e] );
-         referenced_exceptions[e] = NULL;
+         Py_XDECREF ( referenced_exceptions[e] ) ;
+         Py_CLEAR ( referenced_exceptions[e] ) ;
+         referenced_exceptions[e] = NULL ;
       }
       // We also declrease the reference of the module so it can be freed later
       // on when the garbage collector feels like doing so.
-      Py_DECREF ( module );
+      Py_DECREF ( module ) ;
       // We also restore the original values of the static functions to allow
       // the module to be imported again if anything goes wrong *AGAIN*.
-      referenced_exceptions_number = 0;
+      referenced_exceptions_number = 0 ;
       // We finally finalize the utils and return false.
-      _pyMalef_finalizeUtils ();
-      return false;
+      _pyMalef_finalizeUtils () ;
+      return false ;
    }
 
-   return true;
+   return true ;
 }
 
 
@@ -211,30 +211,30 @@ _pyMalef_initializeExceptions ( PyObject *module ) {
 
    // LibraryError //
    pyMalef_LibraryError = PyErr_NewException( "malef.LibraryError",
-                                              NULL, NULL );
+                                              NULL, NULL ) ;
    if ( ! _pyMalef_addException ( module, pyMalef_LibraryError,
-                                  "LibraryError" ) ) return false;
+                                  "LibraryError" ) ) return false ;
 
    // InitializationError //
    pyMalef_InitializationError = PyErr_NewException (
                                                 "malef.InitializationError",
-                                                NULL, NULL );
+                                                NULL, NULL ) ;
    if ( ! _pyMalef_addException ( module, pyMalef_InitializationError,
-                                  "InitializationError" ) ) return false;
+                                  "InitializationError" ) ) return false ;
 
    // BoundsError //
    pyMalef_BoundsError = PyErr_NewException ( "malef.BoundsError",
-                                              NULL, NULL );
+                                              NULL, NULL ) ;
    if ( ! _pyMalef_addException ( module, pyMalef_BoundsError,
-                                  "BoundsError" ) ) return false;
+                                  "BoundsError" ) ) return false ;
 
    // NullSurfaceError //
    pyMalef_NullSurfaceError = PyErr_NewException ( "malef.NullSurfaceError",
-                                                   NULL, NULL );
+                                                   NULL, NULL ) ;
    if ( ! _pyMalef_addException ( module, pyMalef_NullSurfaceError,
-                                  "NullSurfaceError" ) ) return false;
+                                  "NullSurfaceError" ) ) return false ;
 
-   return true;
+   return true ;
 }
 
 

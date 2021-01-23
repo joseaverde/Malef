@@ -72,7 +72,7 @@ typedef enum _malef_error_t {
    malef_INITIALIZATION_ERROR =  1,
    malef_BOUNDS_ERROR         =  2,
    malef_NULL_SURFACE_ERROR   =  3
-} malef_error_t;
+} malef_error_t ;
 
 
 /*
@@ -94,7 +94,7 @@ typedef enum _malef_error_t {
  *    most similar colours are chosen. So just use the palettes if you want
  *    your programme to be portable.
  */
-typedef uint8_t malef_color_t[4];
+typedef uint8_t malef_color_t[4] ;
 
 
 /*
@@ -111,7 +111,7 @@ typedef enum _malef_colorKind_t {
    malef_MAGENTA = 5,
    malef_CYAN    = 6,
    malef_WHITE   = 7
-} malef_colorKind_t;
+} malef_colorKind_t ;
 
 
 /*
@@ -121,7 +121,7 @@ typedef enum _malef_colorKind_t {
  * Note: As said above, you can use the colours you want for each of the
  * palette components. There are some predefined palettes too, see functions.
  */
-typedef malef_color_t malef_palette_t[2][8];
+typedef malef_color_t malef_palette_t[2][8] ;
 
 
 /*
@@ -143,7 +143,7 @@ typedef enum _malef_paletteKind_t {
    malef_MIRC               = 8,
    malef_XTERM              = 9,
    malef_UBUNTU             = 10
-} malef_paletteKind_t;
+} malef_paletteKind_t ;
 
 
 /*
@@ -162,13 +162,13 @@ typedef enum _malef_style_t {
    malef_CONCEAL          = 7,
    malef_CROSSED_OUT      = 8,
    malef_DOUBLY_UNDERLINE = 9
-} malef_style_t;
+} malef_style_t ;
 
 /*
  * This is an array of styles, if true means the style is set, otherwise it
  * isn't. Easy, isn't it?
  */
-typedef bool malef_style_arr[10];
+typedef bool malef_style_arr[10] ;
 
 
 /*
@@ -176,7 +176,7 @@ typedef bool malef_style_arr[10];
  * XXX: WARNING: VALUE ZERO IS NOT ALLOWED!!!!!
  * We start counting from 1 in surfaces, so get used to it.
  */
-typedef uint16_t malef_row_t, malef_col_t;
+typedef uint16_t malef_row_t, malef_col_t ;
 
 
 /*
@@ -189,9 +189,9 @@ typedef uint16_t malef_row_t, malef_col_t;
  * The column the cursor is at.
  */
 typedef struct _malef_cursor_t {
-   malef_row_t row;
-   malef_col_t col;
-} malef_cursor_t;
+   malef_row_t row ;
+   malef_col_t col ;
+} malef_cursor_t ;
 
 
 
@@ -201,13 +201,13 @@ typedef struct _malef_cursor_t {
  * Unicode characters. That way the internals will transform the unicode
  * characters into the needed encoding.
  */
-typedef uint8_t *malef_char_t[4];
+typedef uint8_t *malef_char_t[4] ;
 
 
 /*
  * Just a string type, an array of malef_char_t.
  */
-typedef malef_char_t *malef_str_t;
+typedef malef_char_t *malef_str_t ;
 
 
 /*
@@ -217,8 +217,8 @@ typedef malef_char_t *malef_str_t;
  * TODO: Add deallocator.
  */
 typedef struct _malef_surface_t {
-   void* object;
-} malef_surface_t;
+   void* object ;
+} malef_surface_t ;
 
 
 
@@ -256,7 +256,7 @@ typedef struct _malef_surface_t {
  * function will return true.
  */
 extern void
-malef_catchError ( void );
+malef_catchError ( void ) ;
 
 /*
  * This function checks whether an error has been `thrown' and is flying
@@ -265,8 +265,8 @@ malef_catchError ( void );
  * @return
  * It returns whether a an error has been thrown.
  */
-extern bool 
-malef_isFlyingError ( void );
+extern bool
+malef_isFlyingError ( void ) ;
 
 /*
  * This function gets the last error name and returns it. Keep in mind you
@@ -276,7 +276,7 @@ malef_isFlyingError ( void );
  * A pointer to an allocated string with the name of the error.
  */
 extern char*
-malef_getErrorName ( void );
+malef_getErrorName ( void ) ;
 
 /*
  * This function gets the last error message describing the `thrown' error and
@@ -286,7 +286,7 @@ malef_getErrorName ( void );
  * A pointer to an allocated string with the message of the error.
  */
 extern char*
-malef_getErrorMessage ( void );
+malef_getErrorMessage ( void ) ;
 
 
 
@@ -319,7 +319,7 @@ malef_initialize ( void );
  *                                initialized before calling the function.
  */
 extern malef_error_t
-malef_finalize ( void );
+malef_finalize ( void ) ;
 
 /*
  * This function doesn't raise any error and doesn't requiere the library to be
@@ -329,7 +329,7 @@ malef_finalize ( void );
  * Whether it has been initialized or not.
  */
 extern bool
-malef_isInitialized ( void );
+malef_isInitialized ( void ) ;
 
 /*
  * This function returns (to the parameter) the height of the current terminal
@@ -344,7 +344,7 @@ malef_isInitialized ( void );
  *                                not initialized.
  */
 extern malef_error_t
-malef_getHeight ( malef_row_t out height );
+malef_getHeight ( malef_row_t out height ) ;
 
 /*
  * This function returns (to the parameter) the width of the current terminal
@@ -359,7 +359,7 @@ malef_getHeight ( malef_row_t out height );
  *                                not initialized.
  */
 extern malef_error_t
-malef_getWidth ( malef_col_t out width );
+malef_getWidth ( malef_col_t out width ) ;
 
 /*
  * This function moves everything there was on the terminal before execution
@@ -370,7 +370,7 @@ malef_getWidth ( malef_col_t out width );
  *                                not initialized.
  */
 extern malef_error_t
-malef_newPage ( void );
+malef_newPage ( void ) ;
 
 /*
  * This function changes the title of the terminal, it's imposible to retrieve
@@ -382,7 +382,7 @@ malef_newPage ( void );
  *                                not initialized.
  */
 extern malef_error_t
-malef_setTitle ( const char* in titleName );
+malef_setTitle ( const char* in titleName ) ;
 
 /*
  * This function updates the terminal size and returns whether it has changed,
@@ -398,7 +398,7 @@ malef_setTitle ( const char* in titleName );
  *                                function.
  */
 extern malef_error_t
-malef_updateTerminalSize ( bool out is_updated );
+malef_updateTerminalSize ( bool out is_updated ) ;
 
 /*
  * This is a wrapper, you can give your function and parameters and be sure
@@ -422,7 +422,7 @@ malef_updateTerminalSize ( bool out is_updated );
 extern malef_error_t
 malef_wrapper ( void* (*function)(void*),
                 void* in  params,
-                void  out ret_val );
+                void  out ret_val ) ;
 
 
 
@@ -438,21 +438,21 @@ malef_wrapper ( void* (*function)(void*),
 extern malef_error_t
 malef_createSurface ( malef_col_t     cols,
                       malef_row_t     rows,
-                      malef_surface_t surface);
+                      malef_surface_t surface) ;
 
 
 /*
  * This
  */
 extern malef_error_t
-malef_destroySurface ( malef_surface_t surface );
+malef_destroySurface ( malef_surface_t surface ) ;
 
 
 /*
  *
  */
 extern void
-_malef_debugPutSurface ( malef_surface_t surface );
+_malef_debugPutSurface ( malef_surface_t surface ) ;
 
 
 /*
@@ -463,7 +463,7 @@ _malef_debugPutSurface ( malef_surface_t surface );
  * A null surface.
  */
 extern malef_surface_t
-malef_getNullSurface ( void );
+malef_getNullSurface ( void ) ;
 
 /*
  * This is basically a short-cut so you don't remember to initialize always a
@@ -481,36 +481,36 @@ malef_getNullSurface ( void );
 extern void malef_getSurfaceForeground (malef_surface_t,
                                         malef_row_t,
                                         malef_col_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_getSurfaceBackground (malef_surface_t,
                                         malef_row_t,
                                         malef_col_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_setSurfaceForeground (malef_surface_t,
                                         malef_row_t,
                                         malef_row_t,
                                         malef_col_t,
                                         malef_col_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_setSurfaceBackground (malef_surface_t,
                                         malef_row_t,
                                         malef_row_t,
                                         malef_col_t,
                                         malef_col_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_getCursorForeground  (malef_surface_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_getCursorBackground  (malef_surface_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_setCursorForeground  (malef_surface_t,
-                                        malef_color_t);
+                                        malef_color_t) ;
 extern void malef_setCursorBackground  (malef_surface_t,
-                                        malef_color_t);
-extern void malef_getPalette           (malef_palette_t);
+                                        malef_color_t) ;
+extern void malef_getPalette           (malef_palette_t) ;
 extern void malef_getPaletteKind       (malef_paletteKind_t,
-                                        malef_palette_t);
-extern void malef_setPalette           (malef_palette_t);
-extern void malef_setPaletteKind       (malef_paletteKind_t);
+                                        malef_palette_t) ;
+extern void malef_setPalette           (malef_palette_t) ;
+extern void malef_setPaletteKind       (malef_paletteKind_t) ;
 
 
 #  ifdef _malef_temp_out
