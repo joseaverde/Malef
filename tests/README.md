@@ -85,5 +85,6 @@ tells what has happened there.
 For **failed**, it has two words: <expected> <got>
 The expected is the result that was **expected** to have and **got** is what
 it had got. What had been got can be an _error_ or a wrong value.
-If the **expected** string starts with a _$_, then it's known to fail.
+If the **expected** string starts with a _$_, then it failed but it's not
+important, it's called "known_to_fail" in the source files.
 If the **expected** string starts with a _@_, then it may be user's fault.
