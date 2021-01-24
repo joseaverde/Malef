@@ -33,14 +33,14 @@
 int
 main ( void ) {
 
-   tests_start ("<>");
-   tests_start ("Malef"); test_malef_main ();
+   tests_start ("<>") ;
+   tests_start ("Malef"); test_malef_main () ;
 
    if ( malef_isInitialized () ) {
-      malef_finalize ();
+      malef_finalize () ;
    }
 
-   return 0;
+   return 0 ;
 }
 
 

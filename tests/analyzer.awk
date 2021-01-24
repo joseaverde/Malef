@@ -228,7 +228,7 @@ END {
    title["passed"]        = "\033[32mPASSED       \033[0m" ;
    title["failed"]        = "\033[31mFAILED       \033[0m" ;
    title["skipped"]       = "\033[33mSKIPPED      \033[0m" ;
-   title["fatal"]         = "\033[31;2mFATAL      \033[0m  " ;
+   title["fatal"]         = "\033[31;2mFATAL        \033[0m" ;
    title["user"]          = "\033[34mFAIL-BY-USER \033[0m" ;
    title["known-to-fail"] = "\033[35mKNOWN-TO_FAIL\033[0m" ;
    # We loop through all languages.

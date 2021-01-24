@@ -139,7 +139,7 @@ static PyObject*
 pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 
    malef_col_t width ;
-   malef_error_t err = malef_getHeight ( &width ) ;
+   malef_error_t err = malef_getWidth ( &width ) ;
 
    if ( _pyMalef_raiseException (err) ) {
       return NULL ;

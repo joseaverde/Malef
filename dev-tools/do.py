@@ -40,24 +40,26 @@ import os
 import sys
 
 
-dirs = ["ada-malef", "c-malef", "py-malef"]
+dirs = ["ada-malef", "c-malef", "py-malef", "tests"]
 temp = dirs.copy()
 
 while len(temp) != 0:
     d = temp.pop(0)
     _ = filter(os.path.isdir, [os.path.join(d, f) for f in os.listdir(d)])
-    dirs += _
-    temp += _
+    _ = list(_)
+    temp += _.copy()
+    dirs += _.copy()
 
 del temp
 
 def _lines():
-    sources = []
     for d in dirs:
-        sources += filter(lambda f: os.path.isfile(f) and
-                                    f.split('.')[-1] in ["ads", "adb", "c",
-                                                         "h", "py", "gpr"],
-                          [os.path.join(d, f) for f in os.listdir(d)])
+        sources += [os.path.join(d, f) for f in os.listdir (d)
+                                       if  os.path.isfile(os.path.join(d, f))
+                                       and f.split('.')[-1] in
+                                            ["ads", "adb", "c",
+                                             "h", "py", "gpr",
+                                             "awk", "sh"]]
 
     data = {}
     max_size = 0
@@ -119,8 +121,13 @@ def _todo():
     TODO = {}
     files = []
     for d in dirs:
-        files += filter(os.path.isfile,
-                        [os.path.join(d, f) for f in os.listdir(d)])
+        files += [os.path.join(d, f) for f in os.listdir (d)
+                                     if  os.path.isfile(os.path.join(d, f))
+                                     and f.split('.')[-1] in
+                                            ["ads", "adb", "c",
+                                             "h", "py", "gpr",
+                                             "awk", "sh"]]
+
 
     for file in files:
         _TODO = []
