@@ -152,6 +152,7 @@ _pyMalef_raiseException ( malef_error_t err ) {
 }
 
 
+
 /*
  * This function is used to add an exception to the module, so we can make
  * sure that everything is finalized if an error happens.
@@ -185,9 +186,6 @@ _pyMalef_addException ( PyObject*   module,
          Py_CLEAR ( referenced_exceptions[e] ) ;
          referenced_exceptions[e] = NULL ;
       }
-      // We also declrease the reference of the module so it can be freed later
-      // on when the garbage collector feels like doing so.
-      Py_DECREF ( module ) ;
       // We also restore the original values of the static functions to allow
       // the module to be imported again if anything goes wrong *AGAIN*.
       referenced_exceptions_number = 0 ;

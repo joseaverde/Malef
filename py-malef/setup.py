@@ -29,6 +29,7 @@
 #=============================================================================#
 
 
+import os
 from distutils.core import setup, Extension
 
 def _get_version () -> str:
@@ -45,9 +46,13 @@ def _get_version () -> str:
 
 
 def main ():
-    src_base = Extension(name      = "malef",
-                         sources   = ["src-base/py_malef.c"],
+    src_base = Extension(name         = "malef",
+                         sources      = ["src-base/py_malef.c"],
                          include_dirs = ["../c-malef/include"],
+                         depends      = [os.path.join("src-base", f)
+                                            for f in os.listdir("src-base")
+                                            if f.endswith(".h")],
+                         extra_compile_args = ["-Wall", "-Werror"],
                          #define_macros = [(name, value)]
                          #undef_macros = []
                          library_dirs = ["../alire/build/lib-linux"],

@@ -45,7 +45,9 @@ temp = dirs.copy()
 
 while len(temp) != 0:
     d = temp.pop(0)
-    _ = filter(os.path.isdir, [os.path.join(d, f) for f in os.listdir(d)])
+    _ = filter(lambda f: os.path.isdir(f)
+                    and os.path.basename(f) not in ["obj", "bin"],
+               [os.path.join(d, f) for f in os.listdir(d)])
     _ = list(_)
     temp += _.copy()
     dirs += _.copy()
@@ -53,6 +55,7 @@ while len(temp) != 0:
 del temp
 
 def _lines():
+    sources = []
     for d in dirs:
         sources += [os.path.join(d, f) for f in os.listdir (d)
                                        if  os.path.isfile(os.path.join(d, f))
@@ -220,7 +223,7 @@ commands = {
         "linux": "gprbuild -p -Pmalef",
         "windows": "wine gprbuild -p -Pmalef "
                    "-XMALEF_OPERATING_SYSTEM=windows",
-        "tests-linux": "gprbuild -p -Ptests/ada/tests.gpr",
+        "tests-linux": ["cd tests && ./run-tests.sh && cd .."],
         "tests-windows": ["wine gprbuild -p -Ptests/ada/tests.gpr "
                           "-XMALEF_OPERATING_SYSTEM=windows",
                           "cp alire/build/lib-windows/libMalef.dll "

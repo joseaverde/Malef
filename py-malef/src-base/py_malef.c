@@ -32,7 +32,7 @@
 #include "Malef.h"
 
 #include "py_malef-exceptions.h"
-
+#include "py_malef-surfaces.h"
 
 
 /*###########################################################################*\
@@ -186,12 +186,14 @@ PyDoc_STRVAR (pyMalef_setTitle_doc,
 "programme is terminated. It raises an exception if the library hasn't been " \
 "initialized.") ;
 static PyObject*
-pyMalef_setTitle ( PyObject *self, PyObject *args ) {
+pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
 
+   static char *keyword_list[] = { "title", NULL } ;
    const char *title_name ;
 
    // We parse the arguments to get a string.
-   if ( ! PyArg_ParseTuple ( args, "s", &title_name ) ) {
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "s", keyword_list,
+                                        &title_name ) ) {
       // We raise an exception if it couldn't parse the string from the tuple.
       return NULL ;
    }
@@ -207,8 +209,8 @@ pyMalef_setTitle ( PyObject *self, PyObject *args ) {
 static const PyMethodDef
 pyMalef_setTitle_method = {
    "setTitle",
-   pyMalef_setTitle,
-   METH_VARARGS,
+   (PyCFunction)pyMalef_setTitle,
+   METH_VARARGS | METH_KEYWORDS,
    pyMalef_setTitle_doc
 } ;
 
@@ -248,19 +250,21 @@ PyDoc_STRVAR (pyMalef_wrapper_doc,
 "the same errors will be raised again. You can pass one (or none) argument "  \
 "to your wrapped function -- whose return value will be returned as well ") ;
 static PyObject*
-pyMalef_wrapper ( PyObject *self, PyObject *args ) {
+pyMalef_wrapper ( PyObject *self, PyObject *args, PyObject *kwargs ) {
    // Due to the types of the Python objects and many other problems, this
    // function will NOT call the malef_wrapper function from the C API. It will
    // be completely written in C with Python types and function calls.
    // However I will try to avoid Python calls as much as possible throughout
    // this implementation, because C functions are way faster than Python ones.
 
+   static char *keyword_list[] = { "func", "args", NULL } ;
    PyObject *function_to_wrap ;
    PyObject *arguments_to_wrap ;
    PyObject *return_value ;
 
-   if ( ! PyArg_ParseTuple ( args, "O|O", &function_to_wrap,
-                                          &arguments_to_wrap ) ) {
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "O|O", keyword_list,
+                                        &function_to_wrap,
+                                        &arguments_to_wrap ) ) {
       return NULL ;
    }
 
@@ -298,8 +302,8 @@ pyMalef_wrapper ( PyObject *self, PyObject *args ) {
 static const PyMethodDef
 pyMalef_wrapper_method = {
    "wrapper",
-   pyMalef_wrapper,
-   METH_VARARGS,
+   (PyCFunction)pyMalef_wrapper,
+   METH_VARARGS | METH_KEYWORDS,
    pyMalef_wrapper_doc
 } ;
 
@@ -312,6 +316,7 @@ pyMalef_wrapper_method = {
 // We add all the declared methods to the table.
 static PyMethodDef
 pyMalefMethods[] = {
+   /* MALEF */
    pyMalef_initialize_method,
    pyMalef_finalize_method,
    pyMalef_isInitialized_method,
@@ -321,6 +326,7 @@ pyMalefMethods[] = {
    pyMalef_setTitle_method,
    pyMalef_updateTerminalSize_method,
    pyMalef_wrapper_method,
+
    {NULL, NULL, 0, NULL}
 } ;
 
@@ -360,13 +366,25 @@ pyMalefModule = {
 PyMODINIT_FUNC
 PyInit_malef ( void ) {
 
+   // If any error occurs during initialization we finalize everything
+   // initialize so far and also unreference the module so the garbage
+   // collector can free the memory when it feels like doing so.
+
    PyObject *module = PyModule_Create ( &pyMalefModule );
    if ( module == NULL ) {
+      Py_DECREF ( module ) ;
+      return NULL ;
+   }
+
+   if ( ! _pyMalef_initializeSurfaces ( module ) ) {
+      Py_DECREF ( module ) ;
       return NULL ;
    }
 
    _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
+      Py_DECREF ( module ) ;
+      _pyMalef_finalizeSurfaces ( module ) ;
       return NULL ;
    }
 

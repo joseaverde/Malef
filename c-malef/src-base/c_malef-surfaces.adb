@@ -26,7 +26,7 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---with C_Malef.Errors;
+with C_Malef.Errors;
 --with Ada.Text_IO;
 
 package body C_Malef.Surfaces is
@@ -44,10 +44,13 @@ package body C_Malef.Surfaces is
 
       return No_Error;
 
--- exception
---    when Ada_Exception : others =>
---       C_Malef.Errors.Push(Ada_Exception);
---       return Ada_Error;
+   exception
+      when Ada_Exception : Constraint_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Bounds_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Create;
 
 
@@ -61,10 +64,10 @@ package body C_Malef.Surfaces is
 
       return No_Error;
 
--- exception
---    when Ada_Exception : others =>
---       C_Malef.Errors.Push(Ada_Exception);
---       return Ada_Error;
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Destroy;
 
 
