@@ -431,6 +431,8 @@ malef_wrapper ( void* (*function)(void*),
     ///////////////////////////////////////////////////////////////////////
 
 
+// TODO: malef_assingSurface function
+
 /*
  * This function is used to create a surface. Sizes lower than 1 aren't
  * allowed due to Ada's type checking.
@@ -442,7 +444,23 @@ malef_createSurface ( malef_col_t     cols,
 
 
 /*
- * This
+ * This function is used to finalize a surface, keep in mind that if the
+ * surface it's still being used by other structure or object, it won't be
+ * freed, i.e.:
+ *    | If you create a surface
+ *    |     malef_declareSurface(my_surf) ;
+ *    |     // Do something with your surface.
+ *    |     your_surf = my_surf
+ *    | If you destroy `your_surf', `my_surf' will be freed.
+ *    | However, if you use any other structure like (TODO: coming soon)
+ *    |     malef_appendBox ( my_box, my_surf ) ;
+ *    |     malef_destroy ( my_surf ) ;
+ *    | The surface won't be freed, because the Box still has access to it.
+ *    | In orther to assing to another surface use the `malef_assingSurface'
+ *    | function.
+ *
+ * @param surface
+ * The surface to destroy.
  */
 extern malef_error_t
 malef_destroySurface ( malef_surface_t surface ) ;

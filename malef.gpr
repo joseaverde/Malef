@@ -32,9 +32,11 @@ project Malef is
    --====-====- EXTERNAL -====-====--
    --====-====------------====-====--
    
-   type OS_Kind is ("linux", "windows", "windows-cmd", "nix");
-   Operating_System : OS_Kind := External ("MALEF_OPERATING_SYSTEM",
-                                           "linux");
+   type System_Kind is ("linux", "windows", "unix");
+   System    : System_Kind := External ("MALEF_SYSTEM", "linux");
+
+   type Subsystem_Kind is ("ansi", "cmd");
+   Subsystem : Subsystem_Kind := External ("MALEF_SUBSYSTEM", "ansi");
 
 
    type Library_Type_Type is ("relocatable", "static", "static-pic");
@@ -71,6 +73,7 @@ project Malef is
                "Malef.Colors",
                "Malef.Events",
                "Malef.Exceptions",
+               "Malef.Subsystems",
                "Malef.Surfaces",
                "Malef.Systems",
                "Malef.Wrapper");
@@ -82,22 +85,14 @@ project Malef is
 
    API := Ada_API;
 
-   Src_Dirs := ("ada-malef/src-base", "ada-malef/src-systems");
-
-   case Operating_System is
-      when "linux" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux",
-                                 "ada-malef/src-systems/shared/ansi");
-      when "windows" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows",
-                                 "ada-malef/src-systems/shared/ansi");
-      when "windows-cmd" =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/windows",
-                                 "ada-malef/src-systems/shared/cmd");
-      when others =>
-         Src_Dirs := Src_Dirs & ("ada-malef/src-systems/linux",
-                                 "ada-malef/src-systems/shared/ansi");
-   end case;
+   Src_Dirs := ("ada-malef/src-base",
+                "ada-malef/src-systems",
+                "ada-malef/src-systems/" & System,
+                "ada-malef/src-subsystems",
+                "ada-malef/src-subsystems/" & Subsystem,
+                -- TODO: This thing is here in order for the library to build
+                --       while several changes are applied.
+                "ada-malef/src-systems/shared/" & Subsystem);
 
    case C_API_Compilation is
       when "enabled" =>
@@ -117,11 +112,11 @@ project Malef is
    for Library_Version    use "libMalef.so." & "0";
    for Library_Standalone use "standard";
    for Library_Interface  use API;
-   for Library_Dir        use Prefix & "lib-" & Operating_System;
+   for Library_Dir        use Prefix & "lib-" & System & "." & Subsystem;
 
    for Languages           use ("Ada", "C");
    for Source_Dirs         use Src_Dirs;
-   for Object_Dir          use Prefix & "obj-" & Operating_System ;
+   for Object_Dir          use Prefix & "obj-" & System & "." & Subsystem;
    for Create_Missing_Dirs use "True";
 
 

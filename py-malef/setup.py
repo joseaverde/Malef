@@ -60,7 +60,7 @@ def main ():
                          runtime_library_dirs = ["../alire/build/lib-linux"])
     setup(name         = "malef",
           version      = _get_version(),
-          description  = "MALEF",
+          description  = "MALEF", # TODO
           author       = "José Antonio Verde Jiménez",
           author_email = "joseaverde@pm.me",
           ext_modules  = [src_base])

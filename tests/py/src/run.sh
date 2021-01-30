@@ -1,7 +1,20 @@
 #!/bin/bash
 
-OS=$(echo "$(uname -s)" | awk '{print tolower($0)}')
-LIB=$(readlink -f ../alire/build/lib-$OS)
+SYS=$(echo "$(uname -s)" | awk '{print tolower($0)}')
+
+case OS in
+   linux)
+      SUB=ansi
+   ;;
+   windows)
+      SUB=cmd
+   ;;
+   *)
+      SUB=ansi
+   ;;
+esac
+
+LIB=$(readlink -f ../alire/build/lib-$SYS.$SUB)
 PYLIB=$(readlink -f ../py-malef/build/)
 
 cd py/src

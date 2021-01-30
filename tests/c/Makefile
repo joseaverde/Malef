@@ -32,16 +32,16 @@ LIBRARY=$(shell readlink -f ../../alire/build/lib-)
 FLAGS=-fprofile-arcs -ftest-coverage $(INCLUDE)
 
 ifeq ($(OS),Windows_NT)
-	LIBRARY:=$(LIBRARY)win
+	LIBRARY:=$(LIBRARY)windows.cmd
 else
-	UNAME := $(shell uname -s)
+	UNAME:=$(shell uname -s)
 	ifeq ($(UNAME),Linux)
-		LIBRARY:=$(LIBRARY)linux
+		LIBRARY:=$(LIBRARY)linux.ansi
 	else ifeq ($(UNAME),Darwin)
 	# TODO: Add MacOS support
-		LIBRARY:=$(LIBRARY)unix
+		LIBRARY:=$(LIBRARY)unix.ansi
 	else
-		LIBRARY:=$(LIBRARY)unix
+		LIBRARY:=$(LIBRARY)unix.ansi
 	endif
 endif
 

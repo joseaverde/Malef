@@ -232,6 +232,7 @@ commands = {
         "todo": _todo,
         "commit": _commit,
         "lines": _lines,
+        "install": "gprinstall -f -p -Pmalef --prefix=./alire/opt",
 }
 
 

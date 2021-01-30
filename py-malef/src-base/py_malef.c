@@ -34,6 +34,11 @@
 #include "py_malef-exceptions.h"
 #include "py_malef-surfaces.h"
 
+/*
+ * TODO: (READ BELLOW)
+ *
+ *    * Change functions to take no parameters.
+ */
 
 /*###########################################################################*\
  *###########################  F U N C T I O N S  ###########################*

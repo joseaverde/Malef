@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2021-01-30
+### Added
+- Added Surface type for Python3.
+- Added test cases for Ada, C and Python3 and a test-engine written in AWK.
+- Added and improved **dev-tools** to add functions to keep track of tasks to do and added more languages to [src-gen](dev-tools/src-gen.py)
+### Fixed
+- Fixed Surface type in C.
+- Fixed formatting of C source files.
+
 ## [0.2.1] - 2021-01-06
 ### Fixed
 - Fixed format in C header
