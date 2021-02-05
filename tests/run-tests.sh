@@ -87,7 +87,7 @@ if [ ${#LANGUAGES[@]} -eq 0 ] || [ $DO_ALL_TESTS = "true" ]; then
    LANGUAGES=( )
    for file in $(ls)
    do
-      if [ -d $file ] && [ $file != "bin" ] && [ $file != "logs" ]; then
+      if [ -d $file ] && [ $file != "bin" ] && [ $file != "logs" ] && [ $file != "danger_zone" ]; then
          LANGUAGES+=( $file )
       fi
    done

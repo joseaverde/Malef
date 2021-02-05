@@ -29,7 +29,12 @@
 with Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
 with Malef.Systems;
+
+pragma Warnings (Off);
+with System;
+with System.Address_Image;
 with System.Atomic_Counters;
+pragma Warnings (On);
 
 
 package body Malef.Surfaces is
@@ -211,6 +216,100 @@ package body Malef.Surfaces is
       end if;
 
    end Unreference;
+
+
+-- ------- DEBUG -------
+
+
+-- procedure Put (Operation : String;
+--                Reference : not null Shared_Surface_Access) is
+--                use type Ada.Text_IO.Count;
+--    Is_Null : constant Boolean := Reference = Shared_Null_Surface'Access;
+--    Address : constant System.Address := Reference.all'Address;
+--    Length  : constant := 15;
+-- begin
+
+--    Ada.Text_IO.Set_Col (File => Ada.Text_IO.Standard_Error,
+--                         To   => Length - Operation'Length);
+--    Ada.Text_IO.Put_Line(File => Ada.Text_IO.Standard_Error,
+--                         Item =>
+--          Operation & ": " &
+--          (if Is_Null then
+--                ASCII.ESC & "[31m  NULL  " & ASCII.ESC & "[0m "
+--           else
+--                ASCII.ESC & "[32mNOT NULL" & ASCII.ESC & "[0m ") &
+--          System.Address_Image (Address));
+
+-- end Put;
+
+
+-- overriding
+-- procedure Initialize (Object : in out Surface_Type) is
+-- begin
+
+--    Reference (Object.Reference);
+--    Put ("Initialize", Object.Reference);
+
+-- end Initialize;
+
+
+-- overriding
+-- procedure Adjust (Object : in out Surface_Type) is
+-- begin
+
+--    Reference (Object.Reference);
+--    Put ("Adjust", Object.Reference);
+
+-- end Adjust;
+
+-- 
+-- overriding
+-- procedure Finalize (Object : in out Surface_Type) is
+--    Old_Reference :  constant not null Shared_Surface_Access
+--                  := Object.Reference;
+-- begin
+
+--    Put ("Finalize", Object.Reference);
+--    if Old_Reference /= Shared_Null_Surface'Access then
+--       -- This is used to avoid finalizing the same object twice.
+--       Object.Reference := Shared_Null_Surface'Access;
+--       Unreference(Old_Reference);
+--    end if;
+
+-- end Finalize;
+
+
+
+-- procedure Reference (Item : not null Shared_Surface_Access) is
+-- begin
+
+--    if Item = Shared_Null_Surface'Access then
+--       return;
+--    end if;
+
+--    System.Atomic_Counters.Increment (Item.Counter);
+
+-- end Reference;
+
+
+-- procedure Unreference (Item : not null Shared_Surface_Access) is
+--    procedure Free is new Ada.Unchecked_Deallocation (Shared_Surface_Type,
+--                                                      Shared_Surface_Access);
+--    Old : Shared_Surface_Access := Item;
+-- begin
+
+--    if Old = Shared_Null_Surface'Access then
+--       return;
+--    end if;
+
+--    if System.Atomic_Counters.Decrement (Old.Counter) then
+--       Put ("Free", Item);
+--       Free(Old);
+--    end if;
+
+-- end Unreference;
+
+
 
 end Malef.Surfaces;
 

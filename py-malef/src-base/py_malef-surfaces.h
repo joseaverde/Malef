@@ -186,13 +186,12 @@ pyMalef_surfaceStruct_debugPut ( _pyMalef_surfaceStruct *self,
    _malef_debugPutSurface ( self->surface ) ;
    Py_RETURN_NONE ;
 }
-static const PyMethodDef
-pyMalef_surfaceStruct_debugPut_method = {
-   "debugPut",
-   (PyCFunction)pyMalef_surfaceStruct_debugPut,
-   METH_NOARGS,
-   pyMalef_surfaceStruct_debugPut_doc
-} ;
+#define pyMalef_surfaceStruct_debugPut_method {                               \
+   "debugPut",                                                                \
+   (PyCFunction)pyMalef_surfaceStruct_debugPut,                               \
+   METH_NOARGS,                                                               \
+   pyMalef_surfaceStruct_debugPut_doc                                         \
+}
 
 
 

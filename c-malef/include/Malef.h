@@ -214,7 +214,6 @@ typedef malef_char_t *malef_str_t ;
  * This is the most important type in the library, it's the surface. It acts
  * similarly to a sprite in graphic libraries. In Ada it has garbage collection
  * I will try to make it happen for C, or add some kind of deallocator for it.
- * TODO: Add deallocator.
  */
 typedef struct _malef_surface_t {
    void* object ;
@@ -377,6 +376,9 @@ malef_newPage ( void ) ;
  * it and it will be set this title during execution (even if the library is
  * finalized). TODO: Find a way to recover it.
  *
+ * @param titleName
+ * (IN) The new title.
+ *
  * @return
  *  - malef_INITIALIZATION_ERROR: This exception is raised if the library was
  *                                not initialized.
@@ -390,7 +392,7 @@ malef_setTitle ( const char* in titleName ) ;
  * will always return false. However in Windows, (for now XXX) you have to call
  * it to check if it has changed.
  *
- * @param
+ * @param is_updated
  * (OUT) Whether the terminal size has been updated.
  *
  * @return
@@ -431,16 +433,48 @@ malef_wrapper ( void* (*function)(void*),
     ///////////////////////////////////////////////////////////////////////
 
 
-// TODO: malef_assingSurface function
+/*
+ * This function is used to assign one surface to another. You should do it
+ * this way so the internal components can keep track of the surfaces and
+ * perfom automatic garbage collection when a surface is destroyed without
+ * freeing a surface which is referenced by many other surfaces.
+ *
+ * @param surface
+ * (IN)  The surface you want to assign to another surface, this is the one
+ *       that will be modified, keep in mind it should be either a null surface
+ *       or an initialized surface.
+ *
+ * @param to_surface
+ * (IN)  This is the surface you want your surface to assigned to. This one
+ *       also shouldn't be an uninitialized surface.
+ *
+ * @return
+ * It returns the error code, it will return very nasty errors if you try to
+ * use any uninitialized surface.
+ */
+extern malef_error_t
+malef_assignSurface ( malef_surface_t in surface,
+                      malef_surface_t in to_surface ) ;
+
 
 /*
  * This function is used to create a surface. Sizes lower than 1 aren't
  * allowed due to Ada's type checking.
+ *
+ * @param rows
+ * (IN)  The number of rows (the height) of the new surface.
+ *
+ * @param rows
+ * (IN)  The number of columns (the width) of the new surface.
+ *
+ * @param surface
+ * (IN)  The null or initialized surface variable where you want to place the
+ *       new created surface.
  */
 extern malef_error_t
-malef_createSurface ( malef_col_t     cols,
-                      malef_row_t     rows,
-                      malef_surface_t surface) ;
+malef_createSurface ( malef_row_t     in rows,
+                      malef_col_t     in cols,
+                      malef_surface_t in surface ) ;
 
 
 /*
@@ -456,18 +490,18 @@ malef_createSurface ( malef_col_t     cols,
  *    |     malef_appendBox ( my_box, my_surf ) ;
  *    |     malef_destroy ( my_surf ) ;
  *    | The surface won't be freed, because the Box still has access to it.
- *    | In orther to assing to another surface use the `malef_assingSurface'
+ *    | In orther to assing to another surface use the `malef_assignSurface'
  *    | function.
  *
  * @param surface
- * The surface to destroy.
+ * (IN)  The surface to destroy.
  */
 extern malef_error_t
-malef_destroySurface ( malef_surface_t surface ) ;
+malef_destroySurface ( malef_surface_t in surface ) ;
 
 
 /*
- *
+ * DEBUGGING!
  */
 extern void
 _malef_debugPutSurface ( malef_surface_t surface ) ;
@@ -496,39 +530,260 @@ malef_getNullSurface ( void ) ;
     //---------- COLOUR FUNCTIONS ---------------------------------------//
     ///////////////////////////////////////////////////////////////////////
 
-extern void malef_getSurfaceForeground (malef_surface_t,
-                                        malef_row_t,
-                                        malef_col_t,
-                                        malef_color_t) ;
-extern void malef_getSurfaceBackground (malef_surface_t,
-                                        malef_row_t,
-                                        malef_col_t,
-                                        malef_color_t) ;
-extern void malef_setSurfaceForeground (malef_surface_t,
-                                        malef_row_t,
-                                        malef_row_t,
-                                        malef_col_t,
-                                        malef_col_t,
-                                        malef_color_t) ;
-extern void malef_setSurfaceBackground (malef_surface_t,
-                                        malef_row_t,
-                                        malef_row_t,
-                                        malef_col_t,
-                                        malef_col_t,
-                                        malef_color_t) ;
-extern void malef_getCursorForeground  (malef_surface_t,
-                                        malef_color_t) ;
-extern void malef_getCursorBackground  (malef_surface_t,
-                                        malef_color_t) ;
-extern void malef_setCursorForeground  (malef_surface_t,
-                                        malef_color_t) ;
-extern void malef_setCursorBackground  (malef_surface_t,
-                                        malef_color_t) ;
-extern void malef_getPalette           (malef_palette_t) ;
-extern void malef_getPaletteKind       (malef_paletteKind_t,
-                                        malef_palette_t) ;
-extern void malef_setPalette           (malef_palette_t) ;
-extern void malef_setPaletteKind       (malef_paletteKind_t) ;
+/*
+ * This function gets the foreground colour from a certain position of
+ * the Surface.
+ *
+ * @param surface
+ * (IN)  The surface where we want to get the colour.
+ *
+ * @param row
+ * (IN)  The row from where we want to retrieve the colour. Keep in mind, in
+ *       this whole library we start counting at one, so if you try to use any
+ *       other number a very nasty error will be raised.
+ *
+ * @param col
+ * (IN)  The column from where we want to retrieve the colour. It's a positive
+ *       integer bigger than zero, keep that in mind.
+ *
+ * @param color
+ * (OUT) The foreground colour in the given position.
+ *
+ * @return
+ *  - malef_BOUNDS_ERROR: The position is out of bounds.
+ */
+extern malef_error_t
+malef_getSurfaceForeground ( malef_surface_t in  surface,
+                             malef_row_t     in  row,
+                             malef_col_t     in  col,
+                             malef_color_t   out color ) ;
+
+/*
+ * This function gets the background colour from a certain position of the
+ * Surface.
+ *
+ * @param surface
+ * (IN)  The surface where we want to get the colour.
+ *
+ * @param row
+ * (IN)  The row from where we want to retrieve the colour. Keep in mind, in
+ *       this whole library we start counting at one, so if you try to use any
+ *       other number a very nasty error will be raised.
+ *
+ * @param col
+ * (IN)  The column from where we want to retrieve the colour. It's a positive
+ *       integer bigger than zero, keep that in mind.
+ *
+ * @param color
+ * (OUT) The background colour in the given position.
+ *
+ * @return
+ *  - malef_BOUNDS_ERROR: The position is out of bounds.
+ */
+extern malef_error_t
+malef_getSurfaceBackground ( malef_surface_t in surface,
+                             malef_row_t     in row,
+                             malef_col_t     in col,
+                             malef_color_t   in color ) ;
+
+/*
+ * This function changes the foreground colour in a given block.
+ *
+ * @param surface
+ * (IN)  The surface to edit.
+ *
+ * @param from_row
+ * (IN)  The block's starting row position.
+ *
+ * @param to_row
+ * (IN)  The block's ending row position.
+ *
+ * @param from_col
+ * (IN)  The block's starting column position.
+ *
+ * @param to_col
+ * (IN)  The block's ending column position.
+ *
+ * @param color
+ * (IN)  The colour to dye the given position with.
+ *
+ * @return
+ *  - malef_BOUNDS_ERROR: Any of the positions is out of bounds or the range
+ *                        is negative.
+ *  - malef_NULL_SURFACE_ERROR: You are trying to modify a null surface which
+ *                              is not possible.
+ */
+extern malef_error_t
+malef_setSurfaceForeground ( malef_surface_t in surface,
+                             malef_row_t     in from_row,
+                             malef_row_t     in to_row,
+                             malef_col_t     in from_col,
+                             malef_col_t     in to_col,
+                             malef_color_t   in color ) ;
+
+/*
+ * This function changes the background colour in a given block.
+ *
+ * @param surface
+ * (IN)  The surface to edit.
+ *
+ * @param from_row
+ * (IN)  The block's starting row position.
+ *
+ * @param to_row
+ * (IN)  The block's ending row position.
+ *
+ * @param from_col
+ * (IN)  The block's starting column position.
+ *
+ * @param to_col
+ * (IN)  The block's ending column position.
+ *
+ * @param color
+ * (IN)  The colour to dye the given position with.
+ *
+ * @return
+ *  - malef_BOUNDS_ERROR: Any of the positions is out of bounds or the range
+ *                        is negative.
+ *  - malef_NULL_SURFACE_ERROR: You are trying to modify a null surface which
+ *                              is not possible.
+ */
+extern malef_error_t
+malef_setSurfaceBackground ( malef_surface_t in surface,
+                             malef_row_t     in from_row,
+                             malef_row_t     in to_row,
+                             malef_col_t     in from_row,
+                             malef_col_t     in to_row,
+                             malef_color_t   in color ) ;
+
+/*
+ * This function gets the default Surface's writing colour. This is the colour
+ * that will be used when writing a string text into the Surface by default.
+ *
+ * @param surface
+ * (IN)  The surface from which you want to get the default writing colour.
+ *
+ * @param color
+ * (OUT) The surface's default writing colour.
+ *
+ * @return
+ * It usually returns no errors, if it returns any, it is fatal one.
+ */
+extern malef_error_t
+malef_getCursorForeground ( malef_surface_t in  surface,
+                            malef_color_t   out color ) ;
+
+/*
+ * This function gets the default Surface's writing colour. This is the colour
+ * that will be used when writing a string text into the Surface by default.
+ *
+ * @param surface
+ * (IN)  The surface from which you want to get the default writing colour.
+ *
+ * @param color
+ * (OUT) The surface's default writing colour.
+ *
+ * @return
+ * It usually returns no errors, if it returns any, it is fatal one.
+ */
+extern malef_error_t
+malef_getCursorBackground ( malef_surface_t in  surface,
+                            malef_color_t   out color ) ;
+
+/*
+ * This function changes the default Surface's writing foreground colour. You
+ * can even change it in a null surface because it won't have any effect on it
+ * because it can't be written.
+ *
+ * @param surface
+ * (IN)  The surface whose default cursor colour you want to change.
+ *
+ * @param color
+ * (IN)  The colour.
+ *
+ * @return
+ * It won't return any error, but you can always check it if anything goes
+ * wrong unexpectedly.
+ */
+extern malef_error_t
+malef_setCursorForeground ( malef_surface_t in surface,
+                            malef_color_t   in color ) ;
+
+/*
+ * This function changes the default Surface's writing background colour. The
+ * null surfaces can also be changed because it won't have any effect at all.
+ *
+ * @param surface
+ * (IN)  The surface whose default background cursor colour you want to change.
+ *
+ * @param color
+ * (IN)  The new colour.
+ *
+ * @return
+ * It shouldn't return any errors, but check it if you can because if any error
+ * is raised it must be a fatal one.
+ */
+extern malef_error_t
+malef_setCursorBackground ( malef_surface_t in surface,
+                            malef_color_t   in color ) ;
+
+/*
+ * This function gets the current surface palette.
+ *
+ * @param palette
+ * (OUT) This is the current palette that is being used by the internal engine.
+ *
+ * @return
+ *  - malef_INITIALIZATION_ERROR: This error is returned if the library hasn't
+ *                                been initialized yet.
+ */
+extern malef_error_t
+malef_getPalette ( malef_palette_t out palette ) ;
+
+/*
+ * This function gets a palette of a given palette name.
+ *
+ * @param palette_kind
+ * (IN)  This is the palette kind whose palette you want to get.
+ *
+ * @param palette
+ * (OUT) This is the palette where the new palette will be stored.
+ *
+ * @return
+ * It shouldn't return any error if you give the palette_kind in its range.
+ */
+extern malef_error_t
+malef_getPaletteKind ( malef_paletteKind_t in  palette_kind,
+                       malef_palette_t     out palette ) ;
+
+/*
+ * This function changes the current palette to another one, you can change it
+ * before initialization but keep in mind that it will be overwritten after
+ * initialization for the most suitable one for the operating system.
+ *
+ * @param palette
+ * (IN)  The palette you want to set as default.
+ *
+ * @return
+ * It shouldn't return any error if the palettes aren't corrupted or anything.
+ */
+extern malef_error_t
+malef_setPalette ( malef_palette_t in palette ) ;
+
+/*
+ * This function changes the current Malef palette to another one, you can
+ * change it before initialization but it won't have any effects because during
+ * the initialization process the most suitable one is chose depending on the
+ * operating system and the terminal/console emulator.
+ *
+ * @param palette_kind
+ * (IN)  The palette you want to set as default.
+ *
+ * @return
+ * It shouldn't return any error, if it does report it immediately.
+ */
+extern malef_error_t
+malef_setPaletteKind ( malef_paletteKind_t in palette_kind ) ;
 
 
 #  ifdef _malef_temp_out

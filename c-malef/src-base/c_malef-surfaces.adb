@@ -31,6 +31,22 @@ with C_Malef.Errors;
 
 package body C_Malef.Surfaces is
 
+   function Assign (Surface    : out Surface_Type;
+                    To_Surface : in  Surface_Type)
+                    return Error_Kind is
+   begin
+
+      Surface.Object := To_Surface.Object;
+
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+   end Assign;
+
+
    function Create (Rows    : Row_Type;
                     Cols    : Col_Type;
                     Surface : in out Surface_Type)
@@ -54,13 +70,13 @@ package body C_Malef.Surfaces is
    end Create;
 
 
-   function Destroy (Object : in out Surface_Type)
+   function Destroy (Surface : in out Surface_Type)
                      return Error_Kind is
    begin
 
       -- This is enough to destroy a surface, controlled types and finalization
       -- function will take care of the rest.
-      Object := Get_Null_Surface;
+      Surface := Get_Null_Surface;
 
       return No_Error;
 
@@ -71,10 +87,10 @@ package body C_Malef.Surfaces is
    end Destroy;
 
 
-   procedure Debug_Put (Object : Surface_Type) is
+   procedure Debug_Put (Surface : Surface_Type) is
    begin
 
-      Object.Object.Debug_Put;
+      Surface.Object.Debug_Put;
 
    end Debug_Put;
 

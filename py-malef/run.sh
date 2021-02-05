@@ -6,6 +6,6 @@ if [ "$1" = "--compile" ]; then
 fi
 
 cd build/lib*
-export LD_LIBRARY_PATH=/home/jose/Development/Malef/alire/build/lib-linux && \
+export LD_LIBRARY_PATH=/home/jose/Development/Malef/alire/build/lib-linux.ansi && \
    echo $LD_LIBRARY_PATH && python3
 

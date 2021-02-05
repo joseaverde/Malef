@@ -77,6 +77,7 @@ fields = {
         "sys"     : lambda name : "_sys"    in name or "sys_" in name,
         "tests"   : lambda name : "tests"   in name,
         "cleanup" : lambda name : "cleanup" in name,
+        "colors"  : lambda name : "colors"  in name,
 }
 
 

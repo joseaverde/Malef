@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3] - 2021-02-05
+### Added
+- Added complete colour/palette support for C.
+### Fixed
+- Fixed Malef.h formatting.
+- Fixed functions return value.
+
 ## [0.2.2] - 2021-01-30
 ### Added
 - Added Surface type for Python3.

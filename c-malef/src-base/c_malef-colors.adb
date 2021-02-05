@@ -26,13 +26,17 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with C_Malef.Errors;
+with Malef.Exceptions;
+
 
 package body C_Malef.Colors is
 
-   procedure Get_Foreground (Surface :    Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type) is
+   function Get_Foreground (Surface :    Surface_Type;
+                            Row     :     Row_Type;
+                            Col     :     Col_Type;
+                            Color   : out Color_Type)
+                            return Error_Kind is
    begin
 
       Color := To_C(Malef.Colors.Get_Foreground(
@@ -40,13 +44,23 @@ package body C_Malef.Colors is
                      Row     => Malef.Row_Type(Row),
                      Col     => Malef.Col_Type(Col)));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Bounds_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Bounds_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Foreground;
 
 
-   procedure Get_Background (Surface :     Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type) is
+   function Get_Background (Surface :     Surface_Type;
+                            Row     :     Row_Type;
+                            Col     :     Col_Type;
+                            Color   : out Color_Type)
+                            return Error_Kind is
    begin
 
       Color := To_C(Malef.Colors.Get_Background(
@@ -54,16 +68,26 @@ package body C_Malef.Colors is
                      Row     => Malef.Row_Type(Row),
                      Col     => Malef.Col_Type(Col)));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Bounds_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Bounds_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Background;
 
 
 
-   procedure Set_Foreground (Surface  : Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type) is
+   function Set_Foreground (Surface  : Surface_Type;
+                            From_Row : Row_Type;
+                            To_Row   : Row_Type;
+                            From_Col : Col_Type;
+                            To_Col   : Col_Type;
+                            Color    : Color_Type)
+                            return Error_Kind is
    begin
 
       Malef.Colors.Set_Foreground(Surface  => Surface.Object,
@@ -73,15 +97,28 @@ package body C_Malef.Colors is
                                   To_Col   => Malef.Col_Type(To_Col),
                                   Color    => To_Ada(Color));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Bounds_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Bounds_Error;
+      when Ada_Exception : Malef.Exceptions.Null_Surface_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Null_Surface_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Set_Foreground;
 
 
-   procedure Set_Background (Surface  : Surface_Type;
+   function Set_Background (Surface  : Surface_Type;
                              From_Row : Row_Type;
                              To_Row   : Row_Type;
                              From_Col : Col_Type;
                              To_Col   : Col_Type;
-                             Color    : Color_Type) is
+                             Color    : Color_Type)
+                             return Error_Kind is
    begin
 
       Malef.Colors.Set_Background(Surface  => Surface.Object,
@@ -91,81 +128,150 @@ package body C_Malef.Colors is
                                   To_Col   => Malef.Col_Type(To_Col),
                                   Color    => To_Ada(Color));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Bounds_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Bounds_Error;
+      when Ada_Exception : Malef.Exceptions.Null_Surface_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Null_Surface_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+
    end Set_Background;
 
 
 
 
-   procedure Get_Cursor_Foreground (Surface :     Surface_Type;
-                                    Color   : out Color_Type) is
+   function Get_Cursor_Foreground (Surface :     Surface_Type;
+                                   Color   : out Color_Type)
+                                   return Error_Kind is
    begin
 
       Color := To_C(Malef.Colors.Get_Cursor_Foreground(Surface.Object));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Cursor_Foreground;
 
 
-   procedure Get_Cursor_Background (Surface :     Surface_Type;
-                                    Color   : out Color_Type) is
+   function Get_Cursor_Background (Surface :     Surface_Type;
+                                   Color   : out Color_Type)
+                                   return Error_Kind is
    begin
 
       Color := To_C(Malef.Colors.Get_Cursor_Background(Surface.Object));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Cursor_Background;
 
 
 
-   procedure Set_Cursor_Foreground (Surface : Surface_Type;
-                                    Color   : Color_Type) is
+   function Set_Cursor_Foreground (Surface : Surface_Type;
+                                   Color   : Color_Type)
+                                   return Error_Kind is
    begin
 
       Malef.Colors.Set_Cursor_Foreground(Surface => Surface.Object,
                                          Color   => To_Ada(Color));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Set_Cursor_Foreground;
 
 
-   procedure Set_Cursor_Background (Surface : Surface_Type;
-                                    Color   : Color_Type) is
+   function Set_Cursor_Background (Surface : Surface_Type;
+                                   Color   : Color_Type)
+                                   return Error_Kind is
    begin
 
       Malef.Colors.Set_Cursor_Background(Surface => Surface.Object,
                                          Color   => To_Ada(Color));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Set_Cursor_Background;
 
 
 
-   procedure Get_Palette (Palette : out Palette_Type) is
+   function Get_Palette (Palette : out Palette_Type)
+                         return Error_Kind is
    begin
 
       Palette := To_C(Malef.Colors.Get_Palette);
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Palette;
 
 
-   procedure Get_Palette (Kind    :     Palette_Kind;
-                          Palette : out Palette_Type) is
+   function Get_Palette (Kind    :     Palette_Kind;
+                         Palette : out Palette_Type)
+                         return Error_Kind is
    begin
 
       Palette := To_C(Malef.Colors.Palettes(To_Ada(Kind)));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Get_Palette;
 
 
-   procedure Set_Palette (Palette : Palette_Type) is
+   function Set_Palette (Palette : Palette_Type)
+                         return Error_Kind is
    begin
 
       Malef.Colors.Set_Palette(To_Ada(Palette));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Set_Palette;
 
 
-   procedure Set_Palette (Kind : Palette_Kind) is
+   function Set_Palette (Kind : Palette_Kind)
+                         return Error_Kind is
    begin
 
       Malef.Colors.Set_Palette(To_Ada(Kind));
 
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
    end Set_Palette;
 
 

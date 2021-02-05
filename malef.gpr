@@ -68,20 +68,34 @@ project Malef is
    --====-====-----------====-====--
    --====-====- PROJECT -====-====--
    --====-====-----------====-====--
-   
-   Ada_API := ("Malef",
-               "Malef.Colors",
-               "Malef.Events",
-               "Malef.Exceptions",
-               "Malef.Subsystems",
-               "Malef.Surfaces",
-               "Malef.Systems",
-               "Malef.Wrapper");
+ 
+   Ada_API := ("malef.ads",
+               "malef-colors.ads",
+               "malef-events.ads",
+               "malef-exceptions.ads",
+               "malef-surfaces.ads",
+               "malef-systems.ads",
+               "malef-wrapper.ads");
 
-   C_API   := ("C_Malef",
-               "C_Malef.Colors",
-               "C_Malef.Errors",
-               "C_Malef.Surfaces");
+   C_API := ("c_malef.ads",
+             "c_malef-colors.ads",
+             "c_malef-errors.ads",
+             "c_malef-surfaces.ads",
+             "Malef.h");
+
+-- Ada_API := ("Malef",
+--             "Malef.Colors",
+--             "Malef.Events",
+--             "Malef.Exceptions",
+--             "Malef.Subsystems",
+--             "Malef.Surfaces",
+--             "Malef.Systems",
+--             "Malef.Wrapper");
+
+-- C_API   := ("C_Malef",
+--             "C_Malef.Colors",
+--             "C_Malef.Errors",
+--             "C_Malef.Surfaces");
 
    API := Ada_API;
 
@@ -110,15 +124,15 @@ project Malef is
    for Library_Name       use "Malef";
    for Library_Kind       use Library_Type;
    for Library_Version    use "libMalef.so." & "0";
-   for Library_Standalone use "standard";
-   for Library_Interface  use API;
+   for Interfaces         use API;
+-- for Library_Standalone use "standard";
+-- for Library_Interface  use API;
    for Library_Dir        use Prefix & "lib-" & System & "." & Subsystem;
 
    for Languages           use ("Ada", "C");
    for Source_Dirs         use Src_Dirs;
    for Object_Dir          use Prefix & "obj-" & System & "." & Subsystem;
    for Create_Missing_Dirs use "True";
-
 
 
    --====-====------------====-====--

@@ -44,6 +44,7 @@
  *###########################  F U N C T I O N S  ###########################*
 \*###########################################################################*/
 
+
 PyDoc_STRVAR (pyMalef_initialize_doc,
 "This function initializes the Malef library. It must be initialized in order"\
 " to run certain IO functions or functions that requiere it to be initialized"\
@@ -59,13 +60,12 @@ pyMalef_initialize ( PyObject *self, PyObject *args ) {
       Py_RETURN_NONE ;
    }
 }
-static const PyMethodDef
-pyMalef_initialize_method = {
-   "initialize",
-   pyMalef_initialize,
-   METH_VARARGS,
-   pyMalef_initialize_doc
-} ;
+#define pyMalef_initialize_method {                                           \
+   "initialize",                                                              \
+   pyMalef_initialize,                                                        \
+   METH_VARARGS,                                                              \
+   pyMalef_initialize_doc                                                     \
+}
 
 
 PyDoc_STRVAR (pyMalef_finalize_doc,
@@ -83,13 +83,12 @@ pyMalef_finalize ( PyObject *self, PyObject *args ) {
       Py_RETURN_NONE ;
    }
 }
-static const PyMethodDef
-pyMalef_finalize_method = {
-   "finalize",
-   pyMalef_finalize,
-   METH_VARARGS,
-   pyMalef_finalize_doc
-} ;
+#define pyMalef_finalize_method {                                             \
+   "finalize",                                                                \
+   pyMalef_finalize,                                                          \
+   METH_VARARGS,                                                              \
+   pyMalef_finalize_doc                                                       \
+}
 
 
 PyDoc_STRVAR (pyMalef_isInitialized_doc,
@@ -104,13 +103,12 @@ pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
       Py_RETURN_FALSE ;
    }
 }
-static const PyMethodDef
-pyMalef_isInitialized_method = {
-   "isInitialized",
-   pyMalef_isInitialized,
-   METH_VARARGS,
-   pyMalef_isInitialized_doc
-} ;
+#define pyMalef_isInitialized_method {                                        \
+   "isInitialized",                                                           \
+   pyMalef_isInitialized,                                                     \
+   METH_VARARGS,                                                              \
+   pyMalef_isInitialized_doc                                                  \
+}
 
 
 PyDoc_STRVAR (pyMalef_getHeight_doc,
@@ -128,13 +126,12 @@ pyMalef_getHeight ( PyObject *self, PyObject *args ) {
       return PyLong_FromUnsignedLong ( height ) ;
    }
 }
-static const PyMethodDef
-pyMalef_getHeight_method = {
-   "getHeight",
-   pyMalef_getHeight,
-   METH_VARARGS,
-   pyMalef_getHeight_doc
-} ;
+#define pyMalef_getHeight_method {                                            \
+   "getHeight",                                                               \
+   pyMalef_getHeight,                                                         \
+   METH_VARARGS,                                                              \
+   pyMalef_getHeight_doc                                                      \
+}
 
 
 PyDoc_STRVAR (pyMalef_getWidth_doc,
@@ -152,13 +149,12 @@ pyMalef_getWidth ( PyObject *self, PyObject *args ) {
       return PyLong_FromUnsignedLong ( width ) ;
    }
 }
-static const PyMethodDef
-pyMalef_getWidth_method = {
-   "getWidth",
-   pyMalef_getWidth,
-   METH_VARARGS,
-   pyMalef_getWidth_doc
-} ;
+#define pyMalef_getWidth_method {                                             \
+   "getWidth",                                                                \
+   pyMalef_getWidth,                                                          \
+   METH_VARARGS,                                                              \
+   pyMalef_getWidth_doc                                                       \
+}
 
 
 PyDoc_STRVAR (pyMalef_newPage_doc,
@@ -176,13 +172,12 @@ pyMalef_newPage ( PyObject *self, PyObject *args ) {
       Py_RETURN_NONE ;
    }
 }
-static const PyMethodDef
-pyMalef_newPage_method = {
-   "newPage",
-   pyMalef_newPage,
-   METH_VARARGS,
-   pyMalef_newPage_doc
-} ;
+#define pyMalef_newPage_method {                                              \
+   "newPage",                                                                 \
+   pyMalef_newPage,                                                           \
+   METH_VARARGS,                                                              \
+   pyMalef_newPage_doc                                                        \
+}
 
 
 PyDoc_STRVAR (pyMalef_setTitle_doc,
@@ -211,13 +206,12 @@ pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
       Py_RETURN_NONE ;
    }
 }
-static const PyMethodDef
-pyMalef_setTitle_method = {
-   "setTitle",
-   (PyCFunction)pyMalef_setTitle,
-   METH_VARARGS | METH_KEYWORDS,
-   pyMalef_setTitle_doc
-} ;
+#define pyMalef_setTitle_method {                                             \
+   "setTitle",                                                                \
+   (PyCFunction)pyMalef_setTitle,                                             \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_setTitle_doc                                                       \
+}
 
 
 PyDoc_STRVAR (pyMalef_updateTerminalSize_doc,
@@ -240,13 +234,12 @@ pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
       }
    }
 }
-static const PyMethodDef
-pyMalef_updateTerminalSize_method = {
-   "updateTerminalSize",
-   pyMalef_updateTerminalSize,
-   METH_VARARGS,
-   pyMalef_updateTerminalSize_doc
-} ;
+#define pyMalef_updateTerminalSize_method {                                   \
+   "updateTerminalSize",                                                      \
+   pyMalef_updateTerminalSize,                                                \
+   METH_VARARGS,                                                              \
+   pyMalef_updateTerminalSize_doc                                             \
+}
 
 
 PyDoc_STRVAR (pyMalef_wrapper_doc,
@@ -304,13 +297,12 @@ pyMalef_wrapper ( PyObject *self, PyObject *args, PyObject *kwargs ) {
    // Finally we return the value. TODO: Increase reference?
    return return_value ;
 }
-static const PyMethodDef
-pyMalef_wrapper_method = {
-   "wrapper",
-   (PyCFunction)pyMalef_wrapper,
-   METH_VARARGS | METH_KEYWORDS,
-   pyMalef_wrapper_doc
-} ;
+#define pyMalef_wrapper_method {                                              \
+   "wrapper",                                                                 \
+   (PyCFunction)pyMalef_wrapper,                                              \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_wrapper_doc                                                        \
+}
 
 
 

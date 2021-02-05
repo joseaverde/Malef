@@ -31,13 +31,18 @@ with C_Malef.Surfaces; use C_Malef.Surfaces;
 
 --
 -- @summary
---
+-- This package contains functions to work with colours and palettes.
 --
 -- @description
+-- This package contains colours, palettes and some default palettes. You can
+-- use this package to modify a Surface's colours. Read the original Ada
+-- documentation or the C Header file. (I'm not going to write everything
+-- three times).
 --
 package C_Malef.Colors is
 
-   type Color_Kind is (Black, Red, Green, Yellow, Blue, Magenta, Cyan, White);
+   type Color_Kind is (Black, Red, Green, Yellow, Blue, Magenta, Cyan, White)
+      with Convention => C;
    for Color_Kind use
       (Black   => 0,
        Red     => 1,
@@ -47,10 +52,9 @@ package C_Malef.Colors is
        Magenta => 5,
        Cyan    => 6,
        White   => 7);
-   pragma Convention (C, Color_Kind);
 
-   type Palette_Type is array (bool'Range, Color_Kind'Range) of Color_Type;
-   pragma Convention (C, Palette_Type);
+   type Palette_Type is array (bool'Range, Color_Kind'Range) of Color_Type
+      with Convention => C;
 
    type Palette_Kind is (Malef_Palette,
                          VGA,
@@ -62,7 +66,8 @@ package C_Malef.Colors is
                          PuTTY,
                          mIRC,
                          xterm,
-                         Ubuntu);
+                         Ubuntu)
+      with Convention => C;
    for Palette_Kind use
       (Malef_Palette      => 0,
        VGA                => 1,
@@ -75,101 +80,139 @@ package C_Malef.Colors is
        mIRC               => 8,
        xterm              => 9,
        Ubuntu             => 10);
-   pragma Convention (C, Palette_Kind);
-
-   procedure Get_Foreground (Surface :     Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type);
-   pragma Export (C, Get_Foreground, "malef_getSurfaceForeground");
 
 
-   procedure Get_Background (Surface :     Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type);
-   pragma Export (C, Get_Background, "malef_getSurfaceBackground");
+   -- TODO: Handle Constraint_Error
+   function Get_Foreground (Surface :     Surface_Type;
+                            Row     :     Row_Type;
+                            Col     :     Col_Type;
+                            Color   : out Color_Type)
+                            return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getSurfaceForeground";
 
-   procedure Set_Foreground (Surface  : Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type);
-   pragma Export (C, Set_Foreground, "malef_setSurfaceForeground");
+   function Get_Background (Surface :     Surface_Type;
+                            Row     :     Row_Type;
+                            Col     :     Col_Type;
+                            Color   : out Color_Type)
+                            return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getSurfaceBackground";
 
-   procedure Set_Background (Surface  : Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type);
-   pragma Export (C, Set_Background, "malef_setSurfaceBackground");
+   function Set_Foreground (Surface  : Surface_Type;
+                            From_Row : Row_Type;
+                            To_Row   : Row_Type;
+                            From_Col : Col_Type;
+                            To_Col   : Col_Type;
+                            Color    : Color_Type)
+                            return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setSurfaceForeground";
 
-
-   procedure Get_Cursor_Foreground (Surface :     Surface_Type;
-                                    Color   : out Color_Type);
-   pragma Export (C, Get_Cursor_Foreground, "malef_getCursorForeground");
-
-   procedure Get_Cursor_Background (Surface :     Surface_Type;
-                                    Color   : out Color_Type);
-   pragma Export (C, Get_Cursor_Background, "malef_getCursorBackground");
-
-   procedure Set_Cursor_Foreground (Surface : Surface_Type;
-                                    Color   : Color_Type);
-   pragma Export (C, Set_Cursor_Foreground, "malef_setCursorForeground");
-
-   procedure Set_Cursor_Background (Surface : Surface_Type;
-                                    Color   : Color_Type);
-   pragma Export (C, Set_Cursor_Background, "malef_setCursorBackground");
+   function Set_Background (Surface  : Surface_Type;
+                            From_Row : Row_Type;
+                            To_Row   : Row_Type;
+                            From_Col : Col_Type;
+                            To_Col   : Col_Type;
+                            Color    : Color_Type)
+                            return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setSurfaceBackground";
 
 
-   procedure Get_Palette (Palette : out Palette_Type);
-   pragma Export (C, Get_Palette, "malef_getPalette");
+   function Get_Cursor_Foreground (Surface :     Surface_Type;
+                                   Color   : out Color_Type)
+                                   return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getCursorForeground";
 
-   procedure Get_Palette (Kind    :     Palette_Kind;
-                          Palette : out Palette_Type);
-   pragma Export (C, Get_Palette, "malef_getPaletteKind");
+   function Get_Cursor_Background (Surface :     Surface_Type;
+                                   Color   : out Color_Type)
+                                   return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getCursorBackground";
 
-   procedure Set_Palette (Palette : Palette_Type);
-   pragma Export (C, Set_Palette, "malef_setPalette");
+   function Set_Cursor_Foreground (Surface : Surface_Type;
+                                   Color   : Color_Type)
+                                   return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setCursorForeground";
 
-   procedure Set_Palette (Kind : Palette_Kind);
-   pragma Export (C, Set_Palette, "malef_setPaletteKind");
+   function Set_Cursor_Background (Surface : Surface_Type;
+                                   Color   : Color_Type)
+                                   return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setCursorBackground";
+
+
+   function Get_Palette (Palette : out Palette_Type)
+                         return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getPalette";
+
+   -- TODO: Check for ranges.
+   function Get_Palette (Kind    :     Palette_Kind;
+                         Palette : out Palette_Type)
+                         return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getPaletteKind";
+
+   function Set_Palette (Palette : Palette_Type)
+                         return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setPalette";
+
+   function Set_Palette (Kind : Palette_Kind)
+                         return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setPaletteKind";
 
 private
 
-   -- TODO: Check if it's truly worth to inline it.
+   -- The following functions are used to quickly converta Ada types to C
+   -- types and viceversa.
+
    function To_Ada (Item : Color_Type)
-                    return Malef.Color_Type;
-   pragma Pure_Function (To_Ada);
-   pragma Inline (To_Ada);
+                    return Malef.Color_Type
+      with Pure_Function,
+           Inline;
 
    function To_C (Item : Malef.Color_Type)
-                  return Color_Type;
-   pragma Pure_Function (To_C);
-   pragma Inline (To_C);
+                  return Color_Type
+      with Pure_Function,
+           Inline;
 
    function To_Ada (Item : Palette_Type)
-                    return Malef.Colors.Palette_Type;
-   pragma Pure_Function (To_Ada);
-   pragma Inline (To_Ada);
+                    return Malef.Colors.Palette_Type
+      with Pure_Function,
+           Inline;
 
    function To_C (Item : Malef.Colors.Palette_Type)
-                  return Palette_Type;
-   pragma Pure_Function (To_C);
-   pragma Inline (To_C);
+                  return Palette_Type
+      with Pure_Function,
+           Inline;
 
    function To_Ada (Item : Palette_Kind)
-                    return Malef.Colors.Palette_Kind;
-   pragma Pure_Function (To_Ada);
-   pragma Inline (To_Ada);
+                    return Malef.Colors.Palette_Kind
+      with Pure_Function,
+           Inline;
 
    function To_C (Item : Malef.Colors.Palette_Kind)
-                  return Palette_Kind;
-   pragma Pure_Function (To_C);
-   pragma Inline (To_C);
-
+                  return Palette_Kind
+      with Pure_Function,
+           Inline;
 
 end C_Malef.Colors;
 

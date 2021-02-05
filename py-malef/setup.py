@@ -52,12 +52,13 @@ def main ():
                          depends      = [os.path.join("src-base", f)
                                             for f in os.listdir("src-base")
                                             if f.endswith(".h")],
-                         extra_compile_args = ["-Wall", "-Werror"],
+                         extra_compile_args = ["-Wall", "-Werror",
+                                               "-std=c99", "-pedantic"],
                          #define_macros = [(name, value)]
                          #undef_macros = []
-                         library_dirs = ["../alire/build/lib-linux"],
+                         library_dirs = ["../alire/build/lib-linux.ansi"],
                          libraries    = ["Malef"],
-                         runtime_library_dirs = ["../alire/build/lib-linux"])
+                         runtime_library_dirs = ["../alire/build/lib-linux.ansi"])
     setup(name         = "malef",
           version      = _get_version(),
           description  = "MALEF", # TODO

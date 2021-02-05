@@ -94,21 +94,21 @@ package C_Malef is
                        No_Error,
                        Initialization_Error,
                        Bounds_Error,
-                       Null_Surface_Error);
+                       Null_Surface_Error)
+      with Convention => C;
    for Error_Kind use
       (Ada_Error            => -1,
        No_Error             =>  0,
        Initialization_Error =>  1,
        Bounds_Error         =>  2,
        Null_Surface_Error   =>  3);
-   pragma Convention (C, Error_Kind);
 
    --
    -- This type is used for the components of the Color_Type.
    --
-   type Color_Component_Type is mod 256;
+   type Color_Component_Type is mod 256
+      with Convention => C;
    for Color_Component_Type'Size use 8;
-   pragma Convention (C, Color_Component_Type);
 
    --
    -- This type is used to represent the indexes of the Color_Type.
@@ -125,17 +125,17 @@ package C_Malef is
    -- @value A
    -- Alpha (Opacity, 255 -> Completely opaque)
    --
-   type Color_Component_Kind is (R, G, B, A);
+   type Color_Component_Kind is (R, G, B, A)
+      with Convention => C;
    for Color_Component_Kind use (R => 0, G => 1, B => 2, A => 3);
-   pragma Convention (C, Color_Component_Kind);
 
    --
    -- This type is used to represent RGBA colours with a 4 byte unsigned array
    -- of 8 bit integers.
    --
    type Color_Type is array (Color_Component_Kind'Range)
-                      of     aliased Color_Component_Type;
-   pragma Convention (C, Color_Type);
+                      of     aliased Color_Component_Type
+      with Convention => C;
 
    --
    -- This type is used to describe different effects you can place on the
@@ -154,7 +154,8 @@ package C_Malef is
    --
    type Style_Type is (Bold,        Faint,          Italic,        Underline,
                        Slow_Blink,  Rapid_Blink,    Reverse_Video, Conceal,
-                       Crossed_Out, Doubly_Underline);
+                       Crossed_Out, Doubly_Underline)
+      with Convention => C;
    for Style_Type use (
       Bold             => 0,
       Faint            => 1,
@@ -166,14 +167,13 @@ package C_Malef is
       Conceal          => 7,
       Crossed_Out      => 8,
       Doubly_Underline => 9);
-   pragma Convention (C, Style_Type);
 
    --
    -- TODO: Change for an integer to use the `|' (or) operator. (More C-ish)
    -- This is just an array of styles telling whether they are on or off.
    --
-   type Style_Array is array (Style_Type'Range) of Boolean;
-   pragma Convention (C, Style_Array);
+   type Style_Array is array (Style_Type'Range) of Boolean
+      with Convention => C;
 
    --
    -- This is the format type, it's used to store a specific format and use it
@@ -193,24 +193,24 @@ package C_Malef is
          Foreground_Color : Color_Type;
          Background_Color : Color_Type;
          Styles           : Style_Array;
-      end record;
-   pragma Convention (C, Format_Type);
+      end record
+   with Convention => C;
 
    --
    -- This is the Row_Type, as you can see, 0 is forbidden, and an exception
    -- will be raised if the value given is ZERO. It's used to cound rows.
    --
    type Row_Type is new unsigned_short
-      range 1 .. unsigned_short(Malef.Row_Type'Last);
-   pragma Convention (C, Row_Type);
+      range 1 .. unsigned_short(Malef.Row_Type'Last)
+      with Convention => C;
 
    --
    -- Similarly to Row_Type, Col_Type counts columns and forbids the use of
    -- 0 as a valid integer.
    --
    type Col_Type is new unsigned_short
-      range 1 .. unsigned_short(Malef.Col_Type'Last);
-   pragma Convention (C, Col_Type);
+      range 1 .. unsigned_short(Malef.Col_Type'Last)
+      with Convention => C;
 
    --
    -- This is the cursor type.
@@ -219,27 +219,27 @@ package C_Malef is
       record
          Row : Row_Type;
          Col : Col_Type;
-      end record;
-   pragma Convention (C, Cursor_Type);
+      end record
+   with Convention => C;
 
    --
    -- These are each of the components of a character.
    --
-   type Char_Component_Type is mod 256;
+   type Char_Component_Type is mod 256
+      with Convention => C;
    for Char_Component_Type'Size use 8;
-   pragma Convention (C, Char_Component_Type);
 
    --
    -- This is the character type, it's used to store unicode values.
    --
-   type Char_Type is array (unsigned range 0 .. 3) of Char_Component_Type;
-   pragma Convention (C, Char_Type);
+   type Char_Type is array (unsigned range 0 .. 3) of Char_Component_Type
+      with Convention => C;
 
    --
    -- This is the string type, it's an array of characters.
    --
-   type Str_Type is array (unsigned range <>) of Char_Type;
-   pragma Convention (C, Str_Type);
+   type Str_Type is array (unsigned range <>) of Char_Type
+      with Convention => C;
 
 
 
@@ -256,14 +256,18 @@ package C_Malef is
    --
    -- This function initializes the library.
    --
-   function Initialize return Error_Kind;
-   pragma Export (C, Initialize, "malef_initialize");
+   function Initialize return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_initialize";
 
    --
    -- This function finalizes the library
    --
-   function Finalize return Error_Kind;
-   pragma Export (C, Finalize, "malef_finalize");
+   function Finalize return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_finalize";
 
    --
    -- This function checks if the library is initialized.
@@ -271,8 +275,10 @@ package C_Malef is
    -- @return
    -- Whether it has been intialized.
    --
-   function Is_Initialized return bool;
-   pragma Export (C, Is_Initialized, "malef_isInitialized");
+   function Is_Initialized return bool
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_isInitialized";
 
    --
    -- This functionn gets the height of the terminal.
@@ -281,8 +287,10 @@ package C_Malef is
    -- The height of the terminal.
    --
    function Get_Height (Height : out Row_Type)
-                        return Error_Kind;
-   pragma Export (C, Get_Height, "malef_getHeight");
+                        return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getHeight";
 
    --
    -- This function gets the width of the terminal.
@@ -291,15 +299,19 @@ package C_Malef is
    -- The width of the terminal.
    --
    function Get_Width (Width : out Col_Type)
-                       return Error_Kind;
-   pragma Export (C, Get_Width, "malef_getWidth");
+                       return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getWidth";
 
    --
    -- This function adds enough blank lines to move everything up and allow for
    -- a clean space.
    --
-   function New_Page return Error_Kind;
-   pragma Export (C, New_Page, "malef_newPage");
+   function New_Page return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_newPage";
 
    --
    -- This function changes the title of the terminal.
@@ -308,8 +320,10 @@ package C_Malef is
    -- The new title.
    --
    function Set_Title (Name : chars_ptr)
-                       return Error_Kind;
-   pragma Export (C, Set_Title, "malef_setTitle");
+                       return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_setTitle";
 
    --
    -- This function updates the terminal size.
@@ -318,12 +332,14 @@ package C_Malef is
    -- Whether the size has been changed.
    --
    function Update_Terminal_Size (Is_Updated : out bool)
-                                  return Error_Kind;
-   pragma Export (C, Update_Terminal_Size, "malef_updateTerminalSize");
+                                  return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_updateTerminalSize";
 
 
-   type Wrapped_Function is access function (Args: void_ptr) return void_ptr;
-   pragma Convention (C, Wrapped_Function);
+   type Wrapped_Function is access function (Args: void_ptr) return void_ptr
+      with Convention => C;
 
    --
    -- This function wraps other functions and protects them from any critical
@@ -342,8 +358,10 @@ package C_Malef is
    function Wrapper (Func    : Wrapped_Function;
                      Args    : void_ptr;
                      Ret_Val : out void_ptr)
-                     return Error_Kind;
-   pragma Export (C, Wrapper, "malef_wrapper");
+                     return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_wrapper";
 
 end C_Malef;
 
