@@ -33,6 +33,7 @@
 
 #include "py_malef-exceptions.h"
 #include "py_malef-surfaces.h"
+#include "py_malef-colors.h"
 
 /*
  * TODO: (READ BELLOW)
@@ -373,15 +374,25 @@ PyInit_malef ( void ) {
       return NULL ;
    }
 
+   if ( ! _pyMalef_initializeColors ( module ) ) {
+      Py_DECREF ( module ) ;
+
+      return NULL ;
+   }
+
    if ( ! _pyMalef_initializeSurfaces ( module ) ) {
+      _pyMalef_finalizeColors ( module ) ;
+
       Py_DECREF ( module ) ;
       return NULL ;
    }
 
    _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
-      Py_DECREF ( module ) ;
+      _pyMalef_finalizeColors ( module ) ;
       _pyMalef_finalizeSurfaces ( module ) ;
+
+      Py_DECREF ( module ) ;
       return NULL ;
    }
 

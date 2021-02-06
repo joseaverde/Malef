@@ -652,8 +652,8 @@ extern malef_error_t
 malef_setSurfaceBackground ( malef_surface_t in surface,
                              malef_row_t     in from_row,
                              malef_row_t     in to_row,
-                             malef_col_t     in from_row,
-                             malef_col_t     in to_row,
+                             malef_col_t     in from_col,
+                             malef_col_t     in to_col,
                              malef_color_t   in color ) ;
 
 /*

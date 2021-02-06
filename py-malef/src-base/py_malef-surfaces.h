@@ -80,7 +80,7 @@ typedef struct {
  * The Surface we want to deallocate.
  */
 static void
-_pyMalef_surfaceStruct_dealloc ( _pyMalef_surfaceStruct* self ) {
+pyMalef_Surface___dealloc__ ( _pyMalef_surfaceStruct* self ) {
 
    // We reduce the reference count for Ada's controlled type using the C
    // binding. If there are more references, it won't be completely freed.
@@ -94,9 +94,9 @@ _pyMalef_surfaceStruct_dealloc ( _pyMalef_surfaceStruct* self ) {
  * This is the function that is called when a new Surface is created.
  */
 static PyObject*
-_pyMalef_surfaceStruct_new ( PyTypeObject *type,
-                             PyObject     *args,
-                             PyObject     *kwargs ) {
+pyMalef_Surface___new__ ( PyTypeObject *type,
+                           PyObject     *args,
+                           PyObject     *kwargs ) {
 
    // We deckare a new surfaceStruct and allocate it.
    _pyMalef_surfaceStruct *self ;
@@ -126,9 +126,9 @@ _pyMalef_surfaceStruct_new ( PyTypeObject *type,
  * This exception is raised whenever the numbeer is 0 or negative.
  */
 static int
-_pyMalef_surfaceStruct_init ( _pyMalef_surfaceStruct *self,
-                              PyObject               *args,
-                              PyObject               *kwargs ) {
+pyMalef_Surface___init__ ( _pyMalef_surfaceStruct *self,
+                            PyObject               *args,
+                            PyObject               *kwargs ) {
 
    // These are the parameters names.
    static char *keyword_list[] = { "height", "width", NULL } ;
@@ -159,7 +159,7 @@ _pyMalef_surfaceStruct_init ( _pyMalef_surfaceStruct *self,
  * only a template and maybe something will be added here in the future.
  */
 static void
-_pyMalef_surfaceStruct_finalize ( PyObject *self ) {
+pyMalef_Surface___finalize__ ( PyObject *self ) {
    PyObject *error_type, *error_value, *error_traceback;
 
    // Save the current exception, if any.
@@ -175,22 +175,22 @@ _pyMalef_surfaceStruct_finalize ( PyObject *self ) {
  *####################### P U B L I C   M E T H O D S #######################*
 \*###########################################################################*/
 
-PyDoc_STRVAR (pyMalef_surfaceStruct_debugPut_doc,
+PyDoc_STRVAR (pyMalef_Surface_debugPut_doc,
 "This function is currently used for development purposes, it only prints the"\
 " surface onto the screen. A better function will be added in the future.") ;
 static PyObject *
-pyMalef_surfaceStruct_debugPut ( _pyMalef_surfaceStruct *self,
-                                  PyObject *Py_UNUSED(ignored) ) {
+pyMalef_Surface_debugPut ( _pyMalef_surfaceStruct *self,
+                           PyObject *Py_UNUSED(ignored) ) {
 
    // We just print it and return None.
    _malef_debugPutSurface ( self->surface ) ;
    Py_RETURN_NONE ;
 }
-#define pyMalef_surfaceStruct_debugPut_method {                               \
+#define pyMalef_Surface_debugPut_method {                                     \
    "debugPut",                                                                \
-   (PyCFunction)pyMalef_surfaceStruct_debugPut,                               \
+   (PyCFunction)pyMalef_Surface_debugPut,                                     \
    METH_NOARGS,                                                               \
-   pyMalef_surfaceStruct_debugPut_doc                                         \
+   pyMalef_Surface_debugPut_doc                                               \
 }
 
 
@@ -201,7 +201,7 @@ pyMalef_surfaceStruct_debugPut ( _pyMalef_surfaceStruct *self,
 
 static PyMethodDef
 pyMalef_SurfaceMethods[] = {
-   pyMalef_surfaceStruct_debugPut_method,
+   pyMalef_Surface_debugPut_method,
    { NULL, NULL, 0, NULL }
 } ;
 
@@ -213,7 +213,7 @@ pyMalef_Surface = {
    .tp_name      = "malef.Surface",
    .tp_basicsize = sizeof(_pyMalef_surfaceStruct),
 // .tp_itemsize
-   .tp_dealloc   = (destructor)_pyMalef_surfaceStruct_dealloc,
+   .tp_dealloc   = (destructor)pyMalef_Surface___dealloc__,
    .tp_hash      = PyObject_HashNotImplemented,
    .tp_call      = NULL,
 // .tp_str
@@ -232,11 +232,11 @@ pyMalef_Surface = {
    .tp_dict      = NULL,
 // .tp_descr_get
 // .tp_descr_set
-   .tp_init      = (initproc)_pyMalef_surfaceStruct_init,
+   .tp_init      = (initproc)pyMalef_Surface___init__,
 /* .tp_alloc
  */
-   .tp_new       = (newfunc)_pyMalef_surfaceStruct_new,
-   .tp_finalize  = _pyMalef_surfaceStruct_finalize,
+   .tp_new       = (newfunc)pyMalef_Surface___new__,
+   .tp_finalize  = pyMalef_Surface___finalize__
 } ;
 
 
