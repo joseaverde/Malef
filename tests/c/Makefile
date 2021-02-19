@@ -29,7 +29,7 @@
 
 INCLUDE=-I$(shell readlink -f ../../c-malef/include)
 LIBRARY=$(shell readlink -f ../../alire/build/lib-)
-FLAGS=-fprofile-arcs -ftest-coverage $(INCLUDE)
+FLAGS= $(INCLUDE)
 
 ifeq ($(OS),Windows_NT)
 	LIBRARY:=$(LIBRARY)windows.cmd
@@ -54,7 +54,7 @@ obj:
 
 
 ../bin/tests-c: obj/main.o obj/tests.o obj/test_malef.o
-	gcc obj/*.o -o ../bin/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lMalef -lgcov --coverage
+	gcc obj/*.o -o ../bin/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lMalef
 
 obj/main.o: obj src/main.c
 	gcc -c src/main.c -o obj/main.o $(FLAGS)

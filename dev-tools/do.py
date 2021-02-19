@@ -221,7 +221,7 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
 
 commands = {
         "linux": "gprbuild -p -Pmalef",
-        "windows": "wine gprbuild -p -Pmalef "
+        "windows": "gprbuild --target=x86_64-w64-mingw32 "
                    "-XMALEF_OPERATING_SYSTEM=windows",
         "tests-linux": ["cd tests && ./run-tests.sh && cd .."],
         "tests-windows": ["wine gprbuild -p -Ptests/ada/tests.gpr "

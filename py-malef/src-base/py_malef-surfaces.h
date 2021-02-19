@@ -95,8 +95,8 @@ pyMalef_Surface___dealloc__ ( _pyMalef_surfaceStruct* self ) {
  */
 static PyObject*
 pyMalef_Surface___new__ ( PyTypeObject *type,
-                           PyObject     *args,
-                           PyObject     *kwargs ) {
+                          PyObject     *args,
+                          PyObject     *kwargs ) {
 
    // We deckare a new surfaceStruct and allocate it.
    _pyMalef_surfaceStruct *self ;
@@ -127,8 +127,8 @@ pyMalef_Surface___new__ ( PyTypeObject *type,
  */
 static int
 pyMalef_Surface___init__ ( _pyMalef_surfaceStruct *self,
-                            PyObject               *args,
-                            PyObject               *kwargs ) {
+                           PyObject               *args,
+                           PyObject               *kwargs ) {
 
    // These are the parameters names.
    static char *keyword_list[] = { "height", "width", NULL } ;
@@ -249,7 +249,7 @@ pyMalef_Surface = {
  * This function finalizes and clears the Surface type declared in this header.
  * 
  * @param module
- * The module from we which we want to free the Surface type.
+ * The module from which we want to free the Surface type.
  */
 static inline void
 _pyMalef_finalizeSurfaces ( PyObject *module ) {
@@ -263,6 +263,9 @@ _pyMalef_finalizeSurfaces ( PyObject *module ) {
  *
  * @param module
  * The module.
+ *
+ * @return
+ * Whether it has succeeded.
  */
 static inline bool
 _pyMalef_initializeSurfaces ( PyObject *module ) {

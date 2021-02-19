@@ -28,11 +28,62 @@
 
 --
 -- @summary
---
+-- These are the subsystems. Subsystems are runned inside systems such as
+-- GNU/Linux, Windows or even a WebBrowser. These control the behaviour of how
+-- everything is presented onto the screen.
 --
 -- @description
+-- This package is created so Malef can be runned everywhere without needing
+-- to include IO functions directly. I will also try to make this package
+-- available to be loaded dynamically, that in systems like Windows that use
+-- functions from the Windows API for CMD control, will differenciate between
+-- running in an old CMD or not. There will be also an experimental support to
+-- use ncurses itself for systems that can't use ANSI escape sequences, so in
+-- Linux it will also be able to be dynamically loaded.
+-- There are systems like GNU/Linux that can't use certain subsystems like the
+-- Windows CMD.
 --
-package Malef.Subsystems is
+private package Malef.Subsystems is
+
+   --
+   -- This function returns the string needed to put a certain format onto the
+   -- screen.
+   --
+   -- @param Format
+   -- The format to convert into a string.
+   --
+   -- @return
+   -- It returns the String you need to print onto the screen to put such
+   -- Format. It returns "" if to put the format a string can't be put, but a
+   -- function must be called.
+   --
+   function Get_Format (Format : Format_Type)
+                        return String;
+
+   --
+   -- This function returns the number of columns and rows the terminal
+   -- currently has got. Keep in mind most of the terminals/consoles out there
+   -- start with a fixed size of 80x24 (80 columns, 24 rows).
+   --
+   -- @param Rows
+   -- The retrieved number of rows the terminal has got right now.
+   --
+   -- @param Cols
+   -- The retrieved number of columns the terminal has got right now.
+   --
+   procedure Get_Terminal_Size (Rows : out Row_Type;
+                                Cols : out Col_Type);
+
+   --
+   -- This procedure the terminal title, i.e. the name that appears in the top
+   -- bar.
+   --
+   -- @param Name
+   -- The new terminal's name
+   --
+   procedure Set_Title (Name : String);
+
+
 
 end Malef.Subsystems;
 

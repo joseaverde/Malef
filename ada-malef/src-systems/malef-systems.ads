@@ -33,9 +33,12 @@
 -- @description
 -- When talking about systems in this library I'm not talking about operaing
 -- systems, but systems itself. For example GNU/Linux, Windows are operating
--- systems but are also considered systems; Moreover the Windows CMD and the
--- Web browser are also considered systems. More systems will be added in the
--- future.
+-- systems but are also considered systems. However there are also the so
+-- called subsystems, i.e. where the programme will be runned inside the
+-- systems. For example, using ANSI escape sequences, the windows CMD and
+-- maybe using the ncurses library in a future. Moreover maybe in a future
+-- even the web browser will be considered a system. This library depends
+-- on the subsystems library.
 -- Therefore the specification must be the same for every system out there
 -- (even if the implementation is different).
 -- This package is private so the user can't use it before initialization
@@ -96,9 +99,14 @@ private package Malef.Systems is
    procedure Restore_Terminal;
 
 
+   -- TODO: This function will be used to load the subsystems.
+   -- procedure Subsystem_Loader;
+
+
    --====------------------------------====--
    --====-- TERMINAL/CONSOLE CONTROL --====--
    --====------------------------------====--
+   -- DESPRECIATED: This will be moved to the subsystems library.
 
    --
    -- This function returns the string needed to put a certain format onto the

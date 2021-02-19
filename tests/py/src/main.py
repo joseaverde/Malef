@@ -32,10 +32,11 @@ import os
 import sys
 
 build = sys.argv[1]
-files = [os.path.join(build, file) for file in os.listdir(build)
-                                   if  file.startswith("lib.")
-                                   and sys.platform in file]
-sys.path.append(files[0])
+sys.path.append(os.path.join(build, "lib.%s-%s-%d.%d" %
+                                    (sys.platform,
+                                     os.uname().machine,
+                                     sys.version_info.major,
+                                     sys.version_info.minor)))
 
 import malef
 import test_malef

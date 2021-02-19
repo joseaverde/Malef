@@ -5,7 +5,14 @@ if [ "$1" = "--compile" ]; then
    exit 0
 fi
 
-cd build/lib*
-export LD_LIBRARY_PATH=/home/jose/Development/Malef/alire/build/lib-linux.ansi && \
+cd build/$(python3 -c \
+'import os, sys
+print("lib.%s-%s-%d.%d" % (sys.platform,
+                           os.uname().machine,
+                           sys.version_info.major,
+                           sys.version_info.minor))
+') || exit 1
+
+export LD_LIBRARY_PATH=$(readlink -f ../../../alire/build/lib-linux.ansi) && \
    echo $LD_LIBRARY_PATH && python3
 
