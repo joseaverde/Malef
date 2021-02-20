@@ -12,6 +12,33 @@ type called _Surfaces_.
 The Malef library will have bindings for other programming languages like C or
 Python3 in the future, maybe before the first version release.
 
+## Compilation
+
+| System  | Status |
+|:-------:|:------:|
+| Linux   | ![Linux](https://img.shields.io/badge/build-passing-success)     |
+| Windows | ![Windows](https://img.shields.io/badge/build-failing-critical)  |
+| Unix    | ![Unix](https://img.shields.io/badge/build-not_tested-important) |
+
+| Subsystem | Status |
+|:---------:|:------:|
+| ANSI      | ![ANSI](https://img.shields.io/badge/build-passing-success) |
+| CMD       | ![CMD](https://img.shields.io/badge/build-failing-critical) |
+
+
+## Tests
+
+| System  | Status |
+|:-------:|:------:|
+| Linux   | ![Linux](https://img.shields.io/badge/tests-passing-success)    |
+| Windows | ![Windows](https://img.shields.io/badge/tests-failing-critical) |
+
+| Language | Status |
+|:--------:|:------:|
+| Ada      | ![Ada](https://img.shields.io/badge/tests-passing-success)     |
+| C        | ![C](https://img.shields.io/badge/tests-passing-success)       |
+| Python3  | ![Python3](https://img.shields.io/badge/tests-passing-success) |
+
 ## Versions
 This are the milestones that I want to achieve for each of the versions. Every
 version will be able to run in future versions perfectly. Every version will
@@ -82,4 +109,4 @@ Better instructions will be given in the future.
 
 
 ## Licenses
-This game is made available under the [GPLv3](LICENSE) license.
+This library is made available under the [GPLv3](LICENSE) license.

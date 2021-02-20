@@ -135,6 +135,7 @@ package body Malef.Systems.Utils is
       for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Last loop
          if Loaded_Subsystems_Handles (Subsys) /= Null_Handle then
             Unload_Library (Loaded_Subsystems_Handles (Subsys));
+            Loaded_Subsystems (Subsys) := null;
          end if;
       end loop;
       Loaded_Subsystems_Handles (Choose) := Null_Handle;

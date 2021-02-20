@@ -36,7 +36,7 @@
 -- common functions used by all the Malef.System implementations depening on
 -- the system.
 --
-private package Malef.Systems.Utils is
+package Malef.Systems.Utils is
 
    --
    -- This function returns the directory where a programme is located

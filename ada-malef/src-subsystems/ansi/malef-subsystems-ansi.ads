@@ -28,9 +28,13 @@
 
 --
 -- @summary
---
+-- This package contains the functions for ANSI subsystem.
 --
 -- @description
+-- This package contains a set of functions that will be dynamically loaded
+-- using dynamic dispatching when the library is loaded. This functions will be
+-- used by the System part of the library in order to use ANSI Escape Sequences
+-- as the main way to control the terminal.
 --
 private package Malef.Subsystems.Ansi is
 
@@ -40,15 +44,6 @@ private package Malef.Subsystems.Ansi is
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)
                         return String;
-
-   overriding
-   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
-                                Rows   : out Row_Type;
-                                Cols   : out Col_Type);
-
-   overriding
-   procedure Set_Title (Subsys : not null access Subsystem;
-                        Name   : String);
 
 end Malef.Subsystems.Ansi;
 

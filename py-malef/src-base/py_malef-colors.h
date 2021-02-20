@@ -226,7 +226,7 @@ pyMalef_Color = {
 static inline void
 _pyMalef_finalizeColors ( PyObject *module ) {
 
-   Py_DECREF ( &pyMalef_Surface ) ;
+   Py_DECREF ( &pyMalef_Color ) ;
 }
 
 
@@ -248,8 +248,8 @@ _pyMalef_initializeColors ( PyObject *module ) {
 
    Py_INCREF ( &pyMalef_Color ) ;
    if ( PyModule_AddObject ( module, "Color",
-                             (PyObject*)&(pyMalef_Color ) ) < 0 ) {
-      Py_DECREF ( &pyMalef_Surface ) ;
+                             (PyObject*)&(pyMalef_Color) ) < 0 ) {
+      Py_DECREF ( &pyMalef_Color ) ;
       return false ;
    }
 

@@ -41,6 +41,8 @@ project Malef is
                "malef-surfaces.ads",
                "malef-subsystems.ads",
                "malef-systems.ads",
+               "malef-systems-utils.ads",
+               "malef-systems-dynamic_library_loader.ads",
                "malef-wrapper.ads");
 
    C_API := ("c_malef.ads",
@@ -54,8 +56,7 @@ project Malef is
    Src_Dirs := ("ada-malef/src-base",
                 "ada-malef/src-systems",
                 "ada-malef/src-systems/" & Shared.System,
-                "ada-malef/src-subsystems",
-                "ada-malef/src-systems/shared/" & Shared.Subsystem);
+                "ada-malef/src-subsystems");
 
    case Shared.C_API_Compilation is
       when "enabled" =>

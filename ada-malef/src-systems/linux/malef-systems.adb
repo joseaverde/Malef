@@ -67,12 +67,12 @@ package body Malef.Systems is
       -- We seach the paths for `stty' and `tput'.
       if Found_Stty_Path = "" then
          raise Malef.Exceptions.Initialization_Error with
-         "`stty' not found in PATH, couldn't initialize the terminal!";
+         "`stty' not found in PATH, couldn't initialise the terminal!";
       end if;
 
       if Found_Tput_Path = "" then
          raise Malef.Exceptions.Initialization_Error with
-         "`tput' not found in PATH, couldn't initialize the terminal!";
+         "`tput' not found in PATH, couldn't initialise the terminal!";
       end if;
 
       if Stty_Path /= null then
@@ -100,8 +100,27 @@ package body Malef.Systems is
       -- TODO: Get the best colour for each distro.
       Malef.Colors.Set_Palette(Malef.Colors.xterm);
 
-      -- We prepare the libraries.
+      -- We prepare the libraries and choose the best library for the default
+      -- one.
       Malef.Systems.Utils.Load_Libraries;
+      Load_Libraries_Scope:
+         declare
+            use type Malef.Subsystems.Subsystem_Access;
+            Check_Order : constant array (Positive range <>) of Subsystem_Kind
+                        := (ANSI, Ncurses);
+         begin
+
+            for Subsys of Check_Order loop
+               if Loaded_Subsystems (Subsys) /= null then
+                  Loaded_Subsystems(Choose) := Loaded_Subsystems(Subsys);
+                  goto Done_Load_Library_Scope;
+               end if;
+            end loop;
+
+            raise Malef.Exceptions.Initialization_Error with
+            "Couldn't initialise subsystems!";
+            <<Done_Load_Library_Scope>>
+         end Load_Libraries_Scope;
 
       -- We restore the `Has_Been_Initialized' variable.
       Has_Been_Initialized := False;
@@ -182,7 +201,7 @@ package body Malef.Systems is
          end if;
 
          raise Malef.Exceptions.Initialization_Error with
-         "Couldn't initialize the terminal with `stty' check it's on the " &
+         "Couldn't initialise the terminal with `stty' check it's on the " &
          "PATH!";
       end if;
 
@@ -295,7 +314,12 @@ package body Malef.Systems is
    -- IDEA: Make it inline, call the best function that can return the Format
    --       Use Dim/Bright styles if needed.
    function Get_Format (Format : Format_Type)
-                        return String is separate;
+                        return String is
+   begin
+
+      return Loaded_Subsystems(Current_Subsystem).Get_Format(Format);
+
+   end Get_Format;
 
 
    procedure Get_Terminal_Size (Rows : out Row_Type;

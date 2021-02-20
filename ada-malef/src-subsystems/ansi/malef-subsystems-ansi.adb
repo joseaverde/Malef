@@ -28,6 +28,7 @@
 
 with Ada.Finalization;
 with Malef.Systems;
+with Malef.Systems.Utils;
 
 
 package body Malef.Subsystems.Ansi is
@@ -43,34 +44,23 @@ package body Malef.Subsystems.Ansi is
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)
                         return String is
+      function To_String (C : Color_Component_Type) return String
+         renames Malef.Systems.Utils.To_String;
    begin
 
-      return "ANSI";
+      -- TODO: This function is still unfinished, it only returns colours.
+      --       Also optimize it.
+
+      return ASCII.ESC & '[' &
+               "38;2;" & To_String(Format.Foreground_Color(R)) & ';' &
+                         To_String(Format.Foreground_Color(G)) & ';' &
+                         To_String(Format.Foreground_Color(B)) & ';' &
+               "48;2;" & To_String(Format.Background_Color(R)) & ';' &
+                         To_String(Format.Background_Color(G)) & ';' &
+                         To_String(Format.Background_Color(B)) &
+               'm';
 
    end Get_Format;
-
-
-   overriding
-   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
-                                Rows   : out Row_Type;
-                                Cols   : out Col_Type) is
-   begin
-
-      Rows := 10;
-      Cols := 10;
-
-   end Get_Terminal_Size;
-
-
-   overriding
-   procedure Set_Title (Subsys : not null access Subsystem;
-                        Name   : String) is
-   begin
-
-      null;
-
-   end Set_Title;
-
 
 
    overriding

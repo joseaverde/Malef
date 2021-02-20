@@ -64,31 +64,6 @@ private package Malef.Subsystems is
                         Format : Format_Type)
                         return String is abstract;
 
-   --
-   -- This function returns the number of columns and rows the terminal
-   -- currently has got. Keep in mind most of the terminals/consoles out there
-   -- start with a fixed size of 80x24 (80 columns, 24 rows).
-   --
-   -- @param Rows
-   -- The retrieved number of rows the terminal has got right now.
-   --
-   -- @param Cols
-   -- The retrieved number of columns the terminal has got right now.
-   --
-   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
-                                Rows   : out Row_Type;
-                                Cols   : out Col_Type) is abstract;
-
-   --
-   -- This procedure the terminal title, i.e. the name that appears in the top
-   -- bar.
-   --
-   -- @param Name
-   -- The new terminal's name
-   --
-   procedure Set_Title (Subsys : not null access Subsystem;
-                        Name   : String) is abstract;
-
 end Malef.Subsystems;
 
 ---=======================-------------------------=========================---
