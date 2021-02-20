@@ -56,7 +56,8 @@ def main ():
                                                "-std=c99", "-pedantic"],
                          #define_macros = [(name, value)]
                          #undef_macros = []
-                         library_dirs = ["../alire/build/lib-linux.ansi"],
+                         # TODO: Change this so windows users can compile it too.
+                         library_dirs = ["../alire/build/lib-linux"],
                          libraries    = ["Malef"],
                          runtime_library_dirs = ["../alire/build/lib-linux.ansi"])
     setup(name         = "malef",

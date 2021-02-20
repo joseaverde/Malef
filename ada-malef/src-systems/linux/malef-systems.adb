@@ -36,7 +36,7 @@ with Interfaces.C;
 with Malef.Colors;
 with Malef.Events;
 with Malef.Exceptions;
-with Malef.System_Utils;
+with Malef.Systems.Utils;
 
 package body Malef.Systems is
 
@@ -52,12 +52,12 @@ package body Malef.Systems is
    --====-----------------------------------====--
 
    procedure Initialize is
-      Found_Stty_Path : constant String := Malef.System_Utils.Get_Path(
+      Found_Stty_Path : constant String := Malef.Systems.Utils.Get_Path(
                            Programme_Name                 => "stty",
                            PATH_Environment_Variable_Name => "PATH",
                            Default_PATHS                  => "/usr/bin:" &
                                                              "/bin");
-      Found_Tput_Path : constant String := Malef.System_Utils.Get_Path(
+      Found_Tput_Path : constant String := Malef.Systems.Utils.Get_Path(
                            Programme_Name                 => "tput",
                            PATH_Environment_Variable_Name => "PATH",
                            Default_PATHS                  => "/usr/bin:"&
@@ -100,6 +100,9 @@ package body Malef.Systems is
       -- TODO: Get the best colour for each distro.
       Malef.Colors.Set_Palette(Malef.Colors.xterm);
 
+      -- We prepare the libraries.
+      Malef.Systems.Utils.Load_Libraries;
+
       -- We restore the `Has_Been_Initialized' variable.
       Has_Been_Initialized := False;
 
@@ -119,6 +122,9 @@ package body Malef.Systems is
       -- We finally change the components from the library back to a default
       -- state.
       Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
+
+      -- We unload the libraries.
+      Malef.Systems.Utils.Unload_Libraries;
 
    end Finalize;
 

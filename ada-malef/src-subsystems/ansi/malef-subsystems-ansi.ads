@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- M A L E F - S Y S T E M S - G E T _ F O R M A T . S E P A R A T E . A D B --
+--             M A L E F - S U B S Y S T E M S - A N S I . A D S             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,28 +26,31 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
--- with Malef.System_Utils.Ansi;
-separate (Malef.Systems)
+--
+-- @summary
+--
+--
+-- @description
+--
+private package Malef.Subsystems.Ansi is
 
-function Get_Format (Format : Format_Type) return String is
-   function To_String (C : Color_Component_Type) return String
-       renames Malef.Systems.Utils.To_String;
-begin
+   type Subsystem is new Malef.Subsystems.Subsystem with null record;
 
-   -- TODO: This function only returns colours, optimize it.
+   overriding
+   function Get_Format (Subsys : not null access Subsystem;
+                        Format : Format_Type)
+                        return String;
 
-   return ASCII.ESC & '[' &
-            "38;2;" & To_String(Format.Foreground_Color(R)) & ';' &
-                      To_String(Format.Foreground_Color(G)) & ';' &
-                      To_String(Format.Foreground_Color(B)) & ';' &
-            "48;2;" & To_String(Format.Background_Color(R)) & ';' &
-                      To_String(Format.Background_Color(G)) & ';' &
-                      To_String(Format.Background_Color(B)) &
-            'm';
+   overriding
+   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
+                                Rows   : out Row_Type;
+                                Cols   : out Col_Type);
 
-end Get_Format;
+   overriding
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Name   : String);
 
-
+end Malef.Subsystems.Ansi;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

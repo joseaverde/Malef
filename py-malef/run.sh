@@ -13,6 +13,6 @@ print("lib.%s-%s-%d.%d" % (sys.platform,
                            sys.version_info.minor))
 ') || exit 1
 
-export LD_LIBRARY_PATH=$(readlink -f ../../../alire/build/lib-linux.ansi) && \
+export LD_LIBRARY_PATH=$(readlink -f ../../../alire/build/lib-linux) && \
    echo $LD_LIBRARY_PATH && python3
 

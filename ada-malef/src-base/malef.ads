@@ -303,7 +303,38 @@ package Malef is
    type Shared_Surface_Access is private;
 
 
+   --====----------------------------====--
+   --====-- INITIALIZATION OPTIONS --====--
+   --====----------------------------====--
+   --
+   -- These types are used to specify which way Malef should be initialised.
+   -- 
 
+   --
+   -- These are the different subsystems there are.
+   --
+   -- @value Choose
+   -- When the Choose flag is set, then the best one will be chosen. By default
+   -- the best option is always Ansi because it's this library strong point.
+   --
+   -- @value ANSI
+   -- This flag should be closs-platform (except for older Windows versions).
+   -- It uses ANSI Escape Sequences to control the terminal. Keep in mind it
+   -- needs Standard_Output to be working.
+   --
+   -- @value CMD
+   -- This flag is used for older windows terminals. It may be a little slow
+   -- because Windows API functions must be called to control the terminal, and
+   -- thus increasing the number of calls to print onto the screen. And thus
+   -- decreasing performance.
+   --
+   -- @value Ncurses
+   -- This flag is currently experimental, it's a kind of wrap up for Ncurses
+   -- functions for Bench Marking and also to allow other terminals that can
+   -- use Ncurses but don't allow any other subsystem to be able to run Malef
+   -- programmes.
+   --
+   type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses);
 
    ---============-----------------------============---
   ---============-- O P E R A T I O N S --============---

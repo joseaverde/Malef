@@ -26,6 +26,9 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Subsystems;
+with System;
+
 --
 -- @summary
 -- These are system specific information.
@@ -47,7 +50,7 @@
 --
 private package Malef.Systems is
 
-   pragma Elaborate_Body (Malef.Systems);
+   type Library_Handle is new System.Address;
 
    --====-----------------------------------====--
    --====-- INITIALIZATION / FINALIZATION --====--
@@ -98,11 +101,6 @@ private package Malef.Systems is
    --
    procedure Restore_Terminal;
 
-
-   -- TODO: This function will be used to load the subsystems.
-   -- procedure Subsystem_Loader;
-
-
    --====------------------------------====--
    --====-- TERMINAL/CONSOLE CONTROL --====--
    --====------------------------------====--
@@ -146,6 +144,14 @@ private package Malef.Systems is
    --
    procedure Set_Title (Name : String);
 
+             
+   Loaded_Subsystems_Handles : array (Subsystem_Kind'Range)
+                               of Library_Handle
+                             :=(others => Library_Handle(System.Null_Address));
+   Loaded_Subsystems : array (Subsystem_Kind'Range)
+                       of Malef.Subsystems.Subsystem_Access
+                     := (others => null);
+   Current_Subsystem : Subsystem_Kind := Choose;
 
 end Malef.Systems;
 

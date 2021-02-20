@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---          M A L E F - S U B S Y S T E M S - F O R M A T S . A D S          --
+--                  M A L E F _ S U B S Y S T E M S . G P R                  --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                   G P R                                   --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,15 +26,30 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
---
---
--- @description
---
-package Malef.Subsystems.Formats is
+with "shared.gpr";
+with "malef.gpr";
 
-end Malef.Subsystems.Formats;
+library project Malef_Subsystems is
+
+   for Library_Name use "Malef_" & Shared.Subsystem;
+   for Library_Kind use "relocatable";
+   for Library_Dir  use Shared.Prefix & "lib-" & Shared.System;
+
+   for Library_Interface use ("Malef.Subsystems." & Shared.Subsystem);
+   for Library_Standalone use "standard";
+
+   for Languages    use ("Ada");
+   for Source_Dirs  use ("ada-malef/src-subsystems/" & Shared.Subsystem);
+   for Object_Dir   use Shared.Prefix & "obj-" & Shared.System & "." &
+                                        Shared.Subsystem;
+
+   for Create_Missing_Dirs use "True";
+
+   --package Compiler renames Shared.Compiler;
+   --package Binder   renames Shared.Binder;
+   --package Naming   renames Shared.Naming;
+
+end Malef_Subsystems;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

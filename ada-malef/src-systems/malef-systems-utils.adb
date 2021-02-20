@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                M A L E F - S Y S T E M _ U T I L S . A D B                --
+--               M A L E F - S Y S T E M S - U T I L S . A D B               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,11 +26,16 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Characters.Handling;
+ use Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.IO_Exceptions;
+with Malef.Exceptions;
+with Malef.Systems.Dynamic_Library_Loader;
+ use Malef.Systems.Dynamic_Library_Loader;
 
-package body Malef.System_utils is
+package body Malef.Systems.Utils is
 
    function Get_Path (Programme_Name                 : String;
                       PATH_Environment_Variable_Name : String := "PATH";
@@ -93,7 +98,52 @@ package body Malef.System_utils is
    end To_String;
 
 
-end Malef.System_utils;
+
+   procedure Load_Libraries is
+      Handle      : Library_Handle;
+      Null_Handle : constant Library_Handle
+                  := Library_Handle (System.Null_Address);
+   begin
+
+      -- We loop through all the libraries and try to load them, if they can be
+      -- found by default by the linker. Otherwise we let them be just null and
+      -- we do nothing.
+      Search_Libraries:
+         for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Last loop
+            Try_Load_Subsystem:
+               declare
+               begin
+                  Handle := Load_Library (Get_Library_Prefix & "Malef_" &
+                                          To_Lower(Subsys'Image) & "." &
+                                          Get_Library_Suffix);
+               exception
+                  when Malef.Exceptions.Initialization_Error =>
+                     Handle := Null_Handle;
+               end Try_Load_Subsystem;
+
+            Loaded_Subsystems_Handles (Subsys) := Handle;
+         end loop Search_Libraries;
+
+   end Load_Libraries;
+
+   --
+   procedure Unload_Libraries is
+      Null_Handle : constant Library_Handle
+                  := Library_Handle (System.Null_Address);
+   begin
+
+      for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Last loop
+         if Loaded_Subsystems_Handles (Subsys) /= Null_Handle then
+            Unload_Library (Loaded_Subsystems_Handles (Subsys));
+         end if;
+      end loop;
+      Loaded_Subsystems_Handles (Choose) := Null_Handle;
+
+   end Unload_Libraries;
+
+
+
+end Malef.Systems.Utils;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

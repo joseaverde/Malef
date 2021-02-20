@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                M A L E F - S Y S T E M _ U T I L S . A D S                --
+--               M A L E F - S Y S T E M S - U T I L S . A D S               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -36,7 +36,7 @@
 -- common functions used by all the Malef.System implementations depening on
 -- the system.
 --
-private package Malef.System_utils is
+private package Malef.Systems.Utils is
 
    --
    -- This function returns the directory where a programme is located
@@ -121,7 +121,19 @@ private package Malef.System_utils is
    pragma Pure_Function (To_String);
    pragma Inline (To_String);
 
-end Malef.System_utils;
+
+   --
+   -- This function is used to load all the libraries, it nullifies the
+   -- unavailable ones.
+   --
+   procedure Load_Libraries;
+
+   --
+   -- This function is used to unload all the libraries and nullifies them.
+   --
+   procedure Unload_Libraries;
+
+end Malef.Systems.Utils;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

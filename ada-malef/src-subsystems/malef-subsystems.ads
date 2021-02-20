@@ -45,6 +45,9 @@
 --
 private package Malef.Subsystems is
 
+   type Subsystem is abstract tagged null record;
+   type Subsystem_Access is access all Subsystem'Class;
+
    --
    -- This function returns the string needed to put a certain format onto the
    -- screen.
@@ -57,8 +60,9 @@ private package Malef.Subsystems is
    -- Format. It returns "" if to put the format a string can't be put, but a
    -- function must be called.
    --
-   function Get_Format (Format : Format_Type)
-                        return String;
+   function Get_Format (Subsys : not null access Subsystem;
+                        Format : Format_Type)
+                        return String is abstract;
 
    --
    -- This function returns the number of columns and rows the terminal
@@ -71,8 +75,9 @@ private package Malef.Subsystems is
    -- @param Cols
    -- The retrieved number of columns the terminal has got right now.
    --
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type);
+   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
+                                Rows   : out Row_Type;
+                                Cols   : out Col_Type) is abstract;
 
    --
    -- This procedure the terminal title, i.e. the name that appears in the top
@@ -81,9 +86,8 @@ private package Malef.Subsystems is
    -- @param Name
    -- The new terminal's name
    --
-   procedure Set_Title (Name : String);
-
-
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Name   : String) is abstract;
 
 end Malef.Subsystems;
 

@@ -220,7 +220,8 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
              os.listdir("c-malef/src-base")))
 
 commands = {
-        "linux": "gprbuild -p -Pmalef",
+        "linux": ["gprbuild -p -Pmalef",
+                  "gprbuild -p -Pmalef_subsystems"],
         "windows": "gprbuild --target=x86_64-w64-mingw32 "
                    "-XMALEF_OPERATING_SYSTEM=windows",
         "tests-linux": ["cd tests && ./run-tests.sh && cd .."],

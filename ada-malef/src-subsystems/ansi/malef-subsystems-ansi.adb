@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- M A L E F - S Y S T E M S - G E T _ F O R M A T . S E P A R A T E . A D B --
+--             M A L E F - S U B S Y S T E M S - A N S I . A D B             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,29 +26,78 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
--- with Malef.System_Utils.Ansi;
-separate (Malef.Systems)
-
-function Get_Format (Format : Format_Type) return String is
-   function To_String (C : Color_Component_Type) return String
-       renames Malef.Systems.Utils.To_String;
-begin
-
-   -- TODO: This function only returns colours, optimize it.
-
-   return ASCII.ESC & '[' &
-            "38;2;" & To_String(Format.Foreground_Color(R)) & ';' &
-                      To_String(Format.Foreground_Color(G)) & ';' &
-                      To_String(Format.Foreground_Color(B)) & ';' &
-            "48;2;" & To_String(Format.Background_Color(R)) & ';' &
-                      To_String(Format.Background_Color(G)) & ';' &
-                      To_String(Format.Background_Color(B)) &
-            'm';
-
-end Get_Format;
+with Ada.Finalization;
+with Malef.Systems;
 
 
+package body Malef.Subsystems.Ansi is
 
+   type Subsystem_Controller is new Ada.Finalization.Limited_Controlled
+      with null record;
+   overriding procedure Initialize (SC : in out Subsystem_Controller);
+   overriding procedure Finalize   (SC : in out Subsystem_Controller);
+
+   Subsystem_Handler : aliased Subsystem;
+
+   overriding
+   function Get_Format (Subsys : not null access Subsystem;
+                        Format : Format_Type)
+                        return String is
+   begin
+
+      return "ANSI";
+
+   end Get_Format;
+
+
+   overriding
+   procedure Get_Terminal_Size (Subsys : not null access Subsystem;
+                                Rows   : out Row_Type;
+                                Cols   : out Col_Type) is
+   begin
+
+      Rows := 10;
+      Cols := 10;
+
+   end Get_Terminal_Size;
+
+
+   overriding
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Name   : String) is
+   begin
+
+      null;
+
+   end Set_Title;
+
+
+
+   overriding
+   procedure Initialize (SC : in out Subsystem_Controller) is
+   begin
+
+      Malef.Systems.Loaded_Subsystems(Malef.ANSI) :=
+         Subsystem_Handler'Access;
+
+   end Initialize;
+
+
+   overriding
+   procedure Finalize (SC : in out Subsystem_Controller) is
+   begin
+
+      Malef.Systems.Loaded_Subsystems(Malef.ANSI) := null;
+
+   end Finalize;
+
+   pragma Warnings (Off);
+   SC : Subsystem_Controller;
+   pragma Warnings (On);
+
+end Malef.Subsystems.Ansi;
+
+ 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
 ---=======================-------------------------=========================---

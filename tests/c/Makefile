@@ -32,16 +32,16 @@ LIBRARY=$(shell readlink -f ../../alire/build/lib-)
 FLAGS= $(INCLUDE)
 
 ifeq ($(OS),Windows_NT)
-	LIBRARY:=$(LIBRARY)windows.cmd
+	LIBRARY:=$(LIBRARY)windows
 else
 	UNAME:=$(shell uname -s)
 	ifeq ($(UNAME),Linux)
-		LIBRARY:=$(LIBRARY)linux.ansi
+		LIBRARY:=$(LIBRARY)linux
 	else ifeq ($(UNAME),Darwin)
 	# TODO: Add MacOS support
-		LIBRARY:=$(LIBRARY)unix.ansi
+		LIBRARY:=$(LIBRARY)unix
 	else
-		LIBRARY:=$(LIBRARY)unix.ansi
+		LIBRARY:=$(LIBRARY)unix
 	endif
 endif
 
