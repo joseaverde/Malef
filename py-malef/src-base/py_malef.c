@@ -32,6 +32,7 @@
 #include "Malef.h"
 
 #include "py_malef-exceptions.h"
+#include "py_malef-palettes.h"
 #include "py_malef-surfaces.h"
 #include "py_malef-colors.h"
 
@@ -376,12 +377,19 @@ PyInit_malef ( void ) {
 
    if ( ! _pyMalef_initializeColors ( module ) ) {
       Py_DECREF ( module ) ;
+      return NULL ;
+   }
 
+   if ( ! _pyMalef_initializePalettes ( module ) ) {
+      _pyMalef_finalizeColors ( module ) ;
+
+      Py_DECREF ( module ) ;
       return NULL ;
    }
 
    if ( ! _pyMalef_initializeSurfaces ( module ) ) {
       _pyMalef_finalizeColors ( module ) ;
+      _pyMalef_finalizePalettes ( module ) ;
 
       Py_DECREF ( module ) ;
       return NULL ;
@@ -390,6 +398,7 @@ PyInit_malef ( void ) {
    _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
       _pyMalef_finalizeColors ( module ) ;
+      _pyMalef_finalizePalettes ( module ) ;
       _pyMalef_finalizeSurfaces ( module ) ;
 
       Py_DECREF ( module ) ;

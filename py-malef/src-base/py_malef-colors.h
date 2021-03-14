@@ -223,7 +223,7 @@ pyMalef_Color = {
  * @param module
  * The module from which we want to free the Colour type.
  */
-static inline void
+static void
 _pyMalef_finalizeColors ( PyObject *module ) {
 
    Py_DECREF ( &pyMalef_Color ) ;
@@ -239,7 +239,7 @@ _pyMalef_finalizeColors ( PyObject *module ) {
  * @return
  * Whether it has succeeded.
  */
-static inline bool
+static bool
 _pyMalef_initializeColors ( PyObject *module ) {
 
    if ( PyType_Ready ( &pyMalef_Color ) < 0 ) {

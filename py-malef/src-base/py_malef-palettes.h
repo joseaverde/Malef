@@ -54,7 +54,7 @@
  */
 typedef struct {
    PyObject_HEAD
-   pyMalef_Color palette[16] ;
+   PyObject* palette[16] ;
 } _pyMalef_paletteStruct ;
 
 
@@ -63,12 +63,101 @@ typedef struct {
  *###################### P R I V A T E   M E T H O D S ######################*
 \*###########################################################################*/
 
+
+/*
+ * This is the Palette type destructor, this function is called when the
+ * reference count in Python reaches 0. It has to unreference the colours it
+ * contained.
+ *
+ * @param self
+ * The Palette we want to deallocate.
+ */
+static void
+pyMalef_Palette___dealloc__ ( _pyMalef_paletteStruct *self ) {
+
+   for ( int i = 0 ; i < 16 ; i++ ) {
+      Py_DECREF ( self->palette[i] ) ;
+   }
+}
+
+
+/*
+ * __new__
+ *
+ * This function is called when a new Palette is created it will allocate the
+ * Colours to a value other than NULL so it doesn't return any error.
+ */
+static PyObject*
+pyMalef_Palette___new__ ( PyTypeObject *type,
+                          PyObject     *args,
+                          PyObject     *kwargs ) {
+
+   // We declare a new paletteStruct, allocate it and allocate it's items to
+   // be empty colours.
+   _pyMalef_paletteStruct *self ;
+   self = (_pyMalef_paletteStruct*)type->tp_alloc ( type, 0 ) ;
+   if ( self != NULL ) {
+      for ( int i = 0 ; i < 16 ; i++ ) {
+         self->palette[i] = pyMalef_Color.tp_new ( &pyMalef_Color,
+                                                   NULL, NULL ) ;
+      }
+   }
+
+   return (PyObject*)self ;
+}
+
+
 /*
  * __len__
  *
- * This function returns the
-
+ * This function returns the length of the palette which is fixed to always be
+ * 16 in order for it to correctly interact with the internals.
+ *
+ * @param self
+ * The palette whose length we want to retrieve.
+ *
+ * @return
+ * It returns the length of the colours.
 */
+static Py_ssize_t
+pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
+
+   return PYMALEF_PALETTE_LENGTH ;
+}
+
+
+/*
+ * __getitem__
+ *
+ * This function is called when subscripting a palette.
+ *
+ * @param self
+ * The palette that we want to subscript.
+ *
+ * @param index
+ * The index of the palette we want to get. Here we count from 0.
+ *
+ * @exception BoundsError
+ * This exception is raised when trying to access an item out of bounds.
+ */
+static PyObject*
+pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
+      Py_ssize_t            index ) {
+   char message[512] ;
+   if ( index < 0 || index >= PYMALEF_PALETTE_LENGTH ) {
+      sprintf ( message,
+                "%d: Index out of range\nPalettes range from 0 to 15 (both "
+                  "included)",
+                (int)index ) ;
+      PyErr_SetString ( pyMalef_BoundsError, message ) ;
+      return NULL ;
+   } else {
+      Py_INCREF (self->palette[index]) ;
+      return self->palette[index] ;
+   }
+}
+
+
 
 /*###########################################################################*\
  *####################### P Y T H O N   P A L E T T E #######################*
@@ -76,6 +165,8 @@ typedef struct {
 
 static PySequenceMethods
 _pyMalef_Palette_as_sequence = {
+   .sq_length   = (lenfunc)      pyMalef_Palette___len__,
+   .sq_item     = (ssizeargfunc) pyMalef_Palette___getitem__
 } ;
 
 
@@ -85,15 +176,17 @@ pyMalef_Palette = {
    .tp_name      = "malef.Palette",
    .tp_doc       = "TODO: Add documentation",
    .tp_basicsize = sizeof(_pyMalef_paletteStruct),
-   .tp_itemsize  = pyMalef_Color.tp_itemsize * PYMALEF_COLOR_LENGTH *
-                   PYMALEF_PALETTE_LENGTH,
+   .tp_itemsize  = PYMALEF_COLOR_LENGTH * PYMALEF_PALETTE_LENGTH,
+   .tp_dealloc   = (destructor)pyMalef_Palette___dealloc__,
    .tp_flags     = Py_TPFLAGS_DEFAULT,
    .tp_new       = PyType_GenericNew,
 
    .tp_as_sequence = &_pyMalef_Palette_as_sequence,
+
+   .tp_new       = (newfunc)pyMalef_Palette___new__,
 } ;
 
-
+// TODO: Create new function
 /*###########################################################################*\
  *####################### P A L E T T E   F / I N I T #######################*
 \*###########################################################################*/
@@ -105,8 +198,8 @@ pyMalef_Palette = {
  * @param module
  * The module from where we want to free the Palette type.
  */
-static inline void
-_pyMalef_initializePalettes ( PyObject *module ) {
+static void
+_pyMalef_finalizePalettes ( PyObject *module ) {
 
    Py_DECREF ( &pyMalef_Palette ) ;
 }
@@ -121,7 +214,7 @@ _pyMalef_initializePalettes ( PyObject *module ) {
  * @return
  * Whether it has succeeded.
  */
-static inline bool
+static bool
 _pyMalef_initializePalettes ( PyObject *module ) {
 
    if ( PyType_Ready ( &pyMalef_Palette ) < 0 ) {
@@ -129,7 +222,7 @@ _pyMalef_initializePalettes ( PyObject *module ) {
    }
 
    Py_INCREF ( &pyMalef_Palette ) ;
-   if ( PyModule_AddObject (module, "Palette".
+   if ( PyModule_AddObject (module, "Palette",
                             (PyObject*)&(pyMalef_Palette) ) < 0 ) {
       return false ;
    }

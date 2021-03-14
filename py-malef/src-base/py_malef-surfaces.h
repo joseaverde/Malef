@@ -80,7 +80,7 @@ typedef struct {
  * The Surface we want to deallocate.
  */
 static void
-pyMalef_Surface___dealloc__ ( _pyMalef_surfaceStruct* self ) {
+pyMalef_Surface___dealloc__ ( _pyMalef_surfaceStruct *self ) {
 
    // We reduce the reference count for Ada's controlled type using the C
    // binding. If there are more references, it won't be completely freed.
@@ -98,7 +98,7 @@ pyMalef_Surface___new__ ( PyTypeObject *type,
                           PyObject     *args,
                           PyObject     *kwargs ) {
 
-   // We deckare a new surfaceStruct and allocate it.
+   // We declare a new surfaceStruct and allocate it.
    _pyMalef_surfaceStruct *self ;
    self = (_pyMalef_surfaceStruct*)type->tp_alloc( type, 0 ) ;
    if ( self != NULL ) {
@@ -251,7 +251,7 @@ pyMalef_Surface = {
  * @param module
  * The module from which we want to free the Surface type.
  */
-static inline void
+static void
 _pyMalef_finalizeSurfaces ( PyObject *module ) {
 
    Py_DECREF ( &pyMalef_Surface ) ;
@@ -267,7 +267,7 @@ _pyMalef_finalizeSurfaces ( PyObject *module ) {
  * @return
  * Whether it has succeeded.
  */
-static inline bool
+static bool
 _pyMalef_initializeSurfaces ( PyObject *module ) {
 
    if ( PyType_Ready ( &pyMalef_Surface ) < 0 ) {
