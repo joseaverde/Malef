@@ -185,7 +185,7 @@ pyMalef_newPage ( PyObject *self, PyObject *args ) {
 PyDoc_STRVAR (pyMalef_setTitle_doc,
 "This function changes the title of the terminal/console. This new title will"\
 " remain even if the library has been finalized. It will return when the "    \
-"programme is terminated. It raises an exception if the library hasn't been " \
+"program is terminated. It raises an exception if the library hasn't been "   \
 "initialized.") ;
 static PyObject*
 pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {

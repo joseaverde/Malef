@@ -332,7 +332,7 @@ package Malef is
    -- This flag is currently experimental, it's a kind of wrap up for Ncurses
    -- functions for Bench Marking and also to allow other terminals that can
    -- use Ncurses but don't allow any other subsystem to be able to run Malef
-   -- programmes.
+   -- programs.
    --
    type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses);
 

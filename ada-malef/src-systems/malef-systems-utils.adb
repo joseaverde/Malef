@@ -37,7 +37,7 @@ with Malef.Systems.Dynamic_Library_Loader;
 
 package body Malef.Systems.Utils is
 
-   function Get_Path (Programme_Name                 : String;
+   function Get_Path (Program_Name                   : String;
                       PATH_Environment_Variable_Name : String := "PATH";
                       Default_PATHS                  : String := "/bin";
                       Separator                      : Character := ':')
@@ -62,12 +62,12 @@ package body Malef.Systems.Utils is
                begin
                   Ada.Directories.Start_Search(Search    => Searcher,
                                                Directory => PATH(First..Last),
-                                               Pattern   => Programme_Name);
+                                               Pattern   => Program_Name);
                   while Ada.Directories.More_Entries(Search => Searcher) loop
                      Ada.Directories.Get_Next_Entry(
                         Search          => Searcher,
                         Directory_Entry => Dir_Entry);
-                     if Ada.Directories.Simple_Name(Dir_Entry) = Programme_Name
+                     if Ada.Directories.Simple_Name(Dir_Entry) = Program_Name
                      then
                         return PATH(First .. Last);
                      end if;

@@ -59,3 +59,5 @@ bug_null_colours	Change the background and foreground colours from the null surf
 python_separate_headers	Maybe separating header files from sources can make the library useful from plain C.	[TODO]
 bug_py_colors_for_in	'for i in range c:' where c is of type Color raises a BoundsError	[TODO]
 ada_bug_subsystems	In the Malef.Subsystems package declare the Limited_Controlled type so the code can be DRY	[TODO]
+typos_1	Fix PROGRAMMES typos!	[DONE]
+ada_bug_subsystems_missing_libraries	When there are missing libraries the library runs without raising any error, fix that!	[TODO]

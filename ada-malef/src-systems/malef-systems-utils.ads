@@ -39,11 +39,11 @@
 package Malef.Systems.Utils is
 
    --
-   -- This function returns the directory where a programme is located
+   -- This function returns the directory where a program is located
    -- searching in the given PATH.
    --
-   -- @param Programme_Name
-   -- The name of the programme/command to search.
+   -- @param Program_Name
+   -- The name of the program/command to search.
    --
    -- @param PATH_Environment_Variable_Name
    -- The name of the environment variable where the PATHS are located: in
@@ -54,7 +54,7 @@ package Malef.Systems.Utils is
    --
    -- @param Separator
    -- The PATH separator: in Linux it's `:' and `;' in Windows;
-   function Get_Path (Programme_Name                 : String;
+   function Get_Path (Program_Name                   : String;
                       PATH_Environment_Variable_Name : String := "PATH";
                       Default_PATHS                  : String := "/bin";
                       Separator                      : Character := ':')

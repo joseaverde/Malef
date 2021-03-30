@@ -48,7 +48,7 @@
  * If you come up with any error like this, please report it so we can fix it.
  *
  * @value malef_NO_ERROR
- * No problem, you can continue with the development of you programme because
+ * No problem, you can continue with the development of you program because
  * there has been no errors what-so-ever.
  *
  * @value malef_INITIALIZATION_ERROR
@@ -92,7 +92,7 @@ typedef enum _malef_error_t {
  *    determined at initialization, thus it's imposible to change them before
  *    initialization). In case the terminal has no RGB colour support, then the
  *    most similar colours are chosen. So just use the palettes if you want
- *    your programme to be portable.
+ *    your program to be portable.
  */
 typedef uint8_t malef_color_t[4] ;
 
@@ -126,7 +126,7 @@ typedef malef_color_t malef_palette_t[2][8] ;
 
 /*
  * These are the predefined palettes, so you don't have to search any more for
- * the palette of the system you are writting the programme for. The first
+ * the palette of the system you are writting the program for. The first
  * palette is the default one, but on initialization it changes (so it's not
  * the default one). I think the names are very self-explanatory, otherwise
  * search it on the internet.

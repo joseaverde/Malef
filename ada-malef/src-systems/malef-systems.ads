@@ -37,7 +37,7 @@ with System;
 -- When talking about systems in this library I'm not talking about operaing
 -- systems, but systems itself. For example GNU/Linux, Windows are operating
 -- systems but are also considered systems. However there are also the so
--- called subsystems, i.e. where the programme will be runned inside the
+-- called subsystems, i.e. where the program will be runned inside the
 -- systems. For example, using ANSI escape sequences, the windows CMD and
 -- maybe using the ncurses library in a future. Moreover maybe in a future
 -- even the web browser will be considered a system. This library depends

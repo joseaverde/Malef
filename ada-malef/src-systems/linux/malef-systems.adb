@@ -53,12 +53,12 @@ package body Malef.Systems is
 
    procedure Initialize is
       Found_Stty_Path : constant String := Malef.Systems.Utils.Get_Path(
-                           Programme_Name                 => "stty",
+                           Program_Name                   => "stty",
                            PATH_Environment_Variable_Name => "PATH",
                            Default_PATHS                  => "/usr/bin:" &
                                                              "/bin");
       Found_Tput_Path : constant String := Malef.Systems.Utils.Get_Path(
-                           Programme_Name                 => "tput",
+                           Program_Name                   => "tput",
                            PATH_Environment_Variable_Name => "PATH",
                            Default_PATHS                  => "/usr/bin:"&
                                                              "/bin");
@@ -197,7 +197,7 @@ package body Malef.Systems is
          if Exit_Status /= 0 then
             raise Malef.Exceptions.Initialization_Error with
             "Fatal error, couldn't sane the terminal! Check `stty' is on " &
-            "the PATH and rerun the programme!";
+            "the PATH and rerun the program!";
          end if;
 
          raise Malef.Exceptions.Initialization_Error with
@@ -230,7 +230,7 @@ package body Malef.Systems is
          if Exit_Status /= 0 then
             raise Malef.Exceptions.Initialization_Error with
             "Fatal error, couldn't sane the terminal! Check `stty' is on " &
-            "the PATH and rerun the programme!";
+            "the PATH and rerun the program!";
          end if;
 
          raise Malef.Exceptions.Initialization_Error with
