@@ -47,7 +47,7 @@ package Malef is
 
 
    ---============-------------============---
-  ---============-- T Y P E S --============---
+   --============-- T Y P E S --============--
    ---============-------------============---
 
    --====-------------====--
@@ -308,7 +308,7 @@ package Malef is
    --====----------------------------====--
    --
    -- These types are used to specify which way Malef should be initialised.
-   -- 
+   --
 
    --
    -- These are the different subsystems there are.
@@ -337,7 +337,7 @@ package Malef is
    type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses);
 
    ---============-----------------------============---
-  ---============-- O P E R A T I O N S --============---
+   --============-- O P E R A T I O N S --============--
    ---============-----------------------============---
 
    --====-------------------------------------====--
@@ -406,7 +406,7 @@ package Malef is
    --
    -- This procedure creates a new page, that is, adds enough lines to the
    -- terminal without removing what was before.
-   -- 
+   --
    -- @exception Malef.Exceptions.Initialization_Error
    -- This exception is raised if it hasn't been properly initialized.
    --

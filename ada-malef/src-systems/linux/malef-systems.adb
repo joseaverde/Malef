@@ -309,7 +309,7 @@ package body Malef.Systems is
    --====------------------------------====--
    --====-- TERMINAL/CONSOLE CONTROL --====--
    --====------------------------------====--
-   
+
 
    -- IDEA: Make it inline, call the best function that can return the Format
    --       Use Dim/Bright styles if needed.

@@ -27,13 +27,13 @@
 -------------------------------------------------------------------------------
 
 with Ada.Characters.Handling;
- use Ada.Characters.Handling;
+use Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.IO_Exceptions;
 with Malef.Exceptions;
 with Malef.Systems.Dynamic_Library_Loader;
- use Malef.Systems.Dynamic_Library_Loader;
+use Malef.Systems.Dynamic_Library_Loader;
 
 package body Malef.Systems.Utils is
 

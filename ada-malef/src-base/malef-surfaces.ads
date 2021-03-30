@@ -143,7 +143,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    Null_Surface : constant Surface_Type
                 := Surface_Type'(Ada.Finalization.Controlled with
                                     Shared_Null_Surface'Access);
-                     
+
 end Malef.Surfaces;
 
 ---=======================-------------------------=========================---

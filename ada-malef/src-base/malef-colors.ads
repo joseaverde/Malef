@@ -193,7 +193,7 @@ package Malef.Colors is
                                         Cyan    => (  0, 128, 128, 255),
                                         White   => (192, 192, 192, 255)),
                               True  => (Black   => (128, 128, 128, 255),
-                                        Red     => (255, 255, 255, 255),
+                                        Red     => (255,   0,   0, 255),
                                         Green   => (  0, 255,   0, 255),
                                         Yellow  => (255, 255,   0, 255),
                                         Blue    => (  0,   0, 255, 255),
@@ -269,11 +269,11 @@ package Malef.Colors is
                                   Cyan    => ( 20, 240, 240, 255),
                                   White   => (233, 235, 235, 255))),
 
-       PuTTY => (False => (Black   => (187,   0,   0, 255),
-                           Red     => (  0, 187,   0, 255),
-                           Green   => (187, 187,   0, 255),
-                           Yellow  => (  0,   0, 187, 255),
-                           Blue    => (187,   0, 187, 255),
+       PuTTY => (False => (Black   => (  0,   0,   0,   0),
+                           Red     => (187,   0,   0, 255),
+                           Green   => (  0, 187,   0, 255),
+                           Yellow  => (187, 187,   0, 255),
+                           Blue    => (  0,   0, 187, 255),
                            Magenta => (187,   0, 187, 255),
                            Cyan    => (  0, 187, 187, 255),
                            White   => (187, 187, 187, 255)),
@@ -342,7 +342,7 @@ package Malef.Colors is
 
 
    --============-----------------------============--
-  ---============-- COLOUR OPERATIONS --============---
+   --============-- COLOUR OPERATIONS --============--
    --============-----------------------============--
    --
    -- These are the operations (functions and procedures) declared in this
@@ -616,7 +616,7 @@ package Malef.Colors is
 
 
    --============------------------------------============--
-  ---============-- CURSOR COLOUR OPERATIONS --============---
+   --============-- CURSOR COLOUR OPERATIONS --============--
    --============------------------------------============--
    --
    -- The cursor colour is the default colour the cursor writes new text, this
@@ -707,7 +707,7 @@ package Malef.Colors is
 
 
    --============-----------------------============--
-  ---============-- COLOUR OPERATIONS --============---
+   --============-- COLOUR OPERATIONS --============--
    --============-----------------------============--
 
 
@@ -725,7 +725,7 @@ package Malef.Colors is
    -- This exception is raised if the library hasn't been initialized yet.
    --
    procedure Get_Palette (Palette : out Palette_Type);
-   
+
    --
    -- This function gets the palette now in use.
    --

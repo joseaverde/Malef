@@ -61,7 +61,7 @@ private package Malef.Systems is
    -- that, the user should finalize everything because the terminal might
    -- break.
    --
-   
+
    --
    -- This procedure initializes everything needed to be initialized in the
    -- library, i.e, before calling Prepare_Terminal. Keep in mind some systems
@@ -144,7 +144,7 @@ private package Malef.Systems is
    --
    procedure Set_Title (Name : String);
 
-             
+
    Loaded_Subsystems_Handles : array (Subsystem_Kind'Range)
                                of Library_Handle
                              :=(others => Library_Handle(System.Null_Address));

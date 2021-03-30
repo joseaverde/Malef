@@ -186,7 +186,6 @@ pyMalef_Color___contains__ ( _pyMalef_colorStruct *self,
 }
 
 
-
 /*###########################################################################*\
  *######################### P Y T H O N   C O L O R #########################*
 \*###########################################################################*/
@@ -208,8 +207,8 @@ pyMalef_Color = {
    .tp_itemsize  = 8,
    .tp_flags     = Py_TPFLAGS_DEFAULT,
    .tp_new       = PyType_GenericNew,
-
    .tp_as_sequence = &_pyMalef_Color_as_sequence,
+///.tp_iter      = tuple_iter
 } ;
 
 

@@ -47,7 +47,7 @@ with Malef;
 package C_Malef is
 
    --============---------------============--
-  ---============-- T Y P E S --============---
+   --============-- T Y P E S --============--
    --============---------------============--
    --
    -- The types declared here are the same types declared in the Malef package,
@@ -244,7 +244,7 @@ package C_Malef is
 
 
    --============-------------------------============--
-  ---============-- O P E R A T I O N S --============---
+   --============-- O P E R A T I O N S --============--
    --============-------------------------============--
    --
    -- Almost all operations (which are functions) return the error code with

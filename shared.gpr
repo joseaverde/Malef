@@ -99,7 +99,12 @@ abstract project Shared is
       when "enabled" =>
          Style_Checks_Switches :=
            ("-gnaty-d",  -- Disable no DOS line terminators
-            "-gnatyO"    -- Overriding subprograms explicitly marked as such
+            "-gnatyO",   -- Overriding subprograms explicitly marked as such
+            "-gnatWu",   -- Encoding to UTF-8
+            "-gnaty3aA"
+            -- 3  -> Set indentation to three
+            -- a  -> Check attribute casing
+            -- A  -> Check array attribute indexes
            ); -- TODO: Finish this.
       when others => null;
    end case;

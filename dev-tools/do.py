@@ -223,6 +223,8 @@ commands = {
         "linux": ["gprbuild -p -Pmalef ",
          #           "--config=dev-tools/cgpr/linux.cgpr",
                   "gprbuild -p -Pmalef_subsystems "],
+        "force": ["gprbuild -p -f -Pmalef",
+                  "gprbuild -p -f -Pmalef_subsystems"],
         "windows": "gprbuild --config=dev-tools/cgpr/windows.cgpr "
                     "-XMALEF_OPERATING_SYSTEM=windows -p -Pmalef",
         "tests-linux": ["cd tests && ./run-tests.sh && cd .."],

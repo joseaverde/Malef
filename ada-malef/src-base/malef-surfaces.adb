@@ -92,7 +92,7 @@ package body Malef.Surfaces is
       begin
 
          Push(ASCII.ESC & '[' & R_Str(R_Str'First + 1 .. R_Str'Last) & ';' &
-                                C_Str(C_Str'FIrst + 1 .. C_Str'Last) & 'H');
+                                C_Str(C_Str'First + 1 .. C_Str'Last) & 'H');
 
       end Move;
 
@@ -172,7 +172,7 @@ package body Malef.Surfaces is
 
    end Adjust;
 
-   
+
    overriding
    procedure Finalize (Object : in out Surface_Type) is
       Old_Reference :  constant not null Shared_Surface_Access
@@ -262,7 +262,7 @@ package body Malef.Surfaces is
 
 -- end Adjust;
 
--- 
+--
 -- overriding
 -- procedure Finalize (Object : in out Surface_Type) is
 --    Old_Reference :  constant not null Shared_Surface_Access
