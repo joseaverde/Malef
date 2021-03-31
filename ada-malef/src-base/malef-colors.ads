@@ -757,6 +757,27 @@ package Malef.Colors is
    --
    procedure Set_Palette (Kind : Palette_Kind);
 
+   --====-----------------------====--
+   --====-- PALETTE'S COLOURS --====--
+   --====-----------------------====--
+
+   --
+   -- This function returns the colour that represented by the current palette
+   -- in use.
+   --
+   -- @param Kind
+   -- The Colour name.
+   --
+   -- @param Bright
+   -- The brightness level: true is bright and false is the normal one (dim).
+   --
+   -- @return
+   -- The colour it represents in the palette.
+   --
+   function Get_Color (Kind   : Color_Kind;
+                       Bright : Boolean := False)
+                       return Color_Type;
+
 
 private
 

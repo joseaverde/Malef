@@ -35,6 +35,7 @@
 #include "py_malef-palettes.h"
 #include "py_malef-surfaces.h"
 #include "py_malef-colors.h"
+#include "py_malef-color_enums.h"
 
 /*
  * TODO: (READ BELLOW)
@@ -47,6 +48,7 @@
 \*###########################################################################*/
 
 
+/* *** initialize *** */
 PyDoc_STRVAR (pyMalef_initialize_doc,
 "This function initializes the Malef library. It must be initialized in order"\
 " to run certain IO functions or functions that requiere it to be initialized"\
@@ -70,6 +72,7 @@ pyMalef_initialize ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** finalize *** */
 PyDoc_STRVAR (pyMalef_finalize_doc,
 "This function finalizes and restores the terminal. It raises an exception in"\
 " case the library wasn't already initialized or if there was a fatal error " \
@@ -93,6 +96,7 @@ pyMalef_finalize ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** isInitialized *** */
 PyDoc_STRVAR (pyMalef_isInitialized_doc,
 "This function returns whether the Malef library has been initialized.") ;
 static PyObject*
@@ -113,6 +117,7 @@ pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** getHeight *** */
 PyDoc_STRVAR (pyMalef_getHeight_doc,
 "This function returns the height of the terminal/console. It must have been "\
 "initialized (the library) in order for it to work.") ;
@@ -136,6 +141,7 @@ pyMalef_getHeight ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** getWidth *** */
 PyDoc_STRVAR (pyMalef_getWidth_doc,
 "This function returns the width of the terminal/console. The library must "  \
 "have been initialized in order for it to work.") ;
@@ -159,6 +165,7 @@ pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** newPage *** */
 PyDoc_STRVAR (pyMalef_newPage_doc,
 "This function prepares a clean environment for the terminal application by " \
 "moving the old text up. It raises an error if the library hasn't been "      \
@@ -182,6 +189,7 @@ pyMalef_newPage ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** setTitle *** */
 PyDoc_STRVAR (pyMalef_setTitle_doc,
 "This function changes the title of the terminal/console. This new title will"\
 " remain even if the library has been finalized. It will return when the "    \
@@ -216,6 +224,7 @@ pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
 }
 
 
+/* *** updateTerminalSize *** */
 PyDoc_STRVAR (pyMalef_updateTerminalSize_doc,
 "This function updates the terminal size and it returns whether the size has "\
 "changed. However in systems like Linux, the size will be automatically "     \
@@ -244,6 +253,7 @@ pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
 }
 
 
+/* *** wrapper *** */
 PyDoc_STRVAR (pyMalef_wrapper_doc,
 "This function wraps another function to make sure everything is cleaned if " \
 "any error was raised during the execution of the function. After clean up "  \
@@ -380,8 +390,16 @@ PyInit_malef ( void ) {
       return NULL ;
    }
 
+   if ( ! _pyMalef_initializeColorEnums ( module ) ) {
+      _pyMalef_finalizeColors ( module );
+
+      Py_DECREF (module) ;
+      return NULL ;
+   }
+
    if ( ! _pyMalef_initializePalettes ( module ) ) {
       _pyMalef_finalizeColors ( module ) ;
+      _pyMalef_finalizeColorEnums ( module ) ;
 
       Py_DECREF ( module ) ;
       return NULL ;
@@ -389,6 +407,7 @@ PyInit_malef ( void ) {
 
    if ( ! _pyMalef_initializeSurfaces ( module ) ) {
       _pyMalef_finalizeColors ( module ) ;
+      _pyMalef_finalizeColorEnums ( module ) ;
       _pyMalef_finalizePalettes ( module ) ;
 
       Py_DECREF ( module ) ;
@@ -398,6 +417,7 @@ PyInit_malef ( void ) {
    _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
       _pyMalef_finalizeColors ( module ) ;
+      _pyMalef_finalizeColorEnums ( module ) ;
       _pyMalef_finalizePalettes ( module ) ;
       _pyMalef_finalizeSurfaces ( module ) ;
 

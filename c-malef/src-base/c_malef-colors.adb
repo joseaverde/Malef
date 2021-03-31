@@ -275,6 +275,26 @@ package body C_Malef.Colors is
    end Set_Palette;
 
 
+
+   function Get_Color (Color  : out Color_Type;
+                       Kind   : in  Color_Kind;
+                       Bright : in  bool)
+                       return Error_Kind is
+   begin
+
+      Color := To_C(Malef.Colors.Get_Color(
+         Kind   => To_Ada(Kind),
+         Bright => To_Ada(Bright)));
+
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+   end Get_Color;
+
+
 -- PRIVATE --
 
    function To_Ada (Item : Color_Type)
@@ -307,35 +327,6 @@ package body C_Malef.Colors is
    end To_C;
 
 
-   boolAda2C : constant array (Boolean'Range) of bool :=
-      (False => false,
-       True  => true);
-   boolC2Ada : constant array (bool'Range) of Boolean :=
-      (false => False,
-       True  => true);
-
-   colorKindAda2C : constant array (Malef.Colors.Color_Kind'Range)
-                             of Color_Kind :=
-      (Malef.Colors.Black   => Black,
-       Malef.Colors.Red     => Red,
-       Malef.Colors.Green   => Green,
-       Malef.Colors.Yellow  => Yellow,
-       Malef.Colors.Blue    => Blue,
-       Malef.Colors.Magenta => Magenta,
-       Malef.Colors.Cyan    => Cyan,
-       Malef.Colors.White   => White);
-
-   colorKindC2Ada : constant array (Color_Kind'Range)
-                             of Malef.Colors.Color_Kind :=
-      (Black   => Malef.Colors.Black,
-       Red     => Malef.Colors.Red,
-       Green   => Malef.Colors.Green,
-       Yellow  => Malef.Colors.Yellow,
-       Blue    => Malef.Colors.Blue,
-       Magenta => Malef.Colors.Magenta,
-       Cyan    => Malef.Colors.Cyan,
-       White   => Malef.Colors.White);
-
 
    function To_Ada (Item : Palette_Type)
                     return Malef.Colors.Palette_Type is
@@ -345,9 +336,9 @@ package body C_Malef.Colors is
       return New_Palette : Malef.Colors.Palette_Type
       do
          for B in New_Palette'Range(1) loop
-            lastBool := boolAda2C(B);
+            lastBool := To_C (B);
             for C in New_Palette'Range(2) loop
-               New_Palette(B, C) := To_Ada(Item(lastBool, colorKindAda2C(C)));
+               New_Palette(B, C) := To_Ada(Item(lastBool, To_C(C)));
             end loop;
          end loop;
       end return;
@@ -363,9 +354,9 @@ package body C_Malef.Colors is
       return New_Palette : Palette_Type
       do
          for B in New_Palette'Range(1) loop
-            Last_Boolean := boolC2Ada(B);
+            Last_Boolean := To_Ada(B);
             for C in New_Palette'Range(2) loop
-               New_Palette(B, C) := To_C(Item(Last_Boolean,colorKindC2Ada(C)));
+               New_Palette(B, C) := To_C(Item(Last_Boolean,To_Ada(C)));
             end loop;
          end loop;
       end return;
@@ -419,6 +410,46 @@ package body C_Malef.Colors is
 
    end To_C;
 
+
+
+   colorKindAda2C : constant array (Malef.Colors.Color_Kind'Range)
+                             of Color_Kind :=
+      (Malef.Colors.Black   => Black,
+       Malef.Colors.Red     => Red,
+       Malef.Colors.Green   => Green,
+       Malef.Colors.Yellow  => Yellow,
+       Malef.Colors.Blue    => Blue,
+       Malef.Colors.Magenta => Magenta,
+       Malef.Colors.Cyan    => Cyan,
+       Malef.Colors.White   => White);
+
+   colorKindC2Ada : constant array (Color_Kind'Range)
+                             of Malef.Colors.Color_Kind :=
+      (Black   => Malef.Colors.Black,
+       Red     => Malef.Colors.Red,
+       Green   => Malef.Colors.Green,
+       Yellow  => Malef.Colors.Yellow,
+       Blue    => Malef.Colors.Blue,
+       Magenta => Malef.Colors.Magenta,
+       Cyan    => Malef.Colors.Cyan,
+       White   => Malef.Colors.White);
+
+   function To_Ada (Item : Color_Kind)
+                    return Malef.Colors.Color_Kind is
+   begin
+
+      return colorKindC2Ada(Item);
+
+   end To_Ada;
+
+
+   function To_C (Item : Malef.Colors.Color_Kind)
+                    return Color_Kind is
+   begin
+
+      return colorKindAda2C(Item);
+
+   end To_C;
 
 
 end C_Malef.Colors;

@@ -363,6 +363,19 @@ package C_Malef is
            Convention    => C,
            External_Name => "malef_wrapper";
 
+
+private
+
+   function To_Ada (Item : bool)
+                    return Boolean
+      with Pure_Function,
+           Inline;
+
+   function To_C (Item : Boolean)
+                  return bool
+      with Pure_Function,
+           Inline;
+
 end C_Malef;
 
 ---=======================-------------------------=========================---

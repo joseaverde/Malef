@@ -179,6 +179,15 @@ package C_Malef.Colors is
            Convention    => C,
            External_Name => "malef_setPaletteKind";
 
+
+   function Get_Color (Color  : out Color_Type;
+                       Kind   : in  Color_Kind;
+                       Bright : in  bool)
+                       return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_getColor";
+
 private
 
    -- The following functions are used to quickly converta Ada types to C
@@ -211,6 +220,16 @@ private
 
    function To_C (Item : Malef.Colors.Palette_Kind)
                   return Palette_Kind
+      with Pure_Function,
+           Inline;
+ 
+   function To_Ada (Item : Color_Kind)
+                    return Malef.Colors.Color_Kind
+      with Pure_Function,
+           Inline;
+
+   function To_C (Item : Malef.Colors.Color_Kind)
+                    return Color_Kind
       with Pure_Function,
            Inline;
 

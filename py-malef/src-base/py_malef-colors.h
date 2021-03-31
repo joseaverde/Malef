@@ -63,7 +63,7 @@ typedef struct {
 \*###########################################################################*/
 
 /*
- * __len__
+ * *** __len__ ***
  *
  * This function returns the length of the colours which is always 4, but we
  * provide it for any function that uses the `len' method.
@@ -81,7 +81,7 @@ pyMalef_Color___len__ ( _pyMalef_colorStruct *self ) {
 
 
 /*
- * __getitem__
+ * *** __getitem__ ***
  *
  * This function is called when subscripting the Colours, however it has a
  * fixed size so:
@@ -116,7 +116,7 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * __setitem__
+ * *** __setitem__ ***
  *
  * This function is called when trying to change an item from the Colour.
  *
@@ -158,7 +158,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * __contains__
+ * *** __contains__ ***
  *
  * This function is called when the `in' operator is used. It checks whether an
  * item is contained by the Colour. There is a predefined `__contains__'

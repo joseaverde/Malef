@@ -228,6 +228,7 @@ typedef struct _malef_surface_t {
 
 // These are the parameters in the functions, this only tells the user how to
 // pass the parameters when calling those functions
+// TODO: Add warning.
 #  ifdef out
 #     define _malef_temp_out out
 #     define out * /*out*/
@@ -581,10 +582,10 @@ malef_getSurfaceForeground ( malef_surface_t in  surface,
  *  - malef_BOUNDS_ERROR: The position is out of bounds.
  */
 extern malef_error_t
-malef_getSurfaceBackground ( malef_surface_t in surface,
-                             malef_row_t     in row,
-                             malef_col_t     in col,
-                             malef_color_t   in color ) ;
+malef_getSurfaceBackground ( malef_surface_t in  surface,
+                             malef_row_t     in  row,
+                             malef_col_t     in  col,
+                             malef_color_t   out color ) ;
 
 /*
  * This function changes the foreground colour in a given block.
@@ -784,6 +785,30 @@ malef_setPalette ( malef_palette_t in palette ) ;
  */
 extern malef_error_t
 malef_setPaletteKind ( malef_paletteKind_t in palette_kind ) ;
+
+/*
+ * This function returns the colour of the current palette using the
+ * enumeration value and the brightness level. This avoids having to store the
+ * palette in a variable and ensures that the returned colour is the one from
+ * the palette in use.
+ *
+ * @param color
+ * (OUT) The colour from the palette.
+ *
+ * @param color_kind
+ * (IN)  The colour enumeration value.
+ *
+ * @param bright
+ * (IN)  The brightness level, true is bright and false is the normal colour.
+ *
+ * @return
+ * It shouldn't return any error if the colours are given in the specified
+ * range and not random colours such as 17.
+ */
+extern malef_error_t
+malef_getColor ( malef_color_t     out color,
+                 malef_colorKind_t in  color_kind,
+                 bool              in  bright );
 
 
 #  ifdef _malef_temp_out

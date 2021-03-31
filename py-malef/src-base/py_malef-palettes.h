@@ -82,7 +82,7 @@ pyMalef_Palette___dealloc__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * __new__
+ * *** __new__ ***
  *
  * This function is called when a new Palette is created it will allocate the
  * Colours to a value other than NULL so it doesn't return any error.
@@ -108,7 +108,7 @@ pyMalef_Palette___new__ ( PyTypeObject *type,
 
 
 /*
- * __len__
+ * *** __len__ ***
  *
  * This function returns the length of the palette which is fixed to always be
  * 16 in order for it to correctly interact with the internals.
@@ -127,7 +127,7 @@ pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * __getitem__
+ * *** __getitem__ ***
  *
  * This function is called when subscripting a palette.
  *

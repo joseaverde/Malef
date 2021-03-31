@@ -195,6 +195,34 @@ package body C_malef is
          return Ada_Error;
    end Wrapper;
 
+
+-- PRIVATE --
+
+   boolAda2C : constant array (Boolean'Range) of bool :=
+      (False => false,
+       True  => true);
+   boolC2Ada : constant array (bool'Range) of Boolean :=
+      (false => False,
+       True  => true);
+
+
+   function To_Ada (Item : bool)
+                    return Boolean is
+   begin
+
+      return boolC2Ada (Item);
+
+   end To_Ada;
+
+
+   function To_C (Item : Boolean)
+                  return bool is
+   begin
+
+      return boolAda2C (Item);
+
+   end To_C;
+
 end C_malef;
 
 ---=======================-------------------------=========================---

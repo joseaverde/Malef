@@ -415,6 +415,16 @@ package body Malef.Colors is
    end Set_Palette;
 
 
+
+   function Get_Color (Kind   : Color_Kind;
+                       Bright : Boolean := False)
+                       return Color_Type is
+   begin
+
+      return Current_Palette (Bright, Kind);
+
+   end Get_Color;
+
 end Malef.Colors;
 
 ---=======================-------------------------=========================---

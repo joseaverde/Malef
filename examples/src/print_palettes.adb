@@ -8,7 +8,6 @@ procedure Print_Palettes is
    use type Malef.Col_Type;
    Surface : Malef.Surfaces.Surface_Type;
    Col     : Malef.Col_Type := 1;
-   Palette : Malef.Colors.Palette_Type;
    Ignore  : Character;
 begin
 
@@ -21,7 +20,6 @@ begin
 
    for Pal in Malef.Colors.Palette_Kind'Range loop
       Malef.Colors.Set_Palette (Pal);
-      Palette := Malef.Colors.Palettes (Pal);
       Col := 1;
       for Bright in Boolean'Range loop
          for Colour in Malef.Colors.Color_Kind'Range loop
@@ -29,13 +27,13 @@ begin
                Surface => Surface,
                Row     => 1,
                Col     => Col,
-               Color   => Palette (Bright, Colour)
+               Color   => Malef.Colors.Get_Color (Colour, Bright)
             );
             Malef.Colors.Set_Background (
                Surface => Surface,
                Row     => 2,
                Col     => Col,
-               Color   => Palette (Bright, Colour)
+               Color   => Malef.Colors.Get_Color (Colour, Bright)
             );
             Col := Col + 1;
          end loop;
