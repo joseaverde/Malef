@@ -89,7 +89,7 @@ pyMalef_Surface___dealloc__ ( _pyMalef_surfaceStruct *self ) {
 
 
 /*
- * *** __new__ ***
+ * *** malef.Surface.__new__ ***
  *
  * This is the function that is called when a new Surface is created.
  */
@@ -111,7 +111,7 @@ pyMalef_Surface___new__ ( PyTypeObject *type,
 
 
 /*
- * *** __init__ ***
+ * *** malef.Surface.__init__ ***
  *
  * This function is called when the Surface is initialized, in Python it takes
  * the following parameters:
@@ -175,7 +175,7 @@ pyMalef_Surface___finalize__ ( PyObject *self ) {
  *####################### P U B L I C   M E T H O D S #######################*
 \*###########################################################################*/
 
-/* *** Surface.debugPut *** */
+/* *** malef.Surface.debugPut *** */
 PyDoc_STRVAR (pyMalef_Surface_debugPut_doc,
 "This function is currently used for development purposes, it only prints the"\
 " surface onto the screen. A better function will be added in the future.") ;
@@ -194,11 +194,11 @@ pyMalef_Surface_debugPut ( _pyMalef_surfaceStruct *self,
    pyMalef_Surface_debugPut_doc                                               \
 }
 
-/* *** Surface.getForeground *** */
+/* *** malef.Surface.getForeground *** */
 PyDoc_STRVAR ( pyMalef_Surface_getForeground_doc,
 "This function can be used to get the foreground colour in a certain position"\
 " of the surface" ) ;
-static PyObject *
+static PyObject*
 pyMalef_Surface_getForeground ( _pyMalef_surfaceStruct *self,
                                 PyObject               *args,
                                 PyObject               *kwargs) {
@@ -236,11 +236,11 @@ pyMalef_Surface_getForeground ( _pyMalef_surfaceStruct *self,
    pyMalef_Surface_getForeground_doc                                          \
 }
 
-/* *** Surface.getBackground *** */
+/* *** malef.Surface.getBackground *** */
 PyDoc_STRVAR ( pyMalef_Surface_getBackground_doc,
 "This function returns the background colour from a certain position of the " \
 "surface." ) ;
-static PyObject *
+static PyObject*
 pyMalef_Surface_getBackground ( _pyMalef_surfaceStruct *self,
                                 PyObject               *args,
                                 PyObject               *kwargs ) {
@@ -279,11 +279,12 @@ pyMalef_Surface_getBackground ( _pyMalef_surfaceStruct *self,
 
 
 
-/* *** Surface.setForeground *** */
+/* *** malef.Surface.setForeground *** */
+// TODO: Allow ColorEnum
 PyDoc_STRVAR ( pyMalef_Surface_setForeground_doc,
 "This function can be used to change the foreground colour in a certain "     \
 "position of the surface." ) ;
-static PyObject *
+static PyObject*
 pyMalef_Surface_setForeground ( _pyMalef_surfaceStruct *self,
                                 PyObject               *args,
                                 PyObject               *kwargs ) {
@@ -348,11 +349,11 @@ pyMalef_Surface_setForeground ( _pyMalef_surfaceStruct *self,
 
 
 
-/* *** Surface.setBackground *** */
+/* *** malef.Surface.setBackground *** */
 PyDoc_STRVAR ( pyMalef_Surface_setBackground_doc,
 "This function can be used to change the background colour in a certain "     \
 "position of the surface." ) ;
-static PyObject *
+static PyObject*
 pyMalef_Surface_setBackground ( _pyMalef_surfaceStruct *self,
                                 PyObject               *args,
                                 PyObject               *kwargs ) {
@@ -421,14 +422,12 @@ pyMalef_Surface_setBackground ( _pyMalef_surfaceStruct *self,
 /* *** Surface.getCursorBackground *** */
 
 /* *** Surface.setCursorForeground *** */
-
+//TODO: Add colour enums
 /* *** Surface.setCursorBackground *** */
 
 
 // getPalette
 // setPalette
-// getPaletteKind
-// getColor
 
 
 /*###########################################################################*\

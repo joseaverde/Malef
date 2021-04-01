@@ -1,0 +1,9 @@
+#!/usr/bin/env  python3
+# *-* encoding=utf8 *-*
+
+import malef
+
+malef.initialize ()
+surface = malef.Surface (2, 16)
+
+malef.finalize ()

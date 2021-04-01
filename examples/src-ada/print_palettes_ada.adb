@@ -4,7 +4,7 @@ with Malef;
 with Malef.Colors;
 with Malef.Surfaces;
 
-procedure Print_Palettes is
+procedure Print_Palettes_Ada is
    use type Malef.Col_Type;
    Surface : Malef.Surfaces.Surface_Type;
    Col     : Malef.Col_Type := 1;
@@ -46,4 +46,4 @@ begin
 
    Malef.Finalize;
 
-end Print_Palettes;
+end Print_Palettes_Ada;

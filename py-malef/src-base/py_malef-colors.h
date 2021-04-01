@@ -31,8 +31,10 @@
 
 #include <Python.h>
 #include <stdlib.h>
-#include "Malef.h"
+#include <stddef.h>
+#include <Malef.h>
 
+#include "structmember.h"
 #include "py_malef-exceptions.h"
 
 /*###########################################################################*\
@@ -63,7 +65,7 @@ typedef struct {
 \*###########################################################################*/
 
 /*
- * *** __len__ ***
+ * *** malef.Color.__len__ ***
  *
  * This function returns the length of the colours which is always 4, but we
  * provide it for any function that uses the `len' method.
@@ -76,12 +78,13 @@ typedef struct {
  */
 static Py_ssize_t
 pyMalef_Color___len__ ( _pyMalef_colorStruct *self ) {
+
    return PYMALEF_COLOR_LENGTH ;
 }
 
 
 /*
- * *** __getitem__ ***
+ * *** malef.Color.__getitem__ ***
  *
  * This function is called when subscripting the Colours, however it has a
  * fixed size so:
@@ -102,6 +105,7 @@ pyMalef_Color___len__ ( _pyMalef_colorStruct *self ) {
 static PyObject*
 pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
                             Py_ssize_t            index ) {
+
    char message[512] ;
    if ( index < 0 || index >= PYMALEF_COLOR_LENGTH ) {
       sprintf ( message,
@@ -116,7 +120,7 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** __setitem__ ***
+ * *** malef.Color.__setitem__ ***
  *
  * This function is called when trying to change an item from the Colour.
  *
@@ -127,6 +131,7 @@ static int
 pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
                             Py_ssize_t            index,
                             PyObject             *value ) {
+
    char message[512] ;
    long new_value ;
    if ( index < 0 || index >= PYMALEF_COLOR_LENGTH ) {
@@ -158,7 +163,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** __contains__ ***
+ * *** malef.Color.__contains__ ***
  *
  * This function is called when the `in' operator is used. It checks whether an
  * item is contained by the Colour. There is a predefined `__contains__'
@@ -171,6 +176,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
 static int
 pyMalef_Color___contains__ ( _pyMalef_colorStruct *self,
                              PyObject             *element ) {
+
    long value = PyLong_AsLong ( element ) ;
    if ( PyErr_Occurred () != NULL ) {
       // An error has occurred.
@@ -186,9 +192,35 @@ pyMalef_Color___contains__ ( _pyMalef_colorStruct *self,
 }
 
 
+/*
+ * *** malef.Color.__repr__ ***
+ *
+ * This function returns a string that shows the representation of the Colour,
+ * i.e: (R, G, B, A), so the user can see what's inside.
+ */
+static PyObject*
+pyMalef_Color___repr__ ( _pyMalef_colorStruct *self ) {
+
+   return PyUnicode_FromFormat ( "(%d, %d, %d, %d)",
+                                 self->color[0],
+                                 self->color[1],
+                                 self->color[2],
+                                 self->color[3]) ;
+}
+
+
 /*###########################################################################*\
  *######################### P Y T H O N   C O L O R #########################*
 \*###########################################################################*/
+
+static PyMemberDef
+pyMalef_Color_members[] = {
+   { "red"  , T_BYTE, offsetof (_pyMalef_colorStruct, color) + 0, 0, "Red"   },
+   { "green", T_BYTE, offsetof (_pyMalef_colorStruct, color) + 1, 0, "Green" },
+   { "blue" , T_BYTE, offsetof (_pyMalef_colorStruct, color) + 2, 0, "Blue"  },
+   { "alpha", T_BYTE, offsetof (_pyMalef_colorStruct, color) + 3, 0, "Alpha" },
+   {NULL}
+} ;
 
 static PySequenceMethods
 _pyMalef_Color_as_sequence = {
@@ -201,14 +233,16 @@ _pyMalef_Color_as_sequence = {
 static PyTypeObject
 pyMalef_Color = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name      = "malef.Color",
-   .tp_doc       = "TODO: Add documentation",
-   .tp_basicsize = sizeof(_pyMalef_colorStruct),
-   .tp_itemsize  = 8,
-   .tp_flags     = Py_TPFLAGS_DEFAULT,
-   .tp_new       = PyType_GenericNew,
+   .tp_name        = "malef.Color",
+   .tp_doc         = "TODO: Add documentation",
+   .tp_basicsize   = sizeof(_pyMalef_colorStruct),
+   .tp_itemsize    = 8,
+   .tp_flags       = Py_TPFLAGS_DEFAULT,
+   .tp_new         = PyType_GenericNew,
    .tp_as_sequence = &_pyMalef_Color_as_sequence,
-///.tp_iter      = tuple_iter
+   .tp_members     = pyMalef_Color_members,
+   .tp_repr        = (reprfunc)pyMalef_Color___repr__,
+///.tp_iter      = tuple_iter  TODO
 } ;
 
 

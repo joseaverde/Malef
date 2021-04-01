@@ -82,7 +82,7 @@ pyMalef_Palette___dealloc__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * *** __new__ ***
+ * *** malef.Palette.__new__ ***
  *
  * This function is called when a new Palette is created it will allocate the
  * Colours to a value other than NULL so it doesn't return any error.
@@ -108,7 +108,7 @@ pyMalef_Palette___new__ ( PyTypeObject *type,
 
 
 /*
- * *** __len__ ***
+ * *** malef.Palette.__len__ ***
  *
  * This function returns the length of the palette which is fixed to always be
  * 16 in order for it to correctly interact with the internals.
@@ -127,7 +127,7 @@ pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * *** __getitem__ ***
+ * *** malef.Palette.__getitem__ ***
  *
  * This function is called when subscripting a palette.
  *
@@ -142,7 +142,7 @@ pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
  */
 static PyObject*
 pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
-      Py_ssize_t            index ) {
+                              Py_ssize_t             index ) {
    char message[512] ;
    if ( index < 0 || index >= PYMALEF_PALETTE_LENGTH ) {
       sprintf ( message,
@@ -158,6 +158,35 @@ pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
 }
 
 
+/*
+ * *** malef.Palette.__repr__ ***
+ *
+ * This function returns a string that shos the representation of the Palette
+ * data type showing all the colours inside it.
+ */
+static PyObject*
+pyMalef_Palette___repr__ ( _pyMalef_paletteStruct *self ) {
+
+   return PyUnicode_FromFormat ( "{ Dim: %R, %R, %R, %R, %R, %R, %R, %R; "
+                                 "  Bright: %R, %R, %R, %R, %R, %R, %R, %R }",
+                                 self->palette[0],
+                                 self->palette[1],
+                                 self->palette[2],
+                                 self->palette[3],
+                                 self->palette[4],
+                                 self->palette[5],
+                                 self->palette[6],
+                                 self->palette[7],
+
+                                 self->palette[8],
+                                 self->palette[9],
+                                 self->palette[10],
+                                 self->palette[11],
+                                 self->palette[12],
+                                 self->palette[13],
+                                 self->palette[14],
+                                 self->palette[15] ) ;
+}
 
 /*###########################################################################*\
  *####################### P Y T H O N   P A L E T T E #######################*
@@ -180,6 +209,7 @@ pyMalef_Palette = {
    .tp_dealloc   = (destructor)pyMalef_Palette___dealloc__,
    .tp_flags     = Py_TPFLAGS_DEFAULT,
    .tp_new       = PyType_GenericNew,
+   .tp_repr      = (reprfunc)pyMalef_Palette___repr__,
 
    .tp_as_sequence = &_pyMalef_Palette_as_sequence,
 
@@ -229,6 +259,80 @@ _pyMalef_initializePalettes ( PyObject *module ) {
 
    return true ;
 }
+
+
+
+/*###########################################################################*\
+ *#################### P A L E T T E   F U N C T I O N S ####################*
+\*###########################################################################*/
+
+/* *** malef.getPalette *** */
+PyDoc_STRVAR ( pyMalef_getPalette_doc,
+"This function returns the Palette in use if no arguments are given; or the " \
+"palette represented by the same value. The available values are declared in "\
+"the `PaletteEnum' class, any other value will raise a BoundsError exception."
+);
+static PyObject*
+pyMalef_getPalette ( PyObject *self,
+                     PyObject *args ) {
+   malef_paletteKind_t paletteKind = 0 ;
+   int arg_count = PyTuple_GET_SIZE ( args ) ;
+
+   if ( ! PyArg_ParseTuple ( args, "|H", &paletteKind ) ) {
+      return NULL ;
+   }
+
+   PyObject *pyPalette = PyObject_CallObject ( (PyObject*)&pyMalef_Palette,
+                                               NULL ) ;
+   malef_palette_t palette ;
+   malef_error_t err ;
+
+   if ( arg_count == 0 ) {
+      // In order to retrieve it, malef should be initialised, we get the
+      // error code just in case.
+      err = malef_getPalette ( &palette ) ;
+      if ( _pyMalef_raiseException (err) ) {
+         Py_DECREF ( pyPalette ) ;
+         return NULL ;
+      }
+   } else {
+      // We check that the enumeration value is in the range.
+      // TODO: Change this if new palettes are added.
+      if( paletteKind >= malef_MALEF_PALETTE && paletteKind <= malef_UBUNTU ) {
+         err = malef_getPaletteKind ( paletteKind, &palette );
+         if ( _pyMalef_raiseException (err) ) {
+            Py_DECREF ( pyPalette ) ;
+            return NULL ;
+         }
+      } else {
+         Py_DECREF ( pyPalette ) ;
+         PyErr_SetString ( pyMalef_BoundsError,
+                           "The value given is not in the palettes range, take"
+                           " a look at the malef.PaletteEnum class." ) ;
+         return NULL ;
+      }
+   }
+
+   for ( int i = 0 ; i < 16 ; i++ ) {
+      for ( int c = 0 ; c < 4 ; c++ ) {
+         ((_pyMalef_colorStruct*)(((_pyMalef_paletteStruct*)pyPalette)->
+            palette[i]))->color[c] = palette[i/8][i%8][c] ;
+      }
+   }
+   return pyPalette ;
+}
+#define pyMalef_getPalette_method {                                           \
+   "getPalette",                                                              \
+   (PyCFunction)pyMalef_getPalette,                                           \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_getPalette_doc                                                     \
+}
+
+
+/* *** malef.setPalette *** */
+#define pyMalef_setPalette_method { NULL, NULL, 0, NULL }
+
+
 
 
 

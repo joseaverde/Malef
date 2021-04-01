@@ -63,7 +63,7 @@ typedef struct {
 \*###########################################################################*/
 
 /*
- * *** __new__ ***
+ * *** malef.ColorEnum.__new__ ***
  *
  * This function allocates the ColorEnum class and sets the values of the
  * different colours.
@@ -149,7 +149,7 @@ pyMalef_ColorEnum = {
 \*###########################################################################*/
 
 /*
- * This fnuction initialises and clears the ColorEnum declared in this header.
+ * This fnuction finalises and clears the ColorEnum declared in this header.
  *
  * @param module
  * But it requieres the module where it must be removed from.
@@ -176,9 +176,9 @@ _pyMalef_initializeColorEnums ( PyObject *module ) {
       return false ;
    }
 
-   Py_INCREF ( &pyMalef_Color ) ;
+   Py_INCREF ( &pyMalef_ColorEnum ) ;
    if ( PyModule_AddObject ( module, "ColorEnum",
-            (PyObject*)&(pyMalef_ColorEnum) ) < 0 ) {
+                            (PyObject*)&(pyMalef_ColorEnum) ) < 0 ) {
       Py_DECREF ( &pyMalef_ColorEnum ) ;
       return false;
    }
