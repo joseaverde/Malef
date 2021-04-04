@@ -3,7 +3,19 @@
 
 import malef
 
-malef.initialize ()
 surface = malef.Surface (2, 16)
+
+malef.initialize ()
+malef.newPage ()
+
+for pal in malef.palettes:
+    col = 1
+    for bright in [False, True]:
+        for colour in malef.colors:
+            surface.setForeground (1, col, getColor (colour, bright))
+            surface.setBackground (2, col, getColor (colour, bright))
+            col += 1
+    surface.debugPut ()
+    input ()
 
 malef.finalize ()

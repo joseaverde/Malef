@@ -99,7 +99,7 @@ pyMalef_Color___len__ ( _pyMalef_colorStruct *self ) {
  * @param index
  * The index.
  *
- * @exception BoundsError
+ * @exception IndexError
  * This exception is raised when trying to access an item out of bounds.
  */
 static PyObject*
@@ -111,7 +111,7 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
       sprintf ( message,
                "%d: Index out of range\nColours range from 0 to 3 (included)",
                (int)index ) ;
-      PyErr_SetString ( pyMalef_BoundsError, message ) ;
+      PyErr_SetString (PyExc_IndexError, message ) ;
       return NULL ;
    } else {
       return PyLong_FromLong ( self->color[index] ) ;
@@ -124,7 +124,7 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
  *
  * This function is called when trying to change an item from the Colour.
  *
- * @exception BoundsError
+ * @exception IndexError
  * This exception is raised when trying to access an item out of bounds.
  */
 static int
@@ -132,13 +132,15 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
                             Py_ssize_t            index,
                             PyObject             *value ) {
 
+   // TODO: Accept integers, strings and iterables.
+
    char message[512] ;
    long new_value ;
    if ( index < 0 || index >= PYMALEF_COLOR_LENGTH ) {
       sprintf ( message,
                 "%d: Index out of range\nColours range from 0 to 3 (included)",
                 (int)index ) ;
-      PyErr_SetString ( pyMalef_BoundsError, message ) ;
+      PyErr_SetString ( PyExc_IndexError, message ) ;
       return -1 ;
    } else {
       new_value = PyLong_AsLong ( value ) ;
@@ -154,7 +156,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
          return -1 ;
       }
       // A bounds error have defintely occurred.
-      PyErr_SetString ( pyMalef_BoundsError,
+      PyErr_SetString ( PyExc_IndexError,
                         "The colour's components range from 0 to 255 "\
                         "(both included)!" ) ;
       return -1 ;
@@ -207,7 +209,7 @@ pyMalef_Color___repr__ ( _pyMalef_colorStruct *self ) {
                                  self->color[2],
                                  self->color[3]) ;
 }
-
+// TODO: __eq__
 
 /*###########################################################################*\
  *######################### P Y T H O N   C O L O R #########################*
@@ -228,6 +230,8 @@ _pyMalef_Color_as_sequence = {
    .sq_item     = (ssizeargfunc)    pyMalef_Color___getitem__,
    .sq_ass_item = (ssizeobjargproc) pyMalef_Color___setitem__,
    .sq_contains = (objobjproc)      pyMalef_Color___contains__
+   // TODO: This function now it's not needed, because the iteration bug has
+   //       been fixed.
 } ;
 
 static PyTypeObject

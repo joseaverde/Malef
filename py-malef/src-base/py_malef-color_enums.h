@@ -148,6 +148,12 @@ pyMalef_ColorEnum = {
  *################### C O L O R _ E N U M   F / I N I T  ####################*
 \*###########################################################################*/
 
+
+/*
+ * This is the ColorEnum type already initialised for you.
+ */
+static PyObject *pyMalef_Colors ;
+
 /*
  * This fnuction finalises and clears the ColorEnum declared in this header.
  *
@@ -157,6 +163,7 @@ pyMalef_ColorEnum = {
 static void
 _pyMalef_finalizeColorEnums ( PyObject *module ) {
 
+   Py_DECREF ( &pyMalef_Colors ) ;
    Py_DECREF ( &pyMalef_ColorEnum ) ;
 }
 
@@ -176,14 +183,22 @@ _pyMalef_initializeColorEnums ( PyObject *module ) {
       return false ;
    }
 
+   pyMalef_Colors = PyObject_CallObject ( (PyObject*)&pyMalef_ColorEnum,
+                                          NULL ) ;
+
+   if ( PyModule_AddObject ( module, "colors", pyMalef_Colors ) < 0 ) {
+      Py_DECREF ( &pyMalef_Colors ) ;
+      return false ;
+   }
+
    Py_INCREF ( &pyMalef_ColorEnum ) ;
    if ( PyModule_AddObject ( module, "ColorEnum",
                             (PyObject*)&(pyMalef_ColorEnum) ) < 0 ) {
-      Py_DECREF ( &pyMalef_ColorEnum ) ;
-      return false;
+      _pyMalef_finalizeColorEnums ( module ) ;
+      return false ;
    }
 
-   return true;
+   return true ;
 }
 
 

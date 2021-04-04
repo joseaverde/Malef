@@ -137,7 +137,7 @@ pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
  * @param index
  * The index of the palette we want to get. Here we count from 0.
  *
- * @exception BoundsError
+ * @exception IndexError
  * This exception is raised when trying to access an item out of bounds.
  */
 static PyObject*
@@ -149,13 +149,16 @@ pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
                 "%d: Index out of range\nPalettes range from 0 to 15 (both "
                   "included)",
                 (int)index ) ;
-      PyErr_SetString ( pyMalef_BoundsError, message ) ;
+      PyErr_SetString ( PyExc_IndexError, message ) ;
       return NULL ;
    } else {
       Py_INCREF (self->palette[index]) ;
       return self->palette[index] ;
    }
 }
+
+
+// TODO: static PyObject* pyMalef_Palette___setitem
 
 
 /*
@@ -188,14 +191,17 @@ pyMalef_Palette___repr__ ( _pyMalef_paletteStruct *self ) {
                                  self->palette[15] ) ;
 }
 
+// TODO: __eq__
+
 /*###########################################################################*\
  *####################### P Y T H O N   P A L E T T E #######################*
 \*###########################################################################*/
 
 static PySequenceMethods
 _pyMalef_Palette_as_sequence = {
-   .sq_length   = (lenfunc)      pyMalef_Palette___len__,
-   .sq_item     = (ssizeargfunc) pyMalef_Palette___getitem__
+   .sq_length   = (lenfunc)         pyMalef_Palette___len__,
+   .sq_item     = (ssizeargfunc)    pyMalef_Palette___getitem__,
+// .sq_ass_item = (ssizeobjargproc) pyMalef_Palette___setitem__
 } ;
 
 
@@ -266,11 +272,61 @@ _pyMalef_initializePalettes ( PyObject *module ) {
  *#################### P A L E T T E   F U N C T I O N S ####################*
 \*###########################################################################*/
 
+/*
+ * This function converts a C palette into a Python object.
+ *
+ * @param palette
+ * The C palette we want to convert to Python.
+ *
+ * @return
+ * The converted palette.
+ */
+static inline PyObject*
+_pyMalef_paletteC2Py ( malef_palette_t palette ) {
+
+   PyObject* pyPalette = PyObject_CallObject ( (PyObject*)&pyMalef_Palette,
+                                               NULL ) ;
+
+   for ( int i = 0 ; i < 16 ; i++ ) {
+      for ( int c = 0 ; c < 4 ; c++ ) {
+         ((_pyMalef_colorStruct*)(((_pyMalef_paletteStruct*)pyPalette)->
+            palette[i]))->color[c] = palette[i/8][i%8][c] ;
+      }
+   }
+
+   return pyPalette ;
+}
+
+
+/*
+ * This function converts a Python object into a C palette.
+ *
+ * @param palette
+ * The Python object we want to convert to C.
+ *
+ * @return
+ * The converted palette.
+ */
+static inline void
+_pyMalef_palettePy2C ( PyObject         *pyPalette,
+                        malef_palette_t *palette) {
+
+   for ( int i = 0 ; i < 16 ; i++ ) {
+      for ( int c = 0 ; c < 4 ; c++ ) {
+         *palette[i/8][i%8][c] = ((_pyMalef_colorStruct*)
+               (((_pyMalef_paletteStruct*)
+                  pyPalette)->palette[i]))->color[c] ;
+      }
+   }
+}
+
+
+
 /* *** malef.getPalette *** */
 PyDoc_STRVAR ( pyMalef_getPalette_doc,
 "This function returns the Palette in use if no arguments are given; or the " \
 "palette represented by the same value. The available values are declared in "\
-"the `PaletteEnum' class, any other value will raise a BoundsError exception."
+"the `PaletteEnum' class, any other value will raise a IndexError exception."
 );
 static PyObject*
 pyMalef_getPalette ( PyObject *self,
@@ -282,8 +338,7 @@ pyMalef_getPalette ( PyObject *self,
       return NULL ;
    }
 
-   PyObject *pyPalette = PyObject_CallObject ( (PyObject*)&pyMalef_Palette,
-                                               NULL ) ;
+   PyObject *pyPalette ;
    malef_palette_t palette ;
    malef_error_t err ;
 
@@ -292,7 +347,6 @@ pyMalef_getPalette ( PyObject *self,
       // error code just in case.
       err = malef_getPalette ( &palette ) ;
       if ( _pyMalef_raiseException (err) ) {
-         Py_DECREF ( pyPalette ) ;
          return NULL ;
       }
    } else {
@@ -301,24 +355,18 @@ pyMalef_getPalette ( PyObject *self,
       if( paletteKind >= malef_MALEF_PALETTE && paletteKind <= malef_UBUNTU ) {
          err = malef_getPaletteKind ( paletteKind, &palette );
          if ( _pyMalef_raiseException (err) ) {
-            Py_DECREF ( pyPalette ) ;
             return NULL ;
          }
       } else {
-         Py_DECREF ( pyPalette ) ;
-         PyErr_SetString ( pyMalef_BoundsError,
+         PyErr_SetString ( PyExc_IndexError,
                            "The value given is not in the palettes range, take"
                            " a look at the malef.PaletteEnum class." ) ;
          return NULL ;
       }
    }
 
-   for ( int i = 0 ; i < 16 ; i++ ) {
-      for ( int c = 0 ; c < 4 ; c++ ) {
-         ((_pyMalef_colorStruct*)(((_pyMalef_paletteStruct*)pyPalette)->
-            palette[i]))->color[c] = palette[i/8][i%8][c] ;
-      }
-   }
+   pyPalette = _pyMalef_paletteC2Py ( palette ) ;
+   
    return pyPalette ;
 }
 #define pyMalef_getPalette_method {                                           \
@@ -330,10 +378,50 @@ pyMalef_getPalette ( PyObject *self,
 
 
 /* *** malef.setPalette *** */
-#define pyMalef_setPalette_method { NULL, NULL, 0, NULL }
+PyDoc_STRVAR ( pyMalef_setPalette_doc,
+"This function changes the current Palette in use either by using a value "   \
+"(declared in PaletteEnum) or by using a user-defined Palette." ) ;
+static PyObject*
+pyMalef_setPalette ( PyObject *self,
+                     PyObject *args,
+                     PyObject *kwargs ) {
 
+   static char *keyword_list[] = { "palette", NULL } ;
+   PyObject* pyPalette ;
+   malef_palette_t palette ;
+   malef_paletteKind_t paletteKind ;
 
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "O", keyword_list,
+                                        &pyPalette ) ) {
+      return NULL ;
+   }
 
+   malef_error_t err ;
+   // We check whether it's an integer or a Palette.
+   if ( PyObject_IsInstance ( pyPalette, (PyObject*)&pyMalef_Palette ) ) {
+      _pyMalef_palettePy2C ( pyPalette, &palette ) ;
+      err = malef_setPalette ( palette ) ;
+   } else if ( PyLong_Check ( pyPalette ) ) {
+      paletteKind = PyLong_AsLong ( pyPalette ) ;
+      err = malef_setPaletteKind ( paletteKind ) ;
+   } else {
+      PyErr_SetString ( PyExc_TypeError,
+                        "A palette or integer was expected!" ) ;
+      return NULL ;
+   }
+
+   if ( _pyMalef_raiseException (err) ) {
+      return NULL ;
+   } else {
+      Py_RETURN_NONE ;
+   }
+}
+#define pyMalef_setPalette_method {                                           \
+   "setPalette",                                                              \
+   (PyCFunction)pyMalef_setPalette,                                           \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_setPalette_doc                                                     \
+}
 
 
 #endif//PY_MALEF_PALETTES_H

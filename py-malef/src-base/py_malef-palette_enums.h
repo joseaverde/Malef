@@ -126,6 +126,11 @@ pyMalef_PaletteEnum = {
 \*###########################################################################*/
 
 /*
+ * This is the PaletteEnum type already initialized for use.
+ */
+static PyObject *pyMalef_Palettes ;
+
+/*
  * This function finalises and clears the PaletteEnum declared in this header.
  *
  * @param module
@@ -134,6 +139,7 @@ pyMalef_PaletteEnum = {
 static void
 _pyMalef_finalizePaletteEnums ( PyObject *module ) {
 
+   Py_DECREF ( &pyMalef_Palettes ) ;
    Py_DECREF ( &pyMalef_PaletteEnum ) ;
 }
 
@@ -153,10 +159,18 @@ _pyMalef_initializePaletteEnums ( PyObject *module ) {
       return false ;
    }
 
+   pyMalef_Palettes = PyObject_CallObject ( (PyObject*)&pyMalef_PaletteEnum,
+                                             NULL ) ;
+
+   if ( PyModule_AddObject ( module, "palettes", pyMalef_Palettes ) < 0 ) {
+      Py_DECREF ( &pyMalef_Palettes ) ;
+      return false ;
+   }
+
    Py_INCREF ( &pyMalef_PaletteEnum ) ;
    if ( PyModule_AddObject ( module, "PaletteEnum",
                              (PyObject*)&(pyMalef_PaletteEnum) ) < 0 ) {
-      Py_DECREF ( &pyMalef_PaletteEnum ) ;
+      _pyMalef_finalizePaletteEnums ( module ) ;
       return false ;
    }
 
