@@ -31,6 +31,7 @@
 
 #include <stddef.h>
 #include "structmember.h"
+#include "py_malef-enum_iterators.h"
 
 
 /*
@@ -100,6 +101,22 @@ pyMalef_ColorEnum___new__ ( PyTypeObject *type,
    return (PyObject*)self ;
 }
 
+// TODO: Image Function
+// TODO: Document this.
+static PyObject*
+pyMalef_ColorEnum___iter__ ( _pyMalef_colorEnumStruct *self ) {
+
+   PyObject *pyIterator = PyObject_CallObject ( (PyObject*)
+                                                &pyMalef_EnumIterator, NULL ) ;
+   _pyMalef_enumIteratorStruct *iterator = (_pyMalef_enumIteratorStruct*)
+                                             pyIterator ;
+
+   iterator->from = self->BLACK ;
+   iterator->to   = self->BRIGHT_WHITE ;
+
+   return pyIterator ;
+}
+
 
 
 /*###########################################################################*\
@@ -139,7 +156,8 @@ pyMalef_ColorEnum = {
    .tp_doc       = "TODO: Add documentation",
    .tp_basicsize = sizeof(_pyMalef_colorEnumStruct),
    .tp_new       = pyMalef_ColorEnum___new__,
-   .tp_members   = pyMalef_ColorEnum_members
+   .tp_iter      = (getiterfunc)pyMalef_ColorEnum___iter__,
+   .tp_members   = pyMalef_ColorEnum_members,
 } ;
 
 
@@ -152,7 +170,7 @@ pyMalef_ColorEnum = {
 /*
  * This is the ColorEnum type already initialised for you.
  */
-static PyObject *pyMalef_Colors ;
+static PyObject *pyMalef_colors ;
 
 /*
  * This fnuction finalises and clears the ColorEnum declared in this header.
@@ -163,7 +181,7 @@ static PyObject *pyMalef_Colors ;
 static void
 _pyMalef_finalizeColorEnums ( PyObject *module ) {
 
-   Py_DECREF ( &pyMalef_Colors ) ;
+   Py_DECREF ( &pyMalef_colors ) ;
    Py_DECREF ( &pyMalef_ColorEnum ) ;
 }
 
@@ -183,11 +201,11 @@ _pyMalef_initializeColorEnums ( PyObject *module ) {
       return false ;
    }
 
-   pyMalef_Colors = PyObject_CallObject ( (PyObject*)&pyMalef_ColorEnum,
+   pyMalef_colors = PyObject_CallObject ( (PyObject*)&pyMalef_ColorEnum,
                                           NULL ) ;
 
-   if ( PyModule_AddObject ( module, "colors", pyMalef_Colors ) < 0 ) {
-      Py_DECREF ( &pyMalef_Colors ) ;
+   if ( PyModule_AddObject ( module, "colors", pyMalef_colors ) < 0 ) {
+      Py_DECREF ( &pyMalef_colors ) ;
       return false ;
    }
 

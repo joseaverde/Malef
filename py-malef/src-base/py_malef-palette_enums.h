@@ -86,6 +86,23 @@ pyMalef_PaletteEnum___new__ ( PyTypeObject *type,
 }
 
 
+// TODO: Image_Function
+// TODO: Document this.
+static PyObject*
+pyMalef_PaletteEnum___iter__ ( _pyMalef_paletteEnumStruct *self ) {
+
+   PyObject *pyIterator = PyObject_CallObject ( (PyObject*)
+                                                &pyMalef_EnumIterator, NULL ) ;
+   _pyMalef_enumIteratorStruct *iterator = (_pyMalef_enumIteratorStruct*)
+                                            pyIterator ;
+
+   iterator->from = self->MALEF_PALETTE ;
+   iterator->to   = self->UBUNTU ;
+
+   return pyIterator ;
+}
+
+
 /*###########################################################################*\
  *################# P Y T H O N   P A L E T T E _ E N U M  ##################*
 \*###########################################################################*/
@@ -116,7 +133,8 @@ pyMalef_PaletteEnum = {
    .tp_doc       = "TODO: Add documentation",
    .tp_basicsize = sizeof(_pyMalef_paletteEnumStruct),
    .tp_new       = pyMalef_PaletteEnum___new__,
-   .tp_members   = pyMalef_PaletteEnum_members
+   .tp_iter      = (getiterfunc)pyMalef_PaletteEnum___iter__,
+   .tp_members   = pyMalef_PaletteEnum_members,
 } ;
 
 
@@ -128,7 +146,7 @@ pyMalef_PaletteEnum = {
 /*
  * This is the PaletteEnum type already initialized for use.
  */
-static PyObject *pyMalef_Palettes ;
+static PyObject *pyMalef_palettes ;
 
 /*
  * This function finalises and clears the PaletteEnum declared in this header.
@@ -139,7 +157,7 @@ static PyObject *pyMalef_Palettes ;
 static void
 _pyMalef_finalizePaletteEnums ( PyObject *module ) {
 
-   Py_DECREF ( &pyMalef_Palettes ) ;
+   Py_DECREF ( &pyMalef_palettes ) ;
    Py_DECREF ( &pyMalef_PaletteEnum ) ;
 }
 
@@ -159,11 +177,11 @@ _pyMalef_initializePaletteEnums ( PyObject *module ) {
       return false ;
    }
 
-   pyMalef_Palettes = PyObject_CallObject ( (PyObject*)&pyMalef_PaletteEnum,
+   pyMalef_palettes = PyObject_CallObject ( (PyObject*)&pyMalef_PaletteEnum,
                                              NULL ) ;
 
-   if ( PyModule_AddObject ( module, "palettes", pyMalef_Palettes ) < 0 ) {
-      Py_DECREF ( &pyMalef_Palettes ) ;
+   if ( PyModule_AddObject ( module, "palettes", pyMalef_palettes ) < 0 ) {
+      Py_DECREF ( &pyMalef_palettes ) ;
       return false ;
    }
 

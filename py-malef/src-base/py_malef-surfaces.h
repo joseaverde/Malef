@@ -57,7 +57,7 @@ typedef struct {
 } _pyMalef_surfaceStruct ;
 
 
-
+// TODO: Cast everything even if it's not a colour.
 /*###########################################################################*\
  *###################### P R I V A T E   M E T H O D S ######################*
 \*###########################################################################*/
@@ -391,6 +391,7 @@ pyMalef_Surface_setBackground ( _pyMalef_surfaceStruct *self,
       from_col = temp_col ;
    }
 
+   // TODO: Create proper inline function
    for ( int i = 0 ; i < 4 ; i++ ) {
       color[i] = ((_pyMalef_colorStruct*)pyColor)->color[i] ;
    }

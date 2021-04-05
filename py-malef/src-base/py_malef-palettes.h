@@ -57,6 +57,7 @@ typedef struct {
    PyObject* palette[16] ;
 } _pyMalef_paletteStruct ;
 
+static PyTypeObject pyMalef_Palette;
 
 
 /*###########################################################################*\
@@ -152,13 +153,50 @@ pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
       PyErr_SetString ( PyExc_IndexError, message ) ;
       return NULL ;
    } else {
-      Py_INCREF (self->palette[index]) ;
+      Py_INCREF ( self->palette[index] ) ;
       return self->palette[index] ;
    }
 }
 
 
-// TODO: static PyObject* pyMalef_Palette___setitem
+/*
+ * *** malef.Palette.__setitem__ ***
+ *
+ * This functions just changes the colour in a certain position of the palette.
+ *
+ * @exception IndexError
+ * It's raised when the given index is out of the Palettes bounds (fixed).
+ *
+ * @exception TypeError
+ * This exception is returned from the casting function if the colour is not
+ * Color-compatible.
+ */
+static int
+pyMalef_Palette___setitem__ ( _pyMalef_paletteStruct *self,
+                              Py_ssize_t             index,
+                              PyObject               *value) {
+
+   char message[512] ;
+   PyObject *pyColor ;
+   if ( index < 0 || index > PYMALEF_PALETTE_LENGTH ) {
+      sprintf ( message,
+                "%d: Index out of range\nPalettes range from 0 to 15 (both "
+                  "included)",
+                (int)index ) ;
+      PyErr_SetString ( PyExc_IndexError, message ) ;
+      return -1 ;
+   } else {
+      // If there is no errors we just check the value given by the user can be
+      // casted to a Color type, and if so we assign it.
+      pyColor = _pyMalef_cast2Color ( value ) ;
+      if ( pyColor == NULL ) {
+         return -1 ;
+      } else {
+         self->palette[index] = pyColor ;
+         return 0 ;
+      }
+   }
+}
 
 
 /*
@@ -191,7 +229,54 @@ pyMalef_Palette___repr__ ( _pyMalef_paletteStruct *self ) {
                                  self->palette[15] ) ;
 }
 
-// TODO: __eq__
+
+/*
+ * *** malef.Palette.(comparisons) ***
+ *
+ * This function is used to compare two palettes, the only thing that will be
+ * implemented will be the equality and not-equality operators `==` and `!=`,
+ * because how do you tell a Palette is greater than another, because I don't
+ * know how.
+ */
+static PyObject*
+pyMalef_Palette___richCompare__ ( PyObject *pySelf,
+                                  PyObject *pyOther,
+                                  int      op ) {
+
+   // We check both are Palettes, because it makes no sense they are different
+   // types. We suppose the first one in a Palette because it's itself (LOL).
+   // We return False and that's it.
+   if ( ! PyObject_IsInstance ( pyOther, (PyObject*)&pyMalef_Palette ) ) {
+      Py_RETURN_FALSE ;
+   }
+
+   // We check that the operation is not an stupid one.
+   if ( op != Py_EQ || op != Py_NE ) {
+      return Py_NotImplemented ;
+   }
+
+   // Otherwise we start the comparison.
+   _pyMalef_paletteStruct *self  = (_pyMalef_paletteStruct*)pySelf  ;
+   _pyMalef_paletteStruct *other = (_pyMalef_paletteStruct*)pyOther ;
+   int equal = true ;
+   for ( int i = 0 ; i < 16 ; i++ ) {
+      if ( ! PyObject_RichCompare ( self->palette[i],
+                                    other->palette[i],
+                                    Py_EQ ) ) {
+         equal = false ;
+         break ;
+      }
+   }
+
+   equal = op == Py_NE ? ! equal : equal ;
+   if ( equal ) {
+      Py_RETURN_TRUE ;
+   } else {
+      Py_RETURN_FALSE ;
+   }
+}
+
+
 
 /*###########################################################################*\
  *####################### P Y T H O N   P A L E T T E #######################*
@@ -201,7 +286,7 @@ static PySequenceMethods
 _pyMalef_Palette_as_sequence = {
    .sq_length   = (lenfunc)         pyMalef_Palette___len__,
    .sq_item     = (ssizeargfunc)    pyMalef_Palette___getitem__,
-// .sq_ass_item = (ssizeobjargproc) pyMalef_Palette___setitem__
+   .sq_ass_item = (ssizeobjargproc) pyMalef_Palette___setitem__
 } ;
 
 
@@ -209,20 +294,33 @@ static PyTypeObject
 pyMalef_Palette = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
    .tp_name      = "malef.Palette",
-   .tp_doc       = "TODO: Add documentation",
+   .tp_doc       = "This type can be used to store up to sixteen in a single "
+                   "object. Why using this instead of normal lists, I'm glad "
+                   "you asked apart from been faster they have the advantage "
+                   "they can be used to define the colours used in the "
+                   "current terminal/console and if this one doesn't support "
+                   "24-bits colours it will try to find the nearest one. This "
+                   "can be changed with the `malef.setPalette' function. Even "
+                   "though the names are BLACK, RED and so on, it does not "
+                   "mean they are holding those colours, they are names for "
+                   "the different positions, you can safely use colours from "
+                   "0 to 15 (both included), but keep in mind that in some "
+                   "devices if the Bright Style isn't supported (which is "
+                   "rare to begin with) it will try to use the Bright variant "
+                   "of the colour.",
    .tp_basicsize = sizeof(_pyMalef_paletteStruct),
    .tp_itemsize  = PYMALEF_COLOR_LENGTH * PYMALEF_PALETTE_LENGTH,
    .tp_dealloc   = (destructor)pyMalef_Palette___dealloc__,
    .tp_flags     = Py_TPFLAGS_DEFAULT,
-   .tp_new       = PyType_GenericNew,
+   .tp_new       = (newfunc)pyMalef_Palette___new__,
    .tp_repr      = (reprfunc)pyMalef_Palette___repr__,
 
    .tp_as_sequence = &_pyMalef_Palette_as_sequence,
+   .tp_richcompare = pyMalef_Palette___richCompare__,
 
-   .tp_new       = (newfunc)pyMalef_Palette___new__,
 } ;
 
-// TODO: Create new function
+
 /*###########################################################################*\
  *####################### P A L E T T E   F / I N I T #######################*
 \*###########################################################################*/
@@ -351,7 +449,6 @@ pyMalef_getPalette ( PyObject *self,
       }
    } else {
       // We check that the enumeration value is in the range.
-      // TODO: Change this if new palettes are added.
       if( paletteKind >= malef_MALEF_PALETTE && paletteKind <= malef_UBUNTU ) {
          err = malef_getPaletteKind ( paletteKind, &palette );
          if ( _pyMalef_raiseException (err) ) {

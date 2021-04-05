@@ -32,17 +32,14 @@
 #include "Malef.h"
 
 #include "py_malef-exceptions.h"
+#include "py_malef-enum_iterators.h"
 #include "py_malef-palettes.h"
 #include "py_malef-palette_enums.h"
 #include "py_malef-surfaces.h"
 #include "py_malef-colors.h"
 #include "py_malef-color_enums.h"
 
-/*
- * TODO: (READ BELLOW)
- *
- *    * Change functions to take no parameters.
- */
+
 
 /*###########################################################################*\
  *###########################  F U N C T I O N S  ###########################*
@@ -307,7 +304,13 @@ pyMalef_wrapper ( PyObject *self, PyObject *args, PyObject *kwargs ) {
       }
    }
 
-   // Finally we return the value. TODO: Increase reference?
+   // Finally we return the value.
+   // NOTE: I'm not increasing the reference because they wrapped function is
+   // supposed to increase it because it's a function declared maybe in Python.
+   // This function acts as wrapper only, and Python can't perform any kind of
+   // INCREF or DECREF inside a C function. So increasing it may mess up the
+   // Python internal mechanism and not free the object once it's out of the
+   // scope.
    return return_value ;
 }
 #define pyMalef_wrapper_method {                                              \
@@ -351,7 +354,15 @@ pyMalefMethods[] = {
 \*###########################################################################*/
 
 PyDoc_STRVAR (pyMalefDocs,
-"TODO: If you read this, it means I forgot to add documentation xd.") ;
+"This is the Python binding to `Malef', a library which was originally "
+"written in Ada. This library is similar to the `curses' library, but it aims "
+"to be cross-platform and cross-platform inside the same platform, which means"
+" that it will be able to choose the best components during run-time. "
+"It will also try to replicate most of the Styles and Colours that aren't "
+"available in every Console/Terminal. And it will use 32-bits colours instead "
+"of letting the user choose between 3-bits, 4-bits, 8-bits or 24-bits colours "
+"which may not work in every platform. The last 8-bits are for transparency, "
+"because this library adds `Surfaces' which are able to have transparency." ) ;
 
 
 
@@ -383,6 +394,7 @@ PyInit_malef ( void ) {
    // If any error occurs during initialization we finalize everything
    // initialize so far and also unreference the module so the garbage
    // collector can free the memory when it feels like doing so.
+   // TODO: Automate it!
 
    PyObject *module = PyModule_Create ( &pyMalefModule );
    if ( module == NULL ) {
@@ -390,12 +402,19 @@ PyInit_malef ( void ) {
       return NULL ;
    }
 
+   if ( ! _pyMalef_initializeEnumIterators ( module ) ) {
+      Py_DECREF ( module ) ;
+   }
+
    if ( ! _pyMalef_initializeColors ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
+
       Py_DECREF ( module ) ;
       return NULL ;
    }
 
    if ( ! _pyMalef_initializeColorEnums ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
       _pyMalef_finalizeColors ( module );
 
       Py_DECREF (module) ;
@@ -403,6 +422,7 @@ PyInit_malef ( void ) {
    }
 
    if ( ! _pyMalef_initializePalettes ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
       _pyMalef_finalizeColors ( module ) ;
       _pyMalef_finalizeColorEnums ( module ) ;
 
@@ -411,6 +431,7 @@ PyInit_malef ( void ) {
    }
 
    if ( ! _pyMalef_initializePaletteEnums ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
       _pyMalef_finalizeColors ( module ) ;
       _pyMalef_finalizeColorEnums ( module ) ;
       _pyMalef_finalizePalettes ( module ) ;
@@ -419,6 +440,7 @@ PyInit_malef ( void ) {
    }
 
    if ( ! _pyMalef_initializeSurfaces ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
       _pyMalef_finalizeColors ( module ) ;
       _pyMalef_finalizeColorEnums ( module ) ;
       _pyMalef_finalizePalettes ( module ) ;
@@ -430,6 +452,7 @@ PyInit_malef ( void ) {
 
    _pyMalef_initializeUtils () ;
    if ( ! _pyMalef_initializeExceptions ( module ) ) {
+      _pyMalef_finalizeEnumIterators ( module ) ;
       _pyMalef_finalizeColors ( module ) ;
       _pyMalef_finalizeColorEnums ( module ) ;
       _pyMalef_finalizePalettes ( module ) ;

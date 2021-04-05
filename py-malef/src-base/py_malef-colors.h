@@ -126,6 +126,10 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
  *
  * @exception IndexError
  * This exception is raised when trying to access an item out of bounds.
+ *
+ * @exception BoundsError
+ * This exception is raised when trying to assign a colour component with a
+ * value greater than 255 or lower than 0 (1 unsigned byte).
  */
 static int
 pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
@@ -156,7 +160,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
          return -1 ;
       }
       // A bounds error have defintely occurred.
-      PyErr_SetString ( PyExc_IndexError,
+      PyErr_SetString ( pyMalef_BoundsError,
                         "The colour's components range from 0 to 255 "\
                         "(both included)!" ) ;
       return -1 ;
@@ -210,6 +214,7 @@ pyMalef_Color___repr__ ( _pyMalef_colorStruct *self ) {
                                  self->color[3]) ;
 }
 // TODO: __eq__
+//
 
 /*###########################################################################*\
  *######################### P Y T H O N   C O L O R #########################*
@@ -253,6 +258,145 @@ pyMalef_Color = {
 /*###########################################################################*\
  *######################### C O L O R   F / I N I T #########################*
 \*###########################################################################*/
+
+
+/*
+ * This function converts a character from hexadecimal to decimal.
+ *
+ * @param item
+ * The character to convert.
+ *
+ * @return
+ * It returns it's value, but it returns -1 if there is an error. The exception
+ * is also raised, what's left is returning NULL.
+ */
+static inline int
+_pyMalef_char2int ( char item ) {
+
+   if ( item >= '0' && item <= '9' ) {
+      return item - '0' ;
+   } else if ( item >= 'A' && item <= 'Z' ) {
+      return item - 'A' ;
+   } else if ( item >= 'a' && item <= 'z' ) {
+      return item - 'a' ;
+   } else {
+      PyErr_SetString ( PyExc_ValueError,
+                        "Invalid hex value!" ) ;
+      return -1 ;
+   }
+}
+
+
+/*
+ * This complex function converts an object into a Color. It can convert:
+ *
+ * @param value
+ *  - Integer (A 32-bits unsigned hex integer)
+ *  - Color (It does nothing)
+ *  - String (It must start with a Hash '#' and it can be 3, 4, 7 or 8 chars
+ *    long)
+ *  - Sequence (It must have a lenght of 4 and the __getitem__ method in order
+ *    for it to work).
+ *
+ * @return
+ * The converted colour.
+ */
+PyObject*
+_pyMalef_cast2Color ( PyObject *value ) {
+
+   malef_color_t colorArray ;
+   int64_t       colorValue ;
+   const char    *colorHex  ;
+   // We first check the type of the value.
+   if ( PyObject_IsInstance ( value, (PyObject*)&pyMalef_Color ) ) {
+      // We just return it, nothing to be done here.
+      return value ;
+   } else if ( PyLong_Check ( value ) ) {
+      // If it's an integer so we can expect a 32 bit integer we can then
+      // convert to an array.
+      colorValue = PyLong_AsLongLong (value) ;
+      // We check for overflow.
+      if ( PyErr_Occurred () ) {
+         return NULL ;
+      }
+      if ( colorValue > 0xFFFFFFFF || colorValue < 0x00000000 ) {
+         PyErr_SetString ( pyMalef_BoundsError,
+                          "Number to big to represent a colour, a 32 bits "
+                          "unsigned integer was expected!") ;
+         return NULL ;
+      }
+      // Otherwise we just assign it.
+      for ( int i = 0 ; i < 4 ; i++ ) {
+         colorArray[i] = ( colorValue >> 8*( 3 - i ) ) & 0xFF ;
+      }
+   } else if ( PyUnicode_Check (value) ) { 
+      colorHex = PyUnicode_AsUTF8AndSize ( value, &colorValue ) ;
+      colorArray[3] = 0xFF ;
+      switch ( colorValue ) {
+         case 4:
+         case 5:
+            for ( int i = 1, tmp ; i < colorValue ; i++ ) {
+               tmp = _pyMalef_char2int ( colorHex[i] ) ;
+               if ( tmp == -1 ) {
+                  return NULL ;
+               } else {
+                  colorArray[i-1] = tmp*16 + tmp ;
+               }
+            }
+            break ;
+         case 7:
+         case 9:
+            for ( int i = 1, tmp, tmp2 ; i < colorValue ; i += 2 ) {
+               tmp = _pyMalef_char2int ( colorHex[i] ) ;
+               if ( tmp == -1 ) {
+                  return NULL ;
+               }
+               tmp2 = _pyMalef_char2int ( colorHex[i+1] ) ;
+               colorArray [i/2] = tmp * 16 + tmp2 ;
+            }
+            break ;
+         default:
+            PyErr_SetString ( PyExc_ValueError,
+                              "The string should start with a hash '#' and be "
+                              "7 or 9 characters long!" ) ;
+            return NULL ;
+         }
+   } else {
+      // Finally we check if we can iterate it. First we check it has a length.
+      if ( PyObject_Length (value) != 4 ) {
+         PyErr_SetString ( PyExc_TypeError,
+                           "Value couldn't be converted to Color!" ) ;
+         return NULL ;
+      }
+      // If so we can iterate it.
+      for ( int i = 0 ; i < 4 ; i++ ) {
+         colorValue = PyLong_AsLong ( PyObject_GetItem (
+                                             value, PyLong_FromLong(i)) ) ;
+         if ( colorValue == -1 ) {
+            if ( PyErr_Occurred () ) {
+               return NULL ;
+            }
+         }
+         if ( colorValue < 0 || colorValue > 255 ) {
+            PyErr_SetString ( pyMalef_BoundsError,
+                              "The colour components must be in the range "
+                              "0 .. 255 (both included)." ) ;
+            return NULL ;
+         }
+         colorArray[i] = colorValue ;
+      }
+   }
+
+   PyObject *pyColor = PyObject_CallObject ( (PyObject*)&pyMalef_Color, NULL );
+    _pyMalef_colorStruct *color = (_pyMalef_colorStruct*)pyColor ;
+
+    for ( int i = 0 ; i < 4 ; i++ ) {
+       color->color[i] = colorArray[i] ;
+    }
+
+   return pyColor ;
+}
+
 
 /*
  * This function finalizes and clears the Colour declared in this header.
