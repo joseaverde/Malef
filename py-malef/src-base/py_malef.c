@@ -1,4 +1,4 @@
-/*****************************************************************************\
+ /*****************************************************************************\
  *                                                                           * 
  *                            P Y _ M A L E F . C                            * 
  *                                                                           * 
@@ -47,10 +47,10 @@
 
 
 /* *** malef.initialize *** */
-PyDoc_STRVAR (pyMalef_initialize_doc,
+PyDoc_STRVAR ( pyMalef_initialize_doc,
 "This function initializes the Malef library. It must be initialized in order"\
 " to run certain IO functions or functions that requiere it to be initialized"\
-". In case it wasn't initialized, an error would be raised") ;
+". In case it wasn't initialized, an error would be raised." ) ;
 static PyObject*
 pyMalef_initialize ( PyObject *self, PyObject *args ) {
 
@@ -71,10 +71,10 @@ pyMalef_initialize ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.finalize *** */
-PyDoc_STRVAR (pyMalef_finalize_doc,
+PyDoc_STRVAR ( pyMalef_finalize_doc,
 "This function finalizes and restores the terminal. It raises an exception in"\
 " case the library wasn't already initialized or if there was a fatal error " \
-"in the library.") ;
+"in the library." ) ;
 static PyObject*
 pyMalef_finalize ( PyObject *self, PyObject *args ) {
 
@@ -95,8 +95,8 @@ pyMalef_finalize ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.isInitialized *** */
-PyDoc_STRVAR (pyMalef_isInitialized_doc,
-"This function returns whether the Malef library has been initialized.") ;
+PyDoc_STRVAR ( pyMalef_isInitialized_doc,
+"This function returns whether the Malef library has been initialized." ) ;
 static PyObject*
 pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
 
@@ -116,9 +116,9 @@ pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.getHeight *** */
-PyDoc_STRVAR (pyMalef_getHeight_doc,
+PyDoc_STRVAR ( pyMalef_getHeight_doc,
 "This function returns the height of the terminal/console. It must have been "\
-"initialized (the library) in order for it to work.") ;
+"initialized (the library) in order for it to work." ) ;
 static PyObject*
 pyMalef_getHeight ( PyObject *self, PyObject *args ) {
 
@@ -140,9 +140,9 @@ pyMalef_getHeight ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.getWidth *** */
-PyDoc_STRVAR (pyMalef_getWidth_doc,
+PyDoc_STRVAR ( pyMalef_getWidth_doc,
 "This function returns the width of the terminal/console. The library must "  \
-"have been initialized in order for it to work.") ;
+"have been initialized in order for it to work." ) ;
 static PyObject*
 pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 
@@ -164,10 +164,10 @@ pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.newPage *** */
-PyDoc_STRVAR (pyMalef_newPage_doc,
+PyDoc_STRVAR ( pyMalef_newPage_doc,
 "This function prepares a clean environment for the terminal application by " \
 "moving the old text up. It raises an error if the library hasn't been "      \
-"initialized.") ;
+"initialized." ) ;
 static PyObject*
 pyMalef_newPage ( PyObject *self, PyObject *args ) {
 
@@ -188,11 +188,11 @@ pyMalef_newPage ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.setTitle *** */
-PyDoc_STRVAR (pyMalef_setTitle_doc,
+PyDoc_STRVAR ( pyMalef_setTitle_doc,
 "This function changes the title of the terminal/console. This new title will"\
 " remain even if the library has been finalized. It will return when the "    \
 "program is terminated. It raises an exception if the library hasn't been "   \
-"initialized.") ;
+"initialized." ) ;
 static PyObject*
 pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
 
@@ -223,10 +223,10 @@ pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
 
 
 /* *** malef.updateTerminalSize *** */
-PyDoc_STRVAR (pyMalef_updateTerminalSize_doc,
+PyDoc_STRVAR ( pyMalef_updateTerminalSize_doc,
 "This function updates the terminal size and it returns whether the size has "\
 "changed. However in systems like Linux, the size will be automatically "     \
-"updated, so it will always return `False'.") ;
+"updated, so it will always return `False'." ) ;
 static PyObject*
 pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
 
@@ -252,11 +252,11 @@ pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
 
 
 /* *** malef.wrapper *** */
-PyDoc_STRVAR (pyMalef_wrapper_doc,
+PyDoc_STRVAR ( pyMalef_wrapper_doc,
 "This function wraps another function to make sure everything is cleaned if " \
 "any error was raised during the execution of the function. After clean up "  \
 "the same errors will be raised again. You can pass one (or none) argument "  \
-"to your wrapped function -- whose return value will be returned as well ") ;
+"to your wrapped function -- whose return value will be returned as well." ) ;
 static PyObject*
 pyMalef_wrapper ( PyObject *self, PyObject *args, PyObject *kwargs ) {
    // Due to the types of the Python objects and many other problems, this
@@ -353,7 +353,7 @@ pyMalefMethods[] = {
  *#######################  D O C U M E N T A T I O N  #######################*
 \*###########################################################################*/
 
-PyDoc_STRVAR (pyMalefDocs,
+PyDoc_STRVAR ( pyMalefDocs,
 "This is the Python binding to `Malef', a library which was originally "
 "written in Ada. This library is similar to the `curses' library, but it aims "
 "to be cross-platform and cross-platform inside the same platform, which means"

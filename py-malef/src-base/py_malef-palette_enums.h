@@ -86,8 +86,13 @@ pyMalef_PaletteEnum___new__ ( PyTypeObject *type,
 }
 
 
-// TODO: Image_Function
-// TODO: Document this.
+/*
+ * *** malef.PaletteEnum.__iter__ ***
+ *
+ * This function returns an iterator that can be used to iterate over all the
+ * palette names inside the PaletteEnum type. This could be useful to iterate
+ * through all predefined palettes.
+ */
 static PyObject*
 pyMalef_PaletteEnum___iter__ ( _pyMalef_paletteEnumStruct *self ) {
 
@@ -103,15 +108,75 @@ pyMalef_PaletteEnum___iter__ ( _pyMalef_paletteEnumStruct *self ) {
 }
 
 
+
+/*###########################################################################*\
+ *###################### P U B L I C   M E T H O D S ########################*
+\*###########################################################################*/
+
+static const char *_pyMalef_PALETTE_ENUM_NAMES[] = {
+   "MALEF_PALETTE",
+   "VGA",
+   "WINDOWS_XP_CONSOLE",
+   "WINDOWS_POWERSHELL",
+   "VISUAL_STUDIO_CODE",
+   "WINDOWS_10_CONSOLE",
+   "TERMINAL_APP",
+   "PUTTY",
+   "MIRC",
+   "XTERM",
+   "UBUNTU",
+} ;
+
+/* *** malef.PaletteEnum.image *** */
+PyDoc_STRVAR ( pyMalef_PaletteEnum_image_doc,
+"This function returns the image (the string) of each of the values of the "
+"enumeration." ) ;
+static PyObject*
+pyMalef_PaletteEnum_image ( PyObject *self,
+                            PyObject *args,
+                            PyObject *kwargs ) {
+
+   static char *keyword_list[] = { "value", NULL } ;
+   malef_paletteKind_t palette ;
+
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "h", keyword_list,
+                                        &palette ) ) {
+      return NULL ;
+   }
+
+   if ( palette < malef_MALEF_PALETTE || palette > malef_UBUNTU ) {
+      PyErr_SetString ( pyMalef_BoundsError,
+                       "Invalid value for a Palette!" ) ;
+      return NULL ;
+   }
+
+   return PyUnicode_FromString ( _pyMalef_PALETTE_ENUM_NAMES[palette] ) ;
+}
+#define pyMalef_PaletteEnum_image_method {                                    \
+   "image",                                                                   \
+   (PyCFunction)pyMalef_PaletteEnum_image,                                    \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_PaletteEnum_image_doc                                              \
+}
+
+
+
 /*###########################################################################*\
  *################# P Y T H O N   P A L E T T E _ E N U M  ##################*
 \*###########################################################################*/
 
+
+static PyMethodDef
+pyMalef_PaletteEnumMethods[] = {
+   pyMalef_PaletteEnum_image_method,
+   { NULL, NULL, 0, NULL }
+} ;
+
+
 #define _PYMALEF_PALETTE_ENUM_DEFINE_PALETTE_MEMBER(name) \
    {#name, T_INT, offsetof (_pyMalef_paletteEnumStruct, name), READONLY, #name}
-
 static PyMemberDef
-pyMalef_PaletteEnum_members[] = {
+pyMalef_PaletteEnumMembers[] = {
    _PYMALEF_PALETTE_ENUM_DEFINE_PALETTE_MEMBER(MALEF_PALETTE),
    _PYMALEF_PALETTE_ENUM_DEFINE_PALETTE_MEMBER(VGA),
    _PYMALEF_PALETTE_ENUM_DEFINE_PALETTE_MEMBER(WINDOWS_XP_CONSOLE),
@@ -130,11 +195,15 @@ static PyTypeObject
 pyMalef_PaletteEnum = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
    .tp_name      = "malef.PaletteEnum",
-   .tp_doc       = "TODO: Add documentation",
+   .tp_doc       = "This is an enumeration type that assigns a CONSTANT "
+                   "integer value to each of the predefined palettes. These "
+                   "values can be used to change the default palette or to "
+                   "get one of the predefined palettes.",
    .tp_basicsize = sizeof(_pyMalef_paletteEnumStruct),
    .tp_new       = pyMalef_PaletteEnum___new__,
    .tp_iter      = (getiterfunc)pyMalef_PaletteEnum___iter__,
-   .tp_members   = pyMalef_PaletteEnum_members,
+   .tp_members   = pyMalef_PaletteEnumMembers,
+   .tp_methods   = pyMalef_PaletteEnumMethods,
 } ;
 
 

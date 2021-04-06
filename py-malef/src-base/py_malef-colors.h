@@ -58,11 +58,62 @@ typedef struct {
    malef_color_t color ;
 } _pyMalef_colorStruct ;
 
+PyObject*
+_pyMalef_cast2Color ( PyObject *value ) ;
 
 
 /*###########################################################################*\
  *###################### P R I V A T E   M E T H O D S ######################*
 \*###########################################################################*/
+
+/*
+ * *** malef.Color.__init__ ***
+ *
+ * This function initialises a colour object. It takes as argument an object
+ * that will be casted into the Color type. If no argument is given, then
+ * nothing is done.
+ */
+
+static int
+pyMalef_Color___init__ ( _pyMalef_colorStruct *self,
+                         PyObject             *args,
+                         PyObject             *kwargs ) {
+
+   static char *keyword_list[] = { "object", NULL } ;
+   PyObject *newColor = NULL ;
+
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "|O", keyword_list,
+                                        &newColor ) ) {
+      return -1 ;
+   }
+
+   if ( newColor == NULL ) {
+      // It means we have no initialiser, thus we can safely initialise all the
+      // components from the colour to zero.
+      for ( int i = 0 ; i < 4 ; i++ ) {
+         self->color[i] = 0 ;
+      }
+      // Success.
+      return 0 ;
+   } else {
+      // Otherwise an initialiser has been given as a parameter, therefore we
+      // can cast it to a Colour type:
+      PyObject *castColor = _pyMalef_cast2Color ( newColor ) ;
+      if ( castColor == NULL ) {
+         // An error has occurred, we can safely return -1, because the string
+         // has already been set.
+         return -1 ;
+      } else {
+         // Otherwise we just assign it.
+         for ( int i = 0 ; i < 4 ; i++ ) {
+            self->color[i] = ((_pyMalef_colorStruct*)castColor)->color[i] ;
+         }
+         // Success.
+         return 0 ;
+      }
+   }
+}
+
 
 /*
  * *** malef.Color.__len__ ***
@@ -135,8 +186,6 @@ static int
 pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
                             Py_ssize_t            index,
                             PyObject             *value ) {
-
-   // TODO: Accept integers, strings and iterables.
 
    char message[512] ;
    long new_value ;
@@ -235,8 +284,12 @@ _pyMalef_Color_as_sequence = {
    .sq_item     = (ssizeargfunc)    pyMalef_Color___getitem__,
    .sq_ass_item = (ssizeobjargproc) pyMalef_Color___setitem__,
    .sq_contains = (objobjproc)      pyMalef_Color___contains__
-   // TODO: This function now it's not needed, because the iteration bug has
-   //       been fixed.
+   // NOTE: This function now is not needed, because the iteration bug has been
+   //       fixed. However I'll leave it there because it's faster to iterate
+   //       though its items in pure C than in Python. Because in Python it
+   //       requires an iterator and call a method to compare them which can
+   //       slow it down. And in C we have direct access to the array so there
+   //       is no problem.
 } ;
 
 static PyTypeObject
@@ -251,7 +304,7 @@ pyMalef_Color = {
    .tp_as_sequence = &_pyMalef_Color_as_sequence,
    .tp_members     = pyMalef_Color_members,
    .tp_repr        = (reprfunc)pyMalef_Color___repr__,
-///.tp_iter      = tuple_iter  TODO
+   .tp_init        = (initproc)pyMalef_Color___init__,
 } ;
 
 
@@ -358,7 +411,8 @@ _pyMalef_cast2Color ( PyObject *value ) {
          default:
             PyErr_SetString ( PyExc_ValueError,
                               "The string should start with a hash '#' and be "
-                              "7 or 9 characters long!" ) ;
+                              "3, 4, 7 or 9 characters long! For example: "
+                              "'#123', '#2212', '#123456', '#12345678'" ) ;
             return NULL ;
          }
    } else {

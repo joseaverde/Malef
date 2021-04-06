@@ -101,8 +101,16 @@ pyMalef_ColorEnum___new__ ( PyTypeObject *type,
    return (PyObject*)self ;
 }
 
-// TODO: Image Function
-// TODO: Document this.
+/*
+ * *** malef.ColorEnum.__iter__ ***
+ *
+ * This function returns an iterator that can be used to iterate over all the
+ * items inside the ColorEnum type. That way you can write statements such as:
+ *
+ *    for i in malef.colors:
+ *       # Do something
+ *
+ */
 static PyObject*
 pyMalef_ColorEnum___iter__ ( _pyMalef_colorEnumStruct *self ) {
 
@@ -120,14 +128,67 @@ pyMalef_ColorEnum___iter__ ( _pyMalef_colorEnumStruct *self ) {
 
 
 /*###########################################################################*\
+ *###################### P U B L I C   M E T H O D S ########################*
+\*###########################################################################*/
+
+static const char *_pyMalef_COLOR_ENUM_NAMES[] = {
+   "BLACK", "RED", "GREEN", "YELLOW", "BLUE", "MAGENTA", "CYAN", "WHITE",
+   "BRIGHT_BLACK", "BRIGHT_RED"     , "BRIGHT_GREEN"   , "BRIGHT_YELLOW",
+   "BRIGHT_BLUE" , "BRIGHT_MAGENTA ", "BRIGHT_CYAN"    , "BRIGHT_WHITE" ,
+} ;
+
+
+/* *** malef.ColorEnum.image *** */
+PyDoc_STRVAR ( pyMalef_ColorEnum_image_doc,
+"This function returns the image (the string) of each of the values of the "
+"enumeration." ) ;
+static PyObject*
+pyMalef_ColorEnum_image ( PyObject *self,
+                          PyObject *args,
+                          PyObject *kwargs ) {
+
+   static char *keyword_list[] = { "value", NULL } ;
+   malef_colorKind_t color ;
+
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "h", keyword_list,
+                                        &color ) ) {
+      return NULL ;
+   }
+
+   if ( color < 0 || color >= 16 ) {
+      PyErr_SetString ( pyMalef_BoundsError,
+                        "Invalid value for a colour, it should be in the range"
+                        " 0..15 (both included)." ) ;
+      return NULL ;
+   }
+
+   return PyUnicode_FromString ( _pyMalef_COLOR_ENUM_NAMES[color] ) ;
+}
+#define pyMalef_ColorEnum_image_method {                                      \
+   "image",                                                                   \
+   (PyCFunction)pyMalef_ColorEnum_image,                                      \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_ColorEnum_image_doc                                                \
+}
+
+
+
+/*###########################################################################*\
  *################### P Y T H O N   C O L O R _ E N U M  ####################*
 \*###########################################################################*/
 
+
+static PyMethodDef
+pyMalef_ColorEnumMethods[] = {
+   pyMalef_ColorEnum_image_method,
+   { NULL, NULL, 0, NULL }
+} ;
+
+
 #define _PYMALEF_COLOR_ENUM_DEFINE_COLOR_MEMBER(name) \
    {#name, T_INT, offsetof (_pyMalef_colorEnumStruct, name), READONLY, #name}
-
 static PyMemberDef
-pyMalef_ColorEnum_members[] = {
+pyMalef_ColorEnumMembers[] = {
    _PYMALEF_COLOR_ENUM_DEFINE_COLOR_MEMBER(BLACK),
    _PYMALEF_COLOR_ENUM_DEFINE_COLOR_MEMBER(RED),
    _PYMALEF_COLOR_ENUM_DEFINE_COLOR_MEMBER(GREEN),
@@ -153,11 +214,15 @@ static PyTypeObject
 pyMalef_ColorEnum = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
    .tp_name      = "malef.ColorEnum",
-   .tp_doc       = "TODO: Add documentation",
+   .tp_doc       = "This is an enumeration type, it defines integer CONSTANTS "
+                   "that can be used to index colours in palettes. This type "
+                   "is iterable and can return the String representation of "
+                   "each of the colours.",
    .tp_basicsize = sizeof(_pyMalef_colorEnumStruct),
    .tp_new       = pyMalef_ColorEnum___new__,
    .tp_iter      = (getiterfunc)pyMalef_ColorEnum___iter__,
-   .tp_members   = pyMalef_ColorEnum_members,
+   .tp_members   = pyMalef_ColorEnumMembers,
+   .tp_methods   = pyMalef_ColorEnumMethods,
 } ;
 
 
