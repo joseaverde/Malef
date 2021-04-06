@@ -388,6 +388,20 @@ pyMalefModule = {
 \*###########################################################################*/
 
 
+typedef struct {
+   PyObject   *object ;
+   const char *name   ;
+   bool       loaded ;
+} __pyMalef_initObject ;
+
+/* TODO: Finish this
+static __pyMalef_initObject
+_pyMalef_initObjects[] = {
+
+   { NULL, "", false }
+} ;
+*/
+
 PyMODINIT_FUNC
 PyInit_malef ( void ) {
 

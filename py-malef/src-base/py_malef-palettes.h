@@ -245,13 +245,15 @@ pyMalef_Palette___richCompare__ ( PyObject *pySelf,
 
    // We check both are Palettes, because it makes no sense they are different
    // types. We suppose the first one in a Palette because it's itself (LOL).
-   // We return False and that's it.
+   // We return they are not implemented and that's it.
    if ( ! PyObject_IsInstance ( pyOther, (PyObject*)&pyMalef_Palette ) ) {
-      Py_RETURN_FALSE ;
+      Py_INCREF ( Py_NotImplemented ) ;
+      return Py_NotImplemented ;
    }
 
    // We check that the operation is not an stupid one.
-   if ( op != Py_EQ || op != Py_NE ) {
+   if ( op != Py_EQ && op != Py_NE ) {
+      Py_INCREF ( Py_NotImplemented ) ;
       return Py_NotImplemented ;
    }
 
@@ -260,9 +262,9 @@ pyMalef_Palette___richCompare__ ( PyObject *pySelf,
    _pyMalef_paletteStruct *other = (_pyMalef_paletteStruct*)pyOther ;
    int equal = true ;
    for ( int i = 0 ; i < 16 ; i++ ) {
-      if ( ! PyObject_RichCompare ( self->palette[i],
-                                    other->palette[i],
-                                    Py_EQ ) ) {
+      if ( ! PyObject_RichCompareBool ( self->palette[i],
+                                        other->palette[i],
+                                        Py_EQ ) ) {
          equal = false ;
          break ;
       }
