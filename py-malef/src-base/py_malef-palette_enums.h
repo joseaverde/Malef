@@ -51,6 +51,11 @@ typedef struct {
 } _pyMalef_paletteEnumStruct ;
 
 
+/*
+ * This is the PaletteEnum type already initialized for use.
+ */
+static PyObject *pyMalef_palettes ;
+
 
 /*###########################################################################*\
  *##################### P R I V A T E   M E T H O D S #######################*
@@ -206,63 +211,6 @@ pyMalef_PaletteEnum = {
    .tp_methods   = pyMalef_PaletteEnumMethods,
 } ;
 
-
-
-/*###########################################################################*\
- *################# P A L E T T E _ E N U M   F / I N I T  ##################*
-\*###########################################################################*/
-
-/*
- * This is the PaletteEnum type already initialized for use.
- */
-static PyObject *pyMalef_palettes ;
-
-/*
- * This function finalises and clears the PaletteEnum declared in this header.
- *
- * @param module
- * The modile where it has been previously added.
- */
-static void
-_pyMalef_finalizePaletteEnums ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_palettes ) ;
-   Py_DECREF ( &pyMalef_PaletteEnum ) ;
-}
-
-/*
- * This function adds the PaletteEnum type into the Python module.
- *
- * @param module
- * Well, we need the module as a paramater to add it somewhere.
- *
- * @return
- * Successful? or Not?
- */
-static bool
-_pyMalef_initializePaletteEnums ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_PaletteEnum ) < 0 ) {
-      return false ;
-   }
-
-   pyMalef_palettes = PyObject_CallObject ( (PyObject*)&pyMalef_PaletteEnum,
-                                             NULL ) ;
-
-   if ( PyModule_AddObject ( module, "palettes", pyMalef_palettes ) < 0 ) {
-      Py_DECREF ( &pyMalef_palettes ) ;
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_PaletteEnum ) ;
-   if ( PyModule_AddObject ( module, "PaletteEnum",
-                             (PyObject*)&(pyMalef_PaletteEnum) ) < 0 ) {
-      _pyMalef_finalizePaletteEnums ( module ) ;
-      return false ;
-   }
-
-   return true ;
-}
 
 #endif//MALEF_PALETTE_ENUMS_H
 

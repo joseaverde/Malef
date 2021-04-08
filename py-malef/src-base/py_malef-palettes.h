@@ -324,51 +324,6 @@ pyMalef_Palette = {
 
 
 /*###########################################################################*\
- *####################### P A L E T T E   F / I N I T #######################*
-\*###########################################################################*/
-
-
-/*
- * This function finalises and clears the Palettes in this header.
- *
- * @param module
- * The module from where we want to free the Palette type.
- */
-static void
-_pyMalef_finalizePalettes ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_Palette ) ;
-}
-
-
-/*
- * This function adds the Palette type to the Malef module.
- *
- * @param module
- * This is the module.
- *
- * @return
- * Whether it has succeeded.
- */
-static bool
-_pyMalef_initializePalettes ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_Palette ) < 0 ) {
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_Palette ) ;
-   if ( PyModule_AddObject (module, "Palette",
-                            (PyObject*)&(pyMalef_Palette) ) < 0 ) {
-      return false ;
-   }
-
-   return true ;
-}
-
-
-
-/*###########################################################################*\
  *#################### P A L E T T E   F U N C T I O N S ####################*
 \*###########################################################################*/
 

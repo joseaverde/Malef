@@ -58,6 +58,11 @@ typedef struct {
 } _pyMalef_colorEnumStruct ;
 
 
+/*
+ * This is the ColorEnum type already initialised for you.
+ */
+static PyObject *pyMalef_colors ;
+
 
 /*###########################################################################*\
  *##################### P R I V A T E   M E T H O D S #######################*
@@ -224,65 +229,6 @@ pyMalef_ColorEnum = {
    .tp_members   = pyMalef_ColorEnumMembers,
    .tp_methods   = pyMalef_ColorEnumMethods,
 } ;
-
-
-
-/*###########################################################################*\
- *################### C O L O R _ E N U M   F / I N I T  ####################*
-\*###########################################################################*/
-
-
-/*
- * This is the ColorEnum type already initialised for you.
- */
-static PyObject *pyMalef_colors ;
-
-/*
- * This fnuction finalises and clears the ColorEnum declared in this header.
- *
- * @param module
- * But it requieres the module where it must be removed from.
- */
-static void
-_pyMalef_finalizeColorEnums ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_colors ) ;
-   Py_DECREF ( &pyMalef_ColorEnum ) ;
-}
-
-/*
- * This function adds the ColorEnum type to the module.
- *
- * @param module
- * The same as above we need to place it somewhere.
- *
- * @return
- * Whether it has succeeded or not.
- */
-static bool
-_pyMalef_initializeColorEnums ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_ColorEnum ) < 0 ) {
-      return false ;
-   }
-
-   pyMalef_colors = PyObject_CallObject ( (PyObject*)&pyMalef_ColorEnum,
-                                          NULL ) ;
-
-   if ( PyModule_AddObject ( module, "colors", pyMalef_colors ) < 0 ) {
-      Py_DECREF ( &pyMalef_colors ) ;
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_ColorEnum ) ;
-   if ( PyModule_AddObject ( module, "ColorEnum",
-                            (PyObject*)&(pyMalef_ColorEnum) ) < 0 ) {
-      _pyMalef_finalizeColorEnums ( module ) ;
-      return false ;
-   }
-
-   return true ;
-}
 
 
 #endif//MALEF_COLOR_ENUMS_H

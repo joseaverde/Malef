@@ -72,32 +72,7 @@ pyMalef_EnumIterator = {
 } ;
 
 
-
-static void
-_pyMalef_finalizeEnumIterators ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_EnumIterator ) ;
-}
-
-
-static bool
-_pyMalef_initializeEnumIterators ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_EnumIterator ) < 0 ) {
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_EnumIterator ) ;
-   if ( PyModule_AddObject ( module, "_EnumIterator",
-                             (PyObject*)&(pyMalef_EnumIterator) ) < 0 ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      return false ;
-   }
-
-   return true ;
-}
-
-
+// TODO: Comment this.
 
 #endif//MALEF_ENUM_ITERATORS_H
 

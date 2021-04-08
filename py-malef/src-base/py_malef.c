@@ -387,20 +387,114 @@ pyMalefModule = {
  *################################  I N I T  ################################*
 \*###########################################################################*/
 
+// TODO: Reorganise it.
 
-typedef struct {
-   PyObject   *object ;
-   const char *name   ;
-   bool       loaded ;
-} __pyMalef_initObject ;
+// TODO: Document this
+typedef enum {
+   __pyNone   = 0,
+   __pyExcept = 1,
+   __pyObject = 2,
+   __pyType   = 3,
+}_PyInit_Kind ;
 
-/* TODO: Finish this
-static __pyMalef_initObject
-_pyMalef_initObjects[] = {
 
-   { NULL, "", false }
-} ;
-*/
+/*
+ * TODO: Document this.
+ */
+static bool
+_PyInit_addObject ( PyObject     *module,
+                    PyObject     *object,
+                    const char   *name,
+                    _PyInit_Kind kind ) {
+
+   // We keep track of all the objects added so far, so we can unreference them
+   // once we are done with them if in any case something goes wrong. For
+   // example when it fails to initialise.
+   // In order to free it all, pass the object as NULL or the kind as __pyNone.
+#define _PYINIT_MAX 0x20
+   static PyObject     *referenced_objects[_PYINIT_MAX]      = { NULL } ;
+   static _PyInit_Kind referenced_objects_kinds[_PYINIT_MAX] = { __pyNone } ;
+   static int          referenced_objects_count              = 0 ;
+   if ( object == NULL || kind == __pyNone ) {
+      // We can unreference all the objects.
+      for ( int e = 0 ; e <= referenced_objects_count ; e++ ) {
+         // We decrease the reference and do whatever we have to do depending
+         // on the kind of the object.
+         Py_XDECREF ( referenced_objects[e] ) ;
+         switch ( referenced_objects_kinds[e] ) {
+            case __pyNone:
+               // Nothing to be done here.
+               break ;
+            case __pyExcept:
+               Py_CLEAR ( referenced_objects[e] ) ;
+            case __pyObject:
+               break ;
+            case __pyType:
+               break ;
+            default:
+               // The code shouldn't get to this scope.
+               break ;     
+         }
+         referenced_objects[e] = NULL ;
+         referenced_objects_kinds[e] = __pyNone ;
+      }
+      // We restore the original values of the functions if for any reason the
+      // user wants to reinitialise it.
+      referenced_objects_count = 0 ;
+      Py_DECREF ( module ) ;
+
+      return false ;
+   } else {
+      // We add the new object and increase the number of exceptions.
+      referenced_objects[referenced_objects_count++] = object ;
+      referenced_objects_kinds[referenced_objects_count] = kind ;
+
+      // We return whether it has succeeded or not, we don't try to free
+      // anything, we just return something went wrong.
+      return ! ( PyModule_AddObject ( module, name, object ) < 0 ) ;
+   }
+}
+
+
+#define TRY2INIT_FAIL _PyInit_addObject (module, NULL, "", __pyNone )
+
+#define TRY2INIT_TYPE(type, name)                                             \
+   if ( PyType_Ready ( &type ) < 0 ) {                                        \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }                                                                          \
+   Py_INCREF ( &type ) ;                                                      \
+   if ( ! _PyInit_addObject ( module, (PyObject*)&type, name, __pyType ) ) {  \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }
+
+
+#define TRY2INIT_EXCEPT(except, name)                                         \
+   except = PyErr_NewException ( "malef." name, NULL, NULL ) ;                \
+   if ( except == NULL ) {                                                    \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }                                                                          \
+   if ( ! _PyInit_addObject ( module, except, name, __pyExcept ) ) {          \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }
+
+
+#define TRY2INIT_OBJECT(object, name, type)                                   \
+   object = PyObject_CallObject ( (PyObject*)&type, NULL ) ;                  \
+   if ( object == NULL ) {                                                    \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }                                                                          \
+   if ( ! _PyInit_addObject ( module, object, name, __pyObject ) ) {          \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }
+
+// TODO: Dry it a little bit.
+
 
 PyMODINIT_FUNC
 PyInit_malef ( void ) {
@@ -408,7 +502,6 @@ PyInit_malef ( void ) {
    // If any error occurs during initialization we finalize everything
    // initialize so far and also unreference the module so the garbage
    // collector can free the memory when it feels like doing so.
-   // TODO: Automate it!
 
    PyObject *module = PyModule_Create ( &pyMalefModule );
    if ( module == NULL ) {
@@ -416,66 +509,23 @@ PyInit_malef ( void ) {
       return NULL ;
    }
 
-   if ( ! _pyMalef_initializeEnumIterators ( module ) ) {
-      Py_DECREF ( module ) ;
-   }
+   TRY2INIT_EXCEPT ( pyMalef_LibraryError,        "LibraryError"        ) ;
+   TRY2INIT_EXCEPT ( pyMalef_InitializationError, "InitializationError" ) ;
+   TRY2INIT_EXCEPT ( pyMalef_BoundsError,         "BoundsError"         ) ;
+   TRY2INIT_EXCEPT ( pyMalef_NullSurfaceError,    "NullSurfaceError"    ) ;
 
-   if ( ! _pyMalef_initializeColors ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
+   TRY2INIT_TYPE ( pyMalef_EnumIterator, "_EnumIterator" ) ;
+   TRY2INIT_TYPE ( pyMalef_Color,        "Color"         ) ;
+   TRY2INIT_TYPE ( pyMalef_Palette,      "Palette"       ) ;
+   TRY2INIT_TYPE ( pyMalef_ColorEnum,    "ColorEnum"     ) ;
+   TRY2INIT_TYPE ( pyMalef_PaletteEnum,  "PaletteEnum"   ) ;
+   TRY2INIT_TYPE ( pyMalef_Surface,      "Surface"       ) ;
 
-      Py_DECREF ( module ) ;
-      return NULL ;
-   }
+   TRY2INIT_OBJECT ( pyMalef_colors,   "colors"  , pyMalef_ColorEnum   ) ;
+   TRY2INIT_OBJECT ( pyMalef_palettes, "palettes", pyMalef_PaletteEnum ) ;
 
-   if ( ! _pyMalef_initializeColorEnums ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      _pyMalef_finalizeColors ( module );
-
-      Py_DECREF (module) ;
-      return NULL ;
-   }
-
-   if ( ! _pyMalef_initializePalettes ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      _pyMalef_finalizeColors ( module ) ;
-      _pyMalef_finalizeColorEnums ( module ) ;
-
-      Py_DECREF ( module ) ;
-      return NULL ;
-   }
-
-   if ( ! _pyMalef_initializePaletteEnums ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      _pyMalef_finalizeColors ( module ) ;
-      _pyMalef_finalizeColorEnums ( module ) ;
-      _pyMalef_finalizePalettes ( module ) ;
-
-      Py_DECREF ( module ) ;
-   }
-
-   if ( ! _pyMalef_initializeSurfaces ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      _pyMalef_finalizeColors ( module ) ;
-      _pyMalef_finalizeColorEnums ( module ) ;
-      _pyMalef_finalizePalettes ( module ) ;
-      _pyMalef_finalizePaletteEnums ( module ) ;
-
-      Py_DECREF ( module ) ;
-      return NULL ;
-   }
-
+   // TODO: Modify it, and remember to finalise it in the addObject function.
    _pyMalef_initializeUtils () ;
-   if ( ! _pyMalef_initializeExceptions ( module ) ) {
-      _pyMalef_finalizeEnumIterators ( module ) ;
-      _pyMalef_finalizeColors ( module ) ;
-      _pyMalef_finalizeColorEnums ( module ) ;
-      _pyMalef_finalizePalettes ( module ) ;
-      _pyMalef_finalizeSurfaces ( module ) ;
-      _pyMalef_finalizePaletteEnums ( module ) ;
-
-      Py_DECREF ( module ) ;
-      return NULL ;
-   }
 
    return module ;
 }

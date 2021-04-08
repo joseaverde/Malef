@@ -490,50 +490,6 @@ pyMalef_Color = {
 } ;
 
 
-/*###########################################################################*\
- *######################### C O L O R   F / I N I T #########################*
-\*###########################################################################*/
-
-
-/*
- * This function finalizes and clears the Colour declared in this header.
- *
- * @param module
- * The module from which we want to free the Colour type.
- */
-static void
-_pyMalef_finalizeColors ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_Color ) ;
-}
-
-
-/*
- * This function adds the Colour type to the module.
- *
- * @param module
- * The module.
- *
- * @return
- * Whether it has succeeded.
- */
-static bool
-_pyMalef_initializeColors ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_Color ) < 0 ) {
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_Color ) ;
-   if ( PyModule_AddObject ( module, "Color",
-                             (PyObject*)&(pyMalef_Color) ) < 0 ) {
-      Py_DECREF ( &pyMalef_Color ) ;
-      return false ;
-   }
-
-   return true ;
-}
-
 #endif//MALEF_COLORS_H
 
 ///=======================/////////////////////////=========================///

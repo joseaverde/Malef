@@ -480,51 +480,6 @@ pyMalef_Surface = {
 } ;
 
 
-
-/*###########################################################################*\
- *###################### S U R F A C E S   F / I N I T ######################*
-\*###########################################################################*/
-
-/*
- * This function finalizes and clears the Surface type declared in this header.
- * 
- * @param module
- * The module from which we want to free the Surface type.
- */
-static void
-_pyMalef_finalizeSurfaces ( PyObject *module ) {
-
-   Py_DECREF ( &pyMalef_Surface ) ;
-}
-
-
-/*
- * This function adds the Surface type to the module.
- *
- * @param module
- * The module.
- *
- * @return
- * Whether it has succeeded.
- */
-static bool
-_pyMalef_initializeSurfaces ( PyObject *module ) {
-
-   if ( PyType_Ready ( &pyMalef_Surface ) < 0 ) {
-      return false ;
-   }
-
-   Py_INCREF ( &pyMalef_Surface ) ;
-   if ( PyModule_AddObject ( module, "Surface",
-                             (PyObject*)&(pyMalef_Surface) ) < 0 ) {
-      Py_DECREF ( &pyMalef_Surface ) ;
-      return false ;
-   }
-
-   return true ;
-}
-
-
 #endif//PY_MALEF_SURFACES_H
 
 ///=======================/////////////////////////=========================///
