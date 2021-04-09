@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2021-04-09
+### Added
+- Added Color type to Python binding.
+- Added Palette type to Python binding.
+- Added Enumeration Iterables to Python binding.
+- Added Color Enumeration and Palette Enumeration types to Python binding.
+### Fixed
+- Fixed various bugs.
+- Fixed all the Python binding.
+- Fixed python iterators.
+
 ## [0.2.3] - 2021-02-05
 ### Added
 - Added complete colour/palette support for C.

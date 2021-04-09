@@ -34,6 +34,7 @@
 #include "Malef.h"
 
 #include "py_malef-exceptions.h"
+#include "py_malef-colors.h"
 
 
 /*###########################################################################*\
@@ -57,7 +58,6 @@ typedef struct {
 } _pyMalef_surfaceStruct ;
 
 
-// TODO: Cast everything even if it's not a colour.
 /*###########################################################################*\
  *###################### P R I V A T E   M E T H O D S ######################*
 \*###########################################################################*/
@@ -280,7 +280,6 @@ pyMalef_Surface_getBackground ( _pyMalef_surfaceStruct *self,
 
 
 /* *** malef.Surface.setForeground *** */
-// TODO: Allow ColorEnum
 PyDoc_STRVAR ( pyMalef_Surface_setForeground_doc,
 "This function can be used to change the foreground colour in a certain "     \
 "position of the surface." ) ;
@@ -322,9 +321,18 @@ pyMalef_Surface_setForeground ( _pyMalef_surfaceStruct *self,
       from_col = temp_col ;
    }
 
+   // We cast the colour to colour.
+   pyColor = _pyMalef_cast2Color ( pyColor ) ;
+   if ( pyColor == NULL ) {
+      // An error has occurred.
+      return NULL ;
+   }
    for ( int i = 0 ; i < 4 ; i++ ) {
       color[i] = ((_pyMalef_colorStruct*)pyColor)->color[i] ;
    }
+   // We decrease the reference to the new colour, because it won't be
+   // returned.
+   Py_DECREF ( pyColor ) ;
 
    // We call the function and return.
    malef_error_t err = malef_setSurfaceForeground ( self->surface,
@@ -391,10 +399,14 @@ pyMalef_Surface_setBackground ( _pyMalef_surfaceStruct *self,
       from_col = temp_col ;
    }
 
-   // TODO: Create proper inline function
+   // We cast the colour to colour.
+   pyColor = _pyMalef_cast2Color ( pyColor ) ;
    for ( int i = 0 ; i < 4 ; i++ ) {
       color[i] = ((_pyMalef_colorStruct*)pyColor)->color[i] ;
    }
+   // We decrease the reference to the new colour, because it won't be
+   // returned.
+   Py_DECREF ( pyColor ) ;
 
    // We call the function and return.
    malef_error_t err = malef_setSurfaceBackground ( self->surface,
@@ -418,17 +430,151 @@ pyMalef_Surface_setBackground ( _pyMalef_surfaceStruct *self,
 } 
 
 
-/* *** Surface.getCursorForeground *** */
+/* *** malef.Surface.getCursorForeground *** */
+PyDoc_STRVAR ( pyMalef_Surface_getCursorForeground_doc,
+"This function returns the colour of the cursor, i.e. the default writing "
+"colour of the surface." ) ;
+static PyObject*
+pyMalef_Surface_getCursorForeground ( _pyMalef_surfaceStruct *self,
+                                      PyObject               *args ) {
 
-/* *** Surface.getCursorBackground *** */
+   PyObject *pyColor = PyObject_CallObject ( (PyObject*)&pyMalef_Color,
+                                             NULL ) ;
 
-/* *** Surface.setCursorForeground *** */
-//TODO: Add colour enums
+   malef_error_t err = malef_getCursorForeground (
+      self->surface,
+      &((_pyMalef_colorStruct*)pyColor)->color
+   ) ;
+
+   if ( _pyMalef_raiseException ( err ) ) {
+      Py_DECREF ( pyColor ) ;
+      return NULL ;
+   } else {
+      return pyColor ;
+   }
+
+}
+#define pyMalef_Surface_getCursorForeground_method {                          \
+   "getCursorForeground",                                                     \
+   (PyCFunction)pyMalef_Surface_getCursorForeground,                          \
+   METH_VARARGS,                                                              \
+   pyMalef_Surface_getCursorForeground_doc                                    \
+}
+
+
+/* *** malef.Surface.getCursorBackground *** */
+PyDoc_STRVAR ( pyMalef_Surface_getCursorBackground_doc,
+"This function returns the background colour of the cursor, i.e. the default "
+"writing colour of the surface on the background." ) ;
+static PyObject*
+pyMalef_Surface_getCursorBackground ( _pyMalef_surfaceStruct *self,
+                                      PyObject               *args ) {
+
+   PyObject *pyColor = PyObject_CallObject ( (PyObject*)&pyMalef_Color,
+                                             NULL ) ;
+   malef_error_t err = malef_getCursorBackground (
+      self->surface,
+      &((_pyMalef_colorStruct*)pyColor)->color
+   ) ;
+
+   if ( _pyMalef_raiseException ( err ) ) {
+      Py_DECREF ( pyColor ) ;
+      return NULL ;
+   } else {
+      return pyColor ;
+   }
+}
+#define pyMalef_Surface_getCursorBackground_method {                          \
+   "getCursorBackground",                                                     \
+   (PyCFunction)pyMalef_Surface_getCursorBackground,                          \
+   METH_VARARGS,                                                              \
+   pyMalef_Surface_getCursorBackground_doc                                    \
+}
+
+
+/* *** malef.Surface.setCursorForeground *** */
+PyDoc_STRVAR ( pyMalef_Surface_setCursorForeground_doc,
+"This function can be used to change the default writing foreground colour "
+"of a Surface." ) ;
+static PyObject*
+pyMalef_Surface_setCursorForeground ( _pyMalef_surfaceStruct *self,
+                                      PyObject               *args,
+                                      PyObject               *kwargs ) {
+
+   static char   *keyword_list[] = { "color", NULL } ;
+   PyObject      *_pyColor ;
+   malef_color_t color ;
+
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "O", keyword_list,
+                                        &_pyColor ) ) {
+      return NULL ;
+   }
+
+   PyObject *pyColor = _pyMalef_cast2Color ( _pyColor ) ;
+   if ( pyColor == NULL ) {
+      return NULL ;
+   }
+   for ( int i = 0 ; i < 4 ; i++ ) {
+      color[i] = ((_pyMalef_colorStruct*)pyColor)->color[i] ;
+   }
+   Py_DECREF ( pyColor ) ;
+   malef_error_t err = malef_setCursorForeground ( self->surface, color ) ;
+
+   if ( _pyMalef_raiseException ( err ) ) {
+      return NULL ;
+   } else {
+      Py_RETURN_NONE ;
+   }
+}
+#define pyMalef_Surface_setCursorForeground_method {                          \
+   "setCursorForeground",                                                     \
+   (PyCFunction)pyMalef_Surface_setCursorForeground,                          \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_Surface_setCursorForeground_doc                                    \
+}
+
+
 /* *** Surface.setCursorBackground *** */
+PyDoc_STRVAR ( pyMalef_Surface_setCursorBackground_doc,
+"This function can be used to change the default writing background colour "
+"of a Surface." ) ;
+static PyObject*
+pyMalef_Surface_setCursorBackground ( _pyMalef_surfaceStruct *self,
+                                      PyObject               *args,
+                                      PyObject               *kwargs ) {
 
+   static char   *keyword_list[] = { "color", NULL } ;
+   PyObject      *_pyColor ;
+   malef_color_t color ;
 
-// getPalette
-// setPalette
+   if ( ! PyArg_ParseTupleAndKeywords ( args, kwargs, "O", keyword_list,
+                                        &_pyColor ) ) {
+      return NULL ;
+   }
+
+   PyObject *pyColor = _pyMalef_cast2Color ( _pyColor ) ;
+   if ( pyColor == NULL ) {
+      return NULL ;
+   }
+   for ( int i = 0 ; i < 4 ; i++ ) {
+      color[i] = ((_pyMalef_colorStruct*)pyColor)->color[i] ;
+   }
+   Py_DECREF ( pyColor ) ;
+   malef_error_t err = malef_setCursorBackground ( self->surface, color ) ;
+
+   if ( _pyMalef_raiseException ( err ) ) {
+      return NULL ;
+   } else {
+      Py_RETURN_NONE ;
+   }
+}
+#define pyMalef_Surface_setCursorBackground_method {                          \
+   "setCursorBackground",                                                     \
+   (PyCFunction)pyMalef_Surface_setCursorBackground,                          \
+   METH_VARARGS | METH_KEYWORDS,                                              \
+   pyMalef_Surface_setCursorBackground_doc                                    \
+}
+
 
 
 /*###########################################################################*\
@@ -442,6 +588,10 @@ pyMalef_SurfaceMethods[] = {
    pyMalef_Surface_getBackground_method,
    pyMalef_Surface_setForeground_method,
    pyMalef_Surface_setBackground_method,
+   pyMalef_Surface_getCursorForeground_method,
+   pyMalef_Surface_getCursorBackground_method,
+   pyMalef_Surface_setCursorForeground_method,
+   pyMalef_Surface_setCursorBackground_method,
    { NULL, NULL, 0, NULL }
 } ;
 
@@ -461,11 +611,12 @@ pyMalef_Surface = {
  * .tp_getattro
  * .tp_setattro
  */
-   .tp_flags     = Py_TPFLAGS_DEFAULT,    // TODO: Change flags
-   .tp_doc       = "TODO: Malef.surface",
+   .tp_flags     = Py_TPFLAGS_DEFAULT, 
+   .tp_doc       = "The Surface type are objects that store a kind of grid "
+                   "with characters, colours and styles that can be printed "
+                   "anywhere onto the screen applying transparencies on "
+                   "different layers.",
 // .tp_richcompare
-// .tp_iter       TODO: Make it iterable for python3 use.
-// .tp_iternext
    .tp_methods   = pyMalef_SurfaceMethods,
 // .tp_members
 // .tp_getset

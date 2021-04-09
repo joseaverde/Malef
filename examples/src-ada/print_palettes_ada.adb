@@ -20,6 +20,7 @@ begin
 
    for Pal in Malef.Colors.Palette_Kind'Range loop
       Malef.Colors.Set_Palette (Pal);
+   -- Ada.Text_IO.Put_Line ( Malef.Colors.Get_Cursor_Foreground (Surface)(Malef.R)'Image ) ;
       Col := 1;
       for Bright in Boolean'Range loop
          for Colour in Malef.Colors.Color_Kind'Range loop

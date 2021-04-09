@@ -387,9 +387,10 @@ pyMalefModule = {
  *################################  I N I T  ################################*
 \*###########################################################################*/
 
-// TODO: Reorganise it.
-
-// TODO: Document this
+/*
+ * This type is just used to tell which kind of object is going to be added to
+ * the module.
+ */
 typedef enum {
    __pyNone   = 0,
    __pyExcept = 1,
@@ -399,7 +400,9 @@ typedef enum {
 
 
 /*
- * TODO: Document this.
+ * This function adds to the module an object, however if for whatever reason
+ * any part of the program fails it will finalise everything by using NULL as
+ * object parameter.
  */
 static bool
 _PyInit_addObject ( PyObject     *module,
@@ -441,6 +444,7 @@ _PyInit_addObject ( PyObject     *module,
       // We restore the original values of the functions if for any reason the
       // user wants to reinitialise it.
       referenced_objects_count = 0 ;
+      _pyMalef_finalizeUtils () ;
       Py_DECREF ( module ) ;
 
       return false ;
@@ -458,20 +462,8 @@ _PyInit_addObject ( PyObject     *module,
 
 #define TRY2INIT_FAIL _PyInit_addObject (module, NULL, "", __pyNone )
 
-#define TRY2INIT_TYPE(type, name)                                             \
-   if ( PyType_Ready ( &type ) < 0 ) {                                        \
-      TRY2INIT_FAIL ;                                                         \
-      return module ;                                                         \
-   }                                                                          \
-   Py_INCREF ( &type ) ;                                                      \
-   if ( ! _PyInit_addObject ( module, (PyObject*)&type, name, __pyType ) ) {  \
-      TRY2INIT_FAIL ;                                                         \
-      return module ;                                                         \
-   }
-
-
-#define TRY2INIT_EXCEPT(except, name)                                         \
-   except = PyErr_NewException ( "malef." name, NULL, NULL ) ;                \
+#define TRY2INIT_EXCEPT(except, name, doc, base)                              \
+   except = PyErr_NewExceptionWithDoc ( "malef." name, doc, base, NULL ) ;    \
    if ( except == NULL ) {                                                    \
       TRY2INIT_FAIL ;                                                         \
       return module ;                                                         \
@@ -480,7 +472,6 @@ _PyInit_addObject ( PyObject     *module,
       TRY2INIT_FAIL ;                                                         \
       return module ;                                                         \
    }
-
 
 #define TRY2INIT_OBJECT(object, name, type)                                   \
    object = PyObject_CallObject ( (PyObject*)&type, NULL ) ;                  \
@@ -493,7 +484,16 @@ _PyInit_addObject ( PyObject     *module,
       return module ;                                                         \
    }
 
-// TODO: Dry it a little bit.
+#define TRY2INIT_TYPE(type, name)                                             \
+   if ( PyType_Ready ( &type ) < 0 ) {                                        \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }                                                                          \
+   Py_INCREF ( &type ) ;                                                      \
+   if ( ! _PyInit_addObject ( module, (PyObject*)&type, name, __pyType ) ) {  \
+      TRY2INIT_FAIL ;                                                         \
+      return module ;                                                         \
+   }
 
 
 PyMODINIT_FUNC
@@ -509,10 +509,18 @@ PyInit_malef ( void ) {
       return NULL ;
    }
 
-   TRY2INIT_EXCEPT ( pyMalef_LibraryError,        "LibraryError"        ) ;
-   TRY2INIT_EXCEPT ( pyMalef_InitializationError, "InitializationError" ) ;
-   TRY2INIT_EXCEPT ( pyMalef_BoundsError,         "BoundsError"         ) ;
-   TRY2INIT_EXCEPT ( pyMalef_NullSurfaceError,    "NullSurfaceError"    ) ;
+   _pyMalef_initializeUtils () ;
+
+   TRY2INIT_EXCEPT ( pyMalef_Exception          , "Exception"           ,
+                     pyMalef_Exception_doc          , NULL              ) ;
+   TRY2INIT_EXCEPT ( pyMalef_LibraryError       , "LibraryError"       ,
+                     pyMalef_LibraryError_doc       , pyMalef_Exception ) ;
+   TRY2INIT_EXCEPT ( pyMalef_InitializationError, "InitializationError",
+                     pyMalef_InitializationError_doc, pyMalef_Exception ) ;
+   TRY2INIT_EXCEPT ( pyMalef_BoundsError        , "BoundsError"        ,
+                     pyMalef_BoundsError_doc        , pyMalef_Exception ) ;
+   TRY2INIT_EXCEPT ( pyMalef_NullSurfaceError   , "NullSurfaceError"   ,
+                     pyMalef_NullSurfaceError_doc   , pyMalef_Exception ) ;
 
    TRY2INIT_TYPE ( pyMalef_EnumIterator, "_EnumIterator" ) ;
    TRY2INIT_TYPE ( pyMalef_Color,        "Color"         ) ;
@@ -523,9 +531,6 @@ PyInit_malef ( void ) {
 
    TRY2INIT_OBJECT ( pyMalef_colors,   "colors"  , pyMalef_ColorEnum   ) ;
    TRY2INIT_OBJECT ( pyMalef_palettes, "palettes", pyMalef_PaletteEnum ) ;
-
-   // TODO: Modify it, and remember to finalise it in the addObject function.
-   _pyMalef_initializeUtils () ;
 
    return module ;
 }

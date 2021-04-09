@@ -31,6 +31,15 @@
 
 #include <Python.h>
 
+
+/*
+ * This is the EnumIterator type, as it names says, it can be used to iterate
+ * over enumeration types. It's very simple because the enumeration types
+ * declared in this binding only contain an arithmetic sequence of step one of
+ * constant integers as values of the enumeration.
+ *
+ * This is the type that will be returned after been initialised when called.
+ */
 typedef struct {
    PyObject_HEAD
    int from ;
@@ -39,6 +48,12 @@ typedef struct {
 } _pyMalef_enumIteratorStruct ;
 
 
+/*
+ * *** malef._EnumIterator.__iter__ ***
+ *
+ * This function just returns itself, is the iterator that is returned when
+ * trying to iterate.
+ */
 static PyObject*
 pyMalef_EnumIterator___iter__ ( PyObject *pySelf ) {
 
@@ -47,6 +62,12 @@ pyMalef_EnumIterator___iter__ ( PyObject *pySelf ) {
 }
 
 
+/*
+ * *** malef._EnumIterator.__next__ ***
+ *
+ * This is the function that is called when passing to the next item in the
+ * iteration. It just increases the index and returns the current value.
+ */
 static PyObject*
 pyMalef_EnumIterator___next__ ( PyObject *pySelf ) {
 
@@ -60,6 +81,7 @@ pyMalef_EnumIterator___next__ ( PyObject *pySelf ) {
 }
 
 
+
 static PyTypeObject
 pyMalef_EnumIterator = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
@@ -71,8 +93,6 @@ pyMalef_EnumIterator = {
    .tp_new       = PyType_GenericNew,
 } ;
 
-
-// TODO: Comment this.
 
 #endif//MALEF_ENUM_ITERATORS_H
 

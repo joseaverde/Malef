@@ -42,30 +42,29 @@
 // This is the number of exceptions there are.
 #define _pyMalef_ERROR_COUNT  4
 
-/*
- * This exception is raised when there is a fatal error or an unknown error in
- * the library.
- */
+PyDoc_STRVAR ( pyMalef_Exception_doc,
+"This exception is the base one for all the others." ) ;
+static PyObject *pyMalef_Exception ;
+
+PyDoc_STRVAR ( pyMalef_LibraryError_doc,
+"This exception is raised when there is a fatal error or an unknown error in "
+"the library" ) ;
 static PyObject *pyMalef_LibraryError ;
 
-/*
- * This exception is raised when trying to access uninitialized functions or
- * variables. Also when trying to initialize an initialized library or
- * finalize an uninitialized library. It can also be raised if there is a
- * problem during initialization.
- */
+PyDoc_STRVAR ( pyMalef_InitializationError_doc,
+"This exception is raised when trying to access uninitialized functions or "
+"variables. Also when trying to initialize an initialized library or "
+"finalize an uninitialized library. It can also be raised if there is a "
+"problem during initialization." ) ;
 static PyObject *pyMalef_InitializationError ;
 
-/*
- * This exception is raised when trying to access any position out of bounds.
- */
+PyDoc_STRVAR ( pyMalef_BoundsError_doc,
+"This exception is raised when trying to access any position out of bounds." );
 static PyObject *pyMalef_BoundsError ;
 
-/*
- * This exception is raised when trying to modify a null surface.
- */
+PyDoc_STRVAR ( pyMalef_NullSurfaceError_doc,
+"This exception is raised when trying to modify a null surface." ) ;
 static PyObject *pyMalef_NullSurfaceError ;
-
 
 
 /*###########################################################################*\
@@ -151,7 +150,6 @@ _pyMalef_raiseException ( malef_error_t err ) {
    }
 }
 
-// TODO:  PyObject* PyErr_NewExceptionWithDoc(const char *name, const char *doc, PyObject *base, PyObject *dict)
 
 #endif//PY_MALEF_EXCEPTIONS_H
 

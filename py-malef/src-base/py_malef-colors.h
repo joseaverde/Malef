@@ -245,6 +245,8 @@ pyMalef_Color___init__ ( _pyMalef_colorStruct *self,
          for ( int i = 0 ; i < 4 ; i++ ) {
             self->color[i] = ((_pyMalef_colorStruct*)castColor)->color[i] ;
          }
+         // We decrease the reference of the new colour.
+         Py_DECREF ( castColor ) ;
          // Success.
          return 0 ;
       }

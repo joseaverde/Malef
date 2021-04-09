@@ -55,7 +55,13 @@ package C_Malef is
    -- the most confortable way to code in C while not damaging the Ada
    -- performance and conventions. Types will have a brief description, you can
    -- read more about them at `ada-malef/src-base/malef.ads'
+ 
    --
+   -- This type is just here because in older versions of GNAT it doesn't
+   -- properly compile.
+   --
+   type bool is new Boolean
+      with Convention => C;
 
    --
    -- Due to the lack of Error handling systems in C, we declare an enumeration
@@ -172,7 +178,7 @@ package C_Malef is
    -- TODO: Change for an integer to use the `|' (or) operator. (More C-ish)
    -- This is just an array of styles telling whether they are on or off.
    --
-   type Style_Array is array (Style_Type'Range) of Boolean
+   type Style_Array is array (Style_Type'Range) of bool
       with Convention => C;
 
    --

@@ -36,7 +36,7 @@
  *###########################  V A R I A B L E S  ###########################*
 \*###########################################################################*/
 
-
+// XXX: Depreciated.
 /*
  * This is an empty tuple, it's used throughout the library when there are no
  * arguments to pass to a function.
