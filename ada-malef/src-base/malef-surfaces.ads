@@ -69,6 +69,10 @@ package Malef.Surfaces is
    procedure Debug_Put (Object : Surface_Type);
 
 
+   -- TODO: Add documentation
+   procedure Put (Object : Surface_Type);
+
+
    --
    -- This function returns the Shared_Surface_Access a Surface_Type is
    -- pointing to.

@@ -106,6 +106,9 @@ private package Malef.Systems is
    --====------------------------------====--
    -- DESPRECIATED: This will be moved to the subsystems library.
 
+   -- TODO: Add documentation
+   procedure Put (Object : Shared_Surface_Access);
+
    --
    -- This function returns the string needed to put a certain format onto the
    -- screen.

@@ -1,10 +1,11 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F - S U B S Y S T E M S . A D S                  --
+--   M A L E F - S Y S T E M S - F I N A L I Z E . S E P A R A T E . A D B   --
+--                               ( L I N U X )                               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,36 +27,32 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
--- These are the subsystems. Subsystems are runned inside systems such as
--- GNU/Linux, Windows or even a WebBrowser. These control the behaviour of how
--- everything is presented onto the screen.
---
--- @description
--- This package is created so Malef can be runned everywhere without needing
--- to include IO functions directly. I will also try to make this package
--- available to be loaded dynamically, that in systems like Windows that use
--- functions from the Windows API for CMD control, will differenciate between
--- running in an old CMD or not. There will be also an experimental support to
--- use ncurses itself for systems that can't use ANSI escape sequences, so in
--- Linux it will also be able to be dynamically loaded.
--- There are systems like GNU/Linux that can't use certain subsystems like the
--- Windows CMD.
---
-private package Malef.Subsystems is
+with Ada.Interrupts;
+with Ada.Interrupts.Names;
+with Malef.Colors;
+with Malef.Systems.Shared; use Malef.Systems.Shared;
+with Malef.Systems.Utils;
 
-   type Subsystem is abstract tagged null record;
-   type Subsystem_Access is access all Subsystem'Class;
+separate (Malef.Systems)
+   procedure Finalize is
+   begin
 
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is abstract;
+      -- We detach the event handlers.
+      Ada.Interrupts.Detach_Handler(Interrupt=>Ada.Interrupts.Names.SIGWINCH);
 
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String is abstract;
+      -- We free the PATHS.
+      Free(Stty_Path);
+      Free(Tput_Path);
 
-end Malef.Subsystems;
+      -- We finally change the components from the library back to a default
+      -- state.
+      Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
+
+      -- We unload the libraries.
+      Malef.Systems.Utils.Unload_Libraries;
+
+   end Finalize;
+
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

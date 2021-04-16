@@ -40,6 +40,18 @@ package body Malef.Subsystems.Ansi is
 
    Subsystem_Handler : aliased Subsystem;
 
+
+   overriding
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access) is
+   begin
+
+      -- TODO
+      null;
+
+   end Put;
+
+
    overriding
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)

@@ -1,10 +1,11 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F - S U B S Y S T E M S . A D S                  --
+--  MALEF - S Y S T E M S - P R E P A R E _ T E R M I N A L . SEPARATE. ADB  --
+--                             ( W I N D O W S )                             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,36 +27,18 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
--- These are the subsystems. Subsystems are runned inside systems such as
--- GNU/Linux, Windows or even a WebBrowser. These control the behaviour of how
--- everything is presented onto the screen.
---
--- @description
--- This package is created so Malef can be runned everywhere without needing
--- to include IO functions directly. I will also try to make this package
--- available to be loaded dynamically, that in systems like Windows that use
--- functions from the Windows API for CMD control, will differenciate between
--- running in an old CMD or not. There will be also an experimental support to
--- use ncurses itself for systems that can't use ANSI escape sequences, so in
--- Linux it will also be able to be dynamically loaded.
--- There are systems like GNU/Linux that can't use certain subsystems like the
--- Windows CMD.
---
-private package Malef.Subsystems is
+separate (Malef.Systems)
+   procedure Prepare_Terminal is
+      procedure C_Driver_Prepare_Console
+         with Import        => True,
+              Convention    => C,
+              External_Name => "_malef_setupConsole";
+   begin
 
-   type Subsystem is abstract tagged null record;
-   type Subsystem_Access is access all Subsystem'Class;
+      C_Driver_Prepare_Console;
 
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is abstract;
+   end Prepare_Terminal;
 
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String is abstract;
-
-end Malef.Subsystems;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

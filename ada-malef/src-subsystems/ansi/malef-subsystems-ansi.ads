@@ -40,6 +40,11 @@ private package Malef.Subsystems.Ansi is
 
    type Subsystem is new Malef.Subsystems.Subsystem with null record;
 
+
+   overriding
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access);
+
    overriding
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)

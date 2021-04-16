@@ -547,8 +547,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                              Width  : Col_Type) is limited
       record
          Grid            : Matrix_Type (1 .. Height, 1 .. Width);
-         Position        : Cursor_Type := Cursor_Type'(Row => 1,
-                                                       Col => 1);
+         Position        : Coord_Type := Coord_Type'(Row => 1,
+                                                     Col => 1);
 
          Cursor_Format   : Format_Type := Default_Format;
          Cursor_Position : Cursor_Type := Cursor_Type'(Row => 1,

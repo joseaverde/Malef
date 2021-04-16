@@ -86,7 +86,7 @@ package body Malef.Surfaces is
 
       end Push;
 
-      procedure Move (R : Row_Type; C : Col_Type) is
+      procedure Move (R : Row_Coord; C : Col_Coord) is
          R_Str : constant String := R'Image;
          C_Str : constant String := C'Image;
       begin
@@ -103,11 +103,12 @@ package body Malef.Surfaces is
 
       Push(Malef.Systems.Get_Format(Default_Format));
       for Row in Surface.Grid'Range(1) loop
-         Move(Surface.Position.Row + Row, Surface.Position.Col);
+         Move(Surface.Position.Row + Row_Coord(Row), Surface.Position.Col);
          for Col in Surface.Grid'Range(2) loop
             Char := Surface.Grid(Row, Col).Char;
             if Char = (0, 0) then
-               Move(Surface.Position.Row + Row, Surface.Position.Col+Col+1);
+               Move(Surface.Position.Row + Row_Coord(Row),
+                    Surface.Position.Col + Col_Coord(Col)+1);
             else
                if Surface.Grid(Row, Col).Format /= Last_Format then
                   Last_Format := Surface.Grid(Row, Col).Format;
@@ -131,6 +132,14 @@ package body Malef.Surfaces is
       Pop;
 
    end Debug_Put;
+
+
+   procedure Put (Object : in Surface_Type) is
+   begin
+
+      Malef.Systems.Put (Object.Reference);
+
+   end Put;
 
 
    function Get_Reference (Object : in Surface_Type)

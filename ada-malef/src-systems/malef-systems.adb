@@ -1,13 +1,14 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F - S U B S Y S T E M S . A D S                  --
+--                     M A L E F - S Y S T E M S . A D B                     --
+--                               ( L I N U X )                               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2020-2021 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,36 +27,51 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
--- These are the subsystems. Subsystems are runned inside systems such as
--- GNU/Linux, Windows or even a WebBrowser. These control the behaviour of how
--- everything is presented onto the screen.
---
--- @description
--- This package is created so Malef can be runned everywhere without needing
--- to include IO functions directly. I will also try to make this package
--- available to be loaded dynamically, that in systems like Windows that use
--- functions from the Windows API for CMD control, will differenciate between
--- running in an old CMD or not. There will be also an experimental support to
--- use ncurses itself for systems that can't use ANSI escape sequences, so in
--- Linux it will also be able to be dynamically loaded.
--- There are systems like GNU/Linux that can't use certain subsystems like the
--- Windows CMD.
---
-private package Malef.Subsystems is
 
-   type Subsystem is abstract tagged null record;
-   type Subsystem_Access is access all Subsystem'Class;
+package body Malef.Systems is
 
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is abstract;
+   --====-----------------------------------====--
+   --====-- INITIALIZATION / FINALIZATION --====--
+   --====-----------------------------------====--
 
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String is abstract;
+   procedure Initialize is separate;
+ 
+   procedure Finalize is separate;
 
-end Malef.Subsystems;
+   procedure Prepare_Terminal is separate;
+
+   procedure Restore_Terminal is separate;
+
+
+   --====------------------------------====--
+   --====-- TERMINAL/CONSOLE CONTROL --====--
+   --====------------------------------====--
+
+
+   procedure Put (Object : Shared_Surface_Access) is
+   begin
+
+      Loaded_Subsystems(Current_Subsystem).Put(Object);
+
+   end Put;
+
+   -- IDEA: Make it inline, call the best function that can return the Format
+   --       Use Dim/Bright styles if needed.
+   function Get_Format (Format : Format_Type)
+                        return String is
+   begin
+
+      return Loaded_Subsystems(Current_Subsystem).Get_Format(Format);
+
+   end Get_Format;
+
+
+   procedure Get_Terminal_Size (Rows : out Row_Type;
+                                Cols : out Col_Type) is separate;
+
+   procedure Set_Title (Name : String) is separate;
+
+end Malef.Systems;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADB --
+--   M A L E F - S Y S T E M S - G E T _ T E R M I N A L _ S I Z E . A D B   --
 --                               ( L I N U X )                               --
 --                                                                           --
 --                                 M A L E F                                 --
@@ -28,79 +28,71 @@
 -------------------------------------------------------------------------------
 
 with Interfaces.C;
-with Interfaces.C.Strings;
-with Malef.Exceptions;
 
-package body Malef.Systems.Dynamic_Library_Loader is
+separate (Malef.Systems)
+   procedure Get_Terminal_Size (Rows : out Row_Type;
+                                Cols : out Col_Type) is
+      --
+      -- This is the `winsize' type found in <sys/ioctl.h> header from the C
+      -- programming language. It's used to store the terminal size.
+      --
+      -- @field ws_row
+      -- The number of rows the terminal has.
+      --
+      -- @field ws_col
+      -- The number of columns the terminal has.
+      --
+      -- @field ws_xpixel
+      -- TODO: Search information about this field.
+      --
+      -- @field ws_ypixel
+      -- TODO: Search information about this field.
+      --
+      type winsize is
+         record
+            -- The number of rows the terminal has.
+            ws_row    : Interfaces.C.unsigned_short;
+            ws_col    : Interfaces.C.unsigned_short;
+            ws_xpixel : Interfaces.C.unsigned_short;
+            ws_ypixel : Interfaces.C.unsigned_short;
+         end record
+      with Convention => C;
 
-   function dlerror return Interfaces.C.Strings.Chars_Ptr
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlerror";
+      --
+      -- The Ioctl function is used to get the size of the terminal. It's
+      -- imported from C and it isn't available on Windows, that's why we have
+      -- a separate package.
+      --
+      -- @param Fd
+      -- It's the file descriptor: 1 is for standard output.
+      --
+      -- @param Request
+      -- The request we are asking to IOCTL.
+      --
+      -- @param Struct
+      -- The struct where the information will be retrieved.
+      --
+      function Ioctl (Fd      : Interfaces.C.int;
+                      Request : Interfaces.C.unsigned_long;
+                      Struct  : out Winsize)
+                      return Interfaces.C.int;
+      pragma Import (C, Ioctl, "ioctl");
 
-   function dlopen (library_name : String;
-                    mode         : Interfaces.C.int)
-                    return Library_Handle
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlopen";
+      TIOCGWINSZ : constant Interfaces.C.unsigned_long := 16#5413#;
 
-   function dlclose (handle : Library_Handle)
-                     return Interfaces.C.int
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlclose";
-
-
-   -- TODO: Add more
-   RTLD_LAZY : constant := 1;
-
-
-   function Get_Library_Prefix return String is
+      Ws   : Winsize;
+      Temp : Interfaces.C.int;
    begin
 
-      return "lib";
+      Temp := Ioctl (Fd      => 1,
+                     Request => TIOCGWINSZ,
+                     Struct  => Ws);
 
-   end Get_Library_Prefix;
+      Rows := Row_Type(Ws.ws_row);
+      Cols  := Col_Type(Ws.ws_col);
 
+   end Get_Terminal_Size;
 
-   function Get_Library_Suffix return String is
-   begin
-
-      return "so";
-
-   end Get_Library_Suffix;
-
-
-   function Load_Library (Path : String)
-                          return Library_Handle is
-      Handle : Library_Handle;
-   begin
-
-      Handle := dlopen (Path & ASCII.Nul, RTLD_LAZY);
-
-      if Handle = Library_Handle (System.Null_Address) then
-         raise Malef.Exceptions.Initialization_Error
-         with Interfaces.C.Strings.Value (dlerror);
-      end if;
-
-
-      return Handle;
-
-   end Load_Library;
-
-
-   procedure Unload_Library (Handle : in out Library_Handle) is
-      Dummy : Interfaces.C.int
-         with Unreferenced;
-   begin
-
-      Dummy := dlclose (Handle);
-      Handle := Library_Handle (System.Null_Address);
-
-   end Unload_Library;
-
-end Malef.Systems.Dynamic_Library_Loader;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
