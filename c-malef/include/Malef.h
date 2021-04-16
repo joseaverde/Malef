@@ -178,9 +178,17 @@ typedef bool malef_style_arr[10] ;
  */
 typedef uint16_t malef_row_t, malef_col_t ;
 
+/*
+ * These types are used opposite to malef_row_t or malef_col_t to tell where
+ * an object is placed. We also start counting from 1, so the top left corner
+ * is the position (Row=1, Col=1).
+ */
+typedef int16_t malef_rowCord_t, malef_colCord_t ;
+
 
 /*
- * Cursors are just a vector.
+ * Cursors are just a vector that can be used to tell a position in the visible
+ * part of the terminal or inside a surface.
  *
  * @field row
  * The row the cursor is at.
@@ -194,6 +202,22 @@ typedef struct _malef_cursor_t {
 } malef_cursor_t ;
 
 
+/*
+ * The Coord type is similar to the Cursor type, however this can also be used
+ * to tell a position even out of the terminal's bounds. It's only a 16-bit
+ * signed integer because no more is needed.
+ *
+ * @field row
+ * The row where it is.
+ *
+ * @field col
+ * The row where it is.
+ */
+typedef struct _malef_coord_t {
+   malef_rowCord_t row ;
+   malef_colCord_t col ;
+} malef_coord_t ;
+
 
 /*
  * This is character type in this library, it's UNICODE!!! In order to make
@@ -201,7 +225,7 @@ typedef struct _malef_cursor_t {
  * Unicode characters. That way the internals will transform the unicode
  * characters into the needed encoding.
  */
-typedef uint8_t *malef_char_t[4] ;
+typedef uint8_t *malef_char_t[2] ;
 
 
 /*

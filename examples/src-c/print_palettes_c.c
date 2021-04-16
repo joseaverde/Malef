@@ -17,6 +17,7 @@ print_error ( void ) {
 int main () {
 
    malef_declareSurface ( surface ) ;
+   malef_declareSurface ( nullSurface ) ;
    malef_col_t col ;
    malef_error_t err ;
    malef_color_t _color ;
@@ -47,6 +48,7 @@ int main () {
          }
       }
       _malef_debugPutSurface ( surface ) ;
+      _malef_debugPutSurface ( nullSurface ) ;
       while ( ignore != '\n' && ignore != '\r' ) {
          ignore = getchar () ;
       }

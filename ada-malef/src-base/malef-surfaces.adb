@@ -48,7 +48,7 @@ package body Malef.Surfaces is
       New_Surface.Reference := new Shared_Surface_Type (Rows, Cols);
       New_Surface.Reference.Grid := (others => (others => Element_Type'(
          Format => Default_Format,
-         Char   => (0, 0, 0, Character'Pos('A')))));
+         Char   => (0, Character'Pos('A')))));
 
       return New_Surface;
 
@@ -106,7 +106,7 @@ package body Malef.Surfaces is
          Move(Surface.Position.Row + Row, Surface.Position.Col);
          for Col in Surface.Grid'Range(2) loop
             Char := Surface.Grid(Row, Col).Char;
-            if Char = (0, 0, 0, 0) then
+            if Char = (0, 0) then
                Move(Surface.Position.Row + Row, Surface.Position.Col+Col+1);
             else
                if Surface.Grid(Row, Col).Format /= Last_Format then

@@ -113,8 +113,8 @@ package C_Malef is
    -- This type is used for the components of the Color_Type.
    --
    type Color_Component_Type is mod 256
-      with Convention => C;
-   for Color_Component_Type'Size use 8;
+      with Convention => C,
+           Size       => 8;
 
    --
    -- This type is used to represent the indexes of the Color_Type.
@@ -216,7 +216,16 @@ package C_Malef is
    --
    type Col_Type is new unsigned_short
       range 1 .. unsigned_short(Malef.Col_Type'Last)
-      with Convention => C;
+   with Convention => C;
+
+
+   type Row_Coord is new short
+      range short(Malef.Row_Coord'First) .. short(Malef.Row_Coord'Last)
+   with Convention => C;
+
+   type Col_Coord is new short
+      range short(Malef.Col_Coord'First) .. short(Malef.Row_Coord'Last)
+   with Convention => C ;
 
    --
    -- This is the cursor type.
@@ -225,6 +234,14 @@ package C_Malef is
       record
          Row : Row_Type;
          Col : Col_Type;
+      end record
+   with Convention => C;
+
+
+   type Coord_Type is
+      record
+         Row : Row_Coord;
+         Col : Col_Coord;
       end record
    with Convention => C;
 

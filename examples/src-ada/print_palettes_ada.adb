@@ -9,6 +9,7 @@ procedure Print_Palettes_Ada is
    Surface : Malef.Surfaces.Surface_Type;
    Col     : Malef.Col_Type := 1;
    Ignore  : Character;
+   Null_Surface : Malef.Surfaces.Surface_Type ;
 begin
 
    Surface := Malef.Surfaces.Create (
@@ -42,6 +43,7 @@ begin
       Surface.Debug_Put;
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line (Pal'Image & "                                   ");
+      Null_Surface.Debug_Put ;
       Ada.Text_IO.Get_Immediate (Ignore);
    end loop;
 

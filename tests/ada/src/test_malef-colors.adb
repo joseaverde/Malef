@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADS --
+--                 T E S T _ M A L E F - C O L O R S . A D B                 --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,21 +26,9 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
--- TODO: Add documentation
---
--- @description
---
-private package Malef.Systems.Dynamic_Library_Loader is
+package body Test_malef.Colors is
 
-   function Get_Library_Prefix return String;
-   function Get_Library_Suffix return String;
-   function Load_Library (Path : String)
-                          return Library_Handle;
-   procedure Unload_Library (Handle : in out Library_Handle);
-
-end Malef.Systems.Dynamic_Library_Loader;
+end Test_malef.Colors;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADS --
+-- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADB --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  S P E C                                  --
+--                                  B O D Y                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,19 +26,70 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---
--- @summary
--- TODO: Add documentation
---
--- @description
---
-private package Malef.Systems.Dynamic_Library_Loader is
+with Interfaces.C;
+with Malef.Exceptions;
 
-   function Get_Library_Prefix return String;
-   function Get_Library_Suffix return String;
+package body Malef.Systems.Dynamic_Library_Loader is
+
+   function LoadLibrary (Path : String)
+                         return Library_Handle
+      with Import        => True,
+           Convention    => Stdcall,
+           External_Name => "LoadLibraryA";
+
+   function FreeLibrary (handle : Library_Handle)
+                         return Interfaces.C.int
+      with Import        => True,
+           Convention    => Stdcall,
+           External_Name => "FreeLibrary";
+
+   function GetLastError return Interfaces.C.int
+      with Import        => True,
+           Convention    => Stdcall,
+           External_Name => "GetLastError";
+
+   function Get_Library_Prefix return String is
+   begin
+
+      return "";
+
+   end Get_Library_Prefix;
+
+
+   function Get_Library_Suffix return String is
+   begin
+
+      return "dll";
+
+   end Get_Library_Suffix;
+
+
    function Load_Library (Path : String)
-                          return Library_Handle;
-   procedure Unload_Library (Handle : in out Library_Handle);
+                          return Library_Handle is
+      Handle : Library_Handle;
+   begin
+
+      Handle := LoadLibrary (Path & ASCII.Nul);
+
+      if Handle = Library_Handle (System.Null_Address) then
+         raise Malef.Exceptions.Initialization_Error
+         with GetLastError'Image;
+      end if;
+
+      return Handle;
+
+   end Load_Library;
+
+
+   procedure Unload_Library (Handle : in out Library_Handle) is
+      Dummy : Interfaces.C.int
+         with Unreferenced;
+   begin
+
+      Dummy := FreeLibrary (Handle);
+      Handle := Library_Handle (System.Null_Address);
+
+   end Unload_Library;
 
 end Malef.Systems.Dynamic_Library_Loader;
 

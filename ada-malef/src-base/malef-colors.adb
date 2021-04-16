@@ -397,6 +397,11 @@ package body Malef.Colors is
          "The library hasn't been initialized yet, cannot change the Palette!";
       end if;
 
+      Shared_Null_Surface.Grid(1, 1).
+         Format.Foreground_Color := Palette(False, Black);
+      Shared_Null_Surface.Grid(1, 1).
+         Format.Background_Color := Palette(False, White);
+
       Current_Palette := Palette;
 
    end Set_Palette;
@@ -411,6 +416,11 @@ package body Malef.Colors is
       end if;
 
       Current_Palette := Palettes(Kind);
+
+      Shared_Null_Surface.Grid(1, 1).
+         Format.Foreground_Color := Current_Palette(False, Black);
+      Shared_Null_Surface.Grid(1, 1).
+         Format.Background_Color := Current_Palette(False, White);
 
    end Set_Palette;
 

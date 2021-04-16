@@ -239,22 +239,45 @@ package Malef is
    -- found at. It is tagged, however, so a Moveable_Cursor_Type can inherit
    -- from it.
    --
+   -- We have to differenciate between coordinates and counting types:
+   --    Row_Coord : Is to specify where will the object printed.
+   --    Row_Type  : Is to specify the number of rows of the object or to index
+   --                a position is an object.
+   --
 
    --
    -- This type is used to count rows.
    --
-   type Row_Type is new Positive range 1 .. 1024;
-   for Row_Type'Size use 16;
+   type Row_Type is new Positive range 1 .. 1024
+      with Size => 16;
 
    --
    -- This type is used to count columns. I prefer to call it Col instead of
    -- the full name Column so it can have the same number of letters as Row.
    --
-   type Col_Type is new Positive range 1 .. 1024;
-   for Col_Type'Size use 16;
+   type Col_Type is new Positive range 1 .. 1024
+      with Size => 16;
+
 
    --
-   -- This is the cursors type.
+   -- This type is used to represent the row where something is placed. The
+   -- row number zero is the one just above the top side. Coordinates start
+   -- with zero for compatibility with the ANSI terminals.
+   --
+   type Row_Coord is range -2**15 .. 2**15-1
+      with Size => 16;
+
+   --
+   -- This type is used to represent the coloumn where something is placed in a
+   -- terminal. The columns begin with 1, any value lower is always hidden
+   -- because it's always at the left side of the terminal.
+   --
+   type Col_Coord is range -2**15 .. 2**15-1
+      with Size => 16;
+
+   --
+   -- This is the cursors type. It can be used to tell the position in the
+   -- visible part of the terminal or inside a surface itself.
    --
    -- @field Row
    -- The row the cursor is at.
@@ -268,6 +291,22 @@ package Malef is
          Col : Col_Type;
       end record;
 
+   --
+   -- The Coord type is similar to the Cursor type, however the cursor type can
+   -- only be placed inside an object like a surface, but this can be placed
+   -- anywhere in the terminal. For example to tell the position of a surface.
+   --
+   -- @field Row
+   -- The row where it is.
+   --
+   -- @field Col
+   -- The column where it is.
+   --
+   type Coord_Type is tagged
+      record
+         Row : Row_Coord;
+         Col : Col_Coord;
+      end record;
 
 
    --====----------------------------====--
@@ -289,8 +328,8 @@ package Malef is
    -- This type is this library's character type. It's used to store unicode.
    -- TODO: Conversors.
    --
-   type Char_Type is array (Positive range 1 .. 4) of Char_Component_Type;
-   pragma Pack (Char_Type);
+   type Char_Type is array (Positive range 1 .. 2) of Char_Component_Type
+      with Pack;
 
    --
    -- This is the string type in the Malef package which is an array of
@@ -499,6 +538,11 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- when this number reaches zero, the surface is deallocated. Except for the
    -- Shared_Null_Surface.
    --
+   -- @field Writable
+   -- If this variable is false then it can't be modified by the user by normal
+   -- methods, for example calling a function. The removes the need to have a
+   -- null surface and check whether it is one of them.
+   --
    type Shared_Surface_Type (Height : Row_Type;
                              Width  : Col_Type) is limited
       record
@@ -511,6 +555,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                                                        Col => 1);
 
          Counter         : System.Atomic_Counters.Atomic_Counter;
+
+         Writable        : Boolean ;
       end record;
 
    --
@@ -527,14 +573,16 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    Shared_Null_Surface : aliased Shared_Surface_Type (Height => 1,
                                                       Width  => 1) :=
       Shared_Surface_Type'(
-         Height => 1,
-         Width  => 1,
-         Grid   => (others => (others => Element_Type'(
+         Height   => 1,
+         Width    => 1,
+         Grid     => (others => (others => Element_Type'(
             Format => Format_Type'(Foreground_Color => (255, 255,   0, 255),
                                    Background_Color => (255,   0,   0, 255),
                                    Styles           => (others => False)),
-            Char   => (0, 0, 0, Character'Pos('?')) ) )),
-         others => <>);
+            Char   => (0, Character'Pos('?')) ) )),
+         Writable => False,
+         others => <>
+      );
 
    --
    -- This function returns the shared surface contained by a Surface_Type so

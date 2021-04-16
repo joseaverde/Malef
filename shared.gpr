@@ -143,6 +143,14 @@ abstract project Shared is
    end case;
 
 
+   System_Switches := ();
+   case System is
+      when "windows" =>
+         null;
+      when others =>
+         null;
+   end case;
+
 
    --====-====------------====-====--
    --====-====- PACKAGES -====-====--
@@ -155,6 +163,7 @@ abstract project Shared is
         Runtime_Checks_Switches &
         Style_Checks_Switches   &
         Contracts_Switches      &
+        System_Switches         &
         ("-gnatQ");  -- Don't quit. Generate ALI and tree files even if
                      -- illegalities.
    end Compiler;
