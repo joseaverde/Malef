@@ -26,6 +26,8 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Subsystems.Text_IO;
+
 --
 -- @summary
 -- This package contains the functions for ANSI subsystem.
@@ -49,6 +51,39 @@ private package Malef.Subsystems.Ansi is
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)
                         return String;
+
+   function Get_Color_1  (Foreground : Color_Type;
+                          Background : Color_Type)
+                          return String;
+   function Get_Color_3  (Foreground : Color_Type;
+                          Background : Color_Type)
+                          return String;
+   function Get_Color_4  (Foreground : Color_Type;
+                          Background : Color_Type)
+                          return String;
+   function Get_Color_8  (Foreground : Color_Type;
+                          Background : Color_Type)
+                          return String;
+   function Get_Color_24 (Foreground : Color_Type;
+                          Background : Color_Type)
+                          return String;
+
+   function Get_Style (Style : Style_Array)
+                       return String
+      with Inline;
+
+   function Get_Move (Coord : Coord_Type)
+                      return String
+      with Inline;
+
+   function Get_Format (Format : Format_Type)
+                        return String
+      with Inline;
+
+   function Get_Clear return String
+      with Inline;
+
+   Std_Out : Malef.Subsystems.Text_IO.Std_Out;
 
 end Malef.Subsystems.Ansi;
 

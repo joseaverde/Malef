@@ -82,6 +82,7 @@ project Malef is
    --====-====- PACKAGES -====-====--
    --====-====------------====-====--
 
+   package Builder       renames Shared.Builder;
    package Compiler      renames Shared.Compiler;
    package Binder        renames Shared.Binder;
    package Documentation renames Shared.Documentation;

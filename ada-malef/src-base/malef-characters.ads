@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F _ S U B S Y S T E M S . G P R                  --
+--                  M A L E F - C H A R A C T E R S . A D S                  --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,34 +26,34 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "shared.gpr";
-with "malef.gpr";
+-- TODO: Add description.
+-- @summary
+--
+--
+-- @description
+--
+package Malef.Characters is
 
-library project Malef_Subsystems is
+   -- Non printable characters.
+   SKIP         : constant Char_Type := 0;
+   TRANSPARENT  : constant Char_Type := 1;
+   DOUBLE_WIDTH : constant Char_Type := 2;
 
-   for Library_Name use "Malef_" & Shared.Subsystem;
-   for Library_Kind use "relocatable";
-   for Library_Dir  use Shared.Prefix & "lib-" & Shared.System;
+   function To_UTF8 (Char : Char_Type)
+                     return String
+      with Inline;
 
-   -- TODO: Change when certain subsystems can't use such components.
-   for Library_Interface use ("Malef.Subsystems." & Shared.Subsystem,
-                              "Malef.Subsystems.Text_IO");
-   for Library_Standalone use "standard";
+   function To_UTF8 (Str : Str_Type)
+                     return String
+      with Inline;
 
-   for Languages    use ("Ada");
-   for Source_Dirs  use ("ada-malef/src-subsystems/" & Shared.Subsystem,
-                         "ada-malef/src-subsystems/components");
-   for Object_Dir   use Shared.Prefix & "obj-" & Shared.System & "." &
-                                        Shared.Subsystem;
+   function From_UTF8 (Str : String)
+                       return Str_Type
+      with Inline;
 
-   for Create_Missing_Dirs use "True";
+   -- TODO: Add UTF-16, UTF-32
 
-   package Builder    renames Shared.Builder;
-   --package Compiler renames Shared.Compiler;
-   --package Binder   renames Shared.Binder;
-   --package Naming   renames Shared.Naming;
-
-end Malef_Subsystems;
+end Malef.Characters;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

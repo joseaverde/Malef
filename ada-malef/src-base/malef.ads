@@ -26,8 +26,10 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-private with System.Atomic_Counters;
 limited with Malef.Surfaces;
+private with System.Atomic_Counters;
+with Interfaces;
+
 
 --
 -- @summary
@@ -313,23 +315,19 @@ package Malef is
    --====-- CHARACTERS AND STRINGS --====--
    --====----------------------------====--
    --
-   -- Here we declare the string and the character types used in this package
-   -- which are just Wide_Wide_Characters in the form of a 4 byte array used
-   -- to codify 8-UTF strings in every system.
+   -- TODO: Add conversion library.
    --
 
    --
-   -- The components of a character type.
+   -- Characters are just Unicode values.
    --
-   type Char_Component_Type is mod 256;
-   for Char_Component_Type'Size use 8;
+   subtype Char_Type is Interfaces.Unsigned_32 range 16#000000# .. 16#1FFFFF#;
 
-   --
-   -- This type is this library's character type. It's used to store unicode.
-   -- TODO: Conversors.
-   --
-   type Char_Type is array (Positive range 1 .. 2) of Char_Component_Type
-      with Pack;
+   pragma Warnings (Off,
+               "use clause for type ""Interfaces.Unsigned_32"" has no effect");
+   use type Interfaces.Unsigned_32;
+   pragma Warnings (On,
+               "use clause for type ""Interfaces.Unsigned_32"" has no effect");
 
    --
    -- This is the string type in the Malef package which is an array of
@@ -579,7 +577,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
             Format => Format_Type'(Foreground_Color => (255, 255,   0, 255),
                                    Background_Color => (255,   0,   0, 255),
                                    Styles           => (others => False)),
-            Char   => (0, Character'Pos('?')) ) )),
+            Char   => Character'Pos('?') ) )),
          Writable => False,
          others => <>
       );

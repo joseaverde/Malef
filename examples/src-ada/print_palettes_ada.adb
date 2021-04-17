@@ -40,7 +40,7 @@ begin
             Col := Col + 1;
          end loop;
       end loop;
-      Surface.Debug_Put;
+      Surface.Put;
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line (Pal'Image & "                                   ");
       Null_Surface.Debug_Put ;

@@ -225,7 +225,7 @@ typedef struct _malef_coord_t {
  * Unicode characters. That way the internals will transform the unicode
  * characters into the needed encoding.
  */
-typedef uint8_t *malef_char_t[2] ;
+typedef uint32_t malef_char_t ;
 
 
 /*

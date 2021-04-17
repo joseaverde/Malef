@@ -245,18 +245,7 @@ package C_Malef is
       end record
    with Convention => C;
 
-   --
-   -- These are each of the components of a character.
-   --
-   type Char_Component_Type is mod 256
-      with Convention => C;
-   for Char_Component_Type'Size use 8;
-
-   --
-   -- This is the character type, it's used to store unicode values.
-   --
-   type Char_Type is array (unsigned range 0 .. 3) of Char_Component_Type
-      with Convention => C;
+   type Char_Type is new Malef.Char_Type;
 
    --
    -- This is the string type, it's an array of characters.

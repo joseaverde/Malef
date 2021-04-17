@@ -156,6 +156,10 @@ abstract project Shared is
    --====-====- PACKAGES -====-====--
    --====-====------------====-====--
 
+   package Builder is
+      for Global_Configuration_Pragmas use "malef-" & Build_Mode & ".adc";
+   end Builder;
+
    package Compiler is
       for Default_Switches ("Ada") use
         Compile_Checks_Switches &
