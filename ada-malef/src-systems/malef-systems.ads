@@ -156,6 +156,13 @@ private package Malef.Systems is
                      := (others => null);
    Current_Subsystem : Subsystem_Kind := Choose;
 
+
+   Available_Styles : array (Style_Type'Range) of Boolean := (others => False);
+
+   type Color_Bits is (Bit1, Bit3, Bit4, Bit8, Bit24);
+   Available_Colors : array (Color_Bits'Range) of Boolean := (Bit1   => True,
+                                                              others => False);
+
 end Malef.Systems;
 
 ---=======================-------------------------=========================---

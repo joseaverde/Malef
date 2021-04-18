@@ -1,4 +1,4 @@
-colors_sys	Add colour support for different systems	[TODO]
+colors_sys	Add colour support for different systems	[DONE]
 colors_py	Add colour support for Python3 binding	[DONE]
 colors_c	Add colour support for C binding	[DONE]
 styles_ada	Add styles to Malef	[TODO]
@@ -65,3 +65,5 @@ python_bug_object_type	There is a bug with functions that take as a parameter an
 doc_project	Change the location of the Project information to a different file from the README.md file.	[TODO]
 doc_build_instructions	Add information about how to build it to the README file.	[TODO]
 bell_sound	Add bell sound function.\a	[TODO]
+ada_volatile	This library can be used to change things from the system in a very unsafe way, that way the user will have complete control of the library. For example, it can be used to use certain colours or to check against certain styles.	[TODO]
+colors_cmd	Add colour support for CMD!	[TODO]

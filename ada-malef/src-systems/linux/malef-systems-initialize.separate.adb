@@ -78,6 +78,10 @@ separate (Malef.Systems)
                               Update_Terminal_Size'Access,
          Interrupt   => Ada.Interrupts.Names.SIGWINCH);
 
+      -- TODO: We search for the available styles and colours.
+      Available_Styles := (others => True);
+      Available_Colors := (others => True);
+
       -- Finally we prepare some components of the library.
       -- We set the `Has_Been_Initialized' variable to True temporarly so we
       -- can call some functions with private parts from the components.

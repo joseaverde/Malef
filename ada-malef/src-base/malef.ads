@@ -536,6 +536,9 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- when this number reaches zero, the surface is deallocated. Except for the
    -- Shared_Null_Surface.
    --
+   -- @field Data
+   -- This field is used by the subsystem to do it's calculations.
+   --
    -- @field Writable
    -- If this variable is false then it can't be modified by the user by normal
    -- methods, for example calling a function. The removes the need to have a
@@ -553,6 +556,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                                                        Col => 1);
 
          Counter         : System.Atomic_Counters.Atomic_Counter;
+         Data            : Integer;
 
          Writable        : Boolean ;
       end record;

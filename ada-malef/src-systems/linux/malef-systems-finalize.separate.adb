@@ -48,6 +48,10 @@ separate (Malef.Systems)
       -- state.
       Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
 
+      -- We finalize the available colours and styles.
+      Available_Styles := (others => False);
+      Available_Colors := (Bit1 => True, others => False);
+
       -- We unload the libraries.
       Malef.Systems.Utils.Unload_Libraries;
 

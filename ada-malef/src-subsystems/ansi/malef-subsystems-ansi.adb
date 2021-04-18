@@ -27,9 +27,9 @@
 -------------------------------------------------------------------------------
 
 with Ada.Finalization;
+with Malef.Colors;
 with Malef.Systems;
 with Malef.Systems.Utils; use Malef.Systems.Utils;
-
 
 package body Malef.Subsystems.Ansi is
 
@@ -75,6 +75,7 @@ package body Malef.Subsystems.Ansi is
       end loop;
 
       -- We dump the buffer and unlock it.
+      Std_Out.Write (Get_Clear);
       Std_Out.Dump;
       Lock := False;
 
@@ -89,17 +90,7 @@ package body Malef.Subsystems.Ansi is
          renames Malef.Systems.Utils.To_String;
    begin
 
-      -- TODO: This function is still unfinished, it only returns colours.
-      --       Also optimize it.
-
-      return ASCII.ESC & '[' &
-               "38;2;" & To_String(Format.Foreground_Color(R)) & ';' &
-                         To_String(Format.Foreground_Color(G)) & ';' &
-                         To_String(Format.Foreground_Color(B)) & ';' &
-               "48;2;" & To_String(Format.Background_Color(R)) & ';' &
-                         To_String(Format.Background_Color(G)) & ';' &
-                         To_String(Format.Background_Color(B)) &
-               'm';
+      return Get_Format (Format);
 
    end Get_Format;
 
@@ -118,9 +109,42 @@ package body Malef.Subsystems.Ansi is
    function Get_Color_3  (Foreground : Color_Type;
                           Background : Color_Type)
                           return String is
+      Pal  : constant Malef.Colors.Palette_Type :=
+         Malef.Colors.Get_Palette;
+      Fg_Diff : Integer := 0;
+      Bg_Diff : Integer := 0;
+      Fg_Min  : Natural := Natural'Last;
+      Bg_Min  : Natural := Natural'Last;
+      Col     : Color_Type;
+
+      Fg_Kind : Malef.Colors.Color_Kind;
+      Bg_Kind : Malef.Colors.Color_Kind;
+
+      Colors : array (Malef.Colors.Color_Kind'Range) of Character :=
+         "01234567";
    begin
 
-      return "TODO";
+      for Color in Pal'Range(2) loop
+         Col := Pal (False, Color);
+         Fg_Diff := abs ( Integer(Foreground(R)) - Integer(Col(R)) ) +
+                    abs ( Integer(Foreground(G)) - Integer(Col(G)) ) +
+                    abs ( Integer(Foreground(B)) - Integer(Col(B)) ) ;
+         Bg_Diff := abs ( Integer(Background(R)) - Integer(Col(R)) ) +
+                    abs ( Integer(Background(G)) - Integer(Col(G)) ) +
+                    abs ( Integer(Background(B)) - Integer(Col(B)) ) ;
+         if Fg_Diff < Fg_Min then
+            Fg_Min    := Fg_Diff;
+            Fg_Kind   := Color;
+         end if;
+         if Bg_Diff < Bg_Min then
+            Bg_Min    := Bg_Diff;
+            Bg_Kind   := Color;
+         end if;
+      end loop;
+
+      return ASCII.ESC & '[' &
+               '3' & Colors(Fg_Kind) & ';' &
+               '4' & Colors(Bg_Kind) & 'm';
 
    end Get_Color_3;
 
@@ -128,9 +152,51 @@ package body Malef.Subsystems.Ansi is
    function Get_Color_4  (Foreground : Color_Type;
                           Background : Color_Type)
                           return String is
+      Pal  : constant Malef.Colors.Palette_Type :=
+         Malef.Colors.Get_Palette;
+      Fg_Diff : Integer := 0;
+      Bg_Diff : Integer := 0;
+      Fg_Min  : Natural := Natural'Last;
+      Bg_Min  : Natural := Natural'Last;
+      Col     : Color_Type;
+
+      Fg_Bright : Boolean;
+      Fg_Kind   : Malef.Colors.Color_Kind;
+      Bg_Bright : Boolean;
+      Bg_Kind   : Malef.Colors.Color_Kind;
+
+      Colors : array (Malef.Colors.Color_Kind'Range) of Character :=
+         "01234567";
    begin
 
-      return "TODO";
+      -- We look for the minimum difference of colours with the palettes.
+      for Bright in Pal'Range(1) loop
+         for Color in Pal'Range(2) loop
+            Col := Pal (Bright, Color);
+            Fg_Diff := abs ( Integer(Foreground(R)) - Integer(Col(R)) ) +
+                       abs ( Integer(Foreground(G)) - Integer(Col(G)) ) +
+                       abs ( Integer(Foreground(B)) - Integer(Col(B)) ) ;
+            Bg_Diff := abs ( Integer(Background(R)) - Integer(Col(R)) ) +
+                       abs ( Integer(Background(G)) - Integer(Col(G)) ) +
+                       abs ( Integer(Background(B)) - Integer(Col(B)) ) ;
+            if Fg_Diff < Fg_Min then
+               Fg_Min    := Fg_Diff;
+               Fg_Bright := Bright;
+               Fg_Kind   := Color;
+            end if;
+            if Bg_Diff < Bg_Min then
+               Bg_Min    := Bg_Diff;
+               Bg_Bright := Bright;
+               Bg_Kind   := Color;
+            end if;
+         end loop;
+      end loop;
+
+      return ASCII.ESC & '[' &
+               (if not Fg_Bright then "3" else "9") &
+               Colors(Fg_Kind) & ';' &
+               (if not Bg_Bright then "4" else "10") &
+               Colors(Bg_Kind) & 'm';
 
    end Get_Color_4;
 
@@ -138,9 +204,27 @@ package body Malef.Subsystems.Ansi is
    function Get_Color_8  (Foreground : Color_Type;
                           Background : Color_Type)
                           return String is
+      Raw_Fg : Color_Type;
+      Raw_Bg : Color_Type;
    begin
 
-      return "TODO";
+      -- TODO: Find a fast formula.
+      -- Colour = 16 + 36*R + 6*G + B
+      --
+      -- We first reduce the colours.
+      for I in Color_Type'Range loop
+         Raw_Fg (I) := Foreground (I) / 43;
+         Raw_Bg (I) := Background (I) / 43;
+      end loop;
+
+      return ASCII.ESC & '[' &
+               "38:5:" & To_String(16 + Raw_Fg(R)   * 36 +
+                                        Raw_Fg(G) * 6  +
+                                        Raw_Fg(B)) & ';' &
+               "48:5:" & To_String(16 + Raw_Bg(R)   * 36 +
+                                        Raw_Bg(G) * 6  +
+                                        Raw_Bg(B)) &
+               'm';
 
    end Get_Color_8;
 
@@ -166,8 +250,8 @@ package body Malef.Subsystems.Ansi is
                        return String is
    begin
 
-
-      return "TODO";
+      -- TODO
+      return "";
 
    end Get_Style;
 
@@ -185,8 +269,7 @@ package body Malef.Subsystems.Ansi is
                         return String is
    begin
 
-      -- TODO: Change this.
-      return Get_Color_24 (
+      return Get_Color.all (
                Foreground => Format.Foreground_Color,
                Background => Format.Background_Color
              ) &
@@ -206,11 +289,26 @@ package body Malef.Subsystems.Ansi is
 
    overriding
    procedure Initialize (SC : in out Subsystem_Controller) is
+      use Malef.Systems;
    begin
 
-      Lock := False;
       Malef.Systems.Loaded_Subsystems(Malef.ANSI) :=
          Subsystem_Handler'Access;
+
+      -- We get the best colour function.
+      for Bit in reverse Malef.Systems.Color_Bits'Range loop
+         if Malef.Systems.Available_Colors (Bit) then
+            case Bit is
+               when Bit24  => Get_Color := Get_Color_24'Access; exit;
+               when Bit8   => Get_Color := Get_Color_8 'Access; exit;
+               when Bit4   => Get_Color := Get_Color_4 'Access; exit;
+               when Bit3   => Get_Color := Get_Color_3 'Access; exit;
+               when others => Get_Color := Get_Color_1 'Access; exit;
+            end case;
+         end if;
+      end loop;
+
+      Lock := False;
 
    end Initialize;
 
@@ -219,8 +317,10 @@ package body Malef.Subsystems.Ansi is
    procedure Finalize (SC : in out Subsystem_Controller) is
    begin
 
-      Lock := True;
       Malef.Systems.Loaded_Subsystems(Malef.ANSI) := null;
+      Get_Color := Get_Color_1'Access;
+
+      Lock := True;
 
    end Finalize;
 

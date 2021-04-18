@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---             M A L E F - S U B S Y S T E M S - A N S I . A D S             --
+--                    M A L E F - V O L A T I L E . A D S                    --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,74 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Subsystems.Text_IO;
-
 --
 -- @summary
--- This package contains the functions for ANSI subsystem.
+--
 --
 -- @description
--- This package contains a set of functions that will be dynamically loaded
--- using dynamic dispatching when the library is loaded. This functions will be
--- used by the System part of the library in order to use ANSI Escape Sequences
--- as the main way to control the terminal.
 --
-private package Malef.Subsystems.Ansi is
+package Malef.Volatile is
 
-   type Subsystem is new Malef.Subsystems.Subsystem with null record;
-
-
-   overriding
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access);
-
-   overriding
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String;
-
-   function Get_Color_1  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_3  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_4  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_8  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_24 (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-
-   function Get_Style (Style : Style_Array)
-                       return String
-      with Inline;
-
-   function Get_Move (Coord : Coord_Type)
-                      return String
-      with Inline;
-
-   function Get_Format (Format : Format_Type)
-                        return String
-      with Inline;
-
-   function Get_Clear return String
-      with Inline;
-
-   Std_Out : Malef.Subsystems.Text_IO.Std_Out;
-
-private
-
-   type Get_Color_Function is not null access
-      function (Foreground : Color_Type;
-                Background : Color_Type)
-                return String;
-   Get_Color : Get_Color_Function := Get_Color_1'Access;
-
-end Malef.Subsystems.Ansi;
+end Malef.Volatile;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
