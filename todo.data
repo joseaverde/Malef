@@ -67,3 +67,6 @@ doc_build_instructions	Add information about how to build it to the README file.
 bell_sound	Add bell sound function.\a	[TODO]
 ada_volatile	This library can be used to change things from the system in a very unsafe way, that way the user will have complete control of the library. For example, it can be used to use certain colours or to check against certain styles.	[TODO]
 colors_cmd	Add colour support for CMD!	[TODO]
+py_malef_database	Create a database of terminals that can be read by the program, and be able to find information about the terminal using other souces such as terminfo in case the terminal data couldn't be retrieved.	[TODO]
+colors_doc	Add documentation for colours package!	[TODO]
+pakages_creator	Create a package creator for package managers such as dpkg or pacman.	[TODO]

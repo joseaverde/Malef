@@ -142,7 +142,7 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      -- TODO: Use IO package or system packages.
+      -- TODO: Use system's function.
       Ada.Text_IO.New_Line(Ada.Text_IO.Count(Height));
 
    end New_Page;

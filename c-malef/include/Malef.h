@@ -152,23 +152,33 @@ typedef enum _malef_paletteKind_t {
  * possible.
  */
 typedef enum _malef_style_t {
-   malef_BOLD             = 0,
-   malef_FAINT            = 1,
-   malef_ITALIC           = 2,
-   malef_UNDERLINE        = 3,
-   malef_SLOW_BLINK       = 4,
-   malef_RAPID_BLINK      = 5,
-   malef_REVERSE_VIDEO    = 6,
-   malef_CONCEAL          = 7,
-   malef_CROSSED_OUT      = 8,
-   malef_DOUBLY_UNDERLINE = 9
+   malef_BOLD             = 1 << 0,
+   malef_FAINT            = 1 << 1,
+   malef_ITALIC           = 1 << 2,
+   malef_UNDERLINE        = 1 << 3,
+   malef_SLOW_BLINK       = 1 << 4,
+   malef_RAPID_BLINK      = 1 << 5,
+   malef_REVERSE_VIDEO    = 1 << 6,
+   malef_CONCEAL          = 1 << 7,
+   malef_CROSSED_OUT      = 1 << 8,
+   malef_DOUBLY_UNDERLINE = 1 << 9,
 } malef_style_t ;
 
 /*
- * This is an array of styles, if true means the style is set, otherwise it
- * isn't. Easy, isn't it?
+ * To use the style array, just use the values from the enumerations, to add a
+ * style use the `or' operator (|) and to remove it use the `xor' operator (^),
+ * e.g:
+ *
+ *    malef_style_arr styles = malef_BOLD | malef_ITALIC ;
+ *    // We add another style.
+ *    styles |= malef_UNDERLINE ;
+ *    // We remove one style.
+ *    styles ^= malef_BOLD ;
+ *    // Keep in mind that if the style was already disabled it will be enabled
+ *    // it's like a switch. If you want to be sure it's removed use:
+ *    styles &= !malefBOLD ;
  */
-typedef bool malef_style_arr[10] ;
+typedef int malef_style_arr ;
 
 
 /*
@@ -252,20 +262,15 @@ typedef struct _malef_surface_t {
 
 // These are the parameters in the functions, this only tells the user how to
 // pass the parameters when calling those functions
-// TODO: Add warning.
 #  ifdef out
-#     define _malef_temp_out out
-#     define out * /*out*/
-#  else
-#     define out * /*out*/
+WARNING_out_macro_will_redefined_in_Malef_h:
 #  endif
+#  define out * /*out*/
 
 #  ifdef in
-#     define _malef_temp_in in
-#     define in /*in*/
-#  else
-#     define in /*in*/
+WARNING_in_macro_will_be_redefined_in_Malef_h:
 #  endif
+#  define in /*in*/
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -399,7 +404,7 @@ malef_newPage ( void ) ;
 /*
  * This function changes the title of the terminal, it's imposible to retrieve
  * it and it will be set this title during execution (even if the library is
- * finalized). TODO: Find a way to recover it.
+ * finalized).
  *
  * @param titleName
  * (IN) The new title.
@@ -835,17 +840,8 @@ malef_getColor ( malef_color_t     out color,
                  bool              in  bright );
 
 
-#  ifdef _malef_temp_out
-#     define out _malef_temp_out
-#  else
-#     undef out
-#  endif
-
-#  ifdef _malef_temp_in
-#     define in _malef_temp_in
-#  else
-#     undef in
-#  endif
+#  undef out
+#  undef in
 
 #endif//C_MALEF_H
 

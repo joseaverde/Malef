@@ -35,6 +35,7 @@ project Malef is
    --====-====-----------====-====--
  
    Ada_API := ("malef.ads",
+               "malef-characters.ads",
                "malef-colors.ads",
                "malef-events.ads",
                "malef-exceptions.ads",
@@ -43,6 +44,7 @@ project Malef is
                "malef-systems.ads",
                "malef-systems-utils.ads",
                "malef-systems-dynamic_library_loader.ads",
+               "malef-volatile.ads",
                "malef-wrapper.ads");
 
    C_API := ("c_malef.ads",

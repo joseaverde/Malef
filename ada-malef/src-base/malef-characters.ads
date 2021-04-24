@@ -49,9 +49,10 @@ package Malef.Characters is
 
    function From_UTF8 (Str : String)
                        return Str_Type
-      with Inline;
+      with Pre    => (Char_Type(Character'Pos(Str(Str'First))) and
+                      2#10_000000#) /= 0,
+           Inline;
 
-   -- TODO: Add UTF-16, UTF-32
 
 end Malef.Characters;
 

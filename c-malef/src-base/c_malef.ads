@@ -163,23 +163,22 @@ package C_Malef is
                        Crossed_Out, Doubly_Underline)
       with Convention => C;
    for Style_Type use (
-      Bold             => 0,
-      Faint            => 1,
-      Italic           => 2,
-      Underline        => 3,
-      Slow_Blink       => 4,
-      Rapid_Blink      => 5,
-      Reverse_Video    => 6,
-      Conceal          => 7,
-      Crossed_Out      => 8,
-      Doubly_Underline => 9);
+      Bold             => 2#00_0000_0001#,
+      Faint            => 2#00_0000_0010#,
+      Italic           => 2#00_0000_0100#,
+      Underline        => 2#00_0000_1000#,
+      Slow_Blink       => 2#00_0001_0000#,
+      Rapid_Blink      => 2#00_0010_0000#,
+      Reverse_Video    => 2#00_0100_0000#,
+      Conceal          => 2#00_1000_0000#,
+      Crossed_Out      => 2#01_0000_0000#,
+      Doubly_Underline => 2#10_0000_0000#);
 
    --
-   -- TODO: Change for an integer to use the `|' (or) operator. (More C-ish)
-   -- This is just an array of styles telling whether they are on or off.
+   -- To add styles use the `or' operator (|) and to remove them use the
+   -- `xor' operator (^).
    --
-   type Style_Array is array (Style_Type'Range) of bool
-      with Convention => C;
+   type Style_Array is new int;
 
    --
    -- This is the format type, it's used to store a specific format and use it

@@ -227,13 +227,16 @@ commands = {
                     "-XMALEF_BUILD_MODE=optimize "
                     "-XMALEF_SYSTEM=linux "
                     "-XMALEF_SUBSYSTEM=ansi",
-        "windows": ["wine gprbuild -p -Pmalef_subsystems "
-                        "-XMALEF_SYSTEM=windows "
-                        "-XMALEF_SUBSYSTEM=ansi",
+        "wine": ["wine gprbuild -p -f -Pmalef_subsystems "
+                    "-XMALEF_SYSTEM=windows "
+                    "-XMALEF_SUBSYSTEM=ansi",
                     #"wine gprbuild -p -Pmalef_subsystems "
                     #    "-XMALEF_SYSTEM=windows "
                     #    "-XMALEF_SUBSYSTEM=cmd"
                         ],
+        "windows": ["gprbuild -p -Pmalef_subsystems "
+                        "-XMALEF_SYSTEM=windows "
+                        "-XMALEF_SUBSYSTEM=ansi "],
         "tests-linux": ["cd tests && ./run-tests.sh && cd .."],
         "tests-windows": ["wine gprbuild -p -Ptests/ada/tests.gpr "
                           "-XMALEF_OPERATING_SYSTEM=windows",

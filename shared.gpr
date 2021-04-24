@@ -146,7 +146,7 @@ abstract project Shared is
    System_Switches := ();
    case System is
       when "windows" =>
-         null;
+         Linker_Switches := Linker_Switches & ("-static");
       when others =>
          null;
    end case;

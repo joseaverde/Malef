@@ -314,14 +314,11 @@ package Malef is
    --====----------------------------====--
    --====-- CHARACTERS AND STRINGS --====--
    --====----------------------------====--
-   --
-   -- TODO: Add conversion library.
-   --
 
    --
    -- Characters are just Unicode values.
    --
-   subtype Char_Type is Interfaces.Unsigned_32 range 16#000000# .. 16#1FFFFF#;
+   subtype Char_Type is Interfaces.Unsigned_32 range 16#000000# .. 16#10FFFF#;
 
    pragma Warnings (Off,
                "use clause for type ""Interfaces.Unsigned_32"" has no effect");
@@ -471,6 +468,27 @@ package Malef is
    --
    function Update_Terminal_Size return Boolean;
 
+   -- TODO:
+   procedure Clear_Screen is null;                 -- ESC[J
+   procedure Clear_Until_End_Of_Screen is null;    -- ESC[0J
+   procedure Clear_Until_Start_Of_Screen is null;  -- ESC[1J
+   procedure Clear_Entire_Screen is null;          -- ESC[2J
+
+   procedure Clear_Current_Line is null;           -- ESC[K
+   procedure Clear_Until_End_Of_Line is null;      -- ESC[0K
+   procedure Clear_To_Start_Of_Line is null;       -- ESC[1K
+   procedure Clear_Entire_Line is null;            -- ESC[2K
+
+   procedure Enable_Line_Wrapping is null;   -- ESC[=7h
+   procedure Disable_Line_Wrapping is null;  -- ESC[=7l
+   -- function Has_Line_Wrapping;
+   procedure Make_Cursor_Visible is null;    -- ESC[?25h
+   procedure Make_Cursor_Invisible is null;  -- ESC[?25l
+   -- function Is_Cursor_Visible
+   procedure Save_Screen is null;            -- ESC[?47h
+   procedure Restore_Screen is null;         -- ESC[?47l
+
+
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
@@ -505,6 +523,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    --
    type Matrix_Type is array (Row_Type range <>, Col_Type range <>)
                        of     Element_Type;
+
+   -- TODO: Create parent type for Surfaces.
 
    --
    -- This is the real Surface_Type although it needs a kind of wrapper which

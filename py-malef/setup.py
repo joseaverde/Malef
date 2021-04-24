@@ -29,12 +29,14 @@
 #=============================================================================#
 
 
-import os
 from distutils.core import setup, Extension
+import os
+import sys
+
 
 def _get_version () -> str:
     try:
-        file = open("../VERSION");
+        file = open("../VERSION", 'r');
     except FileNotFoundError:
         return "0.0.0";
     else:
@@ -45,7 +47,43 @@ def _get_version () -> str:
         return data.rstrip('\n');
 
 
+def _get_description () -> str:
+    description = "Malef is a TUI library."
+    try:
+        file = open("../alire.toml", 'r')
+    except FileNotFoundError:
+        return description
+    else:
+        line = file.readline()
+        while line != '':
+            line = line.split()
+            try:
+                if line[0] == "long-description":
+                    description = line[2]
+                    break;
+            except IndexError:
+                pass;
+            line = file.readline()
+        file.close()
+        del file;
+
+        return description;
+
+
 def main ():
+    if sys.platform == "win32":
+        system = "windows"
+    elif sys.platform == "linux":
+        system = "linux"
+    else:
+        system = "unix"
+    runtime_library_dirs = ["../alire/build/lib-"+system+"."+subsystem
+                            for subsystem in ["ansi", "cmd"]]
+
+    if system == "windows":
+        # TODO: Fix this
+        runtime_library_dirs = []
+
     src_base = Extension(name         = "malef",
                          sources      = ["src-base/py_malef.c"],
                          include_dirs = ["../c-malef/include"],
@@ -54,15 +92,13 @@ def main ():
                                             if f.endswith(".h")],
                          extra_compile_args = ["-Wall", "-Werror",
                                                "-std=c99", "-pedantic"],
-                         #define_macros = [(name, value)]
-                         #undef_macros = []
-                         # TODO: Change this so windows users can compile it too.
-                         library_dirs = ["../alire/build/lib-linux"],
+                         library_dirs = ["../alire/build/lib-"+system],
                          libraries    = ["Malef"],
-                         runtime_library_dirs = ["../alire/build/lib-linux.ansi"])
+                         runtime_library_dirs = runtime_library_dirs,
+                         )
     setup(name         = "malef",
           version      = _get_version(),
-          description  = "MALEF", # TODO
+          description  = _get_description(),
           author       = "José Antonio Verde Jiménez",
           author_email = "joseaverde@pm.me",
           ext_modules  = [src_base])

@@ -26,6 +26,8 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Exceptions;
+
 function Malef.Wrapper (Parameters : Parameters_Type)
                         return Return_Type is
    Return_Value : Return_Type;
@@ -45,12 +47,12 @@ begin
    return Return_Value;
 
 exception
-   when others =>
+   when Error : others =>
       if Has_Been_Initialized then
          Finalize;
       end if;
-      -- TODO: Continue exception chain
-      raise Constraint_Error;
+      -- We reraise the last exception and that's it.
+      Ada.Exceptions.Reraise_Occurrence (Error);
 end Malef.Wrapper;
 
 ---=======================-------------------------=========================---

@@ -175,6 +175,9 @@ def main():
         top    = '#' + '='*77 + '#'
         bottom = top
 
+    elif ext == "mdbraw":
+        header
+
     elif filename == "Makefile":
         header_kind = center("M A K E F I L E")
         body = ""

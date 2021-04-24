@@ -130,7 +130,7 @@ _pyMalef_cast2Color ( PyObject *value ) {
          colorArray[i] = ( colorValue >> 8*( 3 - i ) ) & 0xFF ;
       }
    } else if ( PyUnicode_Check (value) ) { 
-      colorHex = PyUnicode_AsUTF8AndSize ( value, &colorValue ) ;
+      colorHex = PyUnicode_AsUTF8AndSize ( value, (Py_ssize_t*)&colorValue ) ;
       colorArray[3] = 0xFF ;
       switch ( colorValue ) {
          case 4:

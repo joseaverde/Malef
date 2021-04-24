@@ -26,43 +26,10 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Characters;
 with Interfaces.C_Streams;
 
 package body Malef.Subsystems.Text_IO is
-
-   -- TODO: Clean it.
-   function To_UTF8 (Char : Char_Type)
-                     return String is
-   begin
-
-      case Char is
-         when 16#0000_0000# .. 16#0000_007F# =>
-            return "" & Character'Val(Char);
-         when 16#0000_0080# .. 16#0000_07FF# =>
-            return
-               Character'Val(2#1100_0000# or Interfaces.Shift_Right(Char, 6)) &
-               Character'Val(2#1000_0000# or (Char and 2#0011_1111#));
-         when 16#0000_0800# .. 16#0000_FFFF# =>
-            return
-               Character'Val(2#1110_0000# or Interfaces.Shift_Right(Char, 12))&
-               Character'Val(2#1000_0000# or (Interfaces.Shift_Right(Char, 6)
-                        and  2#0011_1111#)) &
-               Character'Val(2#1000_0000# or (Char and 2#0011_1111#));
-         when 16#0001_0000# .. 16#001F_FFFF# =>
-            return
-               Character'Val(2#1111_0000# or Interfaces.Shift_Right(Char, 24))&
-               Character'Val(2#1100_0000# or (Interfaces.Shift_Right(Char, 12)
-                        and  2#0011_1111#)) &
-               Character'Val(2#1100_0000# or (Interfaces.Shift_Right(Char, 12)
-                        and  2#0011_1111#)) &
-               Character'Val(2#1000_0000# or (Char and 2#0011_1111#));
-      -- when others =>
-      --    -- TODO: Change this, to return a value because as it's inside a
-      --    -- protected type I don't know what could go wrong.
-      --    raise Constraint_Error;
-      end case;
-
-   end To_UTF8;
 
    protected body Std_Out is
 
@@ -104,7 +71,7 @@ package body Malef.Subsystems.Text_IO is
             -- We convert the character to the current encoding system, for now
             -- it will be UTF-8.
             -- TODO: Add more encodings.
-            Write_Char (To_UTF8 (Char));
+            Write_Char (Malef.Characters.To_UTF8 (Char));
          end loop;
 
          Lock := False;
@@ -117,7 +84,7 @@ package body Malef.Subsystems.Text_IO is
       begin
 
          Lock := True;
-         Write_Char (To_UTF8 (Data));
+         Write_Char (Malef.Characters.To_UTF8 (Data));
          Lock := False;
 
       end Write;
