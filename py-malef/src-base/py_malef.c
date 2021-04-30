@@ -46,7 +46,7 @@
 \*###########################################################################*/
 
 
-/* *** malef.initialize *** */
+/* *** pyMalef.initialize *** */
 PyDoc_STRVAR ( pyMalef_initialize_doc,
 "This function initializes the Malef library. It must be initialized in order"\
 " to run certain IO functions or functions that requiere it to be initialized"\
@@ -70,7 +70,7 @@ pyMalef_initialize ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.finalize *** */
+/* *** pyMalef.finalize *** */
 PyDoc_STRVAR ( pyMalef_finalize_doc,
 "This function finalizes and restores the terminal. It raises an exception in"\
 " case the library wasn't already initialized or if there was a fatal error " \
@@ -94,7 +94,7 @@ pyMalef_finalize ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.isInitialized *** */
+/* *** pyMalef.isInitialized *** */
 PyDoc_STRVAR ( pyMalef_isInitialized_doc,
 "This function returns whether the Malef library has been initialized." ) ;
 static PyObject*
@@ -115,7 +115,7 @@ pyMalef_isInitialized ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.getHeight *** */
+/* *** pyMalef.getHeight *** */
 PyDoc_STRVAR ( pyMalef_getHeight_doc,
 "This function returns the height of the terminal/console. It must have been "\
 "initialized (the library) in order for it to work." ) ;
@@ -139,7 +139,7 @@ pyMalef_getHeight ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.getWidth *** */
+/* *** pyMalef.getWidth *** */
 PyDoc_STRVAR ( pyMalef_getWidth_doc,
 "This function returns the width of the terminal/console. The library must "  \
 "have been initialized in order for it to work." ) ;
@@ -163,7 +163,7 @@ pyMalef_getWidth ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.newPage *** */
+/* *** pyMalef.newPage *** */
 PyDoc_STRVAR ( pyMalef_newPage_doc,
 "This function prepares a clean environment for the terminal application by " \
 "moving the old text up. It raises an error if the library hasn't been "      \
@@ -187,7 +187,7 @@ pyMalef_newPage ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.setTitle *** */
+/* *** pyMalef.setTitle *** */
 PyDoc_STRVAR ( pyMalef_setTitle_doc,
 "This function changes the title of the terminal/console. This new title will"\
 " remain even if the library has been finalized. It will return when the "    \
@@ -222,7 +222,7 @@ pyMalef_setTitle ( PyObject *self, PyObject *args, PyObject *kwargs ) {
 }
 
 
-/* *** malef.updateTerminalSize *** */
+/* *** pyMalef.updateTerminalSize *** */
 PyDoc_STRVAR ( pyMalef_updateTerminalSize_doc,
 "This function updates the terminal size and it returns whether the size has "\
 "changed. However in systems like Linux, the size will be automatically "     \
@@ -251,7 +251,7 @@ pyMalef_updateTerminalSize ( PyObject *self, PyObject *args ) {
 }
 
 
-/* *** malef.wrapper *** */
+/* *** pyMalef.wrapper *** */
 PyDoc_STRVAR ( pyMalef_wrapper_doc,
 "This function wraps another function to make sure everything is cleaned if " \
 "any error was raised during the execution of the function. After clean up "  \
@@ -463,7 +463,7 @@ _PyInit_addObject ( PyObject     *module,
 #define TRY2INIT_FAIL _PyInit_addObject (module, NULL, "", __pyNone )
 
 #define TRY2INIT_EXCEPT(except, name, doc, base)                              \
-   except = PyErr_NewExceptionWithDoc ( "malef." name, doc, base, NULL ) ;    \
+   except = PyErr_NewExceptionWithDoc ( "pyMalef." name, doc, base, NULL ) ;  \
    if ( except == NULL ) {                                                    \
       TRY2INIT_FAIL ;                                                         \
       return module ;                                                         \
@@ -497,7 +497,7 @@ _PyInit_addObject ( PyObject     *module,
 
 
 PyMODINIT_FUNC
-PyInit_malef ( void ) {
+PyInit_pyMalef ( void ) {
 
    // If any error occurs during initialization we finalize everything
    // initialize so far and also unreference the module so the garbage

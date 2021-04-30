@@ -69,7 +69,7 @@ static PyObject *pyMalef_colors ;
 \*###########################################################################*/
 
 /*
- * *** malef.ColorEnum.__new__ ***
+ * *** pyMalef.ColorEnum.__new__ ***
  *
  * This function allocates the ColorEnum class and sets the values of the
  * different colours.
@@ -107,12 +107,12 @@ pyMalef_ColorEnum___new__ ( PyTypeObject *type,
 }
 
 /*
- * *** malef.ColorEnum.__iter__ ***
+ * *** pyMalef.ColorEnum.__iter__ ***
  *
  * This function returns an iterator that can be used to iterate over all the
  * items inside the ColorEnum type. That way you can write statements such as:
  *
- *    for i in malef.colors:
+ *    for i in pyMalef.colors:
  *       # Do something
  *
  */
@@ -143,7 +143,7 @@ static const char *_pyMalef_COLOR_ENUM_NAMES[] = {
 } ;
 
 
-/* *** malef.ColorEnum.image *** */
+/* *** pyMalef.ColorEnum.image *** */
 PyDoc_STRVAR ( pyMalef_ColorEnum_image_doc,
 "This function returns the image (the string) of each of the values of the "
 "enumeration." ) ;
@@ -218,7 +218,7 @@ pyMalef_ColorEnumMembers[] = {
 static PyTypeObject
 pyMalef_ColorEnum = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name      = "malef.ColorEnum",
+   .tp_name      = "pyMalef.ColorEnum",
    .tp_doc       = "This is an enumeration type, it defines integer CONSTANTS "
                    "that can be used to index colours in palettes. This type "
                    "is iterable and can return the String representation of "

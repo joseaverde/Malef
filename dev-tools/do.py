@@ -220,23 +220,47 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
              os.listdir("c-malef/src-base")))
 
 commands = {
-        "linux": ["gprbuild -p -Pmalef ",
-         #           "--config=dev-tools/cgpr/linux.cgpr",
-                  "gprbuild -p -Pmalef_subsystems "],
-        "force": "gprbuild -p -f -Pmalef_subsystems "
+        "linux": "gprbuild -p -Pmake_all",
+        "force": "gprbuild -p -Pmake_all "
                     "-XMALEF_BUILD_MODE=optimize "
-                    "-XMALEF_SYSTEM=linux "
-                    "-XMALEF_SUBSYSTEM=ansi",
-        "wine": ["wine gprbuild -p -f -Pmalef_subsystems "
+                    "-XMALEF_SYSTEM=linux ",
+        "wine": ["wine gprbuild -p -Pmake_all "
                     "-XMALEF_SYSTEM=windows "
                     "-XMALEF_SUBSYSTEM=ansi",
-                    #"wine gprbuild -p -Pmalef_subsystems "
-                    #    "-XMALEF_SYSTEM=windows "
-                    #    "-XMALEF_SUBSYSTEM=cmd"
-                        ],
-        "windows": ["gprbuild -p -Pmalef_subsystems "
+                 "wine gprbuild -p -Pmake_all "
+                    "-XMALEF_SYSTEM=windows "
+                    "-XMALEF_SUBSYSTEM=cmd"],
+        "windows": ["gprbuild -p -Pmake_all "
                         "-XMALEF_SYSTEM=windows "
                         "-XMALEF_SUBSYSTEM=ansi "],
+        "release": ["gprbuild -f -p -Pmake_all "
+                        "-XMALEF_BUILD_MODE=optimize "
+                        "-XMALEF_SYSTEM=linux ",
+                    "wine gprbuild -f -p -Pmake_all "
+                        "-XMALEF_BUILD_MODE=optimize "
+                        "-XMALEF_SYSTEM=windows "
+                        "-XMALEF_SUBSYSTEM=ansi",
+                    "wine gprbuild -f -p -Pmake_all "
+                        "-XMALEF_BUILD_MODE=optimize "
+                        "-XMALEF_SYSTEM=windows "
+                        "-XMALEF_SUBSYSTEM=cmd",
+                    "gnatdoc -bplwPmalef --enable-build",
+                    "gprinstall -f -p -Pmalef --prefix=./alire/opt",
+                    "gprinstall -f -p -Pc_malef --prefix=./alire/opt",
+                    "gprinstall -f -p -Ppy_malef --prefix=./alire/opt",
+                    "gprinstall -f -p -Pmalef_subsystems --prefix=./alire/opt "
+                        "-XMALEF_SUBSYSTEM=ansi",
+                    "wine gprinstall -f -p -Pmalef --prefix=./alire/win32 "
+                        "-XMALEF_SYSTEM=windows ",
+                    "wine gprinstall -f -p -Pc_malef --prefix=./alire/win32 "
+                        "-XMALEF_SYSTEM=windows ",
+                    "wine gprinstall -f -p -Ppy_malef --prefix=./alire/win32 "
+                        "--install-name=py_malef"
+                        "-XMALEF_SYSTEM=windows ",
+                    "wine gprinstall -f -p -Pmalef_subsystems "
+                        "--prefix=./alire/win32 "
+                        "-XMALEF_SYSTEM=windows ",
+                    ],
         "tests-linux": ["cd tests && ./run-tests.sh && cd .."],
         "tests-windows": ["wine gprbuild -p -Ptests/ada/tests.gpr "
                           "-XMALEF_OPERATING_SYSTEM=windows",
@@ -247,7 +271,9 @@ commands = {
         "commit": _commit,
         "lines": _lines,
         "install": ["rm -r alire/opt",
-                    "gprinstall -f -p -Pmalef --prefix=./alire/opt"],
+                    "gprinstall -f -p -Pmalef --prefix=./alire/opt",
+                    "gprinstall -f -p -Pmalef_subsystems --prefix=./alire/opt "
+                        "-XMALEF_SUBSYSTEM=ansi"],
 }
 
 

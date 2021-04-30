@@ -49,7 +49,7 @@ typedef struct {
 
 
 /*
- * *** malef._EnumIterator.__iter__ ***
+ * *** pyMalef._EnumIterator.__iter__ ***
  *
  * This function just returns itself, is the iterator that is returned when
  * trying to iterate.
@@ -63,7 +63,7 @@ pyMalef_EnumIterator___iter__ ( PyObject *pySelf ) {
 
 
 /*
- * *** malef._EnumIterator.__next__ ***
+ * *** pyMalef._EnumIterator.__next__ ***
  *
  * This is the function that is called when passing to the next item in the
  * iteration. It just increases the index and returns the current value.
@@ -85,7 +85,7 @@ pyMalef_EnumIterator___next__ ( PyObject *pySelf ) {
 static PyTypeObject
 pyMalef_EnumIterator = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name      = "malef._EnumIterator",
+   .tp_name      = "pyMalef._EnumIterator",
    .tp_doc       = "Iterator for enumeration types.",
    .tp_basicsize = sizeof(_pyMalef_enumIteratorStruct),
    .tp_iter      = pyMalef_EnumIterator___iter__,

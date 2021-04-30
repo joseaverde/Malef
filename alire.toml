@@ -39,8 +39,7 @@ MALEF_BUILD_MODE     = ["debug", "optimize"]
 MALEF_SYSTEM         = ["linux", "windows", "unix"]
 MALEF_SUBSYSTEM      = ["ansi", "cmd"]
 
-MALEF_C_API_COMPILATION = ["enabled", "disabled"]
-
+MALEF_PYTHON_VERSION = ["3.6", "3.7", "3.8", "3.9"]
 
 # How to built it depends on the operating system.
 [gpr-set-externals.'case(os)']

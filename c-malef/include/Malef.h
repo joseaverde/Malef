@@ -509,19 +509,19 @@ malef_createSurface ( malef_row_t     in rows,
 
 /*
  * This function is used to finalize a surface, keep in mind that if the
- * surface it's still being used by other structure or object, it won't be
+ * surface was still being used by other structure or object, it won't be
  * freed, i.e.:
  *    | If you create a surface
  *    |     malef_declareSurface(my_surf) ;
  *    |     // Do something with your surface.
  *    |     your_surf = my_surf
  *    | If you destroy `your_surf', `my_surf' will be freed.
- *    | However, if you use any other structure like (TODO: coming soon)
+ *    | However, if you use any other structure like boxes or sprites.
  *    |     malef_appendBox ( my_box, my_surf ) ;
  *    |     malef_destroy ( my_surf ) ;
  *    | The surface won't be freed, because the Box still has access to it.
- *    | In orther to assing to another surface use the `malef_assignSurface'
- *    | function.
+ *    | In orther words to assing to another surface use the
+ *    | `malef_assignSurface' function.
  *
  * @param surface
  * (IN)  The surface to destroy.

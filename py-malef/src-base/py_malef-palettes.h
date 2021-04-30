@@ -83,7 +83,7 @@ pyMalef_Palette___dealloc__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * *** malef.Palette.__new__ ***
+ * *** pyMalef.Palette.__new__ ***
  *
  * This function is called when a new Palette is created it will allocate the
  * Colours to a value other than NULL so it doesn't return any error.
@@ -109,7 +109,7 @@ pyMalef_Palette___new__ ( PyTypeObject *type,
 
 
 /*
- * *** malef.Palette.__len__ ***
+ * *** pyMalef.Palette.__len__ ***
  *
  * This function returns the length of the palette which is fixed to always be
  * 16 in order for it to correctly interact with the internals.
@@ -128,7 +128,7 @@ pyMalef_Palette___len__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * *** malef.Palette.__getitem__ ***
+ * *** pyMalef.Palette.__getitem__ ***
  *
  * This function is called when subscripting a palette.
  *
@@ -160,7 +160,7 @@ pyMalef_Palette___getitem__ ( _pyMalef_paletteStruct *self,
 
 
 /*
- * *** malef.Palette.__setitem__ ***
+ * *** pyMalef.Palette.__setitem__ ***
  *
  * This functions just changes the colour in a certain position of the palette.
  *
@@ -200,7 +200,7 @@ pyMalef_Palette___setitem__ ( _pyMalef_paletteStruct *self,
 
 
 /*
- * *** malef.Palette.__repr__ ***
+ * *** pyMalef.Palette.__repr__ ***
  *
  * This function returns a string that shos the representation of the Palette
  * data type showing all the colours inside it.
@@ -231,7 +231,7 @@ pyMalef_Palette___repr__ ( _pyMalef_paletteStruct *self ) {
 
 
 /*
- * *** malef.Palette.(comparisons) ***
+ * *** pyMalef.Palette.(comparisons) ***
  *
  * This function is used to compare two palettes, the only thing that will be
  * implemented will be the equality and not-equality operators `==` and `!=`,
@@ -295,21 +295,21 @@ _pyMalef_Palette_as_sequence = {
 static PyTypeObject
 pyMalef_Palette = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name      = "malef.Palette",
+   .tp_name      = "pyMalef.Palette",
    .tp_doc       = "This type can be used to store up to sixteen in a single "
                    "object. Why using this instead of normal lists, I'm glad "
                    "you asked apart from been faster they have the advantage "
                    "they can be used to define the colours used in the "
                    "current terminal/console and if this one doesn't support "
                    "24-bits colours it will try to find the nearest one. This "
-                   "can be changed with the `malef.setPalette' function. Even "
-                   "though the names are BLACK, RED and so on, it does not "
-                   "mean they are holding those colours, they are names for "
-                   "the different positions, you can safely use colours from "
-                   "0 to 15 (both included), but keep in mind that in some "
-                   "devices if the Bright Style isn't supported (which is "
-                   "rare to begin with) it will try to use the Bright variant "
-                   "of the colour.",
+                   "can be changed with the `pyMalef.setPalette' function. "
+                   "Even though the names are BLACK, RED and so on, it does "
+                   "not mean they are holding those colours, they are names "
+                   "for the different positions, you can safely use colours "
+                   "from 0 to 15 (both included), but keep in mind that in "
+                   "some devices if the Bright Style isn't supported (which "
+                   "is rare to begin with) it will try to use the Bright "
+                   "variant of the colour.",
    .tp_basicsize = sizeof(_pyMalef_paletteStruct),
    .tp_itemsize  = PYMALEF_COLOR_LENGTH * PYMALEF_PALETTE_LENGTH,
    .tp_dealloc   = (destructor)pyMalef_Palette___dealloc__,
@@ -377,7 +377,7 @@ _pyMalef_palettePy2C ( PyObject         *pyPalette,
 
 
 
-/* *** malef.getPalette *** */
+/* *** pyMalef.getPalette *** */
 PyDoc_STRVAR ( pyMalef_getPalette_doc,
 "This function returns the Palette in use if no arguments are given; or the " \
 "palette represented by the same value. The available values are declared in "\
@@ -414,7 +414,7 @@ pyMalef_getPalette ( PyObject *self,
       } else {
          PyErr_SetString ( PyExc_IndexError,
                            "The value given is not in the palettes range, take"
-                           " a look at the malef.PaletteEnum class." ) ;
+                           " a look at the pyMalef.PaletteEnum class." ) ;
          return NULL ;
       }
    }
@@ -431,7 +431,7 @@ pyMalef_getPalette ( PyObject *self,
 }
 
 
-/* *** malef.setPalette *** */
+/* *** pyMalef.setPalette *** */
 PyDoc_STRVAR ( pyMalef_setPalette_doc,
 "This function changes the current Palette in use either by using a value "   \
 "(declared in PaletteEnum) or by using a user-defined Palette." ) ;

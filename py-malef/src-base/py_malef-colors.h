@@ -204,7 +204,7 @@ _pyMalef_cast2Color ( PyObject *value ) {
 \*###########################################################################*/
 
 /*
- * *** malef.Color.__init__ ***
+ * *** pyMalef.Color.__init__ ***
  *
  * This function initialises a colour object. It takes as argument an object
  * that will be casted into the Color type. If no argument is given, then
@@ -255,7 +255,7 @@ pyMalef_Color___init__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** malef.Color.__len__ ***
+ * *** pyMalef.Color.__len__ ***
  *
  * This function returns the length of the colours which is always 4, but we
  * provide it for any function that uses the `len' method.
@@ -274,7 +274,7 @@ pyMalef_Color___len__ ( _pyMalef_colorStruct *self ) {
 
 
 /*
- * *** malef.Color.__getitem__ ***
+ * *** pyMalef.Color.__getitem__ ***
  *
  * This function is called when subscripting the Colours, however it has a
  * fixed size so:
@@ -310,7 +310,7 @@ pyMalef_Color___getitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** malef.Color.__setitem__ ***
+ * *** pyMalef.Color.__setitem__ ***
  *
  * This function is called when trying to change an item from the Colour.
  *
@@ -357,7 +357,7 @@ pyMalef_Color___setitem__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** malef.Color.__contains__ ***
+ * *** pyMalef.Color.__contains__ ***
  *
  * This function is called when the `in' operator is used. It checks whether an
  * item is contained by the Colour. There is a predefined `__contains__'
@@ -387,7 +387,7 @@ pyMalef_Color___contains__ ( _pyMalef_colorStruct *self,
 
 
 /*
- * *** malef.Color.__repr__ ***
+ * *** pyMalef.Color.__repr__ ***
  *
  * This function returns a string that shows the representation of the Colour,
  * i.e: (R, G, B, A), so the user can see what's inside.
@@ -403,7 +403,7 @@ pyMalef_Color___repr__ ( _pyMalef_colorStruct *self ) {
 }
 
 /*
- * *** malef.Color.(comparisons) ***
+ * *** pyMalef.Color.(comparisons) ***
  *
  * This function is used to compare two colours, the only thing that can be
  * compared is whether they are equal, other kind of comparisons are stupid,
@@ -476,7 +476,7 @@ _pyMalef_Color_as_sequence = {
 static PyTypeObject
 pyMalef_Color = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name        = "malef.Color",
+   .tp_name        = "pyMalef.Color",
    .tp_doc         = "This is the Color type, it's a 32-bit array that you can"
                      " use to store colours in the format RGBA (Red, Green, "
                      "Blue and Alpha [Opacity]).",

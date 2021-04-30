@@ -28,6 +28,8 @@
 
 abstract project Shared is
 
+   Version := "0";
+
    --====-====------------====-====--
    --====-====- EXTERNAL -====-====--
    --====-====------------====-====--
@@ -59,14 +61,20 @@ abstract project Shared is
    type Build_Kind is ("debug", "optimize");
    Build_Mode : Build_Kind := External ("MALEF_BUILD_MODE", "debug");
 
+   type Python_Version_Kind is ("3.6", "3.7", "3.8", "3.9");
+   Python_Version : Python_Version_Kind := External ("MALEF_PYTHON_VERSION",
+                                                     "3.9");
 
-   C_API_Compilation : Enabled_Kind := External ("MALEF_C_API_COMPILATION",
-                                                 "enabled");
 
-   Prefix := "";
+   Prefix := "build";
+   Docs_Prefix := "build/docs";
    case Alire_Built is
-      when "disabled" => Prefix := "alire/build/";
-      when others     => Prefix := "";
+      when "disabled" =>
+         Prefix := "alire/build/";
+         Docs_Prefix := "alire/docs";
+      when others =>
+         Prefix := "build";
+         Docs_Prefix := "build/docs";
    end case;
 
 
@@ -136,22 +144,6 @@ abstract project Shared is
    end case;
 
 
-   Linker_Switches := ();
-   case Build_Mode is
-      when "debug" => Linker_Switches := ("-lgmem");
-      when others  => null;
-   end case;
-
-
-   System_Switches := ();
-   case System is
-      when "windows" =>
-         Linker_Switches := Linker_Switches & ("-static");
-      when others =>
-         null;
-   end case;
-
-
    --====-====------------====-====--
    --====-====- PACKAGES -====-====--
    --====-====------------====-====--
@@ -167,21 +159,21 @@ abstract project Shared is
         Runtime_Checks_Switches &
         Style_Checks_Switches   &
         Contracts_Switches      &
-        System_Switches         &
         ("-gnatQ");  -- Don't quit. Generate ALI and tree files even if
                      -- illegalities.
    end Compiler;
 
 
    package Binder is
-      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+      for Switches ("Ada") use ("-Es");
+      --  Symbolic traceback
    end Binder;
 
 
    package Documentation is
       -- To build the documentation:
       --    `gnatdoc -bplwPmalef --enable-build'
-      for Documentation_Dir use Prefix & "docs";
+      for Documentation_Dir use Docs_Prefix;
    end Documentation;
 
 
@@ -203,7 +195,6 @@ abstract project Shared is
       -- The suffix for separate units (subunits).
       for Separate_Suffix use ".separate.adb";
    end Naming;
-
 
 end Shared;
 

@@ -1,0 +1,119 @@
+-------------------------------------------------------------------------------
+--                                                                           --
+--                          P Y _ M A L E F . G P R                          --
+--                                                                           --
+--                                 M A L E F                                 --
+--                                                                           --
+--                                   G P R                                   --
+--                                                                           --
+-------------------------------------------------------------------------------
+--     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
+-------------------------------------------------------------------------------
+-- This file is part of Malef.                                               --
+--                                                                           --
+-- This program is free software:  you  can redistribute it and/or modify it --
+-- under  the terms  of the  GNU  General License  as published by the  Free --
+-- Software  Foundation,  either  version 3  of  the  License,  or  (at your --
+-- opinion) any later version.                                               --
+--                                                                           --
+-- This  program  is distributed  in the  hope that  it will be  useful, but --
+-- WITHOUT   ANY   WARRANTY;   without   even  the   implied   warranty   of --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General --
+-- Public License for more details.                                          --
+--                                                                           --
+-- You should have received  a copy of the  GNU General Public License along --
+-- with this program. If not, see <https://www.gnu.org/licenses/>.           --
+--                                                                           --
+-------------------------------------------------------------------------------
+
+with "c_malef.gpr";
+with "shared.gpr";
+
+library project Py_Malef is
+
+   --====-====-----------====-====--
+   --====-====- PROJECT -====-====--
+   --====-====-----------====-====--
+
+
+   Src_Dirs := ("py-malef/src-base");
+
+   -- TODO: -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")  \
+   -- -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
+   for Library_Dir     use Shared.Prefix & "lib-" & Shared.System;
+   for Library_Name    use "pyMalef";
+   for Library_Kind    use Shared.Library_Type;
+
+   for Languages   use ("C");
+   for Source_Dirs use Src_Dirs;
+   for Object_Dir  use Shared.Prefix & "obj-" & Shared.System & ".Py";
+
+   for Create_Missing_Dirs use "True";
+
+   --====-====------------====-====--
+   --====-====- PACKAGES -====-====--
+   --====-====------------====-====--
+
+   Linker_Switches := ();
+   Build_Switches := ();
+   case Shared.System is
+      when "linux" =>
+         for Shared_Library_Prefix use "";
+         Linker_Switches := ("-pthread",
+                             "-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now",
+                             "-fno-semantic-interposition");
+         Build_Switches := ("-pthread",
+                            "-Wno-unused-result",
+                            "-Wsign-compare",
+                            "-DBDEBUG",
+                            "-fwrapv",
+                            "-O3",
+                            "-pipe",
+                            "-fno-plt",
+                            "-fno-semantic-interposition",
+                            "-fPIC",
+                            "-Wall",
+                            "-Werror",
+                            "-std=c99",
+                            "-pedantic",
+                            "-I/usr/include/python" & Shared.Python_Version);
+      when "windows" =>
+         for Library_Name use "pyMalef";
+         for Shared_Library_Prefix use "";
+         for Shared_Library_Suffix  use ".pyd";
+         Linker_Switches := ("-LC:\Program Files (x86)\Python39-32\libs",
+                             "-LC:\Program Files (X86)\Python39-32\PCbuild\win32",
+                             "-lpython39",
+                             "-lvcruntime140");
+         Build_Switches := ("-mdll",
+                            "-O3",
+                            "-Wall",
+                            -- TODO: Find a way to search this directory.
+                            -- For example, let python generate this file.
+                            "-IC:\Program Files (x86)\Python39-32\include",
+                            "-Wall", "-Werror", "-std=c99", "-pedantic");
+      when others =>
+         null;
+   end case;
+
+-- iles (x86)\Python39-32\PCbuild\win32 -lMalef -lpython39 -lvcruntime140 -o build\lib.win32-3.9\malef.cp39
+-- -win32.pyd
+
+
+   package Builder renames Shared.Builder;
+
+   package Compiler is
+      for Default_Switches ("C") use Build_Switches;
+   end Compiler;
+
+   -- XXX: Can't use package Linker.
+   for Library_Options use Linker_Switches;
+
+   package Binder renames Shared.Binder;
+   package Naming renames Shared.Naming;
+
+end Py_Malef;
+
+---=======================-------------------------=========================---
+--=======================-- E N D   O F   F I L E --=========================--
+---=======================-------------------------=========================---

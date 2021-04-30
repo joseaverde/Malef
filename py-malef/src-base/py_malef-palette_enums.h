@@ -62,7 +62,7 @@ static PyObject *pyMalef_palettes ;
 \*###########################################################################*/
 
 /*
- * *** malef.PaletteEnum.__new__ ***
+ * *** pyMalef.PaletteEnum.__new__ ***
  *
  * This function allocates the ColorEnum class and initialises its values.
  */
@@ -92,7 +92,7 @@ pyMalef_PaletteEnum___new__ ( PyTypeObject *type,
 
 
 /*
- * *** malef.PaletteEnum.__iter__ ***
+ * *** pyMalef.PaletteEnum.__iter__ ***
  *
  * This function returns an iterator that can be used to iterate over all the
  * palette names inside the PaletteEnum type. This could be useful to iterate
@@ -132,7 +132,7 @@ static const char *_pyMalef_PALETTE_ENUM_NAMES[] = {
    "UBUNTU",
 } ;
 
-/* *** malef.PaletteEnum.image *** */
+/* *** pyMalef.PaletteEnum.image *** */
 PyDoc_STRVAR ( pyMalef_PaletteEnum_image_doc,
 "This function returns the image (the string) of each of the values of the "
 "enumeration." ) ;
@@ -199,7 +199,7 @@ pyMalef_PaletteEnumMembers[] = {
 static PyTypeObject
 pyMalef_PaletteEnum = {
    PyVarObject_HEAD_INIT ( NULL, 0 )
-   .tp_name      = "malef.PaletteEnum",
+   .tp_name      = "pyMalef.PaletteEnum",
    .tp_doc       = "This is an enumeration type that assigns a CONSTANT "
                    "integer value to each of the predefined palettes. These "
                    "values can be used to change the default palette or to "

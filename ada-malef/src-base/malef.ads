@@ -193,6 +193,11 @@ package Malef is
    pragma Pack (Style_Array);
 
 
+   -- TODO:
+   type Attribute_Kind is (TODO);
+   type Attribute_Array is array (Attribute_Kind'Range) of Boolean
+      with Default_Component_Value => False;
+
 
    --====-------------====--
    --====-- FORMATS --====--
@@ -221,6 +226,7 @@ package Malef is
          Foreground_Color : Color_Type;
          Background_Color : Color_Type;
          Styles           : Style_Array;
+         Attributes       : Attribute_Array;
       end record;
    pragma Pack (Format_Type);
 
@@ -228,7 +234,8 @@ package Malef is
    Default_Format :  constant Format_Type
                   := Format_Type'(Foreground_Color => (255, 255, 255, 255),
                                   Background_Color => (  0,   0,   0, 255),
-                                  Styles           => (others => False));
+                                  Styles           => (others => False),
+                                  Attributes       => (others => False));
 
 
 
@@ -513,8 +520,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    --
    type Element_Type is
       record
-         Format : Format_Type;
-         Char   : Char_Type;
+         Format    : Format_Type;
+         Char      : Char_Type;
       end record;
 
    --
@@ -600,7 +607,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Grid     => (others => (others => Element_Type'(
             Format => Format_Type'(Foreground_Color => (255, 255,   0, 255),
                                    Background_Color => (255,   0,   0, 255),
-                                   Styles           => (others => False)),
+                                   Styles           => (others => False),
+                                   Attributes       => (others => False)),
             Char   => Character'Pos('?') ) )),
          Writable => False,
          others => <>

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2021-04-00
+### Added
+- Added database
+- Added UTF-8 encoding
+- Added "packager" for different package managers.
+
+### Fixed
+- Python binding now works on Windows
+
 ## [0.2.4] - 2021-04-09
 ### Added
 - Added Color type to Python binding.
