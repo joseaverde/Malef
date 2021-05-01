@@ -1,12 +1,11 @@
-#!/usr/bin/env  python3
-# *-* encoding=utf8 *-*
+#!/usr/bin/make -f
 #=============================================================================#
  #                                                                           # 
- #                         T E S T _ M A L E F . P Y                         # 
+ #                              M A K E F I L E                              # 
  #                                                                           # 
  #                                 M A L E F                                 # 
  #                                                                           # 
- #                         P Y T H O N   S C R I P T                         # 
+ #                              M A K E F I L E                              # 
  #                                                                           # 
  #---------------------------------------------------------------------------# 
  #     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     # 
@@ -28,69 +27,9 @@
  #                                                                           # 
 #=============================================================================#
 
-import pyMalef
-import tests
 
-
-def initialize () -> str:
-    pyMalef.initialize ()
-    return "<>"
-
-
-def finalize () -> str:
-    pyMalef.finalize ()
-    return "<>"
-
-
-def isInitialized () -> str:
-    return str(pyMalef.isInitialized ())
-
-
-def getHeight () -> str:
-    if pyMalef.isInitialized ():
-        tests.wait ("Set the terminal height to 20")
-        if pyMalef.updateTerminalSize ():
-            return "$No automatic update"
-
-    return "@%d" % pyMalef.getHeight ()
-
-
-def getWidth () -> str:
-    if pyMalef.isInitialized ():
-        tests.wait ("Set the terminal width to 50")
-        if pyMalef.updateTerminalSize ():
-            return "$No automatic update"
-
-    return "@%d" % pyMalef.getWidth ()
-
-
-def newPage () -> str:
-    pyMalef.newPage ()
-    return "<>"
-
-
-def setTitle () -> str:
-    pyMalef.setTitle ("Testing Malef in Python3!")
-    return "<>"
-
-
-
-def main ():
-    tests.test (initialize, "initialize", "<>")
-    tests.test (initialize, "initialize", "InitializationError")
-    tests.test (finalize,   "finalize",   "<>")
-    tests.test (finalize,   "finalize",   "InitializationError")
-    tests.test (getHeight,  "getHeight",  "InitializationError")
-    tests.test (getWidth,   "getWidth",   "InitializationError")
-    tests.test (newPage,    "newPage",    "InitializationError")
-    tests.test (setTitle,   "setTitle",   "InitializationError")
-
-    tests.safe_run (initialize)
-
-    tests.test (getHeight, "getHeight", "@20", False)
-    tests.test (getWidth,  "getWidth",  "@50", False)
-    tests.test (newPage,   "newPage",   "<>")
-    tests.test (setTitle,  "setTitle",  "<>")
+all: malef.tex 1-introduction.tex
+	pdflatex -output-directory=build malef.tex
 
 
 ###=======================#########################=========================###

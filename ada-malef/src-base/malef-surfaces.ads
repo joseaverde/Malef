@@ -38,7 +38,8 @@ private with Ada.Finalization;
 --
 package Malef.Surfaces is
 
-   type Surface_Type is tagged private;
+   -- TODO: Document it
+   type Surface_Type is new Base_Type with null record;
 
 
    -- TODO: Replace this function.
@@ -73,76 +74,11 @@ package Malef.Surfaces is
    procedure Put (Object : Surface_Type);
 
 
-   --
-   -- This function returns the Shared_Surface_Access a Surface_Type is
-   -- pointing to.
-   --
-   -- @param Object
-   -- The object to retrieve the Shared_Surface_Access from.
-   --
-   -- @return
-   -- The shared surface access.
-   --
-   function Get_Reference (Object : in Surface_Type)
-                           return Shared_Surface_Access;
-
-
    Null_Surface : constant Surface_Type;
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
-
-   --
-   -- This is the Surface_Type: a Controlled type containing a Shared_Surface
-   -- access type.
-   --
-   -- @field Reference
-   -- The surface the current controlled type is pointing at.
-   --
-   type Surface_Type is new Ada.Finalization.Controlled with
-      record
-         Reference :  not null Shared_Surface_Access
-                   := Shared_Null_Surface'Access;
-      end record;
-
-   --
-   -- @param Object
-   -- The object to initialize.
-   --
-   overriding procedure Initialize (Object : in out Surface_Type);
-
-   --
-   -- @param Object
-   -- The object to adjust.
-   --
-   overriding procedure Adjust     (Object : in out Surface_Type);
-
-   --
-   -- @param Object
-   -- The object to finalize.
-   --
-   overriding procedure Finalize   (Object : in out Surface_Type);
-
-   --
-   -- This procedure adds to the reference counter.
-   --
-   -- @param Item
-   -- A not null shared surface access to increase its counter.
-   --
-   procedure Reference   (Item : not null Shared_Surface_Access);
-
-   --
-   -- This procedure substracts from the reference counter, and if it reaches
-   -- zero it is freed.
-   --
-   -- @param Item
-   -- A not null shared suraface access to decrease its counter. It will freed
-   -- if it reaches 0.
-   --
-   procedure Unreference (Item : not null Shared_Surface_Access);
-
-
 
    Null_Surface : constant Surface_Type
                 := Surface_Type'(Ada.Finalization.Controlled with

@@ -31,14 +31,9 @@
 import os
 import sys
 
-build = sys.argv[1]
-sys.path.append(os.path.join(build, "lib.%s-%s-%d.%d" %
-                                    (sys.platform,
-                                     os.uname().machine,
-                                     sys.version_info.major,
-                                     sys.version_info.minor)))
+sys.path.append(sys.argv[1])
 
-import malef
+import pyMalef
 import test_malef
 import tests
 
@@ -48,8 +43,8 @@ def main ():
     tests.start ()
     tests.wrap (test_malef.main, "Malef")
 
-    if malef.isInitialized ():
-        malef.finalize ()
+    if pyMalef.isInitialized ():
+        pyMalef.finalize ()
 
 
 if __name__ == "__main__":

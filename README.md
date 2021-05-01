@@ -2,6 +2,7 @@
 Malef is a terminal/console-handling library written in Ada.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: FDL 1.3](https://img.shields.io/badge/License-FDL%20v1.3-blue.svg)](http://www.gnu.org/licenses/fdl-1.3)
 
 ## Description
 Malef is an open source and free library written in Ada (with some parts

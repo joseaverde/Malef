@@ -1,4 +1,5 @@
 with "../malef.gpr";
+with "../c_malef.gpr";
 
 project Examples is
 

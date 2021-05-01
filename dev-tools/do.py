@@ -220,7 +220,7 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
              os.listdir("c-malef/src-base")))
 
 commands = {
-        "linux": "gprbuild -p -Pmake_all",
+        "linux": "gprbuild -p -Pmake_all -m -m2",
         "force": "gprbuild -p -Pmake_all "
                     "-XMALEF_BUILD_MODE=optimize "
                     "-XMALEF_SYSTEM=linux ",
@@ -266,7 +266,7 @@ commands = {
                           "-XMALEF_OPERATING_SYSTEM=windows",
                           "cp alire/build/lib-windows/libMalef.dll "
                           "tests/ada/bin/"],
-        "docs": "gnatdoc -bplwPmalef --enable-build --ignore-files=%s"%_,
+        "docs": "gnatdoc -blwPmalef --enable-build --ignore-files=%s"%_,
         "todo": _todo,
         "commit": _commit,
         "lines": _lines,

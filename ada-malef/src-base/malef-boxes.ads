@@ -34,6 +34,12 @@
 --
 package Malef.Boxes is
 
+   type Box_Type is new Base_Type with private;
+
+private
+
+   type Box_Type is new Base_Type with null record;
+
 end Malef.Boxes;
 
 ---=======================-------------------------=========================---

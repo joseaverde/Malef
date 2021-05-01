@@ -54,7 +54,7 @@ obj:
 
 
 ../bin/tests-c: obj/main.o obj/tests.o obj/test_malef.o
-	gcc obj/*.o -o ../bin/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lMalef
+	gcc obj/*.o -o ../bin/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lCMalef
 
 obj/main.o: obj src/main.c
 	gcc -c src/main.c -o obj/main.o $(FLAGS)

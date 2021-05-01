@@ -70,6 +70,29 @@ EOF = """
 ---=======================-------------------------=========================---
 """[1:-1]
 
+
+
+HEADER_FDL = """
+                                                                           
+{filename}
+                                                                           
+                                 M A L E F                                 
+                                                                           
+{kind}
+                                                                           
+---------------------------------------------------------------------------
+     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     
+---------------------------------------------------------------------------
+ Permission  is granted to copy,  distribute  and/or  modify this document 
+ under the terms of the GNU Free Documentation License, Version 1.3 or any 
+ later  version  published  by  the  Free  Software  Foundation;  with  no 
+ Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.        
+ A copy  of the  license is  included in  the section  entitled  "GNU Free 
+ Documentation License" or the files "fdl.tex" or "LICENSE.fdl-v1.3".      
+                                                                           
+"""[1:-1]
+
+
 import os
 import sys
 
@@ -174,6 +197,16 @@ def main():
         wrapper = " #"
         top    = '#' + '='*77 + '#'
         bottom = top
+
+    elif ext in ["tex"]:
+        header_kind = center ("L a T e X")
+        body = ""
+        shebang = ""
+        comment = '%'
+        wrapper = "%%"
+        top = "%%" + "%"*75 + "%%"
+        bottom = top
+        HEADER = HEADER_FDL
 
     elif ext == "mdbraw":
         header

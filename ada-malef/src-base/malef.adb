@@ -27,9 +27,9 @@
 -------------------------------------------------------------------------------
 
 with Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 with Malef.Exceptions;
 with Malef.Systems;
-with Malef.Surfaces;
 
 
 package body Malef is
@@ -191,15 +191,78 @@ package body Malef is
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
 
-
-   function Get_Shared_Surface (Object : Malef.Surfaces.Surface_Type)
-                                return Shared_Surface_Access is
+   overriding
+   procedure Initialize (Object : in out Base_Type) is
    begin
 
-      return Malef.Surfaces.Get_Reference (Object => Object);
+      Reference (Object.Reference);
 
-   end Get_Shared_Surface;
+   end Initialize;
 
+
+   overriding
+   procedure Adjust (Object : in out Base_Type) is
+   begin
+
+      Reference (Object.Reference);
+
+   end Adjust;
+
+
+   overriding
+   procedure Finalize (Object : in out Base_Type) is
+      Old_Reference : constant not null Shared_Surface_Access
+                    := Object.Reference;
+   begin
+
+      if Old_Reference /= Shared_Null_Surface'Access then
+         -- This is used to avoid finalising the same object twice.
+         Object.Reference := Shared_Null_Surface'Access;
+         Unreference (Old_Reference);
+         -- TODO: Remove it from all the object referencing it.
+      end if;
+
+   end Finalize;
+
+
+   procedure Reference (Item : not null Shared_Surface_Access) is
+   begin
+
+      if Item = Shared_Null_Surface'Access then
+         return;
+      end if;
+
+      System.Atomic_Counters.Increment (Item.Counter);
+
+   end Reference;
+
+
+   procedure Unreference (Item : not null Shared_Surface_Access) is
+      procedure Free is new Ada.Unchecked_Deallocation (Shared_Surface_Type,
+                                                        Shared_Surface_Access);
+      Old : Shared_Surface_Access := Item;
+   begin
+
+      if Old = Shared_Null_Surface'Access then
+         return;
+      end if;
+
+      if System.Atomic_Counters.Decrement (Old.Counter) then
+         Free (Old);
+      end if;
+
+   end Unreference;
+
+
+
+
+   function Get_Reference (Object : Base_Type)
+                           return Shared_Surface_Access is
+   begin
+
+      return Object.Reference;
+
+   end Get_Reference;
 
 end Malef;
 

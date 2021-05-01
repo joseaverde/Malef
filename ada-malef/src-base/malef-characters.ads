@@ -34,10 +34,7 @@
 --
 package Malef.Characters is
 
-   -- Non printable characters.
-   SKIP         : constant Char_Type := 0;
-   TRANSPARENT  : constant Char_Type := 1;
-   DOUBLE_WIDTH : constant Char_Type := 2;
+   type UTF8_String is new String;
 
    function To_UTF8 (Char : Char_Type)
                      return String

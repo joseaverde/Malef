@@ -26,7 +26,7 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-limited with Malef.Surfaces;
+private with Ada.Finalization;
 private with System.Atomic_Counters;
 with Interfaces;
 
@@ -88,8 +88,8 @@ package Malef is
    --
    -- This is type for the colour components. They are 8 bits each one of them.
    --
-   type Color_Component_Type is mod 256;
-   for Color_Component_Type'Size use 8;
+   type Color_Component_Type is mod 256
+      with Size => 8;
 
    --
    -- These are the names for each of the components of the Color_Type, so no
@@ -109,8 +109,8 @@ package Malef is
    -- The opacity of the colour: 255 is completely opaque and 0 is completely
    -- transparent.
    --
-   type Color_Component_Kind is (R, G, B, A);
-   for Color_Component_Kind'Size use 2;
+   type Color_Component_Kind is (R, G, B, A)
+      with Size => 2;
 
    --
    -- This is the colour type used in this library, read the comments above for
@@ -118,8 +118,8 @@ package Malef is
    -- 1 byte unsigned values ranging from 0 to 255.
    --
    type Color_Type is array (Color_Component_Kind'Range)
-                      of     Color_Component_Type;
-   for Color_Type'Size use 32;
+                      of     Color_Component_Type
+      with Size => 32;
 
 
 
@@ -183,18 +183,75 @@ package Malef is
    --
    type Style_Type is (Bold,        Faint,           Italic,        Underline,
                        Slow_Blink,  Rapid_Blink,     Reverse_Video, Conceal,
-                       Crossed_Out, Doubly_Underline);
-   for Style_Type'Size use 4;
+                       Crossed_Out, Doubly_Underline)
+      with Size => 4;
 
    --
    -- This is just an array of styles telling whether they are put or not.
    --
-   type Style_Array is array (Style_Type'Range) of Boolean;
-   pragma Pack (Style_Array);
+   type Style_Array is array (Style_Type'Range) of Boolean
+      with Default_Component_Value => False,
+           Pack;
 
 
-   -- TODO:
-   type Attribute_Kind is (TODO);
+
+   --====----------------====--
+   --====-- ATTRIBUTES --====--
+   --====----------------====--
+   --
+   -- Attributes are similar to styles, however this are extra information of
+   -- the character that is inside the surface. For example imagine a Japanese,
+   -- Chinese or Korean character, they are double the size of a single
+   -- character from the Roman alphabet: "あ" occupies more than "A". Or for
+   -- example imagine unicode diacritics, writing "AU+0300" will produce "À",
+   -- however this A will occupy two unicode characters. The attributes are
+   -- here to prevent this.
+   --
+
+   --
+   -- This is the type that identifies each attribute, the are used in a
+   -- packed Boolean array, though.
+   -- Internally, what is done is the following: if any of the character has
+   -- an attribute, the visual size of the character is changed. And the
+   -- characters are added until it almost exceed the width of the surface.
+   -- At the end of the surface transparent spaces will be added to give
+   -- certain consistence to the surfaces.
+   --
+   -- @value Skip
+   -- Skip means that, this character must be skipped. Which means that if you
+   -- have a row like "AASA", where the 'S' has the attribute `Skip', it will
+   -- print: "AAA ", adding one space at the end to give more consitency to
+   -- surfaces. Skip will count a 0 size character.
+   --
+   -- @value Double_Width
+   -- This attribute tells that the character occupies double the width of any
+   -- character from the Roman alphabet. "絵" needs two spaces to be
+   -- represented. So if for example a row like "こんにちは", is printed onto
+   -- the screen, what will be printed depends on the width of the surface. If
+   -- it's 10, then the whole word is written. But if it was 6, only the first
+   -- three characters will be written. If it was 5, only the first two
+   -- characters and a space will be written. This allows to give consistence
+   -- to the Surface. Double_Width will count as a 0 size character.
+   --
+   -- @value Diacritic
+   -- This attribute tells that the character will be place in the same
+   -- position of another one. Thus two characters count as one. For example
+   -- writing the unicode string "AU+0300" is the same a writing an grave
+   -- accent (`) on top of the A: À, however if it's written with those two
+   -- unicode characters, it will surely occupy one space. If you add this
+   -- attribute to any character, it will be completely skipped. The internal
+   -- mechanism will try to add consistency to the Surface representation
+   -- though, for example:
+   --    Original Surface   Representation (The ":" are spaces)
+   --        AAAAAAA           AAAAAAA
+   --        AA`A`AA           AÀÀAA::
+   -- Diacritic will count as a 0 size character.
+   --
+   type Attribute_Kind is (Skip, Double_Width, Diacritic);
+
+   --
+   -- This type is used to tell which diacrites are on at the same time.
+   --
    type Attribute_Array is array (Attribute_Kind'Range) of Boolean
       with Default_Component_Value => False;
 
@@ -227,8 +284,8 @@ package Malef is
          Background_Color : Color_Type;
          Styles           : Style_Array;
          Attributes       : Attribute_Array;
-      end record;
-   pragma Pack (Format_Type);
+      end record
+   with Pack;
 
    -- This is the default format.
    Default_Format :  constant Format_Type
@@ -377,6 +434,31 @@ package Malef is
    --
    type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses);
 
+
+   --====---------------====--
+   --====-- BASE TYPE --====--
+   --====---------------====--
+
+   -- TODO: Document it
+   type Base_Type is abstract tagged private;
+   type Base_Type_Class is access Base_Type'Class;
+
+   --
+   -- This function returns the shared surface contained by a Surface_Type so
+   -- other child packages can access and modify it.
+   --
+   -- @param Object
+   -- The object to retrieve the shared surface from.
+   --
+   -- @return
+   -- The shared surface.
+   --
+   function Get_Reference (Object : Base_Type)
+                           return Shared_Surface_Access;
+
+   -- procedure Put (Object : Base_Type) is abstract;
+
+
    ---============-----------------------============---
    --============-- O P E R A T I O N S --============--
    ---============-----------------------============---
@@ -501,6 +583,7 @@ package Malef is
 private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
+
    --====--------------====--
    --====-- SURFACES --====--
    --====--------------====--
@@ -614,19 +697,29 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          others => <>
       );
 
-   --
-   -- This function returns the shared surface contained by a Surface_Type so
-   -- other child packages can access and modify it.
-   --
-   -- @param Object
-   -- The object to retrieve the shared surface from.
-   --
-   -- @return
-   -- The shared surface.
-   --
-   function Get_Shared_Surface (Object : Malef.Surfaces.Surface_Type)
-                                return Shared_Surface_Access;
-   pragma Inline (Get_Shared_Surface);
+
+   --====---------------====--
+   --====-- BASE TYPE --====--
+   --====---------------====--
+
+   type Base_Type is abstract new Ada.Finalization.Controlled with
+      record
+         Reference : not null Shared_Surface_Access
+                   := Shared_Null_Surface'Access;
+      end record;
+
+   overriding
+   procedure Initialize (Object : in out Base_Type);
+
+   overriding
+   procedure Adjust (Object : in out Base_Type);
+
+   overriding
+   procedure Finalize (Object : in out Base_Type);
+
+   procedure Reference (Item : not null Shared_Surface_Access);
+
+   procedure Unreference (Item : not null Shared_Surface_Access);
 
 
    --====---------------====--
