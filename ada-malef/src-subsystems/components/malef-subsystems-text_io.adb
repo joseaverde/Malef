@@ -71,7 +71,7 @@ package body Malef.Subsystems.Text_IO is
             -- We convert the character to the current encoding system, for now
             -- it will be UTF-8.
             -- TODO: Add more encodings.
-            Write_Char (Malef.Characters.To_UTF8 (Char));
+            Write_Char (String(Malef.Characters.To_UTF8 (Char)));
          end loop;
 
          Lock := False;
@@ -84,7 +84,7 @@ package body Malef.Subsystems.Text_IO is
       begin
 
          Lock := True;
-         Write_Char (Malef.Characters.To_UTF8 (Data));
+         Write_Char (String(Malef.Characters.To_UTF8 (Data)));
          Lock := False;
 
       end Write;

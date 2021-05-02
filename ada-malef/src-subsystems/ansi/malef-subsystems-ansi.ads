@@ -42,6 +42,44 @@ private package Malef.Subsystems.Ansi is
 
    type Subsystem is new Malef.Subsystems.Subsystem with null record;
 
+   overriding
+   procedure New_Page (Subsys : not null access Subsystem);
+   overriding
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Title  : String);
+
+   overriding
+   procedure Clear_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_End_Of_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_Start_Of_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Entire_Screen (Subsys : not null access Subsystem);
+
+   overriding
+   procedure Clear_Current_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_End_Of_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_Start_Of_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Entire_Line (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Enable_Line_Wrapping (Subsys : not null access Subsystem);
+   overriding
+   procedure Disable_Line_Wrapping (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Make_Cursor_Visible (Subsys : not null access Subsystem);
+   overriding
+   procedure Make_Cursor_Invisible (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Save_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Restore_Screen (Subsys : not null access Subsystem);
 
    overriding
    procedure Put (Subsys : not null access Subsystem;

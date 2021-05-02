@@ -40,6 +40,171 @@ package body Malef.Subsystems.Ansi is
 
    Subsystem_Handler : aliased Subsystem;
 
+
+   overriding
+   procedure New_Page (Subsys : not null access Subsystem) is
+      New_Lines : constant String (1 .. Integer(Height)) :=
+         (others => Character'Val(10));
+   begin
+      Std_Out.Write (New_Lines);
+      Std_Out.Dump;
+   end New_Page;
+
+
+   overriding
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Title  : String) is
+   begin
+      Std_Out.Write (ASCII.ESC & "]2;" & Title & Character'Val(16#07#));
+      Std_Out.Dump;
+   end Set_Title;
+
+
+   overriding
+   procedure Clear_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[J");
+      Std_Out.Dump;
+
+   end Clear_Screen;
+
+
+   overriding
+   procedure Clear_Until_End_Of_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[0J");
+      Std_Out.Dump;
+
+   end Clear_Until_End_Of_Screen;
+
+
+   overriding
+   procedure Clear_Until_Start_Of_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[1J");
+      Std_Out.Dump;
+
+   end Clear_Until_Start_Of_Screen;
+
+
+   overriding
+   procedure Clear_Entire_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[2J");
+      Std_Out.Dump;
+
+   end Clear_Entire_Screen;
+
+
+
+   overriding
+   procedure Clear_Current_Line (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[K");
+      Std_Out.Dump;
+
+   end Clear_Current_Line;
+
+
+   overriding
+   procedure Clear_Until_End_Of_Line (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[0K");
+      Std_Out.Dump;
+
+   end Clear_Until_End_Of_Line;
+
+
+   overriding
+   procedure Clear_Until_Start_Of_Line (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[1K");
+      Std_Out.Dump;
+
+   end Clear_Until_Start_Of_Line;
+
+
+   overriding
+   procedure Clear_Entire_Line (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[2K");
+      Std_Out.Dump;
+
+   end Clear_Entire_Line;
+
+
+   
+   overriding
+   procedure Enable_Line_Wrapping (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[=7h");
+      Std_Out.Dump;
+
+   end Enable_Line_Wrapping;
+
+
+   overriding
+   procedure Disable_Line_Wrapping (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[=7l");
+      Std_Out.Dump;
+
+   end Disable_Line_Wrapping;
+
+
+   
+   overriding
+   procedure Make_Cursor_Visible (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[?25h");
+      Std_Out.Dump;
+
+   end Make_Cursor_Visible;
+
+
+   overriding
+   procedure Make_Cursor_Invisible (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[?25l");
+      Std_Out.Dump;
+
+   end Make_Cursor_Invisible;
+
+
+   
+   overriding
+   procedure Save_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[?47h");
+      Std_Out.Dump;
+
+   end Save_Screen;
+
+
+   overriding
+   procedure Restore_Screen (Subsys : not null access Subsystem) is
+   begin
+
+      Std_Out.Write (ASCII.ESC & "[?47l");
+      Std_Out.Dump;
+
+   end Restore_Screen;
+
+
+
    Lock : Boolean := True;
    overriding
    procedure Put (Subsys : not null access Subsystem;

@@ -35,6 +35,7 @@
  #                                                                           #
 #=============================================================================#
 
+global HEADER
 HEADER = """
                                                                            
 {filename}
@@ -103,6 +104,7 @@ def center(text, line=79 - 4):
     return spaces*' ' + text + ' '*spaces
 
 def main():
+    global HEADER
     if len(sys.argv) != 2:
         print("USAGE: `" + sys.argv[0] + " [FILENAME]'",
               file=sys.stderr)
@@ -224,7 +226,6 @@ def main():
         print(ext + ": Unknown extension!",
               file=sys.stderr)
         sys.exit(3)
-
     header = top + '\n'
     for line in HEADER.format(filename = header_filename,
                               kind     = header_kind).split('\n'):

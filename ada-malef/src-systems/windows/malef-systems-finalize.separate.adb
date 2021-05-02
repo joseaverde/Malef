@@ -33,6 +33,11 @@ separate (Malef.Systems)
    procedure Finalize is
    begin
 
+      Saved_Screen      := False;
+      Line_Wrapping     := False;
+      Cursor_Visibility := False;
+      Loaded_Subsystems (Choose) := Loaded_Subsystems (None);
+
       -- We restore some library components to a previous state.
       Malef.Colors.Set_Palette(Malef.Colors.Malef_Palette);
 

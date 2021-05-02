@@ -106,54 +106,53 @@ private package Malef.Systems is
    --====------------------------------====--
    -- DESPRECIATED: This will be moved to the subsystems library.
 
-   -- TODO: Add documentation
    procedure Put (Object : Shared_Surface_Access);
 
-   --
-   -- This function returns the string needed to put a certain format onto the
-   -- screen.
-   --
-   -- @param Format
-   -- The format to convert into a string.
-   --
-   -- @return
-   -- It returns the String you need to print onto the screen to put such
-   -- Format. It returns "" if to put the format a string can't be put, but a
-   -- function must be called.
-   --
    function Get_Format (Format : Format_Type)
                         return String;
 
-   --
-   -- This function returns the number of columns and rows the terminal
-   -- currently has got. Keep in mind most of the terminals/consoles out there
-   -- start with a fixed size of 80x24 (80 columns, 24 rows).
-   --
-   -- @param Rows
-   -- The retrieved number of rows the terminal has got right now.
-   --
-   -- @param Cols
-   -- The retrieved number of columns the terminal has got right now.
-   --
    procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type);
 
-   --
-   -- This procedure the terminal title, i.e. the name that appears in the top
-   -- bar.
-   --
-   -- @param Name
-   -- The new terminal's name
-   --
+
+   procedure New_Page;
    procedure Set_Title (Name : String);
 
+   procedure Clear_Screen;
+   procedure Clear_Until_End_Of_Screen;
+   procedure Clear_Until_Start_Of_Screen;
+   procedure Clear_Entire_Screen;
+
+   procedure Clear_Current_Line;
+   procedure Clear_Until_End_Of_Line;
+   procedure Clear_Until_Start_Of_Line;
+   procedure Clear_Entire_Line;
+
+   procedure Enable_Line_Wrapping;
+   procedure Disable_Line_Wrapping;
+   function Has_Line_Wrapping return Boolean;
+
+   procedure Make_Cursor_Visible;
+   procedure Make_Cursor_Invisible;
+   function Is_Cursor_Visible return Boolean;
+
+   procedure Save_Screen;
+   procedure Restore_Screen;
+   function Has_Saved_Screen return Boolean;
+
+   Saved_Screen      : Boolean := False;
+   Line_Wrapping     : Boolean := False;
+   Cursor_Visibility : Boolean := False;
 
    Loaded_Subsystems_Handles : array (Subsystem_Kind'Range)
                                of Library_Handle
                              :=(others => Library_Handle(System.Null_Address));
    Loaded_Subsystems : array (Subsystem_Kind'Range)
                        of Malef.Subsystems.Subsystem_Access
-                     := (others => null);
+                     := (
+      None   => Malef.Subsystems.None.Subsystem_Handler'Access,
+      Choose => Malef.Subsystems.None.Subsystem_Handler'Access,
+      others => null);
    Current_Subsystem : Subsystem_Kind := Choose;
 
 

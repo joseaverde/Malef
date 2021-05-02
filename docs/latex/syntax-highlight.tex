@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                                           %%
-%%                             M A L E F . T E X                             %%
+%%                  S Y N T A X - H I G H L I G H T . T E X                  %%
 %%                                                                           %%
 %%                                 M A L E F                                 %%
 %%                                                                           %%
@@ -18,29 +18,35 @@
 %%                                                                           %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass [12pt,a4paper] {article}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
 
-\author {José Antonio Verde Jiménez}
-\date {\today}
-\title {Malef Library Tutorial}
+\definecolor{black}  {HTML}{1F293B}
+\definecolor{red}    {HTML}{C03060}
+\definecolor{green}  {HTML}{30C060}
+\definecolor{yellow} {HTML}{C0C030}
+\definecolor{blue}   {HTML}{3060C0}
+\definecolor{magenta}{HTML}{C030C0}
+\definecolor{cyan}   {HTML}{30C0C0}
+\definecolor{white}  {HTML}{C0C0C0}
 
-\usepackage{hyperref}
-\include {syntax-highlight}
-
-\begin {document}
-
-   \pagenumbering {gobble}
-   \maketitle
-   \newpage
-   \tableofcontents
-   \newpage
-   \pagenumbering {arabic}
-   \setcounter{page}{2}
-
-   \include {1-introduction}
-   \include {2-curse-the-world}
-
-\end {document}
+\lstset{frame=tb,
+  language=Ada,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{red},
+  keywordstyle=\color{yellow},
+  commentstyle=\color{blue},
+  stringstyle=\color{red},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
 
 %%%=======================%%%%%%%%%%%%%%%%%%%%%%%%%=========================%%%
 %%=======================%% E N D   O F   F I L E %%=========================%%

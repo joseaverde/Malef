@@ -102,7 +102,7 @@ separate (Malef.Systems)
 
             for Subsys of Check_Order loop
                if Loaded_Subsystems (Subsys) /= null then
-                  Loaded_Subsystems(Choose) := Loaded_Subsystems(Subsys);
+                  Loaded_Subsystems (Choose) := Loaded_Subsystems (Subsys);
                   goto Done_Load_Library_Scope;
                end if;
             end loop;

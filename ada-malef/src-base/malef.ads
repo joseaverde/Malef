@@ -278,6 +278,9 @@ package Malef is
    -- @field Styles
    -- The styles it has.
    --
+   -- @field Attributes
+   -- The attributes that are on.
+   --
    type Format_Type is
       record
          Foreground_Color : Color_Type;
@@ -432,14 +435,17 @@ package Malef is
    -- use Ncurses but don't allow any other subsystem to be able to run Malef
    -- programs.
    --
-   type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses);
+   type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses, None);
 
 
    --====---------------====--
    --====-- BASE TYPE --====--
    --====---------------====--
 
-   -- TODO: Document it
+   --
+   -- The base type is the base type for most of the tagged types declared in
+   -- this library.
+   --
    type Base_Type is abstract tagged private;
    type Base_Type_Class is access Base_Type'Class;
 
@@ -557,25 +563,30 @@ package Malef is
    --
    function Update_Terminal_Size return Boolean;
 
-   -- TODO:
-   procedure Clear_Screen is null;                 -- ESC[J
-   procedure Clear_Until_End_Of_Screen is null;    -- ESC[0J
-   procedure Clear_Until_Start_Of_Screen is null;  -- ESC[1J
-   procedure Clear_Entire_Screen is null;          -- ESC[2J
 
-   procedure Clear_Current_Line is null;           -- ESC[K
-   procedure Clear_Until_End_Of_Line is null;      -- ESC[0K
-   procedure Clear_To_Start_Of_Line is null;       -- ESC[1K
-   procedure Clear_Entire_Line is null;            -- ESC[2K
+   -- The following functions are self explanatory.
 
-   procedure Enable_Line_Wrapping is null;   -- ESC[=7h
-   procedure Disable_Line_Wrapping is null;  -- ESC[=7l
-   -- function Has_Line_Wrapping;
-   procedure Make_Cursor_Visible is null;    -- ESC[?25h
-   procedure Make_Cursor_Invisible is null;  -- ESC[?25l
-   -- function Is_Cursor_Visible
-   procedure Save_Screen is null;            -- ESC[?47h
-   procedure Restore_Screen is null;         -- ESC[?47l
+   procedure Clear_Screen;
+   procedure Clear_Until_End_Of_Screen;
+   procedure Clear_Until_Start_Of_Screen;
+   procedure Clear_Entire_Screen;
+
+   procedure Clear_Current_Line;
+   procedure Clear_Until_End_Of_Line;
+   procedure Clear_Until_Start_Of_Line;
+   procedure Clear_Entire_Line;
+
+   procedure Enable_Line_Wrapping;
+   procedure Disable_Line_Wrapping;
+   function Has_Line_Wrapping return Boolean;
+
+   procedure Make_Cursor_Visible;
+   procedure Make_Cursor_Invisible;
+   function Is_Cursor_Visible return Boolean;
+
+   procedure Save_Screen;
+   procedure Restore_Screen;
+   function Has_Saved_Screen return Boolean;
 
 
 
@@ -614,7 +625,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    type Matrix_Type is array (Row_Type range <>, Col_Type range <>)
                        of     Element_Type;
 
-   -- TODO: Create parent type for Surfaces.
 
    --
    -- This is the real Surface_Type although it needs a kind of wrapper which

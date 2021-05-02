@@ -48,12 +48,109 @@ private package Malef.Subsystems is
    type Subsystem is abstract tagged null record;
    type Subsystem_Access is access all Subsystem'Class;
 
+   procedure New_Page (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Title  : String)
+      is abstract;
+
+   procedure Clear_Screen (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Until_End_Of_Screen (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Until_Start_Of_Screen (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Entire_Screen (Subsys : not null access Subsystem)
+      is abstract;
+
+   procedure Clear_Current_Line (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Until_End_Of_Line (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Until_Start_Of_Line (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Clear_Entire_Line (Subsys : not null access Subsystem)
+      is abstract;
+
+   procedure Enable_Line_Wrapping (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Disable_Line_Wrapping (Subsys : not null access Subsystem)
+      is abstract;
+
+   procedure Make_Cursor_Visible (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Make_Cursor_Invisible (Subsys : not null access Subsystem)
+      is abstract;
+
+   procedure Save_Screen (Subsys : not null access Subsystem)
+      is abstract;
+   procedure Restore_Screen (Subsys : not null access Subsystem)
+      is abstract;
+
    procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is abstract;
+                  Object : Shared_Surface_Access)
+      is abstract;
 
    function Get_Format (Subsys : not null access Subsystem;
                         Format : Format_Type)
-                        return String is abstract;
+                        return String
+      is abstract;
+
+
+package None is
+   type Subsystem is new Malef.Subsystems.Subsystem with null record;
+
+   overriding
+   procedure New_Page (Subsys : not null access Subsystem);
+   overriding
+   procedure Set_Title (Subsys : not null access Subsystem;
+                        Title  : String);
+
+   overriding
+   procedure Clear_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_End_Of_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_Start_Of_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Entire_Screen (Subsys : not null access Subsystem);
+
+   overriding
+   procedure Clear_Current_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_End_Of_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Until_Start_Of_Line (Subsys : not null access Subsystem);
+   overriding
+   procedure Clear_Entire_Line (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Enable_Line_Wrapping (Subsys : not null access Subsystem);
+   overriding
+   procedure Disable_Line_Wrapping (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Make_Cursor_Visible (Subsys : not null access Subsystem);
+   overriding
+   procedure Make_Cursor_Invisible (Subsys : not null access Subsystem);
+   
+   overriding
+   procedure Save_Screen (Subsys : not null access Subsystem);
+   overriding
+   procedure Restore_Screen (Subsys : not null access Subsystem);
+
+   overriding
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access);
+
+   overriding
+   function Get_Format (Subsys : not null access Subsystem;
+                        Format : Format_Type)
+                        return String;
+
+   Subsystem_Handler : aliased Subsystem;
+end None;
+
 
 end Malef.Subsystems;
 

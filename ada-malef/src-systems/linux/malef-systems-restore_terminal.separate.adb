@@ -83,8 +83,6 @@ separate (Malef.Systems)
       -- Finally we free everything and restore the original colour.
       Exit_Status := Exit_Status + Buffer;
       Free;
-      -- TODO: Use subsystems here.
-      Ada.Text_IO.Put(ASCII.ESC & "[0m");
 
       if Exit_Status /= 0 then
          raise Malef.Exceptions.Initialization_Error with

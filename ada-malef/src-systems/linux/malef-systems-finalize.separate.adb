@@ -51,6 +51,10 @@ separate (Malef.Systems)
       -- We finalize the available colours and styles.
       Available_Styles := (others => False);
       Available_Colors := (Bit1 => True, others => False);
+      Saved_Screen      := False;
+      Line_Wrapping     := False;
+      Cursor_Visibility := False;
+      Loaded_Subsystems (Choose) := Loaded_Subsystems (None);
 
       -- We unload the libraries.
       Malef.Systems.Utils.Unload_Libraries;

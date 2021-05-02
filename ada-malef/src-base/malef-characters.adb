@@ -29,7 +29,7 @@
 package body Malef.Characters is
 
    function To_UTF8 (Char : Char_Type)
-                     return String is
+                     return UTF8_String is
    begin
 
       case Char is
@@ -59,7 +59,7 @@ package body Malef.Characters is
  
 
    function To_UTF8 (Str : Str_Type)
-                     return String is
+                     return UTF8_String is
       function Calculate_Length return Natural
          with Inline is
       begin
@@ -76,14 +76,14 @@ package body Malef.Characters is
          end return;
       end Calculate_Length;
 
-      Result  : String (1 .. Calculate_Length);
+      Result  : UTF8_String (1 .. Calculate_Length);
       Current : Positive := 1;
    begin
 
       for Char of Str loop
          Get_Next:
             declare
-               Next : constant String := To_UTF8(Char);
+               Next : constant UTF8_String := To_UTF8(Char);
             begin
                Result(Current .. Current+Next'Length-1) := Next;
                Current := Current + Next'Length;
@@ -95,7 +95,7 @@ package body Malef.Characters is
    end To_UTF8;
          
 
-   function From_UTF8 (Str : String)
+   function From_UTF8 (Str : UTF8_String)
                        return Str_Type is
       function Calculate_Length return Natural
          with Inline is

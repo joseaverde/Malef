@@ -27,6 +27,8 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Exceptions;
+
 
 package body Malef.Systems is
 
@@ -50,9 +52,7 @@ package body Malef.Systems is
 
    procedure Put (Object : Shared_Surface_Access) is
    begin
-
       Loaded_Subsystems(Current_Subsystem).Put(Object);
-
    end Put;
 
    -- IDEA: Make it inline, call the best function that can return the Format
@@ -60,16 +60,122 @@ package body Malef.Systems is
    function Get_Format (Format : Format_Type)
                         return String is
    begin
-
       return Loaded_Subsystems(Current_Subsystem).Get_Format(Format);
-
    end Get_Format;
 
 
    procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type) is separate;
 
-   procedure Set_Title (Name : String) is separate;
+
+   procedure New_Page is
+   begin
+      Loaded_Subsystems(Current_Subsystem).New_Page;
+   end New_Page;
+
+   procedure Set_Title (Name : String) is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Set_Title (Name);
+   end Set_Title;
+
+
+   procedure Clear_Screen is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Screen;
+   end Clear_Screen;
+
+   procedure Clear_Until_End_Of_Screen is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Until_End_Of_Screen;
+   end Clear_Until_End_Of_Screen;
+
+   procedure Clear_Until_Start_Of_Screen is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Until_Start_Of_Screen;
+   end Clear_Until_Start_Of_Screen;
+
+   procedure Clear_Entire_Screen is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Entire_Screen;
+   end Clear_Entire_Screen;
+
+
+   procedure Clear_Current_Line is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Current_Line;
+   end Clear_Current_Line;
+
+   procedure Clear_Until_End_Of_Line is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Until_End_Of_Line;
+   end Clear_Until_End_Of_Line;
+
+   procedure Clear_Until_Start_Of_Line is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Until_Start_Of_Line;
+   end Clear_Until_Start_Of_Line;
+
+   procedure Clear_Entire_Line is
+   begin
+      Loaded_Subsystems(Current_Subsystem).Clear_Entire_Line;
+   end Clear_Entire_Line;
+
+
+   procedure Enable_Line_Wrapping is
+   begin
+      Line_Wrapping := True;
+      Loaded_Subsystems(Current_Subsystem).Enable_Line_Wrapping;
+   end Enable_Line_Wrapping;
+
+   procedure Disable_Line_Wrapping is
+   begin
+      Line_Wrapping := False;
+      Loaded_Subsystems(Current_Subsystem).Disable_Line_Wrapping;
+   end Disable_Line_Wrapping;
+
+   function Has_Line_Wrapping return Boolean is
+   begin
+      return Line_Wrapping;
+   end Has_Line_Wrapping;
+
+
+   procedure Make_Cursor_Visible is
+   begin
+      Cursor_Visibility := True;
+      Loaded_Subsystems(Current_Subsystem).Make_Cursor_Visible;
+   end Make_Cursor_Visible;
+
+   procedure Make_Cursor_Invisible is
+   begin
+      Cursor_Visibility := False;
+      Loaded_Subsystems(Current_Subsystem).Make_Cursor_Invisible;
+   end Make_Cursor_Invisible;
+
+   function Is_Cursor_Visible return Boolean is
+   begin
+      return Cursor_Visibility;
+   end Is_Cursor_Visible;
+
+
+   procedure Save_Screen is
+   begin
+      Saved_Screen := True;
+      Loaded_Subsystems(Current_Subsystem).Save_Screen;
+   end Save_Screen;
+
+   procedure Restore_Screen is
+   begin
+      if not Saved_Screen then
+         raise Malef.Exceptions.Initialization_Error with
+         "Cant restore non-saved screen!";
+      end if;
+      Loaded_Subsystems(Current_Subsystem).Restore_Screen;
+   end Restore_Screen;
+
+   function Has_Saved_Screen return Boolean is
+   begin
+      return Saved_Screen;
+   end Has_Saved_Screen;
 
 end Malef.Systems;
 

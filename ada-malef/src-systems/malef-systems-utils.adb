@@ -132,7 +132,8 @@ package body Malef.Systems.Utils is
                   := Library_Handle (System.Null_Address);
    begin
 
-      for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Last loop
+      -- The last subsystem is None, which can't be freed.
+      for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Pred(None) loop
          if Loaded_Subsystems_Handles (Subsys) /= Null_Handle then
             Unload_Library (Loaded_Subsystems_Handles (Subsys));
             Loaded_Subsystems (Subsys) := null;

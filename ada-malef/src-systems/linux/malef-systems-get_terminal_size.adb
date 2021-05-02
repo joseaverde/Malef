@@ -42,12 +42,6 @@ separate (Malef.Systems)
       -- @field ws_col
       -- The number of columns the terminal has.
       --
-      -- @field ws_xpixel
-      -- TODO: Search information about this field.
-      --
-      -- @field ws_ypixel
-      -- TODO: Search information about this field.
-      --
       type winsize is
          record
             -- The number of rows the terminal has.
