@@ -2,8 +2,8 @@
 alire/
 
 # binaries and objects
-bin/
-obj/
+bin*/
+obj*/
 
 # Others
 *.o

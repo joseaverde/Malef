@@ -44,6 +44,7 @@ begin
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line (Pal'Image & "                                   ");
       Null_Surface.Debug_Put ;
+      Malef.Surfaces.Update_Screen;
       Ada.Text_IO.Get_Immediate (Ignore);
    end loop;
 

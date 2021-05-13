@@ -20,5 +20,7 @@
 # The Python3 programming language.
 .py               linguistic-language=Python
 
+# LaTeX
+.tex              linguistic-language=LaTeX
 
 # END OF FILE #

@@ -207,8 +207,9 @@ package body Malef.Subsystems.Ansi is
 
    Lock : Boolean := True;
    overriding
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is
+   procedure Put (Subsys : not null access Subsystem) is
+      Object      : constant Shared_Surface_Access
+                  := Shared_Main_Surface'Access;
       Last_Format : Format_Type := Default_Format;
    begin
 

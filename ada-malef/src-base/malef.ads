@@ -565,28 +565,31 @@ package Malef is
 
 
    -- The following functions are self explanatory.
+   -- By the way, they are inlined because it would be a crime to use two
+   -- function calls in order to use them. The symbols are already defined in
+   -- the subsystem libraries, so there is no need for them not to be inlined.
 
-   procedure Clear_Screen;
-   procedure Clear_Until_End_Of_Screen;
-   procedure Clear_Until_Start_Of_Screen;
-   procedure Clear_Entire_Screen;
+   procedure Clear_Screen with Inline;
+   procedure Clear_Until_End_Of_Screen with Inline;
+   procedure Clear_Until_Start_Of_Screen with Inline;
+   procedure Clear_Entire_Screen with Inline;
 
-   procedure Clear_Current_Line;
-   procedure Clear_Until_End_Of_Line;
-   procedure Clear_Until_Start_Of_Line;
-   procedure Clear_Entire_Line;
+   procedure Clear_Current_Line with Inline;
+   procedure Clear_Until_End_Of_Line with Inline;
+   procedure Clear_Until_Start_Of_Line with Inline;
+   procedure Clear_Entire_Line with Inline;
 
-   procedure Enable_Line_Wrapping;
-   procedure Disable_Line_Wrapping;
-   function Has_Line_Wrapping return Boolean;
+   procedure Enable_Line_Wrapping with Inline;
+   procedure Disable_Line_Wrapping with Inline;
+   function Has_Line_Wrapping return Boolean with Inline;
 
-   procedure Make_Cursor_Visible;
-   procedure Make_Cursor_Invisible;
-   function Is_Cursor_Visible return Boolean;
+   procedure Make_Cursor_Visible with Inline;
+   procedure Make_Cursor_Invisible with Inline;
+   function Is_Cursor_Visible return Boolean with Inline;
 
-   procedure Save_Screen;
-   procedure Restore_Screen;
-   function Has_Saved_Screen return Boolean;
+   procedure Save_Screen with Inline;
+   procedure Restore_Screen with Inline;
+   function Has_Saved_Screen return Boolean with Inline;
 
 
 
@@ -618,12 +621,21 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Char      : Char_Type;
       end record;
 
+   Default_Element : Element_Type := (
+      Format => (Foreground_Color => (255, 255, 255, 255),
+                 Background_Color => (0, 0, 0, 0),
+                 others => <>),
+      Char   => 16#0020#   -- Espace
+   );
+
    --
    -- This is the Matrix_Type, the matrix where every element of the Surface is
    -- stored.
    --
    type Matrix_Type is array (Row_Type range <>, Col_Type range <>)
                        of     Element_Type;
+
+   type Matrix_Access is access all Matrix_Type;
 
 
    --
@@ -664,10 +676,16 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- methods, for example calling a function. The removes the need to have a
    -- null surface and check whether it is one of them.
    --
-   type Shared_Surface_Type (Height : Row_Type;
-                             Width  : Col_Type) is limited
+   type Shared_Surface_Type is limited
       record
-         Grid            : Matrix_Type (1 .. Height, 1 .. Width);
+         Height          : Row_Type;
+         Width           : Col_Type;
+
+         -- The grid is now an access type. This will fix the problem while
+         -- resizing a grid or the main grid. That way all the objects that
+         -- can be resized at the same time without having to create a new
+         -- object.
+         Grid            : Matrix_Access := null;
          Position        : Coord_Type := Coord_Type'(Row => 1,
                                                      Col => 1);
 
@@ -688,24 +706,47 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    --
    type Shared_Surface_Access is access all Shared_Surface_Type;
 
+
    --
    -- This surface is shown for every Surface_Type that hasn't been yet
    -- initialized.
    --
-   Shared_Null_Surface : aliased Shared_Surface_Type (Height => 1,
-                                                      Width  => 1) :=
-      Shared_Surface_Type'(
-         Height   => 1,
-         Width    => 1,
-         Grid     => (others => (others => Element_Type'(
+   
+   Null_Grid : aliased Matrix_Type :=
+      (1 => (1 => Element_Type'(
             Format => Format_Type'(Foreground_Color => (255, 255,   0, 255),
                                    Background_Color => (255,   0,   0, 255),
                                    Styles           => (others => False),
                                    Attributes       => (others => False)),
-            Char   => Character'Pos('?') ) )),
+            Char   => Character'Pos('?') ) ));
+
+   Shared_Null_Surface : aliased Shared_Surface_Type :=
+      Shared_Surface_Type'(
+         Height   => 1,
+         Width    => 1,
+         Grid     => Null_Grid'Access,
          Writable => False,
          others => <>
       );
+
+
+   --
+   -- This is the surface that will be used as a base where other surfaces
+   -- will be put on.
+   --
+      Shared_Main_Surface : aliased Shared_Surface_Type := (
+         Height   => 1,
+         Width    => 1,
+         Grid     => new Matrix_Type'(1 => (1 => Default_Element)),
+         Writable => False,
+         others   => <>
+      );
+
+   --
+   -- This function is called everytime the size of the screen has changed or
+   -- at initialization time. It just changes the size of the main surface.
+   --
+   procedure Update_Main_Surface;
 
 
    --====---------------====--

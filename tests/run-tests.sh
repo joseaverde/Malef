@@ -87,16 +87,42 @@ if [ ${#LANGUAGES[@]} -eq 0 ] || [ $DO_ALL_TESTS = "true" ]; then
    LANGUAGES=( )
    for file in $(ls)
    do
-      if [ -d $file ] && [ $file != "bin" ] && [ $file != "logs" ] && [ $file != "danger_zone" ]; then
+      if [ -d $file ] && ! [[ $file =~ "bin" ]] && [ $file != "logs" ] && [ $file != "danger_zone" ]; then
          LANGUAGES+=( $file )
       fi
    done
 fi
 
 
+# We get the operating system.
+case "$OSTYPE" in
+   linux-gnu)
+      SYSTEM=linux
+   ;;
+   darwin)
+      SYSTEM=unix
+   ;;
+   msys)
+      SYSTEM=windows
+   ;;
+   win32)
+      SYSTEM=windows
+   ;;
+   freebsd)
+      SYSTEM=unix
+   ;;
+   cygwin)
+      SYSTEM=windows
+   ;;
+   *)
+      SYSTEM=unix
+   ;;
+esac
+
 # We create the bin directory.
-if ! [ -d bin/ ]; then
-   mkdir bin
+BIN=bin-$SYSTEM
+if ! [ -d $BIN ]; then
+   mkdir $BIN
 fi
 
 
@@ -113,7 +139,7 @@ for lang in "${LANGUAGES[@]}"
 do
    echo -e "\033[35m   $lang\033[0m"
    cd $lang
-      bash compile.sh || COMPILING_ERRORS+=( $lang )
+      bash compile.sh $SYSTEM || COMPILING_ERRORS+=( $lang )
    cd "$PARENT"
 done
 
@@ -159,7 +185,7 @@ for lang in "${LANGUAGES[@]}"
 do
 
    echo -e "\033[35m   $lang\033[0m"
-   "./bin/tests-$lang" 2>>data.log
+   "./$BIN/tests-$lang" 2>>data.log
 
 done
 

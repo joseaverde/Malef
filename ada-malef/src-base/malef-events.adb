@@ -28,6 +28,7 @@
 
 with Malef.Systems;
 
+
 package body Malef.Events is
 
    protected body Event_Handler is
@@ -37,8 +38,7 @@ package body Malef.Events is
 
          Malef.Systems.Get_Terminal_Size (Rows => Height,
                                           Cols => Width);
-
-         -- TODO: Has_Resized := True;
+         Malef.Update_Main_Surface;
 
       end Update_Terminal_Size;
 

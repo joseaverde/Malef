@@ -29,41 +29,51 @@
 
 INCLUDE=-I$(shell readlink -f ../../c-malef/include)
 LIBRARY=$(shell readlink -f ../../alire/build/lib-)
+OBJ=obj
+BIN=../bin
 FLAGS= $(INCLUDE)
 
 ifeq ($(OS),Windows_NT)
 	LIBRARY:=$(LIBRARY)windows
+	OBJ:=$(OBJ)-windows
+	BIN:=$(BIN)-windows
 else
 	UNAME:=$(shell uname -s)
 	ifeq ($(UNAME),Linux)
 		LIBRARY:=$(LIBRARY)linux
+		OBJ:=$(OBJ)-linux
+		BIN:=$(BIN)-linux
 	else ifeq ($(UNAME),Darwin)
 	# TODO: Add MacOS support
 		LIBRARY:=$(LIBRARY)unix
+		OBJ:=$(OBJ)-unix
+		BIN:=$(BIN)-unix
 	else
 		LIBRARY:=$(LIBRARY)unix
+		OBJ:=$(OBJ)-unix
+		BIN:=$(BIN)-unix
 	endif
 endif
 
 
-all: obj ../bin/tests-c
+all: $(OBJ) $(BIN)/tests-c
 
 
-obj:
-	mkdir obj
+$(OBJ):
+	mkdir $(OBJ)
 
 
-../bin/tests-c: obj/main.o obj/tests.o obj/test_malef.o
-	gcc obj/*.o -o ../bin/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lCMalef
+$(BIN)/tests-c: $(OBJ)/main.o $(OBJ)/tests.o $(OBJ)/test_malef.o
+	gcc $(OBJ)/*.o -o $(BIN)/tests-c -L$(LIBRARY) -Wl,-rpath=$(LIBRARY) -lCMalef
 
-obj/main.o: obj src/main.c
-	gcc -c src/main.c -o obj/main.o $(FLAGS)
+$(OBJ)/main.o: $(OBJ) src/main.c
+	gcc -c src/main.c -o $(OBJ)/main.o $(FLAGS)
 
-obj/tests.o: obj src/tests.c
-	gcc -c src/tests.c -o obj/tests.o $(FLAGS)
+$(OBJ)/tests.o: $(OBJ) src/tests.c
+	gcc -c src/tests.c -o $(OBJ)/tests.o $(FLAGS)
 
-obj/test_malef.o: obj src/test_malef.c
-	gcc -c src/test_malef.c -o obj/test_malef.o $(FLAGS)
+$(OBJ)/test_malef.o: $(OBJ) src/test_malef.c
+	gcc -c src/test_malef.c -o $(OBJ)/test_malef.o $(FLAGS)
 
 
 

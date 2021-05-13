@@ -101,13 +101,7 @@ private package Malef.Systems is
    --
    procedure Restore_Terminal;
 
-   --====------------------------------====--
-   --====-- TERMINAL/CONSOLE CONTROL --====--
-   --====------------------------------====--
-   -- DESPRECIATED: This will be moved to the subsystems library.
-
-   procedure Put (Object : Shared_Surface_Access);
-
+   -- TODO: This function is DESPRECIATED it will be removed in later versions.
    function Get_Format (Format : Format_Type)
                         return String;
 
@@ -115,30 +109,9 @@ private package Malef.Systems is
                                 Cols : out Col_Type);
 
 
-   procedure New_Page;
-   procedure Set_Title (Name : String);
-
-   procedure Clear_Screen;
-   procedure Clear_Until_End_Of_Screen;
-   procedure Clear_Until_Start_Of_Screen;
-   procedure Clear_Entire_Screen;
-
-   procedure Clear_Current_Line;
-   procedure Clear_Until_End_Of_Line;
-   procedure Clear_Until_Start_Of_Line;
-   procedure Clear_Entire_Line;
-
-   procedure Enable_Line_Wrapping;
-   procedure Disable_Line_Wrapping;
-   function Has_Line_Wrapping return Boolean;
-
-   procedure Make_Cursor_Visible;
-   procedure Make_Cursor_Invisible;
-   function Is_Cursor_Visible return Boolean;
-
-   procedure Save_Screen;
-   procedure Restore_Screen;
-   function Has_Saved_Screen return Boolean;
+   --====---------------====--
+   --====-- INTERNALS --====--
+   --====---------------====--
 
    Saved_Screen      : Boolean := False;
    Line_Wrapping     : Boolean := False;

@@ -8,6 +8,6 @@ if [ ! -d obj/ ]; then
 fi
 
 # We run `gprbuild'
-gprbuild -p -Ptests
+gprbuild -p -Ptests -XMALEF_SYSTEM=$1
 
 # EOF

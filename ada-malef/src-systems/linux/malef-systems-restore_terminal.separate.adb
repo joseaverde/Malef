@@ -27,7 +27,6 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Text_IO;
 with GNAT.OS_Lib;
 with Malef.Exceptions;
 with Malef.Systems.Shared; use Malef.Systems.Shared;

@@ -82,8 +82,7 @@ private package Malef.Subsystems.Ansi is
    procedure Restore_Screen (Subsys : not null access Subsystem);
 
    overriding
-   procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access);
+   procedure Put (Subsys : not null access Subsystem);
 
    overriding
    function Get_Format (Subsys : not null access Subsystem;

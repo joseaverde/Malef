@@ -28,6 +28,7 @@
 
 with Ada.Unchecked_Deallocation;
 with Malef.Exceptions;
+with Malef.Surfaces;
 with Malef.Systems;
 
 
@@ -61,7 +62,7 @@ package body Malef is
       Malef.Systems.Get_Terminal_Size(Rows => Height,
                                       Cols => Width);
 
-      -- TODO: We update the main surface.
+      Malef.Update_Main_Surface;
 
       -- Finally we tell the user the terminal has been initialized.
       Has_Been_Initialized := True;
@@ -149,6 +150,7 @@ package body Malef is
       if New_Height /= Height or New_Width /= Width then
          Height := New_Height;
          Width  := New_Width;
+         Malef.Update_Main_Surface;
          return True;
       end if;
 
@@ -274,6 +276,15 @@ package body Malef is
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
 
+   procedure Update_Main_Surface is
+      Object : Malef.Surfaces.Surface_Type := Surfaces.Get_Main_Surface;
+   begin
+
+      Malef.Surfaces.Resize (Object, Height, Width);
+
+   end Update_Main_Surface;
+
+
    overriding
    procedure Initialize (Object : in out Base_Type) is
    begin
@@ -298,7 +309,9 @@ package body Malef is
                     := Object.Reference;
    begin
 
-      if Old_Reference /= Shared_Null_Surface'Access then
+      if Old_Reference /= Shared_Null_Surface'Access and
+         Old_Reference /= Shared_Main_Surface'Access
+      then
          -- This is used to avoid finalising the same object twice.
          Object.Reference := Shared_Null_Surface'Access;
          Unreference (Old_Reference);
@@ -311,7 +324,9 @@ package body Malef is
    procedure Reference (Item : not null Shared_Surface_Access) is
    begin
 
-      if Item = Shared_Null_Surface'Access then
+      if Item = Shared_Null_Surface'Access or
+         Item = Shared_Main_Surface'Access
+      then
          return;
       end if;
 
@@ -320,23 +335,27 @@ package body Malef is
    end Reference;
 
 
+
    procedure Unreference (Item : not null Shared_Surface_Access) is
       procedure Free is new Ada.Unchecked_Deallocation (Shared_Surface_Type,
                                                         Shared_Surface_Access);
+      procedure Free is new Ada.Unchecked_Deallocation (Matrix_Type,
+                                                        Matrix_Access);
       Old : Shared_Surface_Access := Item;
    begin
 
-      if Old = Shared_Null_Surface'Access then
+      if Old = Shared_Null_Surface'Access or
+         Old = Shared_Main_Surface'Access
+      then
          return;
       end if;
 
       if System.Atomic_Counters.Decrement (Old.Counter) then
+         Free (Old.Grid);
          Free (Old);
       end if;
 
    end Unreference;
-
-
 
 
    function Get_Reference (Object : Base_Type)
@@ -346,6 +365,7 @@ package body Malef is
       return Object.Reference;
 
    end Get_Reference;
+
 
 end Malef;
 

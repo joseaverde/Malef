@@ -401,6 +401,8 @@ package body Malef.Colors is
          Format.Foreground_Color := Palette(False, Black);
       Shared_Null_Surface.Grid(1, 1).
          Format.Background_Color := Palette(False, White);
+      Default_Element.Format.Foreground_Color := Palette (False, White);
+      Default_Element.Format.Background_Color := Palette (False, Black);
 
       Current_Palette := Palette;
 
@@ -421,6 +423,8 @@ package body Malef.Colors is
          Format.Foreground_Color := Current_Palette(False, Black);
       Shared_Null_Surface.Grid(1, 1).
          Format.Background_Color := Current_Palette(False, White);
+      Default_Element.Format.Foreground_Color := Current_Palette(False, White);
+      Default_Element.Format.Background_Color := Current_Palette(False, Black);
 
    end Set_Palette;
 

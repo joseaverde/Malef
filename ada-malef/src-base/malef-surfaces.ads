@@ -38,11 +38,14 @@ private with Ada.Finalization;
 --
 package Malef.Surfaces is
 
-   -- TODO: Document it
+   --
+   -- This is the surface type, it's a controlled type that can be used to
+   -- store a matrix of letters with colours and styles and then print it into
+   -- the screen.
+   --
    type Surface_Type is new Base_Type with null record;
 
 
-   -- TODO: Replace this function.
    --
    -- This function creates a surface of a given number of rows and columns.
    --
@@ -59,7 +62,7 @@ package Malef.Surfaces is
                     Cols : Col_Type)
                     return Surface_Type;
 
-   -- TODO: Replace this function
+   -- XXX: Depreciated
    --
    -- This procedure doesn't belong to the API.
    -- This procedure prints the object onto the screen.
@@ -69,10 +72,22 @@ package Malef.Surfaces is
    --
    procedure Debug_Put (Object : Surface_Type);
 
+   function Get_Main_Surface return Surface_Type with Inline, Pure_Function;
 
-   -- TODO: Add documentation
-   procedure Put (Object : Surface_Type);
+   function Height (Object : Surface_Type) return Row_Type with Inline;
 
+   -- TODO: Document it
+   procedure Put (Object : Surface_Type;
+                  Onto   : Surface_Type := Get_Main_Surface);
+
+   -- All references will be also resized.
+   procedure Resize (Object   : in out Surface_Type;
+                     New_Rows : Row_Type;
+                     New_Cols : Col_Type);
+
+   procedure Update_Screen;
+
+   function Width  (Object : Surface_Type) return Col_Type with Inline;
 
    Null_Surface : constant Surface_Type;
 
@@ -83,6 +98,10 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    Null_Surface : constant Surface_Type
                 := Surface_Type'(Ada.Finalization.Controlled with
                                     Shared_Null_Surface'Access);
+
+   Main_Surface : Surface_Type
+                := Surface_Type'(Ada.Finalization.Controlled with
+                                    Shared_Main_Surface'Access);
 
 end Malef.Surfaces;
 
