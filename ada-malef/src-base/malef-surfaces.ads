@@ -72,21 +72,96 @@ package Malef.Surfaces is
    --
    procedure Debug_Put (Object : Surface_Type);
 
+   --
+   -- This function returns the Main Surface.
+   --
    function Get_Main_Surface return Surface_Type with Inline, Pure_Function;
 
+   --
+   -- This function returns the height of a surface.
+   --
+   -- @param Object
+   -- The surface
+   --
    function Height (Object : Surface_Type) return Row_Type with Inline;
 
-   -- TODO: Document it
+   --
+   -- This function puts a surface "onto" another one in the relative
+   -- position they would be depending on their coords, e.g:
+   --
+   --    +------------+
+   --    |            |
+   --    |       +-------------+
+   --    |       |####|        |
+   --    +-------|----+        |
+   --            |             |
+   --            +-------------+
+   --
+   -- The coloured part is the part that will be put onto the surface.
+   --
+   -- @param Object
+   -- The object we want to put.
+   --
+   -- @param Onto
+   -- The surface onto we want to put it.
+   --
+   -- @exception Malef.Exceptions.Null_Surface_Error
+   -- This exception is raised if you are trying to put a surface onto a null
+   -- surface, which cannot be overwritten.
+   --
    procedure Put (Object : Surface_Type;
                   Onto   : Surface_Type := Get_Main_Surface);
 
-   -- All references will be also resized.
+   --
+   -- This procedure changes the size of a surface and all variables that
+   -- reference it, i.e:
+   --
+   --    declare
+   --       -- Imagine you declare two surfaces.
+   --       Surface_1 : Surface_Type;
+   --       Surface_2 : Surface_Type;
+   --    begin
+   --       -- And you assign both to the same value.
+   --       Surface_1 := ...;
+   --       Surface_2 := Surface_1;
+   --       -- Both will be referencing the same surface.
+   --       -- Now if you resize one of them.
+   --       Surface_2.Resize (10, 10);
+   --       -- Then both of them will be resized.
+   --       pragma Assert (Surface_1.Height = Surface_2.Height and
+   --                      Surface_1.Width  = Surface_2.Width);
+   --    end;
+   --
+   -- @param Object
+   -- The Surface to be resized. If it was the Main_Surface, then it won't be
+   -- resized unless the new number of rows and the new number of columns
+   -- matches the one of the terminal. It's done this way so, it can be
+   -- automatically resized when the terminal is resized.
+   --
+   -- @param New_Rows
+   -- The new number of rows.
+   --
+   -- @param New_Cols
+   -- The new number of columns.
+   --
+   -- @exception Malef.Exceptions.Null_Surface_Error
+   -- You cannot resize a null surface.
+   --
    procedure Resize (Object   : in out Surface_Type;
                      New_Rows : Row_Type;
                      New_Cols : Col_Type);
 
+   --
+   -- This function prints the main surface onto the screen.
+   --
    procedure Update_Screen;
 
+   --
+   -- This function returns the width of a surface.
+   --
+   -- @param Object
+   -- The surface.
+   --
    function Width  (Object : Surface_Type) return Col_Type with Inline;
 
    Null_Surface : constant Surface_Type;

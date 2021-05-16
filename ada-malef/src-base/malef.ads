@@ -785,6 +785,33 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    Width  : Col_Type := 24;
 
 
+   --====-------------====--
+   --====-- SYMBOLS --====--
+   --====-------------====--
+   --
+   -- The are some symbols declared in the malef-symbols.c file using macros at
+   -- compilation time. It's better than using gnatprep on this source file,
+   -- honestly.
+   --
+
+   type uint16_t is mod 2**16;
+
+   Debug_Value : constant uint16_t
+      with Import        => True,
+           Convention    => C,
+           External_Name => "_malef_debug";
+   Debug_Mode : constant Boolean := Debug_Value = 1;
+
+   Version : constant array (1 .. 3) of uint16_t
+      with Import        => True,
+           Convention    => C,
+           External_Name => "_malef_version";
+
+   Version_Number : constant uint16_t
+      with Import        => True,
+           Convention    => C,
+           External_Name => "_malef_version_number";
+
 end Malef;
 
 ---=======================-------------------------=========================---

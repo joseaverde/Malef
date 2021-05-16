@@ -28,7 +28,9 @@
 
 abstract project Shared is
 
-   Version := "0";
+   Major_Version := "0";
+   Minor_Version := "2";
+   Patch_Version := "4";
 
    --====-====------------====-====--
    --====-====- EXTERNAL -====-====--
@@ -73,7 +75,7 @@ abstract project Shared is
          Prefix := "alire/build/";
          Docs_Prefix := "alire/docs";
       when others =>
-         Prefix := "build";
+         Prefix := "alire/build/";
          Docs_Prefix := "build/docs";
    end case;
 
@@ -143,6 +145,16 @@ abstract project Shared is
              );
    end case;
 
+
+   C_Macros := (
+      "-DMAJOR_VERSION=" & Major_Version,
+      "-DMINOR_VERSION=" & Minor_Version,
+      "-DPATCH_VERSION=" & Patch_Version
+   );
+   case Build_Mode is
+      when "optimize" => C_Macros := C_Macros & ("-DDEBUG=1");
+      when others     => C_Macros := C_Macros & ("-DDEBUG=0");
+   end case;
 
    --====-====------------====-====--
    --====-====- PACKAGES -====-====--

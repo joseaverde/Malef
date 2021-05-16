@@ -51,10 +51,7 @@ package body Malef.Systems.Dynamic_Library_Loader is
            Convention    => C,
            External_Name => "dlclose";
 
-
-   -- TODO: Add more
    RTLD_LAZY : constant := 1;
-
 
    function Get_Library_Prefix return String is
    begin

@@ -48,7 +48,7 @@ library project C_Malef is
    for Library_Name        use "CMalef";
    for Library_Kind        use Shared.Library_Type;
    for Interfaces          use C_API;
-   for Library_Version     use "libCMalef.so." & Shared.Version;
+   for Library_Version     use "libCMalef.so." & Shared.Major_Version;
 
    for Languages           use ("Ada", "C");
    for Source_Dirs         use Src_Dirs;

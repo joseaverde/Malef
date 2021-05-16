@@ -205,6 +205,8 @@ def _commit():
                 status("CHANGELOG.md", True)
             break;
 
+    # TODO: shared.gpr
+
     if not done:
         print("\033[31mYou can't commit just yet!\033[0m")
     else:
@@ -221,7 +223,7 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
 
 commands = {
         "linux": "gprbuild -p -Pmake_all -m -m2",
-        "force": "gprbuild -p -Pmake_all "
+        "force": "gprbuild -p -Pmake_all -f "
                     "-XMALEF_BUILD_MODE=optimize "
                     "-XMALEF_SYSTEM=linux ",
         "wine": ["wine gprbuild -p -Pmake_all "
@@ -236,6 +238,7 @@ commands = {
         "release": ["gprbuild -f -p -Pmake_all "
                         "-XMALEF_BUILD_MODE=optimize "
                         "-XMALEF_SYSTEM=linux ",
+                    "gprbuild -p -Pmalef_db",
                     "wine gprbuild -f -p -Pmake_all "
                         "-XMALEF_BUILD_MODE=optimize "
                         "-XMALEF_SYSTEM=windows "

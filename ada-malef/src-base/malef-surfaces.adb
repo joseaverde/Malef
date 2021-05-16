@@ -27,11 +27,21 @@
 -------------------------------------------------------------------------------
 
 with Ada.Text_IO;
+with Malef.Exceptions;
 with Malef.Systems; use Malef.Systems;
 with Ada.Unchecked_Deallocation;
 
 
 package body Malef.Surfaces is
+
+   procedure Check_Not_Null_Surface (Surface : Surface_Type) with Inline is
+   begin
+      if Surface.Reference = Shared_Null_Surface'Access then
+         raise Malef.Exceptions.Null_Surface_Error
+         with "Cannot modify a null surface!";
+      end if;
+   end Check_Not_Null_Surface;
+
 
    function Create (Rows : Row_Type;
                     Cols : Col_Type)
@@ -211,6 +221,8 @@ package body Malef.Surfaces is
 
    begin
 
+      Check_Not_Null_Surface (Onto);
+
       -- We check that the ranges are ok.
       if From_Col > In_Surface.Grid'Last(2) or
          To_Col < Integer(From_Col)         or
@@ -244,12 +256,13 @@ package body Malef.Surfaces is
          (if A > B then B else A) with Pure_Function, Inline;
    begin
 
+      Check_Not_Null_Surface (Object);
+
       if Object.Reference = Shared_Main_Surface'Access and then
          (New_Rows /= Malef.Height or New_Cols /= Malef.Width)
       then
          -- Cannot resize the main surface unless it's to the size of the
          -- current window.
-         -- TODO: Raise exception
          return;
       end if;
 

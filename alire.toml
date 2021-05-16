@@ -19,13 +19,13 @@ maintainers-logins = ["joseaverde"]
 
 
 # Information about the package's licence.
-licenses = ["GPL 3.0"]
+licenses = "GPL-3.0-or-later"
 website = "https://github.com/joseaverde/malef"
-tags = ["sdk", "ansi", "terminal", "console"]
+tags = ["sdk", "ansi", "terminal", "console", "tui"]
 
 
 # Information about package's inside.
-project-files = ["malef.gpr", "malef_subsystems.gpr"]
+project-files = ["make_all", "c_malef.gpr", "py_malef.gpr", "malef.gpr", "malef_subsystems.gpr"]
 
 
 # We map the names of external variables in the .gpr project file.

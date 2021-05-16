@@ -315,7 +315,6 @@ package body Malef is
          -- This is used to avoid finalising the same object twice.
          Object.Reference := Shared_Null_Surface'Access;
          Unreference (Old_Reference);
-         -- TODO: Remove it from all the object referencing it.
       end if;
 
    end Finalize;
