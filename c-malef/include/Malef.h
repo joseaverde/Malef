@@ -531,13 +531,6 @@ malef_destroySurface ( malef_surface_t in surface ) ;
 
 
 /*
- * DEBUGGING!
- */
-extern void
-_malef_debugPutSurface ( malef_surface_t surface ) ;
-
-
-/*
  * This function returns a null surface, remember to initialize all your
  * surfaces with this before even using them.
  *

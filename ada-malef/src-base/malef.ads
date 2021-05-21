@@ -622,10 +622,10 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
       end record;
 
    Default_Element : Element_Type := (
-      Format => (Foreground_Color => (255, 255, 255, 255),
+      Format => (Foreground_Color => (255, 255, 255, 0),
                  Background_Color => (0, 0, 0, 0),
                  others => <>),
-      Char   => 16#0020#   -- Espace
+      Char   => 16#0020#   -- Space
    );
 
    --
@@ -696,7 +696,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Counter         : System.Atomic_Counters.Atomic_Counter;
          Data            : Integer;
 
-         Writable        : Boolean ;
+         Writable        : Boolean := True;
+         Lock            : Boolean := False;    -- TODO
       end record;
 
    --

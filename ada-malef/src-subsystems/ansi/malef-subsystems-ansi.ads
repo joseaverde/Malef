@@ -84,10 +84,6 @@ private package Malef.Subsystems.Ansi is
    overriding
    procedure Put (Subsys : not null access Subsystem);
 
-   overriding
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String;
 
    function Get_Color_1  (Foreground : Color_Type;
                           Background : Color_Type)

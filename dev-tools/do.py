@@ -275,8 +275,11 @@ commands = {
         "lines": _lines,
         "install": ["rm -r alire/opt",
                     "gprinstall -f -p -Pmalef --prefix=./alire/opt",
+                    "gprinstall -f -p -Pc_malef --prefix=./alire/opt",
+                    "gprinstall -f -p -Ppy_malef --prefix=./alire/opt",
                     "gprinstall -f -p -Pmalef_subsystems --prefix=./alire/opt "
-                        "-XMALEF_SUBSYSTEM=ansi"],
+                        "-XMALEF_SUBSYSTEM=ansi",
+                    "gprinstall -f -p -Pmalef_db --prefix=./alire/opt"]
 }
 
 

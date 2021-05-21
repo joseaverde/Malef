@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                             M A L E F . G P R                             --
+--               T E S T _ M A L E F - S U R F A C E S . A D S               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2021  José Antonio Verde Jiménez All Rights Reserved  --
+--     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,60 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "shared.gpr";
+--
+-- @summary
+--
+--
+-- @description
+--
+package Test_malef.Surfaces is
 
-project Malef is
-
-   --====-====-----------====-====--
-   --====-====- PROJECT -====-====--
-   --====-====-----------====-====--
- 
-   Ada_API := ("malef.ads",
-               "malef-boxes.ads",
-               "malef-characters.ads",
-               "malef-colors.ads",
-               "malef-cursors.ads",
-               "malef-events.ads",
-               "malef-exceptions.ads",
-               "malef-styles.ads",
-               "malef-surfaces.ads",
-               "malef-subsystems.ads",
-               "malef-systems.ads",
-               "malef-systems-db.ads",
-               "malef-systems-utils.ads",
-               "malef-systems-dynamic_library_loader.ads",
-               "malef-volatile.ads",
-               "malef-wrapper.ads");
-
-   Src_Dirs := ("ada-malef/src-base",
-                "ada-malef/src-systems",
-                "ada-malef/src-systems/" & Shared.System,
-                "ada-malef/src-subsystems");
-
-   for Library_Name       use "Malef";
-   for Library_Kind       use Shared.Library_Type;
-   for Interfaces         use Ada_API;
--- for Library_Standalone use "standard";
--- for Library_Interface  use API;
-   for Library_Dir        use Shared.Prefix & "lib-" & Shared.System;
-   for Library_Version    use "libMalef.so." & Shared.Major_Version;
-
-   for Languages           use ("Ada", "C");
-   for Source_Dirs         use Src_Dirs;
-   for Object_Dir          use Shared.Prefix & "obj-" & Shared.System;
-   for Create_Missing_Dirs use "True";
-
-   --====-====------------====-====--
-   --====-====- PACKAGES -====-====--
-   --====-====------------====-====--
-
-   package Builder       renames Shared.Builder;
-   package Compiler      renames Shared.Compiler;
-   package Binder        renames Shared.Binder;
-   package Documentation renames Shared.Documentation;
-   package Naming        renames Shared.Naming;
-
-end Malef;
+end Test_malef.Surfaces;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

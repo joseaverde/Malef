@@ -122,19 +122,6 @@ package C_Malef.Surfaces is
            External_Name => "malef_destroySurface";
 
    --
-   -- This procedure is here just for debugging purposes, as you can it
-   -- returns no errors. It will be replaced by a normal Put function in the
-   -- future.
-   --
-   -- @param Surface
-   -- The surface to display into the screen.
-   --
-   procedure Debug_Put (Surface : Surface_Type)
-      with Export        => True,
-           Convention    => C,
-           External_Name => "_malef_debugPutSurface";
-
-   --
    -- This function just returns a null surface and references it. It can't
    -- raise any error because there is no surface involved.
    --

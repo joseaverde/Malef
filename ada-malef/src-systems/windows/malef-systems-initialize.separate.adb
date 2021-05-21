@@ -44,6 +44,8 @@ separate (Malef.Systems)
       -- We restore the previous state of the `Has_Been_Initialize' variable.
       Has_Been_Initialized := False;
 
+   -- TODO: Remove this.
+   exception when others => raise Malef.Exceptions.Initialization_Error;
    end Initialize;
 
 

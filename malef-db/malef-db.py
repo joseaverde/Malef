@@ -60,6 +60,28 @@ fields = {
             "background" : ["", "string"]
         }
     },
+    "defaults" : {
+        "black"   : (0, 0, 0),
+        "red"     : (0, 0, 0),
+        "yellow"  : (0, 0, 0),
+        "green"   : (0, 0, 0),
+        "blue"    : (0, 0, 0),
+        "magenta" : (0, 0, 0),
+        "cyan"    : (0, 0, 0),
+        "white"   : (0, 0, 0),
+
+        "bright-black"   : (0, 0, 0),
+        "bright-red"     : (0, 0, 0),
+        "bright-yellow"  : (0, 0, 0),
+        "bright-green"   : (0, 0, 0),
+        "bright-blue"    : (0, 0, 0),
+        "bright-magenta" : (0, 0, 0),
+        "bright-cyan"    : (0, 0, 0),
+        "bright-white"   : (0, 0, 0),
+
+        "foreground" : "black",
+        "background" : "white"
+    }
     "styles" : {
         "bold"             : False,
         "faint"            : False,
@@ -152,6 +174,7 @@ def compile (raw):
             regex = bytes(field[0], "ascii")
             post_header += to_bytes(len(regex), 1) + regex + \
                     to_bytes(syntax_types.index(field[1]), 1)
+    # TODO: Defaults
 
     # BODY #
     body = b""

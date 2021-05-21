@@ -127,14 +127,6 @@ package body None is
    begin raise Malef.Exceptions.Initialization_Error with Error_Message;
    end Put;
 
-   overriding
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String is
-   begin raise Malef.Exceptions.Initialization_Error with Error_Message;
-   return "ERROR!";
-   end Get_Format;
-
 end None;
 
 

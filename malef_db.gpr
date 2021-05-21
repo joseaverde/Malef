@@ -32,14 +32,16 @@ project Malef_DB is
 
    for Languages              use ("mdb");
    for Source_Dirs            use ("malef-db/raw");
-   for Object_Dir             use Shared.Prefix & "obj-malef-db";
+   for Object_Dir             use Shared.Prefix & "obj-"&Shared.System & ".DB";
    for Library_Dir            use Shared.Prefix;
    for Create_Missing_Dirs    use "True";
    for Objects_Linked ("mdb") use "False";
 
    package Compiler is
-      for Driver ("mdb") use "malef-db/malef-db.py";
-      for Leading_Required_Switches ("mdb") use ("compile");
+      for Driver ("mdb") use "python";
+      for Leading_Required_Switches ("mdb") use (
+         "../../../malef-db/malef-db.py",
+         "compile");
       for Object_File_Suffix ("mdb") use ".mdb";
       for Dependency_Kind ("mdb") use "none";
    end Compiler;

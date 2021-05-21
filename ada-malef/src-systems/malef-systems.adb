@@ -44,15 +44,6 @@ package body Malef.Systems is
 
    procedure Restore_Terminal is separate;
 
-   -- IDEA: Make it inline, call the best function that can return the Format
-   --       Use Dim/Bright styles if needed.
-   function Get_Format (Format : Format_Type)
-                        return String is
-   begin
-      return Loaded_Subsystems(Current_Subsystem).Get_Format(Format);
-   end Get_Format;
-
-
    procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type) is separate;
 

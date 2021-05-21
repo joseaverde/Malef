@@ -91,12 +91,6 @@ private package Malef.Subsystems is
    procedure Put (Subsys : not null access Subsystem)
       is abstract;
 
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String
-      is abstract;
-
-
 package None is
    type Subsystem is new Malef.Subsystems.Subsystem with null record;
 
@@ -141,11 +135,6 @@ package None is
 
    overriding
    procedure Put (Subsys : not null access Subsystem);
-
-   overriding
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String;
 
    Subsystem_Handler : aliased Subsystem;
 end None;

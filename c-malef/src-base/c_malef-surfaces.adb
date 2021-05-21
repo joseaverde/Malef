@@ -87,14 +87,6 @@ package body C_Malef.Surfaces is
    end Destroy;
 
 
-   procedure Debug_Put (Surface : Surface_Type) is
-   begin
-
-      Surface.Object.Debug_Put;
-
-   end Debug_Put;
-
-
    function Get_Null_Surface return Surface_Type is
       Object : constant Malef.Surfaces.Surface_Type
              := Malef.Surfaces.Null_Surface;

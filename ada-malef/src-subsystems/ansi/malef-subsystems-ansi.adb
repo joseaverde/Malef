@@ -248,20 +248,6 @@ package body Malef.Subsystems.Ansi is
    end Put;
 
 
-   overriding
-   function Get_Format (Subsys : not null access Subsystem;
-                        Format : Format_Type)
-                        return String is
-      function To_String (C : Color_Component_Type) return String
-         renames Malef.Systems.Utils.To_String;
-   begin
-
-      return Get_Format (Format);
-
-   end Get_Format;
-
-
-
    function Get_Color_1  (Foreground : Color_Type;
                           Background : Color_Type)
                           return String is

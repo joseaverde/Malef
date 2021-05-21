@@ -47,8 +47,8 @@ int main () {
             col++ ;
          }
       }
-      _malef_debugPutSurface ( surface ) ;
-      _malef_debugPutSurface ( nullSurface ) ;
+      malef_debugPutSurface ( surface ) ;
+      malef_debugPutSurface ( nullSurface ) ;
       while ( ignore != '\n' && ignore != '\r' ) {
          ignore = getchar () ;
       }

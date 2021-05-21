@@ -184,7 +184,7 @@ pyMalef_Surface_debugPut ( _pyMalef_surfaceStruct *self,
                            PyObject *Py_UNUSED(ignored) ) {
 
    // We just print it and return None.
-   _malef_debugPutSurface ( self->surface ) ;
+   // TODO: Remove it!_malef_debugPutSurface ( self->surface ) ;
    Py_RETURN_NONE ;
 }
 #define pyMalef_Surface_debugPut_method {                                     \

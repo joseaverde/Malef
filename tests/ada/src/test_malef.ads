@@ -30,13 +30,25 @@ package Test_Malef is
 
    procedure Main;
 
-   function Initialize     return String;
-   function Finalize       return String;
-   function Is_Initialized return String;
-   function Get_Height     return String;
-   function Get_Width      return String;
-   function New_Page       return String;
-   function Set_Title      return String;
+   function Initialize                return String;
+   function Finalize                  return String;
+   function Is_Initialized            return String;
+   function Get_Height                return String;
+   function Get_Width                 return String;
+   function New_Page                  return String;
+   function Set_Title                 return String;
+   function Clear_Screen              return String;
+   function Clear_Until_End_Of_Screen return String;
+   function Clear_Entire_Screen       return String;
+   function Clear_Current_Line        return String;
+   function Clear_Until_End_Of_Line   return String;
+   function Clear_Until_Start_Of_Line return String;
+   function Clear_Entire_Line         return String;
+   function Enable_Line_Wrapping      return String;
+   function Make_Cursor_Visible       return String;
+   function Make_Cursor_Invisible     return String;
+   function Save_Screen               return String;
+   function Restore_Screen            return String;
 
 end Test_Malef;
 

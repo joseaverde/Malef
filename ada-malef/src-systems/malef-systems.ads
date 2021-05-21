@@ -101,9 +101,6 @@ private package Malef.Systems is
    --
    procedure Restore_Terminal;
 
-   -- TODO: This function is DESPRECIATED it will be removed in later versions.
-   function Get_Format (Format : Format_Type)
-                        return String;
 
    procedure Get_Terminal_Size (Rows : out Row_Type;
                                 Cols : out Col_Type);
