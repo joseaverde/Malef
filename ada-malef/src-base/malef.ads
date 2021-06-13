@@ -122,6 +122,25 @@ package Malef is
       with Size => 32;
 
 
+   --
+   -- This function sums two colours keeping in mind the Alpha value. The
+   -- operation is done as if you placed Over over Base. So for example:
+   --
+   --    (128, 128, 128, 255) + (100, 100, 100, 255) = (100, 100, 100, 255)
+   --    (128, 128, 128, 128) + (100, 100, 100, 128) = (114, 114, 114, 255)
+   --
+   -- @param Base
+   -- The left operand.
+   --
+   -- @param Over
+   -- The right colour operand.
+   --
+   -- @return
+   -- The sum of the colours.
+   --
+   function "+" (Base, Over : Color_Type) return Color_Type;
+
+
 
    --====------------====--
    --====-- STYLES --====--
@@ -447,7 +466,9 @@ package Malef is
    -- this library.
    --
    type Base_Type is abstract tagged private;
-   type Base_Type_Class is access Base_Type'Class;
+   type Base_Type_Class is not null access Base_Type'Class;
+
+   procedure Clear (Object : in out Base_Type);
 
    --
    -- This function returns the shared surface contained by a Surface_Type so
@@ -462,7 +483,17 @@ package Malef is
    function Get_Reference (Object : Base_Type)
                            return Shared_Surface_Access;
 
-   -- procedure Put (Object : Base_Type) is abstract;
+   procedure Resize (Object : in out Base_Type;
+                     Height : Row_Type;
+                     Width  : Col_Type);
+
+   -- TODO: Comment it
+   procedure Set_Position (Object : in out Base_Type;
+                           Row    : Row_Coord;
+                           Col    : Col_Coord);
+
+   procedure Update (Object : in out Base_Type) is abstract;
+
 
 
    ---============-----------------------============---
@@ -569,6 +600,7 @@ package Malef is
    -- function calls in order to use them. The symbols are already defined in
    -- the subsystem libraries, so there is no need for them not to be inlined.
 
+   -- TODO: Depreciated, most of them aren't even needed.
    procedure Clear_Screen with Inline;
    procedure Clear_Until_End_Of_Screen with Inline;
    procedure Clear_Until_Start_Of_Screen with Inline;
@@ -591,6 +623,7 @@ package Malef is
    procedure Restore_Screen with Inline;
    function Has_Saved_Screen return Boolean with Inline;
 
+   -- TODO: task type Runtime
 
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
@@ -619,6 +652,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
       record
          Format    : Format_Type;
          Char      : Char_Type;
+         -- TODO: Updated   : Boolean := True;
       end record;
 
    Default_Element : Element_Type := (
@@ -697,7 +731,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Data            : Integer;
 
          Writable        : Boolean := True;
-         Lock            : Boolean := False;    -- TODO
+
       end record;
 
    --
@@ -706,7 +740,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- internals.
    --
    type Shared_Surface_Access is access all Shared_Surface_Type;
-
 
    --
    -- This surface is shown for every Surface_Type that hasn't been yet
@@ -731,7 +764,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
       );
 
 
-   --
+   -- TODO: XXX: Depreciated
    -- This is the surface that will be used as a base where other surfaces
    -- will be put on.
    --
@@ -759,6 +792,8 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Reference : not null Shared_Surface_Access
                    := Shared_Null_Surface'Access;
       end record;
+
+   procedure Check_Not_Null_Surface (Object : Base_Type) with Inline;
 
    overriding
    procedure Initialize (Object : in out Base_Type);

@@ -82,7 +82,8 @@ private package Malef.Subsystems.Ansi is
    procedure Restore_Screen (Subsys : not null access Subsystem);
 
    overriding
-   procedure Put (Subsys : not null access Subsystem);
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access);
 
 
    function Get_Color_1  (Foreground : Color_Type;
@@ -105,7 +106,8 @@ private package Malef.Subsystems.Ansi is
                        return String
       with Inline;
 
-   function Get_Move (Coord : Coord_Type)
+   function Get_Move (Row : Row_Type;
+                      Col : Col_Type)
                       return String
       with Inline;
 

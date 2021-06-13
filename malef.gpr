@@ -41,7 +41,6 @@ project Malef is
                "malef-cursors.ads",
                "malef-events.ads",
                "malef-exceptions.ads",
-               "malef-styles.ads",
                "malef-surfaces.ads",
                "malef-subsystems.ads",
                "malef-systems.ads",
@@ -49,6 +48,7 @@ project Malef is
                "malef-systems-utils.ads",
                "malef-systems-dynamic_library_loader.ads",
                "malef-volatile.ads",
+               "malef-windows.ads",
                "malef-wrapper.ads");
 
    Src_Dirs := ("ada-malef/src-base",

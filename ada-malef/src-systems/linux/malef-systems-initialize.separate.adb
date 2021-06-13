@@ -77,6 +77,7 @@ separate (Malef.Systems)
          New_Handler => Malef.Events.Event_Handler.
                               Update_Terminal_Size'Access,
          Interrupt   => Ada.Interrupts.Names.SIGWINCH);
+      Malef.Events.Event_Handler.Update_Terminal_Size;
 
       -- TODO: We search for the available styles and colours.
       Available_Styles := (others => True);

@@ -207,11 +207,55 @@ package body Malef.Subsystems.Ansi is
 
    Lock : Boolean := True;
    overriding
-   procedure Put (Subsys : not null access Subsystem) is
-      Object      : constant Shared_Surface_Access
-                  := Shared_Main_Surface'Access;
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access) is
       Last_Format : Format_Type := Default_Format;
+
+      -- The position of the surface on the screen.
+      In_Row     : Row_Type;
+      In_Col     : Col_Type;
+      -- Position to start iterating from.
+      From_Row   : Row_Type;
+      From_Col   : Col_Type;
+      -- How much to iterate.
+      The_Height : Row_Type;
+      The_Width  : Col_Type;
+
    begin
+
+      -- We first define the bounds and calculate the offset to print it.
+      if Object.Position.Row + Row_Coord (Object.Height) < 1 or   -- Too up
+         Object.Position.Col + Col_Coord (Object.Width)  < 1 or   -- Too left
+         abs Object.Position.Row > Row_Coord (Height)        or   -- Too down
+         abs Object.Position.Col > Col_Coord (Width)              -- Too right
+      then
+         -- Nothing to be done.
+         return;
+      end if;
+
+      -- Otherwise it's safe to define the bounds.
+      -- If it starts out of bounds we let it start at the begining, we've
+      -- already checked the bounds.
+      In_Row := Row_Type
+         (if Object.Position.Row < 1 then 1 else Object.Position.Row);
+      In_Col := Col_Type
+         (if Object.Position.Col < 1 then 1 else Object.Position.Col);
+      From_Row := Row_Type
+         (if Object.Position.Row < 0 then abs Object.Position.Row else 1);
+      From_Col := Col_Type
+         (if Object.Position.Col < 0 then abs Object.Position.Col else 1);
+      The_Height := Row_Type'Min
+         (Height, Row_Type(Row_Coord(Object.Height) + Object.Position.Row))-1;
+      The_Width := Col_Type'Min
+         (Width, Col_Type(Col_Coord(Object.Width) + Object.Position.Col))-1;
+   -- Std_Out.Write ("In_Row =" & In_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("In_Col =" & In_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Row =" & From_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Col =" & From_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Height =" & The_Height'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Width =" & The_Width'Image & ASCII.LF);
+   -- Std_Out.Write ("Height =" & Object.Height'Image & ASCII.LF);
+   -- Std_Out.Dump;
 
       -- We wait until the operation is unlocked because we can't put two
       -- surfaces onto the screen at the same time, because they may interfere.
@@ -219,23 +263,34 @@ package body Malef.Subsystems.Ansi is
       while Lock loop null; end loop;
       Lock := True;
 
+      -- We start by clearing the format to a default one, it will probably
+      -- be changed, but it doesn't matter.
       Std_Out.Write (Get_Format(Last_Format));
-      for Row in Object.Grid'Range(1) loop
-         for Col in Object.Grid'Range(2) loop
-            if Last_Format /= Object.Grid(Row, Col).Format then
+      for Row in Row_Type range From_Row .. From_Row + The_Height - 1 loop
+         Std_Out.Write (Get_Move (In_Row + Row, In_Col));
+         for Col in Col_Type range From_Col .. From_Col + The_Width - 1 loop
+            -- Everytime the format changes, we have to clear the last one in
+            -- order to set the new one. This is due to some bugs with styles.
+            -- For example, to add the Bold effect we use 'ESC[1m', and to
+            -- remove it we have to prepend a '2': 'ESC[21m'. However, in some
+            -- terminals, this also meas Doble-Underline. So to make sure
+            -- everything is correct we have to clear everything everytime a
+            -- new format is set.
+            if Last_Format /= Object.Grid (Row, Col).Format then
                Std_Out.Write (Get_Clear);
-               Last_Format := Object.Grid(Row, Col).Format;
+               Last_Format := Object.Grid (Row, Col).Format;
+               Std_Out.Write (Get_Format (Last_Format));
             end if;
 
-            Std_Out.Write (Get_Format(Last_Format));
-            case Object.Grid(Row, Col).Char is
+            -- Once the format is set we proceed to write the character.
+            case Object.Grid (Row, Col).Char is
                when 0 .. 31 | 127 =>
                   -- Non printable characters.
-                  -- TODO: Special treatment.
-                  null;
+                  -- TODO: Special treatment
+                  Std_Out.Write (Get_Move (In_Row + Row - 1, In_Col + Col));
                when others =>
                   -- We just write them.
-                  Std_Out.Write (Object.Grid(Row, Col).Char);
+                  Std_Out.Write (Object.Grid (Row, Col).Char);
             end case;
          end loop;
       end loop;
@@ -408,11 +463,15 @@ package body Malef.Subsystems.Ansi is
    end Get_Style;
 
 
-   function Get_Move (Coord : Coord_Type)
+   function Get_Move (Row : Row_Type;
+                      Col : Col_Type)
                       return String is
    begin
 
-      return "TODO";
+      return ASCII.ESC & "[" &
+                  To_String(Positive(Row)) & ';' &
+                  To_String(Positive(Col)) &
+             'H';
 
    end Get_Move;
 

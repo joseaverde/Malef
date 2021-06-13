@@ -83,6 +83,7 @@ package Malef.Surfaces is
    --
    function Cursor_Position (Object : Surface_Type) return Cursor_Type;
 
+   -- TODO: Replace Object for Surface
 
    --
    -- This function returns the string in a given position and moves the cursor
@@ -295,11 +296,9 @@ package Malef.Surfaces is
    -- @exception Malef.Exceptions.Null_Surface_Error
    -- You cannot resize a null surface.
    --
-   procedure Resize (Object   : in out Surface_Type;
-                     New_Rows : Row_Type;
-                     New_Cols : Col_Type);
+   -- TODO: Move documentation
 
-
+   -- TODO: Add this functions to the Base_Type specification
    --
    -- This function changes the cursor position.
    --
@@ -314,10 +313,8 @@ package Malef.Surfaces is
    procedure Set_Cursor_Position (Object   : Surface_Type;
                                   Position : Cursor_Type) with Inline;
 
-   --
-   -- This function prints the main surface onto the screen.
-   --
-   procedure Update_Screen;
+
+   overriding procedure Update (Surface : in out Surface_Type) is null;
 
    --
    -- This function returns the width of a surface.

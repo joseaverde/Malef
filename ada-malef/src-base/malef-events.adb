@@ -27,7 +27,7 @@
 -------------------------------------------------------------------------------
 
 with Malef.Systems;
-
+with Malef.Windows;
 
 package body Malef.Events is
 
@@ -38,7 +38,7 @@ package body Malef.Events is
 
          Malef.Systems.Get_Terminal_Size (Rows => Height,
                                           Cols => Width);
-         Malef.Update_Main_Surface;
+         Malef.Windows.Main_Window.Resize (Height, Width);
 
       end Update_Terminal_Size;
 

@@ -117,9 +117,23 @@ package Malef.Systems.Utils is
    -- The string that represents such colour.
    --
    function To_String (C : Color_Component_Type)
-                       return String;
-   pragma Pure_Function (To_String);
-   pragma Inline (To_String);
+                       return String
+      with Pure_Function,
+           Inline;
+
+   --
+   -- This function converts a Natural number into a String.
+   --
+   -- @param N
+   -- The number.
+   --
+   -- @return
+   -- The string representation of such number.
+   --
+   function To_String (N : Natural)
+                       return String
+      with Pure_Function,
+           Inline;
 
 
    --

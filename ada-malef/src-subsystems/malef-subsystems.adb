@@ -123,7 +123,8 @@ package body None is
 
 
    overriding
-   procedure Put (Subsys : not null access Subsystem) is
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access) is
    begin raise Malef.Exceptions.Initialization_Error with Error_Message;
    end Put;
 

@@ -27,14 +27,9 @@
 -------------------------------------------------------------------------------
 
 with Malef.Exceptions;
-with Malef.Systems; use Malef.Systems;
-with Ada.Unchecked_Deallocation;
 
 
 package body Malef.Surfaces is
-
-   function Min (A, B : Integer) return Integer is
-      (if A < B then A else B) with Pure_Function, Inline_Always;
 
    procedure Move_Cursor_To (Surface : Shared_Surface_Access;
                              Last    : Cursor_Type) with Inline is
@@ -53,15 +48,6 @@ package body Malef.Surfaces is
    end Move_Cursor_To;
 
    -------------------------------------------------------------------------
-
-   procedure Check_Not_Null_Surface (Surface : Surface_Type) with Inline is
-   begin
-      if Surface.Reference = Shared_Null_Surface'Access then
-         raise Malef.Exceptions.Null_Surface_Error
-         with "Cannot modify a null surface!";
-      end if;
-   end Check_Not_Null_Surface;
-
 
    function Create (Rows : Row_Type;
                     Cols : Col_Type)
@@ -127,7 +113,7 @@ package body Malef.Surfaces is
          with "Position out of bounds!";
       end if;
 
-      Length := Min (Integer(Surface.Width - Position.Col), Item'Length);
+      Length := Integer'Min (Integer(Surface.Width-Position.Col), Item'Length);
       for Col in Col_Type range
          Position.Col .. Position.Col + Col_Type (Length)
       loop
@@ -254,7 +240,7 @@ package body Malef.Surfaces is
 
    begin
 
-      Check_Not_Null_Surface (Onto);
+      Onto.Check_Not_Null_Surface;
 
       -- We check that the ranges are ok.
       if From_Col > In_Surface.Grid'Last(2) or
@@ -286,15 +272,13 @@ package body Malef.Surfaces is
       In_Surface  : constant Shared_Surface_Access := Object.Reference;
       Out_Surface : constant Shared_Surface_Access := Onto.Reference;
 
-      Last_Row : constant Row_Type := Row_Type (Min (
-         Integer(Out_Surface.Height),
-         Integer(In_Surface.Height + Position.Row)));
-      Last_Col : constant Col_Type := Col_Type (Min (
-         Integer(Out_Surface.Width),
-         Integer(In_Surface.Width + Position.Col)));
+      Last_Row : constant Row_Type := Row_Type'Min(
+         Out_Surface.Height, In_Surface.Height + Position.Row);
+      Last_Col : constant Col_Type := Col_Type'Min (
+         Out_Surface.Width, In_Surface.Width + Position.Col);
    begin
 
-      Check_Not_Null_Surface (Onto);
+      Onto.Check_Not_Null_Surface;
 
       if Position.Row > Out_Surface.Height or
          Position.Col > Out_Surface.Width
@@ -389,53 +373,6 @@ package body Malef.Surfaces is
 
 
 
-   procedure Resize (Object   : in out Surface_Type;
-                     New_Rows : Row_Type;
-                     New_Cols : Col_Type) is
-      procedure Free is new Ada.Unchecked_Deallocation (
-         Matrix_Type, Matrix_Access);
-      New_Grid : Matrix_Access;
-      Old_Grid : constant Matrix_Access := Object.Reference.Grid;
-   begin
-
-      Check_Not_Null_Surface (Object);
-
-      if Object.Reference = Shared_Main_Surface'Access and then
-         (New_Rows /= Malef.Height or New_Cols /= Malef.Width)
-      then
-         -- Cannot resize the main surface unless it's to the size of the
-         -- current window.
-         return;
-      end if;
-
-      if New_Rows = Object.Reference.Height and
-         New_Cols = Object.Reference.Width
-      then
-         -- Nothing to be done.
-         return;
-      end if;
-
-      New_Grid := new Matrix_Type (1 .. New_Rows, 1 .. New_Cols);
-      New_Grid.all := (others => (others => Default_Element));
-      for Row in Row_Type range 1 .. Row_Type
-            (Min(Integer(New_Rows), Integer(Object.Reference.Height)))
-         loop
-         for Col in Col_Type range 1 .. Col_Type
-            (Min (Integer(New_Cols), Integer(Object.Reference.Width)))
-         loop
-            New_Grid (Row, Col) := Old_Grid (Row, Col);
-         end loop;
-      end loop;
-
-      Free (Object.Reference.Grid);
-      Object.Reference.Grid := New_Grid;
-      Object.Reference.Height := New_Rows;
-      Object.Reference.Width  := New_Cols;
-      Object.Reference.Cursor_Position := (1, 1);
-
-   end Resize;
-
-
    procedure Set_Cursor_Position (Object   : Surface_Type;
                                   Position : Cursor_Type) is
       Surface : constant Shared_Surface_Access := Object.Reference;
@@ -451,14 +388,6 @@ package body Malef.Surfaces is
       Object.Reference.Cursor_Position := Position;
 
    end Set_Cursor_Position;
-
-
-   procedure Update_Screen is
-   begin
-
-      Loaded_Subsystems(Current_Subsystem).Put;
-
-   end Update_Screen;
 
 
    function Width  (Object : Surface_Type) return Col_Type is

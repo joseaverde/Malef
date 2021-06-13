@@ -35,6 +35,38 @@ with Malef.Systems;
 package body Malef is
 
 
+   function "+" (Base, Over : Color_Type) return Color_Type is
+      -- (100, 100, 100, 255) + (200, 200, 200, 255) = (200, 200, 200, 255)
+      -- (100, 100, 100,  10) + (200, 200, 200,  20) = (166, 166, 166,  30)
+      Alpha : constant Float := Float'Min
+         (255.0, Float(Base(A)) + Float(Over(A)));
+      Over_Strength : constant Float := Float(Over(A)) /
+      -- We check it's not 0.
+         (if Alpha = 0.0 then 1.0 else Alpha);
+      Base_Strength : constant Float := 1.0 - Over_Strength;
+   begin
+
+      if Alpha = 0.0 then
+         return (0, 0, 0, 0);
+      end if;
+
+      return Color : Color_Type
+      do
+         Color(R) := Color_Component_Type (
+            Float(Base(R)) * Base_Strength +
+            Float(Over(R)) * Over_Strength);
+         Color(G) := Color_Component_Type (
+            Float(Base(G)) * Base_Strength +
+            Float(Over(G)) * Over_Strength);
+         Color(B) := Color_Component_Type (
+            Float(Base(B)) * Base_Strength +
+            Float(Over(B)) * Over_Strength);
+         Color(A) := Color_Component_Type (Alpha);
+      end return;
+
+   end "+";
+
+
    --====-------------------------------------====--
    --====-- INITIALIZATION AND FINALIZATION --====--
    --====-------------------------------------====--
@@ -283,6 +315,78 @@ package body Malef is
       Malef.Surfaces.Resize (Object, Height, Width);
 
    end Update_Main_Surface;
+
+
+   procedure Check_Not_Null_Surface (Object : Base_Type) is
+   begin
+      if Object.Reference = Shared_Null_Surface'Access then
+         raise Malef.Exceptions.Null_Surface_Error
+         with "Cannot modify a null surface!";
+      end if;
+   end Check_Not_Null_Surface;
+
+
+   --====---------------====--
+   --====-- BASE TYPE --====--
+   --====---------------====--
+
+   procedure Clear (Object : in out Base_Type) is
+   begin
+
+      Object.Reference.Grid.all := (others => (others => Default_Element));
+
+   end Clear;
+
+
+   procedure Resize (Object : in out Base_Type;
+                     Height : Row_Type;
+                     Width  : Col_Type) is
+      procedure Free is new Ada.Unchecked_Deallocation (
+         Matrix_Type, Matrix_Access);
+      New_Grid : Matrix_Access;
+      Old_Grid : constant Matrix_Access := Object.Reference.Grid;
+   begin
+
+      Check_Not_Null_Surface (Object);
+
+      if Height = Object.Reference.Height and
+         Width  = Object.Reference.Width
+      then
+         -- Nothing to be done.
+         return;
+      end if;
+
+      New_Grid := new Matrix_Type (1 .. Height, 1 .. Width);
+      New_Grid.all := (others => (others => Default_Element));
+      for Row in Row_Type range 1 .. Row_Type'Min
+         (Height, Object.Reference.Height)
+      loop
+         for Col in Col_Type range 1 .. Col_Type'Min
+            (Width, Object.Reference.Width)
+         loop
+            New_Grid (Row, Col) := Old_Grid (Row, Col);
+         end loop;
+      end loop;
+
+      Free (Object.Reference.Grid);
+      Object.Reference.Grid := New_Grid;
+      Object.Reference.Height := Height;
+      Object.Reference.Width  := Width;
+      Object.Reference.Cursor_Position := (1, 1);
+
+   end Resize;
+
+
+   procedure Set_Position (Object : in out Base_Type;
+                           Row    : Row_Coord;
+                           Col    : Col_Coord) is
+   begin
+
+      Object.Reference.Position := (Row, Col);
+
+   end Set_Position;
+
+
 
 
    overriding

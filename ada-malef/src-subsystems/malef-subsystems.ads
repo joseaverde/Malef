@@ -88,7 +88,8 @@ private package Malef.Subsystems is
       is abstract;
 
    -- We supose that the surface we want to print is the main surface.
-   procedure Put (Subsys : not null access Subsystem)
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access)
       is abstract;
 
 package None is
@@ -134,7 +135,8 @@ package None is
    procedure Restore_Screen (Subsys : not null access Subsystem);
 
    overriding
-   procedure Put (Subsys : not null access Subsystem);
+   procedure Put (Subsys : not null access Subsystem;
+                  Object : Shared_Surface_Access);
 
    Subsystem_Handler : aliased Subsystem;
 end None;

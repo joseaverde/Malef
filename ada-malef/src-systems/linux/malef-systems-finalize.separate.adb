@@ -53,7 +53,7 @@ separate (Malef.Systems)
       Available_Colors := (Bit1 => True, others => False);
       Saved_Screen      := False;
       Line_Wrapping     := False;
-      Cursor_Visibility := False;
+      Cursor_Visibility := True;
       Loaded_Subsystems (Choose) := Loaded_Subsystems (None);
 
       -- We unload the libraries.

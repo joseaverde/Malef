@@ -49,6 +49,13 @@ package Malef.Exceptions is
    -- "THE NULL SURFACE".
    Null_Surface_Error : exception;
 
+   -- This exception is raised when there is any problem with a Window.
+   Window_Error : exception;
+
+   -- This exception is raised when there is any problem with layers inside
+   -- a Box for example.
+   Layer_Error : exception;
+
 end Malef.Exceptions;
 
 ---=======================-------------------------=========================---
