@@ -373,7 +373,7 @@ package Malef is
    -- @field Col
    -- The column the cursor is at.
    --
-   type Cursor_Type is tagged
+   type Cursor_Type is
       record
          Row : Row_Type;
          Col : Col_Type;
@@ -390,7 +390,7 @@ package Malef is
    -- @field Col
    -- The column where it is.
    --
-   type Coord_Type is tagged
+   type Coord_Type is
       record
          Row : Row_Coord;
          Col : Col_Coord;
@@ -417,10 +417,6 @@ package Malef is
    -- Char_Type.
    --
    type Str_Type is array (Positive range <>) of Char_Type;
-
-
-   -- Don't look at this, you can't do anything with it.
-   type Shared_Surface_Access is private;
 
 
    --====----------------------------====--
@@ -461,6 +457,8 @@ package Malef is
    --====-- BASE TYPE --====--
    --====---------------====--
 
+   type Surface_Reference is limited private;
+
    --
    -- The base type is the base type for most of the tagged types declared in
    -- this library.
@@ -470,28 +468,84 @@ package Malef is
 
    procedure Clear (Object : in out Base_Type);
 
+
+   procedure Get_Cursor_Position (Object : in Base_Type;
+      Row : out Row_Type;
+      Col : out Col_Type)
+      with Inline;
+
+   function Get_Cursor_Position (Object : in Base_Type)
+      return Cursor_Type
+      with Inline;
+
+   function Get_Height (Object : in Base_Type)
+      return Row_Type
+      with Inline;
+
+   function Get_Position (Object : in Base_Type)
+      return Coord_Type
+      with Inline;
+
+   procedure Get_Position (Object : in Base_Type;
+      Row : out Row_Coord;
+      Col : out Col_Coord)
+      with Inline;
+
+   function Get_Width (Object : in Base_Type)
+      return Col_Type
+      with Inline;
+ 
    --
    -- This function returns the shared surface contained by a Surface_Type so
    -- other child packages can access and modify it.
    --
    -- @param Object
-   -- The object to retrieve the shared surface from.
    --
    -- @return
    -- The shared surface.
    --
    function Get_Reference (Object : Base_Type)
-                           return Shared_Surface_Access;
+      return Surface_Reference;
 
+
+   --
+   -- This function changes the size of a Surface saving the contents inside
+   -- itself. You must be careful because this function is NOT thread safe.
+   --
+   -- @param Height
+   -- The new height of the surface.
+   --
+   -- @param Width
+   -- The new width of the surface.
+   --
+   -- @exception Malef.Exceptions.Null_Surface_Error
+   -- You cannot resize a null surface, you must first create a surface using
+   -- the create function in Malef.Surfaces.Surface. In the case of boxes,
+   -- there is no problem in resizing them.
+   --
    procedure Resize (Object : in out Base_Type;
-                     Height : Row_Type;
-                     Width  : Col_Type);
+      Height : Row_Type;
+      Width  : Col_Type);
 
-   -- TODO: Comment it
+   procedure Set_Cursor_Position (Object : in out Base_Type;
+      Row : Row_Type;
+      Col : Col_Type);
+
+   procedure Set_Cursor_Position (Object : in out Base_Type;
+      Position : Cursor_Type);
+
    procedure Set_Position (Object : in out Base_Type;
-                           Row    : Row_Coord;
-                           Col    : Col_Coord);
+      Row : Row_Coord;
+      Col : Col_Coord);
 
+   procedure Set_Position (Object : in out Base_Type;
+      Position : Coord_Type);
+
+   --
+   -- Updating an Object is only useful for certain types. For example you must
+   -- update every single Malef.Boxes.Box_Type every time is modified to update
+   -- the changes, while it's not necessary for Surfaces.
+   --
    procedure Update (Object : in out Base_Type) is abstract;
 
 
@@ -600,16 +654,7 @@ package Malef is
    -- function calls in order to use them. The symbols are already defined in
    -- the subsystem libraries, so there is no need for them not to be inlined.
 
-   -- TODO: Depreciated, most of them aren't even needed.
    procedure Clear_Screen with Inline;
-   procedure Clear_Until_End_Of_Screen with Inline;
-   procedure Clear_Until_Start_Of_Screen with Inline;
-   procedure Clear_Entire_Screen with Inline;
-
-   procedure Clear_Current_Line with Inline;
-   procedure Clear_Until_End_Of_Line with Inline;
-   procedure Clear_Until_Start_Of_Line with Inline;
-   procedure Clear_Entire_Line with Inline;
 
    procedure Enable_Line_Wrapping with Inline;
    procedure Disable_Line_Wrapping with Inline;
@@ -622,8 +667,6 @@ package Malef is
    procedure Save_Screen with Inline;
    procedure Restore_Screen with Inline;
    function Has_Saved_Screen return Boolean with Inline;
-
-   -- TODO: task type Runtime
 
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
@@ -652,7 +695,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
       record
          Format    : Format_Type;
          Char      : Char_Type;
-         -- TODO: Updated   : Boolean := True;
       end record;
 
    Default_Element : Element_Type := (
@@ -705,11 +747,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    -- @field Data
    -- This field is used by the subsystem to do it's calculations.
    --
-   -- @field Writable
-   -- If this variable is false then it can't be modified by the user by normal
-   -- methods, for example calling a function. The removes the need to have a
-   -- null surface and check whether it is one of them.
-   --
    type Shared_Surface_Type is limited
       record
          Height          : Row_Type;
@@ -729,8 +766,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
 
          Counter         : System.Atomic_Counters.Atomic_Counter;
          Data            : Integer;
-
-         Writable        : Boolean := True;
 
       end record;
 
@@ -759,29 +794,14 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
          Height   => 1,
          Width    => 1,
          Grid     => Null_Grid'Access,
-         Writable => False,
          others => <>
       );
 
 
-   -- TODO: XXX: Depreciated
-   -- This is the surface that will be used as a base where other surfaces
-   -- will be put on.
-   --
-      Shared_Main_Surface : aliased Shared_Surface_Type := (
-         Height   => 1,
-         Width    => 1,
-         Grid     => new Matrix_Type'(1 => (1 => Default_Element)),
-         Writable => False,
-         others   => <>
-      );
-
-   --
-   -- This function is called everytime the size of the screen has changed or
-   -- at initialization time. It just changes the size of the main surface.
-   --
-   procedure Update_Main_Surface;
-
+   type Surface_Reference is limited
+      record
+         Reference : Shared_Surface_Access;
+      end record;
 
    --====---------------====--
    --====-- BASE TYPE --====--

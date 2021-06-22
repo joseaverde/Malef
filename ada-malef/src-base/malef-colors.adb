@@ -43,11 +43,13 @@ package body Malef.Colors is
    --====----------------====--
 
 
-   procedure Get_Foreground (Surface :     Malef.Surfaces.Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      Row   :     Row_Type;
+      Col   :     Col_Type;
+      Color : out Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Row > Reference.Height or Col > Reference.Width then
@@ -60,11 +62,13 @@ package body Malef.Colors is
    end Get_Foreground;
 
 
-   procedure Get_Background (Surface :     Malef.Surfaces.Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Get_Background (Surface : Malef.Surfaces.Surface_Type;
+      Row   :     Row_Type;
+      Col   :     Col_Type;
+      Color : out Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Row > Reference.Height or Col > Reference.Width then
@@ -77,11 +81,13 @@ package body Malef.Colors is
    end Get_Background;
 
 
-   function Get_Foreground (Surface :     Malef.Surfaces.Surface_Type;
-                            Row     :     Row_Type;
-                            Col     :     Col_Type)
-                            return Color_Type is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   function Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      Row : Row_Type;
+      Col : Col_Type)
+      return Color_Type
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Row > Reference.Height or Col > Reference.Width then
@@ -94,11 +100,13 @@ package body Malef.Colors is
    end Get_Foreground;
 
 
-   function Get_Background (Surface :     Malef.Surfaces.Surface_Type;
-                            Row     :     Row_Type;
-                            Col     :     Col_Type)
-                            return Color_Type is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   function Get_Background (Surface : Malef.Surfaces.Surface_Type;
+      Row     : Row_Type;
+      Col     : Col_Type)
+      return Color_Type
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Row > Reference.Height or Col > Reference.Width then
@@ -116,10 +124,12 @@ package body Malef.Colors is
    --====----------------====--
 
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type;
-                             Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -138,10 +148,12 @@ package body Malef.Colors is
 
 
    procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type;
-                             Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -159,13 +171,15 @@ package body Malef.Colors is
    end Set_Background;
 
 
-   procedure Set_Foreground (Surface  : Malef.Surfaces.Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      From_Row : Row_Type;
+      To_Row   : Row_Type;
+      From_Col : Col_Type;
+      To_Col   : Col_Type;
+      Color    : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -199,13 +213,15 @@ package body Malef.Colors is
    end Set_Foreground;
 
 
-   procedure Set_Background (Surface  : Malef.Surfaces.Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
+      From_Row : Row_Type;
+      To_Row   : Row_Type;
+      From_Col : Col_Type;
+      To_Col   : Col_Type;
+      Color    : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -240,8 +256,10 @@ package body Malef.Colors is
 
 
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                             Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Color   : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -259,8 +277,10 @@ package body Malef.Colors is
 
 
    procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
-                             Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Color   : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       if Reference = Shared_Null_Surface'Access then
@@ -286,9 +306,11 @@ package body Malef.Colors is
    --====-- GET COLOUR --====--
    --====----------------====--
 
-   procedure Get_Cursor_Foreground (Surface :     Malef.Surfaces.Surface_Type;
-                                    Color   : out Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Get_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      Color : out Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       Color := Reference.Cursor_Format.Foreground_Color;
@@ -296,9 +318,11 @@ package body Malef.Colors is
    end Get_Cursor_Foreground;
 
 
-   procedure Get_Cursor_Background (Surface :     Malef.Surfaces.Surface_Type;
-                                    Color   : out Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+   procedure Get_Cursor_Background (Surface : Malef.Surfaces.Surface_Type;
+      Color : out Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       Color := Reference.Cursor_Format.Background_Color;
@@ -307,23 +331,13 @@ package body Malef.Colors is
 
 
    function Get_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type)
-                                   return Color_Type is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
-   begin
-
-      return Reference.Cursor_Format.Foreground_Color;
-
-   end Get_Cursor_Foreground;
+      return Color_Type is
+      (Surface.Get_Reference.Reference.Cursor_Format.Foreground_Color);
 
 
    function Get_Cursor_Background (Surface : Malef.Surfaces.Surface_Type)
-                                   return Color_Type is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
-   begin
-
-      return Reference.Cursor_Format.Background_Color;
-
-   end Get_Cursor_Background;
+      return Color_Type is
+      (Surface.Get_Reference.Reference.Cursor_Format.Background_Color);
 
 
    --====----------------====--
@@ -331,8 +345,10 @@ package body Malef.Colors is
    --====----------------====--
 
    procedure Set_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                                    Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Color : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       Reference.Cursor_Format.Foreground_Color := Color;
@@ -341,8 +357,10 @@ package body Malef.Colors is
 
 
    procedure Set_Cursor_Background (Surface : Malef.Surfaces.Surface_Type;
-                                    Color   : Color_Type) is
-      Reference : constant Shared_Surface_Access := Surface.Get_Reference;
+      Color : Color_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Get_Reference.
+         Reference;
    begin
 
       Reference.Cursor_Format.Background_Color := Color;
@@ -430,9 +448,10 @@ package body Malef.Colors is
 
 
 
-   function Get_Color (Kind   : Color_Kind;
-                       Bright : Boolean := False)
-                       return Color_Type is
+   function Get_Color (
+      Kind   : Color_Kind;
+      Bright : Boolean := False)
+      return Color_Type is
    begin
 
       return Current_Palette (Bright, Kind);

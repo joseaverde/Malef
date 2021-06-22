@@ -39,6 +39,7 @@ package Malef.Systems.Shared is
 
    type String_Access is access all String;
 
+   -- TODO-LEAK: Reachable leak
    Stty_Path : String_Access := new String'("/bin/stty");
    Tput_Path : String_Access := new String'("/bin/tput");
 

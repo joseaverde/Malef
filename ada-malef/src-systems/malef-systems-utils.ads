@@ -54,11 +54,12 @@ package Malef.Systems.Utils is
    --
    -- @param Separator
    -- The PATH separator: in Linux it's `:' and `;' in Windows;
-   function Get_Path (Program_Name                   : String;
-                      PATH_Environment_Variable_Name : String := "PATH";
-                      Default_PATHS                  : String := "/bin";
-                      Separator                      : Character := ':')
-                      return String;
+   function Get_Path (
+      Program_Name                   : String;
+      PATH_Environment_Variable_Name : String := "PATH";
+      Default_PATHS                  : String := "/bin";
+      Separator                      : Character := ':')
+      return String;
 
 
    --
@@ -116,8 +117,9 @@ package Malef.Systems.Utils is
    -- @return
    -- The string that represents such colour.
    --
-   function To_String (C : Color_Component_Type)
-                       return String
+   function To_String (
+      C : Color_Component_Type)
+      return String
       with Pure_Function,
            Inline;
 
@@ -130,8 +132,9 @@ package Malef.Systems.Utils is
    -- @return
    -- The string representation of such number.
    --
-   function To_String (N : Natural)
-                       return String
+   function To_String (
+      N : Natural)
+      return String
       with Pure_Function,
            Inline;
 

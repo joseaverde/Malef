@@ -29,7 +29,7 @@
 package body Malef.Characters is
 
    function To_UTF8 (Char : Char_Type)
-                     return UTF8_String is
+      return UTF8_String is
    begin
 
       case Char is
@@ -59,24 +59,9 @@ package body Malef.Characters is
  
 
    function To_UTF8 (Str : Str_Type)
-                     return UTF8_String is
-      function Calculate_Length return Natural
-         with Inline is
-      begin
-         return Size : Natural := 0
-         do
-            for Char of Str loop
-               case Char is
-                  when 16#0000_0000# .. 16#0000_007F# => Size := Size + 1;
-                  when 16#0000_0080# .. 16#0000_07FF# => Size := Size + 2;
-                  when 16#0000_0800# .. 16#0000_FFFF# => Size := Size + 3;
-                  when 16#0001_0000# .. 16#0010_FFFF# => Size := Size + 4;
-               end case;
-            end loop;
-         end return;
-      end Calculate_Length;
-
-      Result  : UTF8_String (1 .. Calculate_Length);
+      return UTF8_String
+   is
+      Result  : UTF8_String (1 .. UTF8_Length (Str));
       Current : Positive := 1;
    begin
 
@@ -96,7 +81,8 @@ package body Malef.Characters is
          
 
    function From_UTF8 (Str : UTF8_String)
-                       return Str_Type is
+      return Str_Type
+   is
       function Calculate_Length return Natural
          with Inline is
       begin
@@ -123,15 +109,15 @@ package body Malef.Characters is
 
       Current : Positive := 1;
       Buffer  : Char_Type;
-      Bytes   : Natural := 0;
+      Bytes   : Natural := 1;
    begin
 
       return Result : Str_Type (1 .. Calculate_Length)
       do
          for Char of Str loop
-            if (Char_Type(Character'Pos(Char)) and 10_000000) = 0 then
+            if (Char_Type(Character'Pos(Char)) and 2#1000_0000#) = 0 then
                if Bytes /= 1 then
-                  raise Constraint_Error with "Invalid UTF String";
+                  raise Constraint_Error with "Invalid UTF String!";
                end if;
             else
                if Bytes = 1 then
@@ -177,6 +163,26 @@ package body Malef.Characters is
       end return;
 
    end From_UTF8;
+
+
+   function UTF8_Length (Str : Str_Type)
+      return Natural
+   is
+      Size : Natural := 0;
+   begin
+      for Char of Str loop
+         case Char is
+            when 16#0000_0000# .. 16#0000_007F# => Size := Size + 1;
+            when 16#0000_0080# .. 16#0000_07FF# => Size := Size + 2;
+            when 16#0000_0800# .. 16#0000_FFFF# => Size := Size + 3;
+            when 16#0001_0000# .. 16#0010_FFFF# => Size := Size + 4;
+         end case;
+      end loop;
+      return Size;
+   end UTF8_Length;
+
+
+
 
 end Malef.Characters;
 

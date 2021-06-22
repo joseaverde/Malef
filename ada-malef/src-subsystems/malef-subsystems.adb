@@ -42,7 +42,7 @@ package body None is
 
    overriding
    procedure Set_Title (Subsys : not null access Subsystem;
-                        Title  : String) is
+      Title  : String) is
    begin raise Malef.Exceptions.Initialization_Error with Error_Message;
    end Set_Title;
 
@@ -124,7 +124,7 @@ package body None is
 
    overriding
    procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is
+      Object : Shared_Surface_Access) is
    begin raise Malef.Exceptions.Initialization_Error with Error_Message;
    end Put;
 

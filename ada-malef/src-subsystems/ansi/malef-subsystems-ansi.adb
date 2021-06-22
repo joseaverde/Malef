@@ -53,7 +53,7 @@ package body Malef.Subsystems.Ansi is
 
    overriding
    procedure Set_Title (Subsys : not null access Subsystem;
-                        Title  : String) is
+      Title  : String) is
    begin
       Std_Out.Write (ASCII.ESC & "]2;" & Title & Character'Val(16#07#));
       Std_Out.Dump;
@@ -208,7 +208,8 @@ package body Malef.Subsystems.Ansi is
    Lock : Boolean := True;
    overriding
    procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access) is
+      Object : Shared_Surface_Access)
+   is
       Last_Format : Format_Type := Default_Format;
 
       -- The position of the surface on the screen.
@@ -248,14 +249,6 @@ package body Malef.Subsystems.Ansi is
          (Height, Row_Type(Row_Coord(Object.Height) + Object.Position.Row))-1;
       The_Width := Col_Type'Min
          (Width, Col_Type(Col_Coord(Object.Width) + Object.Position.Col))-1;
-   -- Std_Out.Write ("In_Row =" & In_Row'Image & ASCII.LF);
-   -- Std_Out.Write ("In_Col =" & In_Col'Image & ASCII.LF);
-   -- Std_Out.Write ("From_Row =" & From_Row'Image & ASCII.LF);
-   -- Std_Out.Write ("From_Col =" & From_Col'Image & ASCII.LF);
-   -- Std_Out.Write ("The_Height =" & The_Height'Image & ASCII.LF);
-   -- Std_Out.Write ("The_Width =" & The_Width'Image & ASCII.LF);
-   -- Std_Out.Write ("Height =" & Object.Height'Image & ASCII.LF);
-   -- Std_Out.Dump;
 
       -- We wait until the operation is unlocked because we can't put two
       -- surfaces onto the screen at the same time, because they may interfere.
@@ -303,9 +296,10 @@ package body Malef.Subsystems.Ansi is
    end Put;
 
 
-   function Get_Color_1  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String is
+   function Get_Color_1 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String is
    begin
 
       return "";
@@ -313,9 +307,11 @@ package body Malef.Subsystems.Ansi is
    end Get_Color_1;
 
 
-   function Get_Color_3  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String is
+   function Get_Color_3 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+   is
       Pal  : constant Malef.Colors.Palette_Type :=
          Malef.Colors.Get_Palette;
       Fg_Diff : Integer := 0;
@@ -356,9 +352,11 @@ package body Malef.Subsystems.Ansi is
    end Get_Color_3;
 
 
-   function Get_Color_4  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String is
+   function Get_Color_4 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+   is
       Pal  : constant Malef.Colors.Palette_Type :=
          Malef.Colors.Get_Palette;
       Fg_Diff : Integer := 0;
@@ -408,9 +406,11 @@ package body Malef.Subsystems.Ansi is
    end Get_Color_4;
 
 
-   function Get_Color_8  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String is
+   function Get_Color_8 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+   is
       Raw_Fg : Color_Type;
       Raw_Bg : Color_Type;
    begin
@@ -436,9 +436,10 @@ package body Malef.Subsystems.Ansi is
    end Get_Color_8;
 
 
-   function Get_Color_24 (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String is
+   function Get_Color_24 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String is
    begin
 
       return ASCII.ESC & '[' &
@@ -454,7 +455,7 @@ package body Malef.Subsystems.Ansi is
 
 
    function Get_Style (Style : Style_Array)
-                       return String is
+      return String is
    begin
 
       -- TODO
@@ -463,9 +464,10 @@ package body Malef.Subsystems.Ansi is
    end Get_Style;
 
 
-   function Get_Move (Row : Row_Type;
-                      Col : Col_Type)
-                      return String is
+   function Get_Move (
+      Row : Row_Type;
+      Col : Col_Type)
+      return String is
    begin
 
       return ASCII.ESC & "[" &
@@ -476,8 +478,9 @@ package body Malef.Subsystems.Ansi is
    end Get_Move;
 
 
-   function Get_Format (Format : Format_Type)
-                        return String is
+   function Get_Format (
+      Format : Format_Type)
+      return String is
    begin
 
       return Get_Color.all (

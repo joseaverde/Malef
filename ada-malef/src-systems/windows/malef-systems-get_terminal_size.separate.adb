@@ -30,8 +30,10 @@
 with Interfaces.C;
 
 separate (Malef.Systems)
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type) is
+   procedure Get_Terminal_Size (
+      Rows : out Row_Type;
+      Cols : out Col_Type)
+   is
       procedure C_Driver_Get_Console_Screen_Size(Rows: out Interfaces.C.short;
                                                  Cols: out Interfaces.C.short)
          with Import        => True,

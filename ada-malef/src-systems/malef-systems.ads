@@ -102,8 +102,9 @@ private package Malef.Systems is
    procedure Restore_Terminal;
 
 
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type);
+   procedure Get_Terminal_Size (
+      Rows : out Row_Type;
+      Cols : out Col_Type);
 
 
    --====---------------====--

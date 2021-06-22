@@ -81,7 +81,7 @@ fields = {
 
         "foreground" : "black",
         "background" : "white"
-    }
+    },
     "styles" : {
         "bold"             : False,
         "faint"            : False,

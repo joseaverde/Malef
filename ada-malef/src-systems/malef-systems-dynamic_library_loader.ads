@@ -36,8 +36,9 @@ private package Malef.Systems.Dynamic_Library_Loader is
 
    function Get_Library_Prefix return String;
    function Get_Library_Suffix return String;
-   function Load_Library (Path : String)
-                          return Library_Handle;
+   function Load_Library (
+      Path : String)
+      return Library_Handle;
    procedure Unload_Library (Handle : in out Library_Handle);
 
 end Malef.Systems.Dynamic_Library_Loader;

@@ -30,8 +30,10 @@
 with Interfaces.C;
 
 separate (Malef.Systems)
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type) is
+   procedure Get_Terminal_Size (
+      Rows : out Row_Type;
+      Cols : out Col_Type)
+   is
       --
       -- This is the `winsize' type found in <sys/ioctl.h> header from the C
       -- programming language. It's used to store the terminal size.

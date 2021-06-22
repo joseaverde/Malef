@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Python binding now works on Windows
+- Fixed UTF8 encoding bugs
 
 ## [0.2.4] - 2021-04-09
 ### Added

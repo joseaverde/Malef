@@ -164,32 +164,6 @@ package Malef.Surfaces is
                  return Char_Type is
       (Object.Get(Object.Cursor_Position)) with Inline;
 
-   --
-   -- This function returns the Main Surface.
-   --
-   function Get_Main_Surface return Surface_Type with Inline, Pure_Function;
-
-   --
-   -- This function returns the height of a surface.
-   --
-   -- @param Object
-   -- The surface.
-   --
-   -- @return
-   -- The height.
-   --
-   function Height (Object : Surface_Type) return Row_Type with Inline;
-
-   --
-   -- This function returns the position of the surface in the screen.
-   --
-   -- @param Object
-   -- The surface.
-   --
-   -- @return
-   -- The position of the object in the screen.
-   --
-   function Position (Object : Surface_Type) return Coord_Type with Inline;
 
 
    --
@@ -217,7 +191,7 @@ package Malef.Surfaces is
    -- surface, which cannot be overwritten.
    --
    procedure Put (Object : Surface_Type;
-                  Onto   : Surface_Type := Get_Main_Surface);
+                  Onto   : Surface_Type);
 
    --
    -- This function puts a surface "onto" another one given the position inside
@@ -233,7 +207,7 @@ package Malef.Surfaces is
    -- This exception is raised when the position of the surface is out of
    -- bounds.
    procedure Put (Object   : Surface_Type;
-                  Onto     : Surface_Type := Get_Main_Surface;
+                  Onto     : Surface_Type;
                   Position : Cursor_Type);
 
    procedure Put (Object   : Surface_Type;
@@ -261,69 +235,9 @@ package Malef.Surfaces is
    procedure Put (Object   : Surface_Type;
                   Item     : Char_Type) with Inline;
 
-   --
-   -- This procedure changes the size of a surface and all variables that
-   -- reference it, i.e:
-   --
-   --    declare
-   --       -- Imagine you declare two surfaces.
-   --       Surface_1 : Surface_Type;
-   --       Surface_2 : Surface_Type;
-   --    begin
-   --       -- And you assign both to the same value.
-   --       Surface_1 := ...;
-   --       Surface_2 := Surface_1;
-   --       -- Both will be referencing the same surface.
-   --       -- Now if you resize one of them.
-   --       Surface_2.Resize (10, 10);
-   --       -- Then both of them will be resized.
-   --       pragma Assert (Surface_1.Height = Surface_2.Height and
-   --                      Surface_1.Width  = Surface_2.Width);
-   --    end;
-   --
-   -- @param Object
-   -- The Surface to be resized. If it was the Main_Surface, then it won't be
-   -- resized unless the new number of rows and the new number of columns
-   -- matches the one of the terminal. It's done this way so, it can be
-   -- automatically resized when the terminal is resized.
-   --
-   -- @param New_Rows
-   -- The new number of rows.
-   --
-   -- @param New_Cols
-   -- The new number of columns.
-   --
-   -- @exception Malef.Exceptions.Null_Surface_Error
-   -- You cannot resize a null surface.
-   --
-   -- TODO: Move documentation
-
-   -- TODO: Add this functions to the Base_Type specification
-   --
-   -- This function changes the cursor position.
-   --
-   -- @param Object
-   -- The surface.
-   --
-   -- @param Position
-   -- The new position of the cursor.
-   --
-   -- @exception Malef.Exceptions.Bounds_Error
-   -- This exception is raised if the cursor is out of the surface's bounds.
-   procedure Set_Cursor_Position (Object   : Surface_Type;
-                                  Position : Cursor_Type) with Inline;
-
-
    overriding procedure Update (Surface : in out Surface_Type) is null;
 
-   --
-   -- This function returns the width of a surface.
-   --
-   -- @param Object
-   -- The surface.
-   --
-   function Width  (Object : Surface_Type) return Col_Type with Inline;
-
+   -- TODO: Copy
    Null_Surface : constant Surface_Type;
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
@@ -333,10 +247,6 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
    Null_Surface : constant Surface_Type
                 := Surface_Type'(Ada.Finalization.Controlled with
                                     Shared_Null_Surface'Access);
-
-   Main_Surface : Surface_Type
-                := Surface_Type'(Ada.Finalization.Controlled with
-                                    Shared_Main_Surface'Access);
 
 end Malef.Surfaces;
 

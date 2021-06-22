@@ -69,8 +69,10 @@ package body Malef.Systems.Dynamic_Library_Loader is
    end Get_Library_Suffix;
 
 
-   function Load_Library (Path : String)
-                          return Library_Handle is
+   function Load_Library (
+      Path : String)
+      return Library_Handle
+   is
       Handle : Library_Handle;
    begin
 

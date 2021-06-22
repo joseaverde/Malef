@@ -136,17 +136,18 @@ package Malef.Colors is
    -- Ubuntu is a Linux distribution based on Debian and mostly composed of
    -- free and open-source software.
    --
-   type Palette_Kind is (Malef_Palette,
-                         VGA,
-                         Windows_XP_Console,
-                         Windows_PowerShell,
-                         Visual_Studio_Code,
-                         Windows_10_Console,
-                         Terminal_App,
-                         PuTTY,
-                         mIRC,
-                         xterm,
-                         Ubuntu);
+   type Palette_Kind is (
+      Malef_Palette,
+      VGA,
+      Windows_XP_Console,
+      Windows_PowerShell,
+      Visual_Studio_Code,
+      Windows_10_Console,
+      Terminal_App,
+      PuTTY,
+      mIRC,
+      xterm,
+      Ubuntu);
 
    -- These are the default palettes for several systems.
    Palettes : constant array (Palette_Kind'Range) of Palette_Type :=
@@ -373,10 +374,10 @@ package Malef.Colors is
    -- This exception is raised when the Row or the Column are out of the
    -- Surfaces's bounds.
    --
-   procedure Get_Foreground (Surface :     Malef.Surfaces.Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type);
+   procedure Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : out Color_Type);
 
    --
    -- This procedure retrieves the background colour of a given position.
@@ -397,10 +398,10 @@ package Malef.Colors is
    -- This exception is raised when the Row or the Column are out of the
    -- Surfaces's bounds.
    --
-   procedure Get_Background (Surface :     Malef.Surfaces.Surface_Type;
-                             Row     :     Row_Type;
-                             Col     :     Col_Type;
-                             Color   : out Color_Type);
+   procedure Get_Background (Surface : Malef.Surfaces.Surface_Type;
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : out Color_Type);
 
    --
    -- This function retrieves the foreground colour of a given position.
@@ -422,9 +423,9 @@ package Malef.Colors is
    -- Surfaces's bounds.
    --
    function Get_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                            Row     : Row_Type;
-                            Col     : Col_Type)
-                            return Color_Type;
+       Row : Row_Type;
+       Col : Col_Type)
+       return Color_Type;
    --
    -- This function retrieves the background colour of a given position.
    --
@@ -445,9 +446,9 @@ package Malef.Colors is
    -- Surfaces's bounds.
    --
    function Get_Background (Surface : Malef.Surfaces.Surface_Type;
-                            Row     : Row_Type;
-                            Col     : Col_Type)
-                            return Color_Type;
+      Row : Row_Type;
+      Col : Col_Type)
+      return Color_Type;
 
    --====----------------====--
    --====-- SET COLOUR --====--
@@ -477,9 +478,9 @@ package Malef.Colors is
    -- out of the given Surface's bounds.
    --
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type;
-                             Color   : Color_Type);
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : Color_Type);
 
    --
    -- This procedure changes the background colour in a certain position of the
@@ -505,9 +506,9 @@ package Malef.Colors is
    -- out of the given Surface's bounds.
    --
    procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
-                             Row     : Row_Type;
-                             Col     : Col_Type;
-                             Color   : Color_Type);
+      Row   : Row_Type;
+      Col   : Col_Type;
+      Color : Color_Type);
 
    --
    -- This procedure changes the foreground colour in a block of the Surface,
@@ -539,12 +540,12 @@ package Malef.Colors is
    -- out of the Surfaces's ranges. It's also raised if any or both of the `TO'
    -- parameters is lower than the `FROM' one.
    --
-   procedure Set_Foreground (Surface  : Malef.Surfaces.Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type);
+   procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      From_Row : Row_Type;
+      To_Row   : Row_Type;
+      From_Col : Col_Type;
+      To_Col   : Col_Type;
+      Color    : Color_Type);
 
    --
    -- This procedure changes the background colour in a block of the Surface,
@@ -576,12 +577,12 @@ package Malef.Colors is
    -- out of the Surfaces's ranges. It's also raised if any or both of the `TO'
    -- parameters is lower than the `FROM' one.
    --
-   procedure Set_Background (Surface  : Malef.Surfaces.Surface_Type;
-                             From_Row : Row_Type;
-                             To_Row   : Row_Type;
-                             From_Col : Col_Type;
-                             To_Col   : Col_Type;
-                             Color    : Color_Type);
+   procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
+      From_Row : Row_Type;
+      To_Row   : Row_Type;
+      From_Col : Col_Type;
+      To_Col   : Col_Type;
+      Color    : Color_Type);
 
    --
    -- This procedure changes the foreground colour on all the surface.
@@ -596,7 +597,7 @@ package Malef.Colors is
    -- This exceptions is raised if you are trying to edit THE NULL SURFACE.
    --
    procedure Set_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                             Color   : Color_Type);
+      Color : Color_Type);
 
    --
    -- This procedure changes the background colour on all the surface.
@@ -611,7 +612,7 @@ package Malef.Colors is
    -- This exceptions is raised if you are trying to edit THE NULL SURFACE.
    --
    procedure Set_Background (Surface : Malef.Surfaces.Surface_Type;
-                             Color   : Color_Type);
+      Color : Color_Type);
 
 
 
@@ -636,8 +637,9 @@ package Malef.Colors is
    -- @param Color
    -- The retrieved colour.
    --
-   procedure Get_Cursor_Foreground (Surface :     Malef.Surfaces.Surface_Type;
-                                    Color   : out Color_Type);
+   procedure Get_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type;
+      Color : out Color_Type)
+      with Inline;
 
    --
    -- This procedure gets the default cursor writing background colour.
@@ -648,8 +650,9 @@ package Malef.Colors is
    -- @param Color
    -- The retrieved colour.
    --
-   procedure Get_Cursor_Background (Surface :     Malef.Surfaces.Surface_Type;
-                                    Color   : out Color_Type);
+   procedure Get_Cursor_Background (Surface : Malef.Surfaces.Surface_Type;
+      Color : out Color_Type)
+      with Inline;
 
    --
    -- This function gets the default cursor writing foreground colour.
@@ -661,7 +664,8 @@ package Malef.Colors is
    -- The retrieved colour.
    --
    function Get_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type)
-                                   return Color_Type;
+      return Color_Type
+      with Inline;
 
    --
    -- This function gets the default cursor writing background colour.
@@ -673,7 +677,8 @@ package Malef.Colors is
    -- The retrieved colour.
    --
    function Get_Cursor_Background (Surface : Malef.Surfaces.Surface_Type)
-                                   return Color_Type;
+      return Color_Type
+      with Inline;
 
    --====----------------====--
    --====-- SET COLOUR --====--
@@ -690,7 +695,8 @@ package Malef.Colors is
    -- The colour to set.
    --
    procedure Set_Cursor_Foreground (Surface : Malef.Surfaces.Surface_Type;
-                                    Color   : Color_Type);
+      Color : Color_Type)
+      with Inline;
 
    --
    -- This procedure changes the default writing background colour of the
@@ -703,7 +709,8 @@ package Malef.Colors is
    -- The colour to set.
    --
    procedure Set_Cursor_Background (Surface : Malef.Surfaces.Surface_Type;
-                                    Color   : Color_Type);
+      Color : Color_Type)
+      with Inline;
 
 
    --============-----------------------============--
@@ -724,7 +731,8 @@ package Malef.Colors is
    -- @exception Malef.Exceptions.Initialization_Error
    -- This exception is raised if the library hasn't been initialized yet.
    --
-   procedure Get_Palette (Palette : out Palette_Type);
+   procedure Get_Palette (Palette : out Palette_Type)
+      with Inline;
 
    --
    -- This function gets the palette now in use.
@@ -732,7 +740,8 @@ package Malef.Colors is
    -- @return
    -- The retrieved palette.
    --
-   function Get_Palette return Palette_Type;
+   function Get_Palette return Palette_Type
+      with Inline;
 
 
    --====-----------------====--
@@ -745,7 +754,8 @@ package Malef.Colors is
    -- @param Palette
    -- The palette to set.
    --
-   procedure Set_Palette (Palette : in Palette_Type);
+   procedure Set_Palette (Palette : in Palette_Type)
+      with Inline;
 
    --
    -- This procedure sets a new palette, but it takes a `Palette_Kind' variable
@@ -755,7 +765,8 @@ package Malef.Colors is
    -- @param Kind
    -- The palette to set.
    --
-   procedure Set_Palette (Kind : Palette_Kind);
+   procedure Set_Palette (Kind : Palette_Kind)
+      with Inline;
 
    --====-----------------------====--
    --====-- PALETTE'S COLOURS --====--
@@ -774,9 +785,11 @@ package Malef.Colors is
    -- @return
    -- The colour it represents in the palette.
    --
-   function Get_Color (Kind   : Color_Kind;
-                       Bright : Boolean := False)
-                       return Color_Type;
+   function Get_Color (
+      Kind   : Color_Kind;
+      Bright : Boolean := False)
+      return Color_Type
+      with Inline;
 
 
 private

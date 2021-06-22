@@ -37,11 +37,13 @@ use Malef.Systems.Dynamic_Library_Loader;
 
 package body Malef.Systems.Utils is
 
-   function Get_Path (Program_Name                   : String;
-                      PATH_Environment_Variable_Name : String := "PATH";
-                      Default_PATHS                  : String := "/bin";
-                      Separator                      : Character := ':')
-                      return String is
+   function Get_Path (
+      Program_Name                   : String;
+      PATH_Environment_Variable_Name : String := "PATH";
+      Default_PATHS                  : String := "/bin";
+      Separator                      : Character := ':')
+      return String
+   is
       PATH : constant String := (if Ada.Environment_Variables.Exists(
                                     PATH_Environment_Variable_Name) then
                                     Ada.Environment_Variables.Value("PATH")
@@ -89,8 +91,9 @@ package body Malef.Systems.Utils is
    end Get_Path;
 
 
-   function To_String (C : Color_Component_Type)
-                       return String is
+   function To_String (
+      C : Color_Component_Type)
+      return String is
    begin
 
       return Color_Components_Strings(C);
@@ -98,8 +101,10 @@ package body Malef.Systems.Utils is
    end To_String;
 
 
-   function To_String (N : Natural)
-                       return String is
+   function To_String (
+      N : Natural)
+      return String
+   is
       Size : Natural := 1;
    begin
 

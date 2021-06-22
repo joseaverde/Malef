@@ -46,7 +46,7 @@ private package Malef.Subsystems.Ansi is
    procedure New_Page (Subsys : not null access Subsystem);
    overriding
    procedure Set_Title (Subsys : not null access Subsystem;
-                        Title  : String);
+      Title  : String);
 
    overriding
    procedure Clear_Screen (Subsys : not null access Subsystem);
@@ -83,40 +83,54 @@ private package Malef.Subsystems.Ansi is
 
    overriding
    procedure Put (Subsys : not null access Subsystem;
-                  Object : Shared_Surface_Access);
+      Object : Shared_Surface_Access);
 
 
-   function Get_Color_1  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_3  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_4  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_8  (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
-   function Get_Color_24 (Foreground : Color_Type;
-                          Background : Color_Type)
-                          return String;
+   function Get_Color_1 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+      with Pure_Function;
+   function Get_Color_3 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+      with Pure_Function;
+   function Get_Color_4 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+      with Pure_Function;
+   function Get_Color_8 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+      with Pure_Function;
+   function Get_Color_24 (
+      Foreground : Color_Type;
+      Background : Color_Type)
+      return String
+      with Pure_Function;
 
-   function Get_Style (Style : Style_Array)
-                       return String
-      with Inline;
+   function Get_Style (
+      Style : Style_Array)
+      return String
+      with Pure_Function, Inline;
 
-   function Get_Move (Row : Row_Type;
-                      Col : Col_Type)
-                      return String
-      with Inline;
+   function Get_Move (
+      Row : Row_Type;
+      Col : Col_Type)
+      return String
+      with Pure_Function, Inline;
 
-   function Get_Format (Format : Format_Type)
-                        return String
-      with Inline;
+   function Get_Format (
+      Format : Format_Type)
+      return String
+      with Pure_Function, Inline;
 
-   function Get_Clear return String
-      with Inline;
+   function Get_Clear
+      return String
+      with Pure_Function, Inline;
 
    Std_Out : Malef.Subsystems.Text_IO.Std_Out;
 

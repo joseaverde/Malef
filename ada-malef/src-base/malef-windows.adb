@@ -33,7 +33,9 @@ package body Malef.Windows is
 
    protected body Window_Type is
 
-      procedure Create (Height : Row_Type; Width : Col_Type) is
+      procedure Create (
+         Height : Row_Type;
+         Width  : Col_Type) is
       begin
 
          if ID /= -1 then
@@ -62,7 +64,9 @@ package body Malef.Windows is
       end Create;
 
 
-      function Contains (Layer : Malef.Boxes.Layer_Type) return Boolean is
+      function Contains (
+         Layer : Malef.Boxes.Layer_Type)
+         return Boolean is
       begin
 
          if not Created then
@@ -74,32 +78,37 @@ package body Malef.Windows is
       end Contains;
 
 
-      entry Draw when not Updating and not Resizing is
+      entry Draw
+         when not Updating and not Resizing
+      is
          use Malef.Systems;
       begin
 
          Check_Created;
          Drawing := True;
-         Loaded_Subsystems (Current_Subsystem).Put (Box.Get_Reference);
+         Loaded_Subsystems (Current_Subsystem).Put
+            (Box.Get_Reference.Reference);
          Drawing := False;
 
       end Draw;
 
 
-      function Get_Position return Coord_Type is
+      function Get_Position
+         return Coord_Type is
       begin
 
          if not Created then
             raise Malef.Exceptions.Window_Error
             with "Window not initialized!";
          end if;
-         return Box.Get_Reference.Position;
+         return Box.Get_Reference.Reference.Position;
 
       end Get_Position;
 
 
-      procedure Insert (Item  : Shared_Surface_Access;
-                        Layer : Malef.Boxes.Layer_Type) is
+      procedure Insert (
+         Item  : Surface_Reference;
+         Layer : Malef.Boxes.Layer_Type) is
       begin
 
          Check_Created;
@@ -108,16 +117,18 @@ package body Malef.Windows is
       end Insert;
 
 
-      procedure Move (Position : Coord_Type) is
+      procedure Move (
+         Position : Coord_Type) is
       begin
 
          Check_Created;
-         Box.Get_Reference.Position := Position;
+         Box.Get_Reference.Reference.Position := Position;
 
       end Move;
 
 
-      procedure Remove (Layer : Malef.Boxes.Layer_Type) is
+      procedure Remove (
+         Layer : Malef.Boxes.Layer_Type) is
       begin
 
          Check_Created;
@@ -126,8 +137,9 @@ package body Malef.Windows is
       end Remove;
 
 
-      procedure Replace (Item  : Shared_Surface_Access;
-                         Layer : Malef.Boxes.Layer_Type) is
+      procedure Replace (
+         Item  : Surface_Reference;
+         Layer : Malef.Boxes.Layer_Type) is
       begin
 
          Check_Created;
@@ -136,7 +148,9 @@ package body Malef.Windows is
       end Replace;
 
 
-      procedure Resize (Height : Row_Type; Width : Col_Type) is
+      procedure Resize (
+         Height : Row_Type;
+         Width : Col_Type) is
       begin
 
          Check_Created;
@@ -153,7 +167,8 @@ package body Malef.Windows is
       end Resize;
 
 
-      entry Update when not Drawing and not Resizing is
+      entry Update
+         when not Drawing and not Resizing is
       begin
 
          Check_Created;
@@ -164,7 +179,10 @@ package body Malef.Windows is
 
       end Update;
 
+   -------------
    -- PRIVATE --
+   -------------
+
       procedure Check_Created is
       begin
          if not Created then

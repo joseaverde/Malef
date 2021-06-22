@@ -36,8 +36,7 @@ package body Malef.Events is
       procedure Update_Terminal_Size is
       begin
 
-         Malef.Systems.Get_Terminal_Size (Rows => Height,
-                                          Cols => Width);
+         Malef.Systems.Get_Terminal_Size (Height, Width);
          Malef.Windows.Main_Window.Resize (Height, Width);
 
       end Update_Terminal_Size;

@@ -40,18 +40,20 @@ package Malef.Characters is
    type UTF8_String is new String;
 
    function To_UTF8 (Char : Char_Type)
-                     return UTF8_String
+      return UTF8_String
       with Inline;
 
    function To_UTF8 (Str : Str_Type)
-                     return UTF8_String
+      return UTF8_String
       with Inline;
 
    function From_UTF8 (Str : UTF8_String)
-                       return Str_Type
-      with Pre    => (Char_Type(Character'Pos(Str(Str'First))) and
-                      2#10_000000#) /= 0,
-           Inline;
+      return Str_Type
+      with Inline;
+
+   function UTF8_Length (Str : Str_Type)
+      return Natural
+      with Inline;
 
 
 end Malef.Characters;

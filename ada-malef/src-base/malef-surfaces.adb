@@ -55,9 +55,11 @@ package body Malef.Surfaces is
       New_Surface : Surface_Type;
    begin
 
+      -- TODO-LEAK: Definitely lost
       New_Surface.Reference := new Shared_Surface_Type;
       New_Surface.Reference.Height := Rows;
       New_Surface.Reference.Width  := Cols;
+      -- TODO-LEAK: Indirectly lost
       New_Surface.Reference.Grid := new Matrix_Type (1 .. Rows, 1 .. Cols);
       New_Surface.Reference.Grid.all := (others => (others => Element_Type'(
          Format => Default_Format,
@@ -156,18 +158,8 @@ package body Malef.Surfaces is
    end Get;
 
 
-   function Get_Main_Surface return Surface_Type is (Main_Surface);
-
-
-   function Height (Object : Surface_Type) return Row_Type is
-      (Object.Reference.Height);
-
-   function Position (Object : Surface_Type) return Coord_Type is
-      (Object.Reference.Position);
-
-
    procedure Put (Object : Surface_Type;
-                  Onto   : Surface_Type := Get_Main_Surface) is
+                  Onto   : Surface_Type) is
       In_Surface  : constant Shared_Surface_Access := Object.Reference;
       Out_Surface : constant Shared_Surface_Access := Onto.Reference;
 
@@ -267,7 +259,7 @@ package body Malef.Surfaces is
 
 
    procedure Put (Object   : Surface_Type;
-                  Onto     : Surface_Type := Get_Main_Surface;
+                  Onto     : Surface_Type;
                   Position : Cursor_Type) is
       In_Surface  : constant Shared_Surface_Access := Object.Reference;
       Out_Surface : constant Shared_Surface_Access := Onto.Reference;
@@ -371,27 +363,6 @@ package body Malef.Surfaces is
 
    end Put;
 
-
-
-   procedure Set_Cursor_Position (Object   : Surface_Type;
-                                  Position : Cursor_Type) is
-      Surface : constant Shared_Surface_Access := Object.Reference;
-   begin
-
-      if Position.Row > Surface.Height or
-         Position.Col > Surface.Width
-      then
-         raise Malef.Exceptions.Bounds_Error
-         with "Cursor Position out of bounds!";
-      end if;
-
-      Object.Reference.Cursor_Position := Position;
-
-   end Set_Cursor_Position;
-
-
-   function Width  (Object : Surface_Type) return Col_Type is
-      (Object.Reference.Width);
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 --*--*- private -*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-

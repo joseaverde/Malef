@@ -62,11 +62,17 @@ package body Malef.Subsystems.Text_IO is
 
 
       entry Write (Data : in Str_Type)
-         when not Lock is
+         when not Lock
+      is
+         Estimated_Length : constant Natural :=
+            Malef.Characters.UTF8_Length (Data);
       begin
 
          Lock := True;
 
+         if Estimated_Length + Current > Length then
+            Dump_It;
+         end if;
          for Char of Data loop
             -- We convert the character to the current encoding system, for now
             -- it will be UTF-8.

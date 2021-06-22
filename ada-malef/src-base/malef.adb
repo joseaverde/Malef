@@ -31,11 +31,10 @@ with Malef.Exceptions;
 with Malef.Surfaces;
 with Malef.Systems;
 
-
 package body Malef is
 
-
-   function "+" (Base, Over : Color_Type) return Color_Type is
+   function "+" (Base, Over : Color_Type) return Color_Type
+   is
       -- (100, 100, 100, 255) + (200, 200, 200, 255) = (200, 200, 200, 255)
       -- (100, 100, 100,  10) + (200, 200, 200,  20) = (166, 166, 166,  30)
       Alpha : constant Float := Float'Min
@@ -93,8 +92,6 @@ package body Malef is
       -- We then get the size of the terminal.
       Malef.Systems.Get_Terminal_Size(Rows => Height,
                                       Cols => Width);
-
-      Malef.Update_Main_Surface;
 
       -- Finally we tell the user the terminal has been initialized.
       Has_Been_Initialized := True;
@@ -182,7 +179,7 @@ package body Malef is
       if New_Height /= Height or New_Width /= Width then
          Height := New_Height;
          Width  := New_Width;
-         Malef.Update_Main_Surface;
+         -- TODO:
          return True;
       end if;
 
@@ -207,42 +204,6 @@ package body Malef is
    begin
       Loaded_Subsystems(Current_Subsystem).Clear_Screen;
    end Clear_Screen;
-
-   procedure Clear_Until_End_Of_Screen is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Until_End_Of_Screen;
-   end Clear_Until_End_Of_Screen;
-
-   procedure Clear_Until_Start_Of_Screen is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Until_Start_Of_Screen;
-   end Clear_Until_Start_Of_Screen;
-
-   procedure Clear_Entire_Screen is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Entire_Screen;
-   end Clear_Entire_Screen;
-
-
-   procedure Clear_Current_Line is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Current_Line;
-   end Clear_Current_Line;
-
-   procedure Clear_Until_End_Of_Line is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Until_End_Of_Line;
-   end Clear_Until_End_Of_Line;
-
-   procedure Clear_Until_Start_Of_Line is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Until_Start_Of_Line;
-   end Clear_Until_Start_Of_Line;
-
-   procedure Clear_Entire_Line is
-   begin
-      Loaded_Subsystems(Current_Subsystem).Clear_Entire_Line;
-   end Clear_Entire_Line;
 
 
    procedure Enable_Line_Wrapping is
@@ -307,40 +268,66 @@ package body Malef is
 --*--*- private -*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
-
-   procedure Update_Main_Surface is
-      Object : Malef.Surfaces.Surface_Type := Surfaces.Get_Main_Surface;
-   begin
-
-      Malef.Surfaces.Resize (Object, Height, Width);
-
-   end Update_Main_Surface;
-
-
-   procedure Check_Not_Null_Surface (Object : Base_Type) is
-   begin
-      if Object.Reference = Shared_Null_Surface'Access then
-         raise Malef.Exceptions.Null_Surface_Error
-         with "Cannot modify a null surface!";
-      end if;
-   end Check_Not_Null_Surface;
-
-
    --====---------------====--
    --====-- BASE TYPE --====--
    --====---------------====--
 
+   ------------
+   -- PUBLIC --
+   ------------
+
    procedure Clear (Object : in out Base_Type) is
    begin
-
       Object.Reference.Grid.all := (others => (others => Default_Element));
-
    end Clear;
+
+   procedure Get_Cursor_Position (Object : in Base_Type;
+      Row : out Row_Type;
+      Col : out Col_Type) is
+   begin
+      Row := Object.Reference.Cursor_Position.Row;
+      Col := Object.Reference.Cursor_Position.Col;
+   end Get_Cursor_Position;
+
+   function Get_Cursor_Position (Object : in Base_Type)
+      return Cursor_Type is
+      (Object.Reference.Cursor_Position);
+
+   function Get_Height (Object : in Base_Type)
+      return Row_Type is
+      (Object.Reference.Grid'Length(1));
+
+   function Get_Position (Object : in Base_Type)
+      return Coord_Type is
+      (Object.Reference.Position);
+
+   procedure Get_Position (Object : in Base_Type;
+      Row : out Row_Coord;
+      Col : out Col_Coord) is
+   begin
+      Row := Object.Reference.Position.Row;
+      Col := Object.Reference.Position.Col;
+   end Get_Position;
+
+
+   function Get_Reference (Object : Base_Type)
+                           return Surface_Reference is
+   begin
+
+      return Surface_Reference'(Reference => Object.Reference);
+
+   end Get_Reference;
+
+
+   function Get_Width  (Object : in Base_Type)
+      return Col_Type is
+      (Object.Reference.Grid'Length(2));
 
 
    procedure Resize (Object : in out Base_Type;
-                     Height : Row_Type;
-                     Width  : Col_Type) is
+      Height : Row_Type;
+      Width  : Col_Type)
+   is
       procedure Free is new Ada.Unchecked_Deallocation (
          Matrix_Type, Matrix_Access);
       New_Grid : Matrix_Access;
@@ -349,8 +336,9 @@ package body Malef is
 
       Check_Not_Null_Surface (Object);
 
-      if Height = Object.Reference.Height and
-         Width  = Object.Reference.Width
+      if Old_Grid /= null                 and then
+        (Height = Object.Reference.Height and
+         Width  = Object.Reference.Width)
       then
          -- Nothing to be done.
          return;
@@ -358,17 +346,21 @@ package body Malef is
 
       New_Grid := new Matrix_Type (1 .. Height, 1 .. Width);
       New_Grid.all := (others => (others => Default_Element));
-      for Row in Row_Type range 1 .. Row_Type'Min
-         (Height, Object.Reference.Height)
-      loop
-         for Col in Col_Type range 1 .. Col_Type'Min
-            (Width, Object.Reference.Width)
-         loop
-            New_Grid (Row, Col) := Old_Grid (Row, Col);
-         end loop;
-      end loop;
 
-      Free (Object.Reference.Grid);
+      if Old_Grid /= null then
+         -- In Boxes for example, the grid is null.
+         for Row in Row_Type range 1 .. Row_Type'Min
+            (Height, Object.Reference.Height)
+         loop
+            for Col in Col_Type range 1 .. Col_Type'Min
+               (Width, Object.Reference.Width)
+            loop
+               New_Grid (Row, Col) := Old_Grid (Row, Col);
+            end loop;
+         end loop;
+
+         Free (Object.Reference.Grid);
+      end if;
       Object.Reference.Grid := New_Grid;
       Object.Reference.Height := Height;
       Object.Reference.Width  := Width;
@@ -377,16 +369,58 @@ package body Malef is
    end Resize;
 
 
-   procedure Set_Position (Object : in out Base_Type;
-                           Row    : Row_Coord;
-                           Col    : Col_Coord) is
+   procedure Set_Cursor_Position (Object : in out Base_Type;
+      Row : Row_Type;
+      Col : Col_Type) is
    begin
+      if Row > Object.Get_Height or
+         Col > Object.Get_Width
+      then
+         raise Malef.Exceptions.Bounds_Error with
+         "Cursor position out of Surface's bounds!";
+      end if;
+      Object.Reference.Cursor_Position := (Row, Col);
+   end Set_Cursor_Position;
 
+   procedure Set_Cursor_Position (Object : in out Base_Type;
+      Position : Cursor_Type) is
+   begin
+      if Position.Row > Object.Get_Height or
+         Position.Col > Object.Get_Width
+      then
+         raise Malef.Exceptions.Bounds_Error with
+         "Cursor position out of Surface's bounds!";
+      end if;
+      Object.Reference.Cursor_Position := Position;
+   end Set_Cursor_Position;
+
+   procedure Set_Position (Object : in out Base_Type;
+      Row : Row_Coord;
+      Col : Col_Coord) is
+   begin
       Object.Reference.Position := (Row, Col);
+   end Set_Position;
 
+   procedure Set_Position (Object : in out Base_Type;
+      Position : Coord_Type) is
+   begin
+      Object.Reference.Position := Position;
    end Set_Position;
 
 
+   -------------
+   -- PRIVATE --
+   -------------
+
+   procedure Check_Not_Null_Surface (Object : Base_Type) is
+   begin
+
+      if Object.Reference = Shared_Null_Surface'Access then
+         raise Malef.Exceptions.Null_Surface_Error
+         with "Cannot modify a null surface!";
+      end if;
+
+   end Check_Not_Null_Surface;
 
 
    overriding
@@ -413,9 +447,7 @@ package body Malef is
                     := Object.Reference;
    begin
 
-      if Old_Reference /= Shared_Null_Surface'Access and
-         Old_Reference /= Shared_Main_Surface'Access
-      then
+      if Old_Reference /= Shared_Null_Surface'Access then
          -- This is used to avoid finalising the same object twice.
          Object.Reference := Shared_Null_Surface'Access;
          Unreference (Old_Reference);
@@ -427,9 +459,7 @@ package body Malef is
    procedure Reference (Item : not null Shared_Surface_Access) is
    begin
 
-      if Item = Shared_Null_Surface'Access or
-         Item = Shared_Main_Surface'Access
-      then
+      if Item = Shared_Null_Surface'Access then
          return;
       end if;
 
@@ -447,9 +477,7 @@ package body Malef is
       Old : Shared_Surface_Access := Item;
    begin
 
-      if Old = Shared_Null_Surface'Access or
-         Old = Shared_Main_Surface'Access
-      then
+      if Old = Shared_Null_Surface'Access then
          return;
       end if;
 
@@ -459,16 +487,6 @@ package body Malef is
       end if;
 
    end Unreference;
-
-
-   function Get_Reference (Object : Base_Type)
-                           return Shared_Surface_Access is
-   begin
-
-      return Object.Reference;
-
-   end Get_Reference;
-
 
 end Malef;
 

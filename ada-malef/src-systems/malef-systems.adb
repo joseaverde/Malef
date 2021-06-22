@@ -44,8 +44,9 @@ package body Malef.Systems is
 
    procedure Restore_Terminal is separate;
 
-   procedure Get_Terminal_Size (Rows : out Row_Type;
-                                Cols : out Col_Type) is separate;
+   procedure Get_Terminal_Size (
+      Rows : out Row_Type;
+      Cols : out Col_Type) is separate;
 
 end Malef.Systems;
 

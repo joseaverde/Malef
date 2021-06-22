@@ -37,8 +37,8 @@ Python3 in the future, maybe before the first version release.
 | Language | Status |
 |:--------:|:------:|
 | Ada      | ![Ada](https://img.shields.io/badge/tests-passing-success)     |
-| C        | ![C](https://img.shields.io/badge/tests-passing-success)       |
-| Python3  | ![Python3](https://img.shields.io/badge/tests-passing-success) |
+| C        | ![C](https://img.shields.io/badge/tests-failing-critical)       |
+| Python3  | ![Python3](https://img.shields.io/badge/tests-failing-critical) |
 
 
 ## How to build it?

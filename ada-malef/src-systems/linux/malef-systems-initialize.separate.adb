@@ -81,7 +81,7 @@ separate (Malef.Systems)
 
       -- TODO: We search for the available styles and colours.
       Available_Styles := (others => True);
-      Available_Colors := (others => True);
+      Available_Colors := (Bit24 => True, others => False);
 
       -- Finally we prepare some components of the library.
       -- We set the `Has_Been_Initialized' variable to True temporarly so we
