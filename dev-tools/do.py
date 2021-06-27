@@ -40,7 +40,7 @@ import os
 import sys
 
 
-dirs = ["ada-malef", "c-malef", "py-malef", "tests"]
+dirs = ["ada-malef", "c-malef", "py-malef", "tests", "examples", "malef-db"]
 temp = dirs.copy()
 
 while len(temp) != 0:

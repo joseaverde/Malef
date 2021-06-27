@@ -244,6 +244,7 @@ begin
 
       The_Box.Clear;
       The_Box.Update;
+      Malef.Windows.Main_Window.Update;
       Malef.Windows.Main_Window.Draw;
 
       delay 0.1;
