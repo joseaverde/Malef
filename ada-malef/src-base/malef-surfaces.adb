@@ -49,17 +49,17 @@ package body Malef.Surfaces is
 
    -------------------------------------------------------------------------
 
-   function Create (Rows : Row_Type;
-                    Cols : Col_Type)
-                    return Surface_Type is
+   function Create (
+      Rows : Row_Type;
+      Cols : Col_Type)
+      return Surface_Type
+   is
       New_Surface : Surface_Type;
    begin
 
-      -- TODO-LEAK: Definitely lost
       New_Surface.Reference := new Shared_Surface_Type;
       New_Surface.Reference.Height := Rows;
       New_Surface.Reference.Width  := Cols;
-      -- TODO-LEAK: Indirectly lost
       New_Surface.Reference.Grid := new Matrix_Type (1 .. Rows, 1 .. Cols);
       New_Surface.Reference.Grid.all := (others => (others => Element_Type'(
          Format => Default_Format,
@@ -70,303 +70,167 @@ package body Malef.Surfaces is
    end Create;
 
 
-   function Cursor_Position (Object : Surface_Type) return Cursor_Type is
-      (Object.Reference.Cursor_Position);
-
-
-   function Get (Object   : Surface_Type;
-                 Position : Cursor_Type;
-                 Length   : Positive)
-                 return Str_Type is
-      Surface  : constant Shared_Surface_Access := Object.Reference;
-      Last_Col : constant Col_Type := Position.Col + Col_Type(Length - 1);
-      Str      : Str_Type (Positive(Position.Row) .. Natural(Last_Col));
+   function Get (Surface : Surface_Type;
+      Position : Cursor_Type;
+      Length   : Positive)
+      return Str_Type
+   is
+      Reference : constant Shared_Surface_Access := Surface.Reference;
+      Last_Col  : constant Col_Type := Position.Col + Col_Type(Length - 1);
+      Str       : Str_Type (Positive(Position.Row) .. Natural(Last_Col));
    begin
 
-      if Position.Row > Surface.Height or
-         Last_Col     > Surface.Width
+      if Position.Row > Reference.Height or
+         Last_Col     > Reference.Width
       then
          raise Malef.Exceptions.Bounds_Error
          with "String out of range!";
       end if;
 
       for Col in Str'Range loop
-         Str (Col) := Surface.Grid (Position.Row, Col_Type(Col)).Char;
+         Str (Col) := Reference.Grid (Position.Row, Col_Type(Col)).Char;
       end loop;
 
-      Move_Cursor_To (Surface, (Position.Row, Last_Col));
+      Move_Cursor_To (Reference, (Position.Row, Last_Col));
 
       return Str;
 
    end Get;
 
 
-   procedure Get (Object   : Surface_Type;
-                  Position : Cursor_Type;
-                  Item     : out Str_Type;
-                  Length   : out Positive) is
-      Surface : constant Shared_Surface_Access := Object.Reference;
+   procedure Get (Surface : Surface_Type;
+      Position : Cursor_Type;
+      Item     : out Str_Type;
+      Length   : out Positive)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Reference;
    begin
 
-      if Position.Row > Surface.Height or
-         Position.Col > Surface.Width
+      if Position.Row > Reference.Height or
+         Position.Col > Reference.Width
       then
          raise Malef.Exceptions.Bounds_Error
          with "Position out of bounds!";
       end if;
 
-      Length := Integer'Min (Integer(Surface.Width-Position.Col), Item'Length);
+      Length := Integer'Min (
+         Integer(Reference.Width - Position.Col), Item'Length);
       for Col in Col_Type range
          Position.Col .. Position.Col + Col_Type (Length)
       loop
          Item (Item'First + Integer(Col) - Integer(Position.Col)) :=
-            Surface.Grid (Position.Row, Col).Char;
+            Reference.Grid (Position.Row, Col).Char;
       end loop;
 
-      Move_Cursor_To (Surface, (Position.Row, Position.Col + Col_Type(Length)));
+      Move_Cursor_To (Reference,
+         (Position.Row, Position.Col + Col_Type(Length)));
 
    end Get;
 
 
-   procedure Get (Object : Surface_Type;
-                  Item   : out Str_Type;
-                  Length : out Positive) is
+   procedure Get (Surface : Surface_Type;
+      Item   : out Str_Type;
+      Length : out Positive) is
    begin
 
-      Object.Get (Object.Reference.Cursor_Position, Item, Length);
+      Surface.Get (Surface.Reference.Cursor_Position, Item, Length);
 
    end Get;
 
 
-   function Get (Object   : Surface_Type;
-                 Position : Cursor_Type)
-                 return Char_Type is
-      Surface : constant Shared_Surface_Access := Object.Reference;
+   function Get (Surface : Surface_Type;
+      Position : Cursor_Type)
+      return Char_Type
+   is
+      Reference : constant Shared_Surface_Access := Surface.Reference;
    begin
 
-      if Position.Row > Surface.Height or
-         Position.Col > Surface.Width
+      if Position.Row > Reference.Height or
+         Position.Col > Reference.Width
       then
          raise Malef.Exceptions.Bounds_Error
          with "Character out of bounds!";
       end if;
 
-      Move_Cursor_To (Surface, Position);
+      Move_Cursor_To (Reference, Position);
 
-      return Surface.Grid (Position.Row, Position.Col).Char;
+      return Reference.Grid (Position.Row, Position.Col).Char;
 
    end Get;
 
 
-   procedure Put (Object : Surface_Type;
-                  Onto   : Surface_Type) is
-      In_Surface  : constant Shared_Surface_Access := Object.Reference;
-      Out_Surface : constant Shared_Surface_Access := Onto.Reference;
-
-      --
-      -- We need to find two ranges, one for the X axis (cols) and another one
-      -- for the Y axis (rows). It depends on the relative position of both
-      -- surfaces.
-      --
-      -- Let's start with the X axis (cols)
-      From_Col : constant Col_Type := (
-         -- We check if the surface "onto" we want to print our surface is on
-         -- the left side (True) or on the right side (False). If they are in
-         -- the same position (True), then the first row in the range will be
-         -- the first one.
-         if In_Surface.Position.Col >= Out_Surface.Position.Col
-            --
-            -- Out_Surface (2)  In_Surface (1)
-            -- +-------+-----+---------------+
-            -- |       |#####|               |
-            -- |       |#####|               |
-            -- +-------+-----+---------------+
-            --
-            -- x1 > x2 -> We start printing from the begining of In_Surface.
-            -- x2 > x1 -> We count the offset
-            --
-         then In_Surface.Grid'First(2)       -- 1
-         else Col_Type(1 + Out_Surface.Position.Col - In_Surface.Position.Col)
-      );
-      -- We have to use integer, so no uncatchable Constraint_Error exception
-      -- is raised if the "out" surface is too far to the right.
-      To_Col : constant Integer := Integer(
-         -- It's the case oposite to the one above.
-         if In_Surface.Position.Col <= Out_Surface.Position.Col
-         then In_Surface.Grid'Last(2)        -- 1
-         else Col_Type(In_Surface.Position.Col + In_Surface.Grid'Length(2) -
-               Out_Surface.Position.Col)
-      );
-
-      -- For the rows is the same as above.
-      From_Row : constant Row_Type := (
-         if In_Surface.Position.Row >= Out_Surface.Position.Row
-         then In_Surface.Grid'First(1)
-         else Row_Type(1 +  Out_Surface.Position.Row - In_Surface.Position.Row)
-      );
-      To_Row : constant Integer := Integer(
-         if In_Surface.Position.Row <= Out_Surface.Position.Row
-         then In_Surface.Grid'Last(1)
-         else Row_Type(In_Surface.Position.Row + In_Surface.Grid'Length(1) -
-               Out_Surface.Position.Row)
-      );
-
-      --
-      -- Finally we have to check the starting position for the destination
-      -- (out) surface.
-      --
-      First_Col : constant Col_Type := (
-         -- It's the oposite case of From_Col.
-         if Out_Surface.Position.Col >= In_Surface.Position.Col
-         then Out_Surface.Grid'First(2)    -- 1
-         else Col_Type(1 + In_Surface.Position.Col - Out_Surface.Position.Col)
-      );
-      First_Row : constant Row_Type := (
-         if Out_Surface.Position.Row >= In_Surface.Position.Row
-         then Out_Surface.Grid'First(1)
-         else Row_Type(1 + In_Surface.Position.Row - Out_Surface.Position.Row)
-      );
-
-      The_Row : Row_Type;
-      The_Col : Col_Type;
-
+   procedure Put (Surface : Surface_Type;
+      Item     : Str_Type;
+      Position : Cursor_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Reference;
+      Last_Col  : constant Col_Type := Position.Col + Item'Length - 1;
    begin
 
-      Onto.Check_Not_Null_Surface;
+      Check_Not_Null_Surface (Surface);
 
-      -- We check that the ranges are ok.
-      if From_Col > In_Surface.Grid'Last(2) or
-         To_Col < Integer(From_Col)         or
-         From_Row > In_Surface.Grid'Last(1) or
-         To_Row < Integer(From_Row)
-      then
-         return;
-      end if;
-
-      for Row in Row_Type range From_Row .. Row_Type(To_Row) loop
-         for Col in Col_Type range From_Col .. Col_Type(To_Col) loop
-            The_Row := First_Row + Row - From_Row;
-            The_Col := First_Col + Col - From_Col;
-         -- exit when The_Row not in Out_Surface.Grid'Range(1) or
-         --           The_Col not in Out_Surface.Grid'Range(2);
-            Out_Surface.Grid (The_Row, The_Col) := In_Surface.Grid (Row, Col);
-         end loop;
-      end loop;
-
-      Move_Cursor_To (Out_Surface, (Row_Type(To_Row), Col_Type(To_Col)));
-
-   end Put;
-
-
-   procedure Put (Object   : Surface_Type;
-                  Onto     : Surface_Type;
-                  Position : Cursor_Type) is
-      In_Surface  : constant Shared_Surface_Access := Object.Reference;
-      Out_Surface : constant Shared_Surface_Access := Onto.Reference;
-
-      Last_Row : constant Row_Type := Row_Type'Min(
-         Out_Surface.Height, In_Surface.Height + Position.Row);
-      Last_Col : constant Col_Type := Col_Type'Min (
-         Out_Surface.Width, In_Surface.Width + Position.Col);
-   begin
-
-      Onto.Check_Not_Null_Surface;
-
-      if Position.Row > Out_Surface.Height or
-         Position.Col > Out_Surface.Width
-      then
-         raise Malef.Exceptions.Bounds_Error
-         with "Position out of surfaces bounds!";
-      end if;
-
-      for Row in Row_Type range Position.Row .. Last_Row loop
-         for Col in Col_Type range Position.Col .. Last_Col loop
-            Out_Surface.Grid (Row, Col) := In_Surface.Grid (
-               1 + Row - Position.Row,
-               1 + Col - Position.Col);
-         end loop;
-      end loop;
-
-      Move_Cursor_To (Out_Surface, (Last_Row, Last_Col));
-
-   end Put;
-
-
-   procedure Put (Object   : Surface_Type;
-                  Item     : Str_Type;
-                  Position : Cursor_Type) is
-      Surface  : constant Shared_Surface_Access := Object.Reference;
-      Last_Col : constant Col_Type := Position.Col + Item'Length - 1;
-   begin
-
-      Check_Not_Null_Surface (Object);
-
-      if Position.Row > Surface.Height or
-         Position.Col > Surface.Width  or
-         Last_Col     > Surface.Width
+      if Position.Row > Reference.Height or
+         Position.Col > Reference.Width  or
+         Last_Col     > Reference.Width
       then
          raise Malef.Exceptions.Bounds_Error
          with "String out of bounds!";
       end if;
 
       for Col in Col_Type range Position.Col .. Last_Col loop
-         Surface.Grid (Position.Row, Col) := Element_Type'(
-            Format => Surface.Cursor_Format,
+         Reference.Grid (Position.Row, Col) := Element_Type'(
+            Format => Reference.Cursor_Format,
             Char   => Item(Positive(Col_Type(Item'First) + Col - Position.Col))
          );
       end loop;
 
-      Move_Cursor_To (Surface, (Position.Row, Last_Col));
+      Move_Cursor_To (Reference, (Position.Row, Last_Col));
 
    end Put;
 
 
-   procedure Put (Object : Surface_Type;
-                  Item   : Str_Type) is
+   procedure Put (Surface : Surface_Type;
+      Item : Str_Type) is
    begin
 
-      Object.Put (Item, Object.Reference.Cursor_Position);
+      Surface.Put (Item, Surface.Reference.Cursor_Position);
 
    end Put;
 
 
-   procedure Put (Object   : Surface_Type;
-                  Item     : Char_Type;
-                  Position : Cursor_Type) is
-      Surface : constant Shared_Surface_Access := Object.Reference;
+   procedure Put (Surface : Surface_Type;
+      Item     : Char_Type;
+      Position : Cursor_Type)
+   is
+      Reference : constant Shared_Surface_Access := Surface.Reference;
    begin
 
-      Check_Not_Null_Surface (Object);
+      Check_Not_Null_Surface (Surface);
 
-      if Position.Row > Surface.Height or
-         Position.Col > Surface.Width
+      if Position.Row > Reference.Height or
+         Position.Col > Reference.Width
       then
          raise Malef.Exceptions.Bounds_Error
          with "Position out of bounds!";
       end if;
 
-      Surface.Grid (Position.Row, Position.Col) := Element_Type'(
+      Reference.Grid (Position.Row, Position.Col) := Element_Type'(
          Char   => Item,
-         Format => Surface.Cursor_Format
+         Format => Reference.Cursor_Format
       );
 
-      Move_Cursor_To (Surface, Position);
+      Move_Cursor_To (Reference, Position);
 
    end Put;
 
 
-   procedure Put (Object : Surface_Type;
-                  Item   : Char_Type) is
+   procedure Put (Surface : Surface_Type;
+      Item : Char_Type) is
    begin
 
-      Object.Put (Item, Object.Reference.Cursor_Position);
+      Surface.Put (Item, Surface.Reference.Cursor_Position);
 
    end Put;
-
-
---*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
---*--*- private -*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
---*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
 
 
 end Malef.Surfaces;

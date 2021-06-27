@@ -52,7 +52,7 @@ package body Malef.Systems.Dynamic_Library_Loader is
    function Get_Library_Prefix return String is
    begin
 
-      return "";
+      return "lib";
 
    end Get_Library_Prefix;
 

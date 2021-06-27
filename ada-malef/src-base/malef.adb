@@ -27,44 +27,12 @@
 -------------------------------------------------------------------------------
 
 with Ada.Unchecked_Deallocation;
+with Malef.Events;
 with Malef.Exceptions;
 with Malef.Surfaces;
 with Malef.Systems;
 
 package body Malef is
-
-   function "+" (Base, Over : Color_Type) return Color_Type
-   is
-      -- (100, 100, 100, 255) + (200, 200, 200, 255) = (200, 200, 200, 255)
-      -- (100, 100, 100,  10) + (200, 200, 200,  20) = (166, 166, 166,  30)
-      Alpha : constant Float := Float'Min
-         (255.0, Float(Base(A)) + Float(Over(A)));
-      Over_Strength : constant Float := Float(Over(A)) /
-      -- We check it's not 0.
-         (if Alpha = 0.0 then 1.0 else Alpha);
-      Base_Strength : constant Float := 1.0 - Over_Strength;
-   begin
-
-      if Alpha = 0.0 then
-         return (0, 0, 0, 0);
-      end if;
-
-      return Color : Color_Type
-      do
-         Color(R) := Color_Component_Type (
-            Float(Base(R)) * Base_Strength +
-            Float(Over(R)) * Over_Strength);
-         Color(G) := Color_Component_Type (
-            Float(Base(G)) * Base_Strength +
-            Float(Over(G)) * Over_Strength);
-         Color(B) := Color_Component_Type (
-            Float(Base(B)) * Base_Strength +
-            Float(Over(B)) * Over_Strength);
-         Color(A) := Color_Component_Type (Alpha);
-      end return;
-
-   end "+";
-
 
    --====-------------------------------------====--
    --====-- INITIALIZATION AND FINALIZATION --====--
@@ -72,6 +40,8 @@ package body Malef is
 
    Initialize_Lock : Boolean := False;
    procedure Initialize is
+      Dummy : Boolean;
+      pragma Unreferenced (Dummy);
    begin
 
       if Has_Been_Initialized then
@@ -86,12 +56,8 @@ package body Malef is
       Initialize_Lock := True;
 
       -- We prepare the terminal depending on the operating system.
-      Malef.Systems.Initialize;
       Malef.Systems.Prepare_Terminal;
-
-      -- We then get the size of the terminal.
-      Malef.Systems.Get_Terminal_Size(Rows => Height,
-                                      Cols => Width);
+      Malef.Systems.Initialize;
 
       -- Finally we tell the user the terminal has been initialized.
       Has_Been_Initialized := True;
@@ -173,13 +139,15 @@ package body Malef is
          "The Malef library hasn't been initialized yet!";
       end if;
 
-      Malef.Systems.Get_Terminal_Size(Rows => New_Height,
-                                      Cols => New_Width);
+      Malef.Systems.Get_Terminal_Size(
+         Rows => New_Height,
+         Cols => New_Width
+      );
 
       if New_Height /= Height or New_Width /= Width then
          Height := New_Height;
          Width  := New_Width;
-         -- TODO:
+         Malef.Events.Event_Handler.Update_Terminal_Size;
          return True;
       end if;
 

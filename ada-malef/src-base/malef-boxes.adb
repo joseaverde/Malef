@@ -241,51 +241,67 @@ package body Malef.Boxes is
 
    overriding
    procedure Update (Box : in out Box_Type) is
+      -- These variables are used to iterate the items inside the Box.
       Cursor : Object_Maps.Cursor := Box.Layers.First;
       Next   : Layer_Element;
       Base   : Shared_Surface_Access := Box.Reference;
 
+      -- These variables are used to delimite the bounds of the Box' internal
+      -- surface. Later, if it's resizable they will be fixed values. If not
+      -- the size is guessed from the relative positions of all the surfaces
+      -- and their sizes.
       Top    : Row_Coord := Row_Coord'Last;
       Bottom : Row_Coord := Row_Coord'First;
       Left   : Col_Coord := Col_Coord'Last;
       Right  : Col_Coord := Col_Coord'First;
 
+      -- These values are just the height and the width of the Box's internal
+      -- surface.
       Height : Row_Type := 1;
       Width  : Col_Type := 1;
 
       Row_Offset : Row_Type;
       Col_Offset : Col_Type;
+      Off_Row    : Row_Type;
+      Off_Col    : Col_Type;
 
-      function Sum (Base, Over : Element_Type) return Element_Type
-         with Inline is
+      function Sum (Base, Over : Element_Type;
+         Mode : Layer_Mode)
+         return Element_Type
+         with Inline, Pure_Function;
+
+      function Sum (Base, Over : Element_Type;
+         Mode : Layer_Mode)
+         return Element_Type is
       begin
          return Element : Element_Type
          do
             Element.Format.Styles := Over.Format.Styles;
             Element.Format.Attributes := Over.Format.Attributes;
-            Element.Format.Background_Color :=
-               Base.Format.Background_Color + Over.Format.Background_Color;
+            Element.Format.Background_Color := Sum (
+               Left  => Base.Format.Background_Color,
+               Right => Over.Format.Background_Color,
+               Mode  => Mode
+            );
 
             if Over.Char <= 32 then
-               Element.Format.Foreground_Color :=
-                  Base.Format.Foreground_Color + Over.Format.Background_Color;
+               Element.Format.Foreground_Color := Sum (
+                  Left  => Base.Format.Foreground_Color,
+                  Right => Over.Format.Background_Color,
+                  Mode  => Mode
+               );
                Element.Char := Base.Char;
             else
-               Element.Format.Foreground_Color :=
-                  Base.Format.Background_Color + Over.Format.Foreground_Color;
+               Element.Format.Foreground_Color := Sum (
+                  Left  => Base.Format.Background_Color,
+                  Right => Over.Format.Foreground_Color,
+                  Mode  => Mode
+               );
                Element.Char := Over.Char;
             end if;
          end return;
       end Sum;
 
-   -- procedure Put (Color : Color_Type) is
-   -- begin
-   --    Ada.Text_IO.Put_Line("(" &
-   --    Color(R)'Image & "," &
-   --    Color(G)'Image & "," &
-   --    Color(B)'Image & "," &
-   --    Color(A)'Image & " )");
-   -- end Put;
    begin
 
       if Box.Layers.Is_Empty then
@@ -293,10 +309,16 @@ package body Malef.Boxes is
          return;
       end if;
 
-      -- If it's resizable we first have to get its bounds.
       if Box.Resizable then
+         -- If the surface is resizable we have to calculate all it's bounds.
          while Object_Maps.Has_Element (Cursor) loop
+            -- We iterate through all the elements getting their dimensions and
+            -- relative positions.
             Next := Object_Maps.Element (Cursor);
+
+            if Next.Hidden then
+               goto NEXT_ITEM;
+            end if;
 
             Top    := Row_Coord'Min
                (Top, Next.Object.Position.Row);
@@ -309,8 +331,10 @@ package body Malef.Boxes is
                (Right, Next.Object.Position.Col + Col_Coord(
                   Next.Object.Width));
 
+            <<NEXT_ITEM>>
             Object_Maps.Next (Cursor);
          end loop;
+         -- We reset the iterator.
          Cursor := Box.Layers.First;
          Height := Row_Type (Bottom - Top);
          Width  := Col_Type (Right - Left);
@@ -324,40 +348,60 @@ package body Malef.Boxes is
          end if;
          Base.Position := (Top, Left);
          Base := Box.Reference;
-
-         -- Finally we can paste one surface over the other. We don't need to
-         -- check bounds since the surface has been resized to the size of the
-         -- layers. It may seem stupid to write twice the same thing, but it's
-         -- worth the time saved for calculations.
-         while Object_Maps.Has_Element (Cursor) loop
-            Next := Object_Maps.Element (Cursor);
-            Row_Offset := Row_Type (Next.Object.Position.Row - Top + 1);
-            Col_Offset := Col_Type (Next.Object.Position.Col - Left + 1);
-            for Row in Next.Object.Grid'Range (1) loop
-               for Col in Next.Object.Grid'Range (2) loop
-                  Base.Grid (Row + Row_Offset - 1, Col + Col_Offset - 1) :=
-                     -- Next.Object.Grid(Row, Col);
-                     Sum (Base => Base.Grid (Row + Row_Offset - 1,
-                                  Col + Col_Offset - 1),
-                          Over => Next.Object.Grid (Row, Col));
-               end loop;
-            end loop;
-            Object_Maps.Next (Cursor);
-         end loop;
       else
+         -- If it wasn't resizable, the operation is straightforward.
          Height := Base.Height;
          Width  := Base.Width;
          Top    := Base.Position.Row;
          Bottom := Top + Row_Coord(Height);
          Left   := Base.Position.Col;
          Right  := Left + Col_Coord(Width);
-         -- TODO
-         while Object_Maps.Has_Element (Cursor) loop
-            Next := Object_Maps.Element (Cursor);
-            Box.Reference := Next.Object;
-            Object_Maps.Next (Cursor);
-         end loop;
       end if;
+
+      -- Finally we can start iterating through all the elements of the Box
+      -- putting each one on top of the other. We suppose the Box' Surface to
+      -- be Clear. If the user doesn't want to Clear it first, it will still
+      -- contains its all contents.
+      while Object_Maps.Has_Element (Cursor) loop
+         Next := Object_Maps.Element (Cursor);
+         if Next.Hidden then
+            goto SKIP_PUT_ITEM;
+         end if;
+
+         -- We iterate alwasys trying to be in the range of both surfaces.
+         -- We have to put the surface inside Next on top of the one inside
+         -- Base, i.e: Base.Grid := Base.Grid + Next.Object.Grid
+         --
+         -- We need to calculate the offset.
+         Row_Offset := Row_Type (Next.Object.Position.Row - Top + 1);
+         Col_Offset := Col_Type (Next.Object.Position.Col - Left + 1);
+         Row_Loop: for Row in Row_Type range Next.Object.Grid'Range (1) loop
+            Off_Row := Row + Row_Offset - 1;
+            -- If the Offset Row wasn't inside the Box' range we skip it.
+            if Off_Row not in Base.Grid'Range (1) then
+               goto CONTINUE_ROW_LOOP;
+            end if;
+            Col_Loop: for Col in Col_Type range Next.Object.Grid'Range (2) loop
+               Off_Col := Col + Col_Offset - 1;
+               -- Similarly, if the offset Column wasn't in the Box' range we
+               -- skip the current iteration.
+               if Off_Col not in Base.Grid'Range(2) then
+                  goto CONTINUE_COL_LOOP;
+               end if;
+               Base.Grid (Off_Row, Off_Col) :=
+                  Sum (
+                     Base => Base.Grid (Off_Row, Off_Col),
+                     Over => Next.Object.Grid (Row, Col),
+                     Mode => Next.Mode
+                  );
+               <<CONTINUE_COL_LOOP>>
+            end loop Col_Loop;
+            <<CONTINUE_ROW_LOOP>>
+         end loop Row_Loop;
+
+         <<SKIP_PUT_ITEM>>
+         Object_Maps.Next (Cursor);
+      end loop;
 
    end Update;
 
@@ -407,6 +451,8 @@ package body Malef.Boxes is
 
       -- Finally we can SWITCH all the possible modes and return.
       case Mode is
+         when None =>
+            Result := Right;
          when Normal =>
             -- Result(C) = Right(C)
             for C in RGB'Range loop
@@ -443,6 +489,7 @@ package body Malef.Boxes is
                   Right_Strength * Float(Right(C)),
                   255.0));
             end loop;
+         -- TODO: Implement the rest of them
          when others => raise Constraint_Error with "Not implemented!";
       end case;
       Result (A) := Color_Component_Type (Alpha);

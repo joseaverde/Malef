@@ -68,22 +68,12 @@ package Malef.Surfaces is
    -- @return
    -- The surface itself.
    --
-   function Create (Rows : Row_Type;
-                    Cols : Col_Type)
-                    return Surface_Type;
+   function Create (
+      Rows : Row_Type;
+      Cols : Col_Type)
+      return Surface_Type;
 
-   --
-   -- This function returns the cursor position of an surface
-   --
-   -- @param Object
-   -- The surface itself.
-   --
-   -- @return
-   -- The position of the cursor inside a a surface.
-   --
-   function Cursor_Position (Object : Surface_Type) return Cursor_Type;
-
-   -- TODO: Replace Object for Surface
+   -- TODO: procedure Copy
 
    --
    -- This function returns the string in a given position and moves the cursor
@@ -105,15 +95,15 @@ package Malef.Surfaces is
    -- @exception Malef.Exceptions.Bounds_Error
    -- This exception is raised when the string ends up out of bounds.
    --
-   function Get (Object   : Surface_Type;
-                 Position : Cursor_Type;
-                 Length   : Positive)
-                 return Str_Type;
+   function Get (Surface : Surface_Type;
+      Position : Cursor_Type;
+      Length   : Positive)
+      return Str_Type;
 
-   function Get (Object : Surface_Type;
-                 Length : Positive)
-                 return Str_Type is
-      (Object.Get(Object.Cursor_Position, Length)) with Inline;
+   function Get (Surface : Surface_Type;
+      Length : Positive)
+      return Str_Type is
+      (Surface.Get(Surface.Get_Cursor_Position, Length)) with Inline;
 
    --
    -- As in the other Get functions, this ones moves the cursor to just after
@@ -133,14 +123,14 @@ package Malef.Surfaces is
    -- @param Length
    -- The length of the string retrieved.
    --
-   procedure Get (Object   : Surface_Type;
-                  Position : Cursor_Type;
-                  Item     : out Str_Type;
-                  Length   : out Positive);
+   procedure Get (Surface : Surface_Type;
+      Position : Cursor_Type;
+      Item     : out Str_Type;
+      Length   : out Positive);
 
-   procedure Get (Object : Surface_Type;
-                  Item   : out Str_Type;
-                  Length : out Positive) with Inline;
+   procedure Get (Surface : Surface_Type;
+      Item   : out Str_Type;
+      Length : out Positive) with Inline;
 
 
    --
@@ -156,68 +146,22 @@ package Malef.Surfaces is
    -- @exception Malef.Exceptions.Bounds_Error
    -- This exception is raised if the position was out of bounds.
    --
-   function Get (Object   : Surface_Type;
-                 Position : Cursor_Type)
-                 return Char_Type;
+   function Get (Surface : Surface_Type;
+      Position : Cursor_Type)
+      return Char_Type;
 
-   function Get (Object : Surface_Type)
-                 return Char_Type is
-      (Object.Get(Object.Cursor_Position)) with Inline;
+   function Get (Surface : Surface_Type)
+      return Char_Type is
+      (Surface.Get(Surface.Get_Cursor_Position)) with Inline;
 
+   -- TODO: Commment it
+   procedure Put (Surface : Surface_Type;
+      Item     : Str_Type;
+      Position : Cursor_Type);
 
-
-   --
-   -- This function puts a surface "onto" another one in the relative
-   -- position they would be depending on their coords, e.g:
-   --
-   --    +------------+
-   --    |            |
-   --    |       +-------------+
-   --    |       |####|        |
-   --    +-------|----+        |
-   --            |             |
-   --            +-------------+
-   --
-   -- The coloured part is the part that will be put onto the surface.
-   --
-   -- @param Object
-   -- The object we want to put.
-   --
-   -- @param Onto
-   -- The surface onto we want to put it.
-   --
-   -- @exception Malef.Exceptions.Null_Surface_Error
-   -- This exception is raised if you are trying to put a surface onto a null
-   -- surface, which cannot be overwritten.
-   --
-   procedure Put (Object : Surface_Type;
-                  Onto   : Surface_Type);
-
-   --
-   -- This function puts a surface "onto" another one given the position inside
-   -- the output surface.
-   --
-   -- @param Object
-   -- The object we want to put.
-   --
-   -- @param Onto
-   -- The surface we want to put it onto.
-   --
-   -- @exception Malef.Exceptions.Bounds_Error.
-   -- This exception is raised when the position of the surface is out of
-   -- bounds.
-   procedure Put (Object   : Surface_Type;
-                  Onto     : Surface_Type;
-                  Position : Cursor_Type);
-
-   procedure Put (Object   : Surface_Type;
-                  Item     : Str_Type;
-                  Position : Cursor_Type
-                  );--TODO: Mode     : Surface_Mode := Normal);
-
-   procedure Put (Object   : Surface_Type;
-                  Item     : Str_Type
-                  );--TODO Mode     : Surface_Mode := Normal) with Inline;
+   procedure Put (Surface : Surface_Type;
+      Item : Str_Type)
+      with Inline;
 
    --
    -- This procedure puts a character onto the surface.
@@ -228,16 +172,15 @@ package Malef.Surfaces is
    -- @param Item
    -- The character to put.
    --
-   procedure Put (Object   : Surface_Type;
-                  Item     : Char_Type;
-                  Position : Cursor_Type);
+   procedure Put (Surface : Surface_Type;
+      Item     : Char_Type;
+      Position : Cursor_Type);
 
-   procedure Put (Object   : Surface_Type;
-                  Item     : Char_Type) with Inline;
+   procedure Put (Surface : Surface_Type;
+      Item : Char_Type) with Inline;
 
    overriding procedure Update (Surface : in out Surface_Type) is null;
 
-   -- TODO: Copy
    Null_Surface : constant Surface_Type;
 
 --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-

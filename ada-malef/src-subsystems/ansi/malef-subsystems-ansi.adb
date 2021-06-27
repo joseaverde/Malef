@@ -256,6 +256,16 @@ package body Malef.Subsystems.Ansi is
       while Lock loop null; end loop;
       Lock := True;
 
+   -- FOR DEBUGGING PURPOSES
+   -- Std_Out.Write ("In_Row =" & In_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("In_Col =" & In_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Row =" & From_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Col =" & From_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Height =" & The_Height'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Width =" & The_Width'Image & ASCII.LF);
+   -- Std_Out.Write ("Height =" & Object.Height'Image & ASCII.LF);
+   -- Std_Out.Dump;
+
       -- We start by clearing the format to a default one, it will probably
       -- be changed, but it doesn't matter.
       Std_Out.Write (Get_Format(Last_Format));

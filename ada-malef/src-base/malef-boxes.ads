@@ -53,16 +53,15 @@ private with Ada.Containers.Ordered_Maps;
 -- coordinate point, the position of the surface will be it, and it will be
 -- stretched to fit all the Surfaces.
 -- WARNING: The Box_Type isn't task safe, if you want a task-safe variant use
---          Malef.Windows.Window_Type instead. Boxes are safe if you don't
---          update it and write it as the same time. If you have a more complex
---          library with tasks use the Window_Type instead. The only problem
---          Windows have is that you cannot get their references. For example,
---          if you have created your Box and added your surfaces and updated it
---          If you disable resizing, there should be no problem using them
---          (even if resizing is enabled). The problem arises when you Draw,
---          Read, Update and those things at the same time. If you keep your
---          Box in one thread even if it's a multithreaded program, you
---          shouldn't experience any problem.
+--   Malef.Windows.Window_Type instead. Boxes are safe if you don't update it
+--   and write it as the same time. If you have a more complex library with
+--   tasks use the Window_Type instead. The only problem Windows have is that
+--   you cannot get their references. For example, if you have created your Box
+--   and added your surfaces and updated it If you disable resizing, there
+--   should be no problem using them (even if resizing is enabled). The problem
+--   arises when you Draw, Read, Update and those things at the same time. If
+--   you keep your Box in one thread even if it's a multithreaded program, you
+--   shouldn't experience any problem.
 --
 package Malef.Boxes is
 
@@ -81,16 +80,23 @@ package Malef.Boxes is
    -- The layer modes are based on the GIMP ones:
    --    <https://docs.gimp.org/en/gimp-concepts-layer-modes.html>
    type Layer_Mode is (
+      None,
       Normal,
       Lighten,
       Screen,
       Dodge,
       Addition,
       Darken,
-      Contrast,
-      Inversion,
-      HSV_Components,
-      LCh_Components
+      Multiply,
+      Burn,
+      Overlay,
+      Soft_Light,
+      Hard_Light,
+      Difference,
+      Substract,
+      Grain_Extract,
+      Grain_Merge,
+      Divide
    );
 
    --

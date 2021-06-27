@@ -83,6 +83,7 @@ void _malef_restoreConsole ( void ) {
 
 }
 
+#include <stdio.h>
 
 // This function returns the number of rows and columns the terminal has got.
 void _malef_getConsoleScreenSize ( short *rows, short *cols ) {
@@ -93,6 +94,8 @@ void _malef_getConsoleScreenSize ( short *rows, short *cols ) {
 
    *rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
    *cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+   printf ("%d %d\n", *rows, *cols) ;
 
 }
 

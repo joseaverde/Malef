@@ -28,24 +28,47 @@
 -------------------------------------------------------------------------------
 
 with Malef.Colors;
+with Malef.Events;
+with Malef.Systems.Utils;
 
 separate (Malef.Systems)
    procedure Initialize is
    begin
 
+      Available_Styles := (others => True);
+      Available_Colors := (others => True);
       -- We prepare some components from the library.
       -- We first set the `Has_Been_Initialized' variable to True while we
       -- call some functions that require Malef to be initialised.
       Has_Been_Initialized := True;
 
+      Malef.Systems.Utils.Load_Libraries;
+      Load_Libraries_Scope:
+         declare
+            use type Malef.Subsystems.Subsystem_Access;
+            Check_Order : constant array (Positive range <>) of Subsystem_Kind
+                        := (CMD, Ncurses, ANSI);
+         begin
+
+            for Subsys of Check_Order loop
+               if Loaded_Subsystems (Subsys) /= null then
+                  Loaded_Subsystems (Choose) := Loaded_Subsystems (Subsys);
+                  goto Done_Load_Library_Scope;
+               end if;
+            end loop;
+
+            raise Malef.Exceptions.Initialization_Error with
+            "Couldn't initialise subsystems!";
+            <<Done_Load_Library_Scope>>
+
+         end Load_Libraries_Scope;
       -- TODO: Get the system's palette.
       Malef.Colors.Set_Palette(Malef.Colors.Windows_10_Console);
+      Malef.Events.Event_Handler.Update_Terminal_Size;
 
       -- We restore the previous state of the `Has_Been_Initialize' variable.
       Has_Been_Initialized := False;
 
-   -- TODO: Remove this.
-   exception when others => raise Malef.Exceptions.Initialization_Error;
    end Initialize;
 
 

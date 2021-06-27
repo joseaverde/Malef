@@ -122,25 +122,6 @@ package Malef is
       with Size => 32;
 
 
-   --
-   -- This function sums two colours keeping in mind the Alpha value. The
-   -- operation is done as if you placed Over over Base. So for example:
-   --
-   --    (128, 128, 128, 255) + (100, 100, 100, 255) = (100, 100, 100, 255)
-   --    (128, 128, 128, 128) + (100, 100, 100, 128) = (114, 114, 114, 255)
-   --
-   -- @param Base
-   -- The left operand.
-   --
-   -- @param Over
-   -- The right colour operand.
-   --
-   -- @return
-   -- The sum of the colours.
-   --
-   function "+" (Base, Over : Color_Type) return Color_Type;
-
-
 
    --====------------====--
    --====-- STYLES --====--
@@ -646,6 +627,7 @@ package Malef is
    -- @exception Malef.Exceptions.Initialization_Error
    -- This exception is raised if it hasn't been properly initialized.
    --
+   -- XXX: DEPRECIATED
    function Update_Terminal_Size return Boolean;
 
 

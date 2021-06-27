@@ -27,6 +27,7 @@
 -------------------------------------------------------------------------------
 
 with Malef.Boxes;
+pragma Elaborate (Malef.Boxes);
 
 --
 -- @summary
@@ -38,8 +39,9 @@ with Malef.Boxes;
 --
 package Malef.Windows is
 
-   pragma Elaborate_Body;
+   pragma Elaborate_Body (Malef.Windows);
 
+   -- TODO: Comment it
    protected type Window_Type is
       procedure Create (
          Height : Row_Type;
