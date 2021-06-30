@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---          M A L E F - S U B S Y S T E M S - T E X T _ I O . A D S          --
+-- MALEF- S U B S Y S T E M S - C O M P O N E N T S - P U T _ U T I L S .ADS --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,28 +26,27 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
--- TODO
+-- TODO: Comment it
 -- @summary
 --
 --
 -- @description
 --
-private package Malef.Subsystems.Text_IO is
+package Malef.Subsystems.Components.Put_Utils is
 
-   Length : constant := 1024;
+   Pass : exception;
 
-   protected type Std_Out is
-      entry Write (Data : in Str_Type);
-      entry Write (Data : in Char_Type);
-      entry Write (Data : in String);
-      entry Dump;
-   private
-      Buffer  : String (1 .. Length + 1);
-      Current : Natural  := 0;
-      Lock    : Boolean  := False;
-   end Std_Out;
+   procedure Get_Bounds (Object : Shared_Surface_Access;
+      In_Row     : out Row_Type;
+      In_Col     : out Col_Type;
+      From_Row   : out Row_Type;
+      From_Col   : out Col_Type;
+      The_Height : out Row_Type;
+      The_Width  : out Col_Type)
+      with Inline;
 
-end Malef.Subsystems.Text_IO;
+
+end Malef.Subsystems.Components.Put_Utils;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

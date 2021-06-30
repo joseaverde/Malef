@@ -28,10 +28,12 @@
 
 with Ada.Finalization;
 with Malef.Colors;
+with Malef.Subsystems.Components.Colors;
+with Malef.Subsystems.Components.Put_Utils;
 with Malef.Systems;
 with Malef.Systems.Utils; use Malef.Systems.Utils;
 
-package body Malef.Subsystems.Ansi is
+package body Malef.Subsystems.ANSI is
 
    type Subsystem_Controller is new Ada.Finalization.Limited_Controlled
       with null record;
@@ -224,47 +226,20 @@ package body Malef.Subsystems.Ansi is
 
    begin
 
-      -- We first define the bounds and calculate the offset to print it.
-      if Object.Position.Row + Row_Coord (Object.Height) < 1 or   -- Too up
-         Object.Position.Col + Col_Coord (Object.Width)  < 1 or   -- Too left
-         abs Object.Position.Row > Row_Coord (Height)        or   -- Too down
-         abs Object.Position.Col > Col_Coord (Width)              -- Too right
-      then
-         -- Nothing to be done.
-         return;
-      end if;
-
-      -- Otherwise it's safe to define the bounds.
-      -- If it starts out of bounds we let it start at the begining, we've
-      -- already checked the bounds.
-      In_Row := Row_Type
-         (if Object.Position.Row < 1 then 1 else Object.Position.Row);
-      In_Col := Col_Type
-         (if Object.Position.Col < 1 then 1 else Object.Position.Col);
-      From_Row := Row_Type
-         (if Object.Position.Row < 0 then abs Object.Position.Row else 1);
-      From_Col := Col_Type
-         (if Object.Position.Col < 0 then abs Object.Position.Col else 1);
-      The_Height := Row_Type'Min
-         (Height, Row_Type(Row_Coord(Object.Height) + Object.Position.Row))-1;
-      The_Width := Col_Type'Min
-         (Width, Col_Type(Col_Coord(Object.Width) + Object.Position.Col))-1;
+      Malef.Subsystems.Components.Put_Utils.Get_Bounds (Object => Object,
+         In_Row     => In_Row,
+         In_Col     => In_Col,
+         From_Row   => From_Row,
+         From_Col   => From_Col,
+         The_Height => The_Height,
+         The_Width  => The_Width
+      );
 
       -- We wait until the operation is unlocked because we can't put two
       -- surfaces onto the screen at the same time, because they may interfere.
       -- This is done so it's safe for multitasking.
-      while Lock loop null; end loop;
-      Lock := True;
-
-   -- FOR DEBUGGING PURPOSES
-   -- Std_Out.Write ("In_Row =" & In_Row'Image & ASCII.LF);
-   -- Std_Out.Write ("In_Col =" & In_Col'Image & ASCII.LF);
-   -- Std_Out.Write ("From_Row =" & From_Row'Image & ASCII.LF);
-   -- Std_Out.Write ("From_Col =" & From_Col'Image & ASCII.LF);
-   -- Std_Out.Write ("The_Height =" & The_Height'Image & ASCII.LF);
-   -- Std_Out.Write ("The_Width =" & The_Width'Image & ASCII.LF);
-   -- Std_Out.Write ("Height =" & Object.Height'Image & ASCII.LF);
-   -- Std_Out.Dump;
+      while Lock loop null; end loop; Lock := True;
+      Malef.Subsystems.Components.Colors.Precalculate;
 
       -- We start by clearing the format to a default one, it will probably
       -- be changed, but it doesn't matter.
@@ -288,6 +263,7 @@ package body Malef.Subsystems.Ansi is
             -- Once the format is set we proceed to write the character.
             case Object.Grid (Row, Col).Char is
                when 0 .. 31 | 127 =>
+                  -- TODO: Keep in mind attributes
                   -- Non printable characters.
                   -- TODO: Special treatment
                   Std_Out.Write (Get_Move (In_Row + Row - 1, In_Col + Col));
@@ -303,6 +279,9 @@ package body Malef.Subsystems.Ansi is
       Std_Out.Dump;
       Lock := False;
 
+   exception
+      -- Nothing to be done.
+      when Malef.Subsystems.Components.Put_Utils.Pass => return;
    end Put;
 
 
@@ -421,27 +400,18 @@ package body Malef.Subsystems.Ansi is
       Background : Color_Type)
       return String
    is
-      Raw_Fg : Color_Type;
-      Raw_Bg : Color_Type;
+      Raw_Fg : Color_Component_Type;
+      Raw_Bg : Color_Component_Type;
    begin
 
-      -- TODO: Find a fast formula.
-      -- Colour = 16 + 36*R + 6*G + B
-      --
-      -- We first reduce the colours.
-      for I in Color_Type'Range loop
-         Raw_Fg (I) := Foreground (I) / 43;
-         Raw_Bg (I) := Background (I) / 43;
-      end loop;
+      Malef.Subsystems.Components.Colors.To_Color_8 (Foreground, Raw_Fg);
+      Malef.Subsystems.Components.Colors.To_Color_8 (Background, Raw_Bg);
 
       return ASCII.ESC & '[' &
-               "38:5:" & To_String(16 + Raw_Fg(R)   * 36 +
-                                        Raw_Fg(G) * 6  +
-                                        Raw_Fg(B)) & ';' &
-               "48:5:" & To_String(16 + Raw_Bg(R)   * 36 +
-                                        Raw_Bg(G) * 6  +
-                                        Raw_Bg(B)) &
-               'm';
+               "38:5:" & To_String(Raw_FG) &
+                  ';' &
+               "48:5:" & To_String(Raw_BG) &
+                  'm';
 
    end Get_Color_8;
 
@@ -552,7 +522,7 @@ package body Malef.Subsystems.Ansi is
    SC : Subsystem_Controller;
    pragma Warnings (On);
 
-end Malef.Subsystems.Ansi;
+end Malef.Subsystems.ANSI;
 
  
 ---=======================-------------------------=========================---

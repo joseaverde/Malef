@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F _ S U B S Y S T E M S . G P R                  --
+--       M A L E F - S U B S Y S T E M S - C O M P O N E N T S . A D S       --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,54 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "shared.gpr";
-with "malef.gpr";
+-- TODO: Comment it
+-- @summary
+--
+--
+-- @description
+--
+private package Malef.Subsystems.Components is
 
-library project Malef_Subsystems is
-
-   for Library_Name use "Malef_" & Shared.Subsystem;
-   for Library_Kind use "relocatable";
-   for Library_Dir  use Shared.Prefix & "lib-" & Shared.System;
-
-   Prefix := "ada-malef/src-subsystems/";
-   Component := "Malef.Subsystems.Components";
-   Interfaces := ("Malef.Subsystems." & Shared.Subsystem);
-   Languages := ("Ada");
-
-   case Shared.Subsystem is
-      when "ansi" =>
-         Interfaces := Interfaces & (
-            Component,
-            Component & ".Text_IO",
-            Component & ".Colors",
-            Component & ".Put_Utils");
-      when "cmd" =>
-         Interfaces := Interfaces & (
-            Component,
-            Component & ".Text_IO",
-            Component & ".Colors",
-            Component & ".Put_Utils");
-         Languages := Languages & ("C");
-      when others =>
-         null;
-   end case;
-
-   for Library_Interface use Interfaces;
-   for Library_Standalone use "standard";
-
-   for Languages    use Languages;
-   for Source_Dirs  use (Prefix & Shared.Subsystem, Prefix & "components");
-   for Object_Dir   use Shared.Prefix & "obj-" & Shared.System & "." &
-                                        Shared.Subsystem;
-
-   for Create_Missing_Dirs use "True";
-
-   package Builder    renames Shared.Builder;
-   --package Compiler renames Shared.Compiler;
-   --package Binder   renames Shared.Binder;
-   --package Naming   renames Shared.Naming;
-
-end Malef_Subsystems;
+end Malef.Subsystems.Components;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

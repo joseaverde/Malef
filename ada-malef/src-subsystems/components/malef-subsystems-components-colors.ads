@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                  M A L E F _ S U B S Y S T E M S . G P R                  --
+--   MALEF - S U B S Y S T E M S - C O M P O N E N T S - C O L O R S . ADS   --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   G P R                                   --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -26,55 +26,66 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with "shared.gpr";
-with "malef.gpr";
+with Malef.Colors; use Malef.Colors;
 
-library project Malef_Subsystems is
+-- TODO: Comment it
+-- @summary
+--
+--
+-- @description
+--
+package Malef.Subsystems.Components.Colors is
 
-   for Library_Name use "Malef_" & Shared.Subsystem;
-   for Library_Kind use "relocatable";
-   for Library_Dir  use Shared.Prefix & "lib-" & Shared.System;
+   type H_Type  is delta 0.1 digits 4 range 0.0 .. 255.9;
+   type SB_Type is           digits 6 range 0.0 .. 1.0;
 
-   Prefix := "ada-malef/src-subsystems/";
-   Component := "Malef.Subsystems.Components";
-   Interfaces := ("Malef.Subsystems." & Shared.Subsystem);
-   Languages := ("Ada");
+   type HSB_Type is
+      record
+         Hue        : H_Type;
+         Saturation : SB_Type;
+         Brightness : SB_Type;
+      end record;
 
-   case Shared.Subsystem is
-      when "ansi" =>
-         Interfaces := Interfaces & (
-            Component,
-            Component & ".Text_IO",
-            Component & ".Colors",
-            Component & ".Put_Utils");
-      when "cmd" =>
-         Interfaces := Interfaces & (
-            Component,
-            Component & ".Text_IO",
-            Component & ".Colors",
-            Component & ".Put_Utils");
-         Languages := Languages & ("C");
-      when others =>
-         null;
-   end case;
+   procedure Precalculate;
 
-   for Library_Interface use Interfaces;
-   for Library_Standalone use "standard";
+   procedure To_Color_1 (Color : in HSB_Type;
+      Is_White : out Boolean)
+      with Inline;
 
-   for Languages    use Languages;
-   for Source_Dirs  use (Prefix & Shared.Subsystem, Prefix & "components");
-   for Object_Dir   use Shared.Prefix & "obj-" & Shared.System & "." &
-                                        Shared.Subsystem;
+   procedure To_Color_3 (Color : in HSB_Type;
+      Out_Color : out Color_Kind)
+      with Inline;
 
-   for Create_Missing_Dirs use "True";
+   procedure To_Color_4 (Color : HSB_Type;
+      Out_Color  : out Color_Kind;
+      Brightness : out Boolean)
+      with Inline;
 
-   package Builder    renames Shared.Builder;
-   --package Compiler renames Shared.Compiler;
-   --package Binder   renames Shared.Binder;
-   --package Naming   renames Shared.Naming;
+   procedure To_Color_8 (Color : Color_Type;
+      Out_Color : out Color_Component_Type)
+      with Inline;
 
-end Malef_Subsystems;
+   function To_HSB (Color : Color_Type)
+      return HSB_Type
+      with Pure_Function;
+
+   function To_RGB (Color : HSB_Type)
+      return Color_Type
+      with Pure_Function;
+
+private
+
+   Current_Palette : Palette_Type;
+   The_Palette : array(Palette_Type'Range(1),Palette_Type'Range(2))of HSB_Type;
+
+   type Percentage is delta 0.0001 range 0.0000 .. 1.0000;
+
+   function Color_Match (Left, Right : HSB_Type)
+      return Percentage
+      with Inline, Pure_Function;
+
+end Malef.Subsystems.Components.Colors;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
----=======================-------------------------=========================---
+---=======================-------------------------=========================--- 

@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---          M A L E F - S U B S Y S T E M S - T E X T _ I O . A D B          --
+--  MALEF - S U B S Y S T E M S - C O M P O N E N T S - T E X T _ I O . ADB  --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -29,7 +29,7 @@
 with Malef.Characters;
 with Interfaces.C_Streams;
 
-package body Malef.Subsystems.Text_IO is
+package body Malef.Subsystems.Components.Text_IO is
 
    protected body Std_Out is
 
@@ -131,7 +131,7 @@ package body Malef.Subsystems.Text_IO is
 
    end Std_Out;
 
-end Malef.Subsystems.Text_IO;
+end Malef.Subsystems.Components.Text_IO;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

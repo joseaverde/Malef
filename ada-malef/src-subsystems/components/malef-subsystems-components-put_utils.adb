@@ -1,7 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---  M A L E F - S Y S T E M S - S E T _ T I T L E . S E P A R A T E . A D B  --
---                             ( W I N D O W S )                             --
+-- MALEF- S U B S Y S T E M S - C O M P O N E N T S - P U T _ U T I L S .ADB --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -27,19 +26,56 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Interfaces.C;
+package body Malef.Subsystems.Components.Put_Utils is
 
-separate (Malef.Systems)
-   procedure Set_Title (Name : String) is
-      procedure C_Driver_Set_Console_Title (Title : Interfaces.C.Char_Array)
-         with Import        => True,
-              Convention    => C,
-              External_Name => "_malef_setConsoleTitle";
+   procedure Get_Bounds (Object : Shared_Surface_Access;
+      In_Row     : out Row_Type;
+      In_Col     : out Col_Type;
+      From_Row   : out Row_Type;
+      From_Col   : out Col_Type;
+      The_Height : out Row_Type;
+      The_Width  : out Col_Type) is
    begin
 
-      C_Driver_Set_Console_Title (Interfaces.C.To_C(Name));
+      -- We first define the bounds and calculate the offset to print it.
+      if Object.Position.Row + Row_Coord (Object.Height) < 1 or   -- Too up
+         Object.Position.Col + Col_Coord (Object.Width)  < 1 or   -- Too left
+         abs Object.Position.Row > Row_Coord (Height)        or   -- Too down
+         abs Object.Position.Col > Col_Coord (Width)              -- Too right
+      then
+         -- Nothing to be done.
+         raise Pass;
+      end if;
 
-   end Set_Title;
+      -- Otherwise it's safe to define the bounds.
+      -- If it starts out of bounds we let it start at the begining, we've
+      -- already checked the bounds.
+      In_Row := Row_Type
+         (if Object.Position.Row < 1 then 1 else Object.Position.Row);
+      In_Col := Col_Type
+         (if Object.Position.Col < 1 then 1 else Object.Position.Col);
+      From_Row := Row_Type
+         (if Object.Position.Row < 0 then abs Object.Position.Row else 1);
+      From_Col := Col_Type
+         (if Object.Position.Col < 0 then abs Object.Position.Col else 1);
+      The_Height := Row_Type'Min
+         (Height, Row_Type(Row_Coord(Object.Height) + Object.Position.Row))-1;
+      The_Width := Col_Type'Min
+         (Width, Col_Type(Col_Coord(Object.Width) + Object.Position.Col))-1;
+
+   -- FOR DEBUGGING PURPOSES
+   -- Std_Out.Write ("In_Row =" & In_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("In_Col =" & In_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Row =" & From_Row'Image & ASCII.LF);
+   -- Std_Out.Write ("From_Col =" & From_Col'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Height =" & The_Height'Image & ASCII.LF);
+   -- Std_Out.Write ("The_Width =" & The_Width'Image & ASCII.LF);
+   -- Std_Out.Write ("Height =" & Object.Height'Image & ASCII.LF);
+   -- Std_Out.Dump;
+
+   end Get_Bounds;
+
+end Malef.Subsystems.Components.Put_Utils;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

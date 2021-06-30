@@ -45,30 +45,31 @@
 
 // We assign the standard output handle to a static variable so we don't have
 // to call a function every time we need it.
-static HANDLE stdoutHandle;
+static HANDLE stdoutHandle ;
 
 // This variable contains the console's mode before the initialization.
-static DWORD  outModeInit;
+static DWORD  outModeInit ;
 
 // This function sets up the console.
 void _malef_setupConsole ( void ) {
 
-   DWORD outMode = 0;
-   stdoutHandle = GetStdHandle ( STD_OUTPUT_HANDLE );
+   DWORD outMode = 0 ;
+   stdoutHandle = GetStdHandle ( STD_OUTPUT_HANDLE ) ;
 
    if ( stdoutHandle == INVALID_HANDLE_VALUE ) {
-      exit ( GetLastError() );
+      exit ( GetLastError() ) ;
+      // TODO: Return exception
    }
 
    if ( ! GetConsoleMode ( stdoutHandle, &outMode ) ) {
-      exit ( GetLastError() );
+      exit ( GetLastError() ) ;
    }
 
-   outModeInit = outMode;
-   outMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+   outModeInit = outMode ;
+   outMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING ;
 
    if ( ! SetConsoleMode ( stdoutHandle, outMode ) ) {
-      exit ( GetLastError() );
+      exit ( GetLastError() ) ;
    }
 
 }
@@ -78,32 +79,21 @@ void _malef_setupConsole ( void ) {
 void _malef_restoreConsole ( void ) {
 
    if ( ! SetConsoleMode ( stdoutHandle, outModeInit ) ) {
-      exit ( GetLastError() );
+      exit ( GetLastError() ) ;
    }
 
 }
 
-#include <stdio.h>
 
 // This function returns the number of rows and columns the terminal has got.
 void _malef_getConsoleScreenSize ( short *rows, short *cols ) {
 
-   CONSOLE_SCREEN_BUFFER_INFO csbi;
+   CONSOLE_SCREEN_BUFFER_INFO csbi ;
 
-   GetConsoleScreenBufferInfo ( stdoutHandle, &csbi );
+   GetConsoleScreenBufferInfo ( stdoutHandle, &csbi ) ;
 
-   *rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-   *cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-
-   printf ("%d %d\n", *rows, *cols) ;
-
-}
-
-
-// This function changes the title of the console.
-void _malef_setConsoleTitle (const char* title) {
-
-   SetConsoleTitle ( title );
+   *rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1 ;
+   *cols = csbi.srWindow.Right - csbi.srWindow.Left + 1 ;
 
 }
 

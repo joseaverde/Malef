@@ -232,6 +232,9 @@ commands = {
                  "wine gprbuild -p -Pmake_all "
                     "-XMALEF_SYSTEM=windows "
                     "-XMALEF_SUBSYSTEM=cmd"],
+        "cmd": ["wine gprbuild -p -Pmalef_subsystems "
+                    "-XMALEF_SYSTEM=windows "
+                    "-XMALEF_SUBSYSTEM=cmd"],
         "windows": ["gprbuild -p -Pmake_all "
                         "-XMALEF_SYSTEM=windows "
                         "-XMALEF_SUBSYSTEM=ansi "],
