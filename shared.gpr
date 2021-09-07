@@ -29,8 +29,8 @@
 abstract project Shared is
 
    Major_Version := "0";
-   Minor_Version := "2";
-   Patch_Version := "4";
+   Minor_Version := "3";
+   Patch_Version := "0";
 
    --====-====------------====-====--
    --====-====- EXTERNAL -====-====--
@@ -43,10 +43,12 @@ abstract project Shared is
    Subsystem : Subsystem_Kind := External ("MALEF_SUBSYSTEM", "ansi");
 
 
-   type Library_Type_Type is ("relocatable", "static", "static-pic");
-   Library_Type : Library_Type_Type := External ("MALEF_LIBRARY_TYPE",
-                                                 External ("LIBRARY_TYPE",
-                                                           "relocatable"));
+   -- XXX: The library currently works only dynamicaly
+   -- type Library_Type_Type is ("relocatable", "static", "static-pic");
+   -- Library_Type : Library_Type_Type := External ("MALEF_LIBRARY_TYPE",
+   --                                               External ("LIBRARY_TYPE",
+   --                                                       "relocatable"));
+   Library_Type := "relocatable";
 
    type Enabled_Kind is ("enabled", "disabled");
    Compile_Checks   : Enabled_Kind := External ("MALEF_COMPILE_CHECKS",

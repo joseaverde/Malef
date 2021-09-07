@@ -191,6 +191,13 @@ procedure Boxes_Modes is
    begin
       Ada.Text_IO.Get_Immediate (Dummy, Available);
       return Available and then Dummy = 'q';
+   -- Available := Ada.Text_IO.End_Of_File (Ada.Text_IO.Standard_Input);
+   -- if Available then
+   --    Ada.Text_IO.Get_Immediate (Dummy);
+   --    return Dummy = 'q';
+   -- else
+   --    return False;
+   -- end if;
    end Quit;
 
    use type Malef.Row_Coord, Malef.Col_Coord, Malef.Boxes.Layer_Type;

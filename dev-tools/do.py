@@ -294,6 +294,11 @@ def usage():
         print(" *", op)
 
 
+def system (cmd):
+    if cmd[:4] == "wine":
+        cmd = "WINEDEBUG=-all " + cmd
+    os.system(cmd)
+
 def main():
     if len(sys.argv) == 1:
         usage()
@@ -308,12 +313,12 @@ def main():
 
         if isinstance(cmd, str):
             print("\033[2m%s\033[0m" % cmd)
-            os.system(cmd)
+            system(cmd)
         elif isinstance(cmd, list):
             for c in cmd:
                 if isinstance(c, str):
                     print("\033[2m%s\033[0m" % c)
-                    os.system(c)
+                    system(c)
                 else:
                     c()
         else:

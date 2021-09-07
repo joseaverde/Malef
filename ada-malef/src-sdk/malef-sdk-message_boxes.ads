@@ -1,11 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADB --
---                               ( L I N U X )                               --
+--           M A L E F - S D K - M E S S A G E _ B O X E S . A D S           --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -27,78 +26,50 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Interfaces.C;
-with Interfaces.C.Strings;
-with Malef.Exceptions;
+--
+-- @summary
+--
+--
+-- @description
+--
+generic
+   type Return_Type is (<>);
+package Malef.SDK.Message_Boxes is
 
-package body Malef.Systems.Dynamic_Library_Loader is
+   package Message_Boxes_Widgets is new Widgets (Return_Type);
 
-   function dlerror return Interfaces.C.Strings.Chars_Ptr
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlerror";
+   type Message_Box_Type is
+      new Message_Boxes_Widgets.Widget_Type with
+      private;
 
-   function dlopen (library_name : String;
-                    mode         : Interfaces.C.int)
-                    return Library_Handle
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlopen";
+   function Create (
+      Message          : Str_Type;
+      Foreground_Color : Color_Type;
+      Background_Color : Color_Type;
+      Selected_Color   : Color_Type;
+      Shadow_Color     : Color_Type := Default_Shadow_Color;
+      Borders          : String := "+-+| |+-+")
+      return Message_Box_Type
+   with Pre => Borders'Length = 9 and Borders'First = 1;
 
-   function dlclose (handle : Library_Handle)
-                     return Interfaces.C.int
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlclose";
+   overriding
+   function Run (Message_Box : in out Message_Box_Type)
+      return Return_Type;
 
-   RTLD_LAZY : constant := 1;
+private
 
-   function Get_Library_Prefix return String is
-   begin
+   type Message_Box_Type is
+      new Message_Boxes_Widgets.Widget_Type with
+      record
+         Message  : Str_Access;
+         Position : Return_Type := Return_Type'First;
+      end record;
 
-      return "lib";
+   overriding
+   procedure Update (Message_Box : in out Message_Box_Type) is null;
+   procedure Finalize (Message_Box : in out Message_Box_Type);
 
-   end Get_Library_Prefix;
-
-
-   function Get_Library_Suffix return String is
-   begin
-
-      return "so";
-
-   end Get_Library_Suffix;
-
-
-   function Load_Library (
-      Path : String)
-      return Library_Handle
-   is
-      Handle : Library_Handle;
-   begin
-
-      Handle := dlopen (Path & ASCII.Nul, RTLD_LAZY);
-
-      if Handle = Library_Handle (System.Null_Address) then
-         raise Malef.Exceptions.Initialization_Error
-         with Interfaces.C.Strings.Value (dlerror);
-      end if;
-
-      return Handle;
-
-   end Load_Library;
-
-
-   procedure Unload_Library (Handle : in out Library_Handle) is
-      Dummy : Interfaces.C.int
-         with Unreferenced;
-   begin
-
-      Dummy := dlclose (Handle);
-      Handle := Library_Handle (System.Null_Address);
-
-   end Unload_Library;
-
-end Malef.Systems.Dynamic_Library_Loader;
+end Malef.SDK.Message_Boxes;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

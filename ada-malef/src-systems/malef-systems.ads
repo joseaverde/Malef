@@ -118,14 +118,16 @@ private package Malef.Systems is
    Loaded_Subsystems_Handles : array (Subsystem_Kind'Range)
                                of Library_Handle
                              :=(others => Library_Handle(System.Null_Address));
-   Loaded_Subsystems : array (Subsystem_Kind'Range)
-                       of Malef.Subsystems.Subsystem_Access
-                     := (
+
+   type Subsystem_Access_Array is array (Subsystem_Kind'Range)
+      of Malef.Subsystems.Subsystem_Access;
+   Loaded_Subsystems : Subsystem_Access_Array := (
       None   => Malef.Subsystems.None.Subsystem_Handler'Access,
       Choose => Malef.Subsystems.None.Subsystem_Handler'Access,
       others => null);
    Current_Subsystem : Subsystem_Kind := Choose;
 
+   Previous_Subsystems : Subsystem_Access_Array;
 
    Available_Styles : array (Style_Type'Range) of Boolean := (others => False);
 

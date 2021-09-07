@@ -141,6 +141,7 @@ package body Malef.Systems.Utils is
                   := Library_Handle (System.Null_Address);
    begin
 
+      Previous_Subsystems := Loaded_Subsystems;
       -- We loop through all the libraries and try to load them, if they can be
       -- found by default by the linker. Otherwise we let them be just null and
       -- we do nothing.
@@ -169,12 +170,7 @@ package body Malef.Systems.Utils is
    begin
 
       -- The last subsystem is None, which can't be freed.
-      for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Pred(None) loop
-         if Loaded_Subsystems_Handles (Subsys) /= Null_Handle then
-            Unload_Library (Loaded_Subsystems_Handles (Subsys));
-            Loaded_Subsystems (Subsys) := null;
-         end if;
-      end loop;
+      Loaded_Subsystems := Previous_Subsystems;
       Loaded_Subsystems_Handles (Choose) := Null_Handle;
 
    end Unload_Libraries;

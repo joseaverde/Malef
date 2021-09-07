@@ -1,7 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADB --
---                               ( L I N U X )                               --
+--           M A L E F - S D K - M E S S A G E _ B O X E S . A D B           --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -27,78 +26,47 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Interfaces.C;
-with Interfaces.C.Strings;
-with Malef.Exceptions;
+package body Malef.SDK.Message_Boxes is
 
-package body Malef.Systems.Dynamic_Library_Loader is
-
-   function dlerror return Interfaces.C.Strings.Chars_Ptr
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlerror";
-
-   function dlopen (library_name : String;
-                    mode         : Interfaces.C.int)
-                    return Library_Handle
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlopen";
-
-   function dlclose (handle : Library_Handle)
-                     return Interfaces.C.int
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlclose";
-
-   RTLD_LAZY : constant := 1;
-
-   function Get_Library_Prefix return String is
+   function Create (
+      Message          : Str_Type;
+      Foreground_Color : Color_Type;
+      Background_Color : Color_Type;
+      Selected_Color   : Color_Type;
+      Shadow_Color     : Color_Type := Default_Shadow_Color;
+      Borders          : String := "+-+| |+-+")
+      return Message_Box_Type is
    begin
 
-      return "lib";
+      return Message_Box_Type'(Message_Boxes_Widgets.Widget_Type with
+         Message => new Str_Type'(Message),
+         others  => <>);
 
-   end Get_Library_Prefix;
+   end Create;
 
-
-   function Get_Library_Suffix return String is
+   overriding
+   function Run (Message_Box : in out Message_Box_Type)
+      return Return_Type is
    begin
 
-      return "so";
+      pragma Unreferenced (Message_Box);
 
-   end Get_Library_Suffix;
+      return Return_Type'First;
+
+   end Run;
 
 
-   function Load_Library (
-      Path : String)
-      return Library_Handle
-   is
-      Handle : Library_Handle;
+   overriding
+   procedure Finalize (Message_Box : in out Message_Box_Type) is
+      Upcast : constant access Base_Type := Base_Type(Message_Box)'Access;
    begin
 
-      Handle := dlopen (Path & ASCII.Nul, RTLD_LAZY);
+      Upcast.Finalize;
 
-      if Handle = Library_Handle (System.Null_Address) then
-         raise Malef.Exceptions.Initialization_Error
-         with Interfaces.C.Strings.Value (dlerror);
-      end if;
-
-      return Handle;
-
-   end Load_Library;
+   end Finalize;
 
 
-   procedure Unload_Library (Handle : in out Library_Handle) is
-      Dummy : Interfaces.C.int
-         with Unreferenced;
-   begin
-
-      Dummy := dlclose (Handle);
-      Handle := Library_Handle (System.Null_Address);
-
-   end Unload_Library;
-
-end Malef.Systems.Dynamic_Library_Loader;
+end Malef.SDK.Message_Boxes;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

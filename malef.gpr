@@ -41,6 +41,8 @@ project Malef is
                "malef-cursors.ads",
                "malef-events.ads",
                "malef-exceptions.ads",
+               "malef-sdk.ads",
+               "malef-sdk-message_boxes.ads",
                "malef-surfaces.ads",
                "malef-subsystems.ads",
                "malef-systems.ads",
@@ -52,6 +54,7 @@ project Malef is
                "malef-wrapper.ads");
 
    Src_Dirs := ("ada-malef/src-base",
+                "ada-malef/src-sdk",
                 "ada-malef/src-systems",
                 "ada-malef/src-systems/" & Shared.System,
                 "ada-malef/src-subsystems");

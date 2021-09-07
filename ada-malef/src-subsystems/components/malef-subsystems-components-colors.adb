@@ -173,7 +173,7 @@ package body Malef.Subsystems.Components.Colors is
       Brightness_Diff : constant Float := abs
          (Float(Left.Brightness) - Float(Right.Brightness));
    begin
-      return Percentage (1.0 - 
+      return Percentage (1.0 -
             (Hue_Diff / 360.0 + Saturation_Diff + Brightness_Diff) / 3.0);
    end Color_Match;
 

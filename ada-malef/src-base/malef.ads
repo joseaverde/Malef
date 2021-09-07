@@ -399,6 +399,8 @@ package Malef is
    --
    type Str_Type is array (Positive range <>) of Char_Type;
 
+   type Str_Access is access Str_Type;
+
 
    --====----------------------------====--
    --====-- INITIALIZATION OPTIONS --====--

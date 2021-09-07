@@ -1,11 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
--- MALEF - S Y S T E M S - D Y N A M I C _ L I B R A R Y _ L O A D E R . ADB --
---                               ( L I N U X )                               --
+--                         M A L E F - S D K . A D S                         --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                                  S P E C                                  --
 --                                                                           --
 -------------------------------------------------------------------------------
 --     Copyright (c) 2021 José Antonio Verde Jiménez All Rights Reserved     --
@@ -27,78 +26,49 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Interfaces.C;
-with Interfaces.C.Strings;
-with Malef.Exceptions;
+with Malef.Boxes;
+with Malef.Surfaces;
 
-package body Malef.Systems.Dynamic_Library_Loader is
+--
+-- @summary
+-- This package is meant to facilitate the creation of interactive porgrams
+-- with the Malef API.
+--
+-- @description
+-- This package declares a new type called Widget which is derived from the Box
+-- type which helps with the creation of interactive applications such as
+-- message boxes or other kind of things. This was planned to be added in
+-- future versions but I needed it for a current project.
+--
+package Malef.SDK is
 
-   function dlerror return Interfaces.C.Strings.Chars_Ptr
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlerror";
+   Default_Shadow_Color : constant Color_Type := (0, 0, 0, 128);
 
-   function dlopen (library_name : String;
-                    mode         : Interfaces.C.int)
-                    return Library_Handle
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlopen";
+   generic
+      type Return_Type is (<>);
+   package Widgets is
 
-   function dlclose (handle : Library_Handle)
-                     return Interfaces.C.int
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlclose";
+      type Widget_Type is abstract new Base_Type with private;
 
-   RTLD_LAZY : constant := 1;
+      function Run (Widget : in out Widget_Type)
+         return Return_Type is abstract;
 
-   function Get_Library_Prefix return String is
-   begin
+   private
 
-      return "lib";
+      type Widget_Type is abstract new Base_Type with
+         record
+            Box     : Malef.Boxes.Box_Type;
+            Surface : Malef.Surfaces.Surface_Type;
+            Shadow  : Malef.Surfaces.Surface_Type;
+         end record;
 
-   end Get_Library_Prefix;
+      overriding
+      function Get_Reference (Widget : in Widget_Type)
+         return Surface_Reference;
 
+   end Widgets;
 
-   function Get_Library_Suffix return String is
-   begin
-
-      return "so";
-
-   end Get_Library_Suffix;
-
-
-   function Load_Library (
-      Path : String)
-      return Library_Handle
-   is
-      Handle : Library_Handle;
-   begin
-
-      Handle := dlopen (Path & ASCII.Nul, RTLD_LAZY);
-
-      if Handle = Library_Handle (System.Null_Address) then
-         raise Malef.Exceptions.Initialization_Error
-         with Interfaces.C.Strings.Value (dlerror);
-      end if;
-
-      return Handle;
-
-   end Load_Library;
-
-
-   procedure Unload_Library (Handle : in out Library_Handle) is
-      Dummy : Interfaces.C.int
-         with Unreferenced;
-   begin
-
-      Dummy := dlclose (Handle);
-      Handle := Library_Handle (System.Null_Address);
-
-   end Unload_Library;
-
-end Malef.Systems.Dynamic_Library_Loader;
+end Malef.SDK;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--
