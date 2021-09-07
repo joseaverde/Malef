@@ -7,15 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2021-04-00
+## [0.3.0] - 2021-09-07
 ### Added
-- Added database
-- Added UTF-8 encoding
+- Added database (still in development).
+- Added UTF-8 encoding.
 - Added "packager" for different package managers.
+- Added the Box_Type, Window_Type and adding Widget_Type.
+- Implemented CMD subsystem.
 
 ### Fixed
-- Python binding now works on Windows
-- Fixed UTF8 encoding bugs
+- Python binding now works on Windows.
+- Fixed UTF8 encoding bugs.
+- Various other things.
 
 ## [0.2.4] - 2021-04-09
 ### Added
