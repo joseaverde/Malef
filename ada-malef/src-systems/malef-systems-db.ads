@@ -30,7 +30,8 @@ with Interfaces;
 
 --
 -- @summary
---
+-- This package is used to load the Malef Data Bases and find which
+-- configuration is the best.
 --
 -- @description
 --

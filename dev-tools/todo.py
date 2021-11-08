@@ -69,15 +69,16 @@ def _get_task (todo_dict, data):
 
 fields = {
         "all"     : lambda name : True,
-        "bugs"    : lambda name : "_bug"    in name or "bug_" in name,
-        "ada"     : lambda name : "_ada"    in name or "ada_" in name,
-        "c"       : lambda name : "_c"      in name or "c_"   in name,
-        "py"      : lambda name : "_py"     in name or "py_"  in name,
-        "doc"     : lambda name : "_doc"    in name or "doc_" in name,
-        "sys"     : lambda name : "_sys"    in name or "sys_" in name,
-        "tests"   : lambda name : "tests"   in name,
-        "cleanup" : lambda name : "cleanup" in name,
-        "colors"  : lambda name : "colors"  in name,
+        "bugs"    : lambda name : "_bug"     in name or "bug_" in name,
+        "ada"     : lambda name : "_ada"     in name or "ada_" in name,
+        "c"       : lambda name : "_c"       in name or "c_"   in name,
+        "py"      : lambda name : "_py"      in name or "py_"  in name,
+        "doc"     : lambda name : "_doc"     in name or "doc_" in name,
+        "sys"     : lambda name : "_sys"     in name or "sys_" in name,
+        "tests"   : lambda name : "tests"    in name,
+        "cleanup" : lambda name : "cleanup"  in name,
+        "colors"  : lambda name : "colors"   in name,
+        "surfaces": lambda name : "surfaces" in name,
 }
 
 

@@ -28,6 +28,7 @@
 
 with Malef;
 with Test_Malef;
+with Test_Malef.Surfaces;
 with Tests;
 
 procedure Main is
@@ -35,6 +36,7 @@ begin
 
    Tests.Start;
    Tests.Wrap (Test_Malef.Main'Access, "Malef");
+   Tests.Wrap (Test_Malef.Surfaces.Main'Access, "Malef.Surfaces");
 
    if Malef.Is_Initialized then
       Malef.Finalize;

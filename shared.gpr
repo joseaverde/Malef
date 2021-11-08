@@ -44,10 +44,10 @@ abstract project Shared is
 
 
    -- XXX: The library currently works only dynamicaly
-   -- type Library_Type_Type is ("relocatable", "static", "static-pic");
-   -- Library_Type : Library_Type_Type := External ("MALEF_LIBRARY_TYPE",
-   --                                               External ("LIBRARY_TYPE",
-   --                                                       "relocatable"));
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Type_Type := External ("MALEF_LIBRARY_TYPE",
+                                                 External ("LIBRARY_TYPE",
+                                                         "relocatable"));
    Library_Type := "relocatable";
 
    type Enabled_Kind is ("enabled", "disabled");
@@ -133,7 +133,7 @@ abstract project Shared is
    case Build_Mode is
       when "optimize" =>
          Build_Switches := Build_Switches &
-            ("-O3",     -- Optimization
+            ("-O2",     -- Optimization
              "-gnatn"); -- Enable inlining
       when "debug" =>
          Build_Switches := Build_Switches &

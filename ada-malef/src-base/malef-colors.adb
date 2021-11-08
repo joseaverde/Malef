@@ -421,6 +421,7 @@ package body Malef.Colors is
          Format.Background_Color := Palette(False, White);
       Default_Element.Format.Foreground_Color := Palette (False, White);
       Default_Element.Format.Background_Color := Palette (False, Black);
+      Default_Element.Format.Background_Color(A) := 0;
 
       Current_Palette := Palette;
 
@@ -443,6 +444,7 @@ package body Malef.Colors is
          Format.Background_Color := Current_Palette(False, White);
       Default_Element.Format.Foreground_Color := Current_Palette(False, White);
       Default_Element.Format.Background_Color := Current_Palette(False, Black);
+      Default_Element.Format.Background_Color(A) := 0;
 
    end Set_Palette;
 

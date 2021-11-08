@@ -222,6 +222,15 @@ def main():
         top     = '#' + '='*77 + '#'
         bottom  = top
 
+    elif ext == "bat":
+        header_kind = center("B A T C H   S C R I P T")
+        body = ""
+        shebang = "@echo off\n"
+        comment = ":"
+        wrapper = "::"
+        top = "::" + "="*75 + "::"
+        bottom = top
+
     else:
         print(ext + ": Unknown extension!",
               file=sys.stderr)

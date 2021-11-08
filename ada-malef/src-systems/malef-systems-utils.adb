@@ -163,14 +163,25 @@ package body Malef.Systems.Utils is
 
    end Load_Libraries;
 
-   --
+
    procedure Unload_Libraries is
+      --use type Library_Handle;
+      use type Malef.Subsystems.Subsystem_Access;
       Null_Handle : constant Library_Handle
                   := Library_Handle (System.Null_Address);
    begin
 
+      -- We unload the libraries.
+      for Subsys in Subsystem_Kind range ANSI .. Subsystem_Kind'Last loop
+         if Previous_Subsystems (Subsys) = null and
+            Loaded_Subsystems_Handles (Subsys) /= Null_Handle
+         then
+            Unload_Library (Loaded_Subsystems_Handles(Subsys));
+         end if;
+         Loaded_Subsystems (Subsys) := Previous_Subsystems (Subsys);
+      end loop;
+
       -- The last subsystem is None, which can't be freed.
-      Loaded_Subsystems := Previous_Subsystems;
       Loaded_Subsystems_Handles (Choose) := Null_Handle;
 
    end Unload_Libraries;

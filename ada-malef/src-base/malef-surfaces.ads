@@ -55,6 +55,14 @@ package Malef.Surfaces is
    --
    type Surface_Type is new Base_Type with null record;
 
+   overriding
+   function "=" (Left, Right : Surface_Type)
+      return Boolean;
+
+
+   function Copy (Surface : Surface_Type)
+      return Surface_Type;
+
 
    --
    -- This function creates a surface of a given number of rows and columns.
@@ -72,8 +80,6 @@ package Malef.Surfaces is
       Rows : Row_Type;
       Cols : Col_Type)
       return Surface_Type;
-
-   -- TODO: procedure Copy
 
    --
    -- This function returns the string in a given position and moves the cursor

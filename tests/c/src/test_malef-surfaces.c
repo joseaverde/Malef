@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *                                                                           * 
- *                                M A I N . C                                * 
+ *                 T E S T _ M A L E F - S U R F A C E S . C                 * 
  *                                                                           * 
  *                                 M A L E F                                 * 
  *                                                                           * 
@@ -25,25 +25,6 @@
  * with this program. If not, see <https://www.gnu.org/licenses/>.           * 
  *                                                                           * 
 \*****************************************************************************/
-
-#include "Malef.h"
-#include "tests.h"
-#include "test_malef.h"
-#include "test_malef-surfaces.h"
-
-int
-main ( void ) {
-
-   tests_start ("<>") ;
-   tests_start ("Malef"); test_malef_main () ;
-   tests_start ("Malef Surfaces"); test_malef_surfaces_main () ;
-
-   if ( malef_isInitialized () ) {
-      malef_finalize () ;
-   }
-
-   return 0 ;
-}
 
 
 ///=======================/////////////////////////=========================///

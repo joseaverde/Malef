@@ -484,7 +484,48 @@ malef_wrapper ( void* (*function)(void*),
  */
 extern malef_error_t
 malef_assignSurface ( malef_surface_t in surface,
-                      malef_surface_t in to_surface ) ;
+      malef_surface_t in to_surface ) ;
+
+
+/*
+ * This function compares two surfaces and returns true if they are equal and
+ * false if they aren't. What is compared is the matrix, not the position,
+ * because a pencil is the same on a table and on a chair.
+ *
+ * @param left
+ * (IN)  The surface on the left (like when operating with the == operator).
+ *
+ * @param right
+ * (IN)  The surface on the right.
+ *
+ * @return
+ * It returns whether they are equal. No error checking is done here.
+ */
+extern bool
+malef_compareSurface (
+   malef_surface_t in left,
+   malef_surface_t in right ) ;
+
+
+/*
+ * This function is used to copy the inner matrix of a surface into another
+ * one. The second one if it wasn't null it will be unreferenced and will
+ * contain the copy of the surface. Other elements such as position are not
+ * copied.
+ *
+ * @param surface
+ * (IN)  The surface to copy.
+ *
+ * @param to_surface
+ * (IN)  This is the surface where the copy will be stored, keep in mind that
+ *       it should be null or contain another surface.
+ *
+ * @return
+ * It returns the error code.
+ */
+extern malef_error_t
+malef_copySurface ( malef_surface_t in surface,
+   malef_surface_t out to_surface ) ;
 
 
 /*

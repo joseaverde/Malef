@@ -223,6 +223,13 @@ _ = ",".join(filter(lambda f: f.split('.')[-1] == "ads",
 
 commands = {
         "linux": "gprbuild -p -Pmake_all -m -m2",
+        "python" : "gprbuild -p -Ppy_malef",
+        "static": ["gprbuild -p -Pmalef -m -m2 "
+                        "-XMALEF_LIBRARY_TYPE=static",
+                    "gprbuild -p -Pmalef_subsystems -m -m2 "
+                        "-XMALEF_LIBRARY_TYPE=static",
+                    "gprbuild -p -Pc_malef -m -m2 "
+                        "-XMALEF_LIBRARY_TYPE=static"],
         "force": "gprbuild -p -Pmake_all -f "
                     "-XMALEF_BUILD_MODE=optimize "
                     "-XMALEF_SYSTEM=linux ",

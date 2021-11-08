@@ -32,7 +32,7 @@ with "malef.gpr";
 library project Malef_Subsystems is
 
    for Library_Name use "Malef_" & Shared.Subsystem;
-   for Library_Kind use "relocatable";
+   for Library_Kind use Shared.Library_Type;
    for Library_Dir  use Shared.Prefix & "lib-" & Shared.System;
 
    Prefix := "ada-malef/src-subsystems/";

@@ -1,4 +1,6 @@
 This is a list of **bugs** found with tests:
 
-[py][malef.getWidth][FIXED][Returned malef.getHeight instead]
+[py][malef.getWidth][FIXED][Returned malef.getHeight instead.]
 [all][malef.systems][FIXED][Error with None subsystem.]
+[all][malef.systems.prepare_terminal][Can't initialise after finalising because of null pointers to strings (Stty_Path, Tput_Path)]
+[all][malef.systems.utils][When library was finalised subsystems weren't unloaded and thus they couldn't be loaded again]

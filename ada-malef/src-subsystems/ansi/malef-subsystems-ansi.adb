@@ -33,6 +33,8 @@ with Malef.Subsystems.Components.Put_Utils;
 with Malef.Systems;
 with Malef.Systems.Utils; use Malef.Systems.Utils;
 
+with Ada.Text_IO;
+
 package body Malef.Subsystems.ANSI is
 
    type Subsystem_Controller is new Ada.Finalization.Limited_Controlled

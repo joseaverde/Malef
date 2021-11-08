@@ -108,6 +108,7 @@ package body Tests is
    exception
       when Error : others =>
          Put_Data (Ada.Exceptions.Exception_Name(Error));
+         Ada.Text_IO.Put_Line (Ada.Exceptions.Exception_Message(Error));
    end Test;
 
 

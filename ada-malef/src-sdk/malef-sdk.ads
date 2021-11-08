@@ -40,31 +40,71 @@ with Malef.Surfaces;
 -- message boxes or other kind of things. This was planned to be added in
 -- future versions but I needed it for a current project.
 --
+-- The internal mechanisms work in the following way:
+--
+-- Every Widget is an object derived from Widget_Type. Every Widget
+-- has three functions Run, Update and Assign and a Return_Type. The
+-- Return_Type is usually an enumeration type -- but it can be an integer
+-- type -- which is returned by the Run function. Every possible return type
+-- may have Assign'ed a Widget to it. When the user selects them these Widgets
+-- will be runned (recursively). And they also contain an Update function
+-- which is runned for all the Widgets, for example: if you have created a
+-- menu: Menu -> File -> Open -> Select File. Then those four widgets will be
+-- updated (a parameter Focused is passed so you can know if the user
+-- currently interacting with that same widget.
+--
+-- Malef defines several Widgets so you can start working on your project
+-- right away:
+--
+--  * Multy Widgets: This Widget is a set of Widgets.
+--  * Function Widget: This Widget are just user-defined functions which
+--  return Return_Type values.
+--  * String Widget: This simple Widget is for getting user input.
+--  * Message Widget: This Widget is like menus but contain a big message.
+--  * Menu Widgets: Menu Widgets.
+--
+-- You can learn more about their usage in the different sources.
+--
 package Malef.SDK is
+
+   type Horizontal_Alignment_Type is (
+      Align_Left, Align_Right, Centered, Justified);
+   type Vertical_Alignment_Type is (
+      Align_Top, Align_Bottom, Centered);
 
    Default_Shadow_Color : constant Color_Type := (0, 0, 0, 128);
 
    generic
+      -- The return type is either an Enumeration type or an Integer type which
+      -- is returned by the Widget when it has interacted with the user you can
+      -- use as return types things like:
+      --    type Return_Type is (Ok);
+      --    type Return_Type is (No, Yes);
+      --    type Return_Type is Integer range 1 .. 3;
       type Return_Type is (<>);
    package Widgets is
 
-      type Widget_Type is abstract new Base_Type with private;
-
-      function Run (Widget : in out Widget_Type)
-         return Return_Type is abstract;
-
-   private
-
+      --type Return_Array is array (Return_Type'Range) of Widget_Type'Class;
       type Widget_Type is abstract new Base_Type with
          record
             Box     : Malef.Boxes.Box_Type;
             Surface : Malef.Surfaces.Surface_Type;
             Shadow  : Malef.Surfaces.Surface_Type;
+            --Next    :
          end record;
+
+      type Any_Widget_Access is not null access Widget_Type'Class;
 
       overriding
       function Get_Reference (Widget : in Widget_Type)
          return Surface_Reference;
+
+      --
+      -- This function when runned tells the user
+      function Run (Widget : in out Widget_Type)
+         return Return_Type is abstract;
+
+      procedure Append
 
    end Widgets;
 

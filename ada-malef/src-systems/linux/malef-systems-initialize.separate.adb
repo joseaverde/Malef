@@ -37,40 +37,7 @@ with Malef.Systems.Utils;
 
 separate (Malef.Systems)
    procedure Initialize is
-
-      Found_Stty_Path : constant String := Malef.Systems.Utils.Get_Path(
-                           Program_Name                   => "stty",
-                           PATH_Environment_Variable_Name => "PATH",
-                           Default_PATHS                  => "/usr/bin:" &
-                                                             "/bin");
-      Found_Tput_Path : constant String := Malef.Systems.Utils.Get_Path(
-                           Program_Name                   => "tput",
-                           PATH_Environment_Variable_Name => "PATH",
-                           Default_PATHS                  => "/usr/bin:"&
-                                                             "/bin");
    begin
-
-      -- We seach the paths for `stty' and `tput'.
-      if Found_Stty_Path = "" then
-         raise Malef.Exceptions.Initialization_Error with
-         "`stty' not found in PATH, couldn't initialise the terminal!";
-      end if;
-
-      if Found_Tput_Path = "" then
-         raise Malef.Exceptions.Initialization_Error with
-         "`tput' not found in PATH, couldn't initialise the terminal!";
-      end if;
-
-      if Stty_Path /= null then
-         Free(Stty_Path);
-      end if;
-
-      if Tput_Path /= null then
-         Free(Tput_Path);
-      end if;
-
-      Stty_Path := new String'(Found_Stty_Path & '/' & "stty");
-      Tput_Path := new String'(Found_Tput_Path & '/' & "tput");
 
       -- We attach all the interrupt handlers.
       Ada.Interrupts.Attach_Handler(

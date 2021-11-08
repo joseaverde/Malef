@@ -1,7 +1,13 @@
 {
    "general": {
       "subsystem": "ansi",
-      "config-files": ["$KITTY_CONFIG_DIRECTORY", "$XDG_CONFIG_HOME/kitty/kitty.conf", "$HOME/.config/kitty/kitty.conf", "$XDG_CONFIG_DIRS/kitty/kitty.conf", "/etc/xdg/kitty/kitty.conf"],
+      "config-files": [
+         "$KITTY_CONFIG_DIRECTORY",
+         "$XDG_CONFIG_HOME/kitty/kitty.conf",
+         "$HOME/.config/kitty/kitty.conf",
+         "$XDG_CONFIG_DIRS/kitty/kitty.conf",
+         "/etc/xdg/kitty/kitty.conf"
+      ],
       "syntax": {
          "black": [
             "color0 +",
@@ -94,5 +100,89 @@
       "4-bits": true,
       "8-bits": true,
       "24-bits": true
+   },
+   "defaults": {
+      "black": [
+         0,
+         0,
+         0
+      ],
+      "red": [
+         0,
+         0,
+         0
+      ],
+      "yellow": [
+         0,
+         0,
+         0
+      ],
+      "green": [
+         0,
+         0,
+         0
+      ],
+      "blue": [
+         0,
+         0,
+         0
+      ],
+      "magenta": [
+         0,
+         0,
+         0
+      ],
+      "cyan": [
+         0,
+         0,
+         0
+      ],
+      "white": [
+         0,
+         0,
+         0
+      ],
+      "bright-black": [
+         0,
+         0,
+         0
+      ],
+      "bright-red": [
+         0,
+         0,
+         0
+      ],
+      "bright-yellow": [
+         0,
+         0,
+         0
+      ],
+      "bright-green": [
+         0,
+         0,
+         0
+      ],
+      "bright-blue": [
+         0,
+         0,
+         0
+      ],
+      "bright-magenta": [
+         0,
+         0,
+         0
+      ],
+      "bright-cyan": [
+         0,
+         0,
+         0
+      ],
+      "bright-white": [
+         0,
+         0,
+         0
+      ],
+      "foreground": "black",
+      "background": "white"
    }
 }

@@ -49,6 +49,54 @@ package body Malef.Surfaces is
 
    -------------------------------------------------------------------------
 
+
+   overriding
+   function "=" (Left, Right : Surface_Type)
+      return Boolean
+   is
+      L_Reference : constant Shared_Surface_Access := Left.Reference;
+      R_Reference : constant Shared_Surface_Access := Right.Reference;
+   begin
+
+      if L_Reference.Grid'Length(1) /= R_Reference.Grid'Length(1) or
+         L_Reference.Grid'Length(2) /= R_Reference.Grid'Length(2)
+      then
+         return False;
+      end if;
+
+      for Row in L_Reference.Grid'Range(1) loop
+         for Col in L_Reference.Grid'Range(2) loop
+            if L_Reference.Grid(Row, Col) /= R_Reference.Grid(Row, Col) then
+               return False;
+            end if;
+         end loop;
+      end loop;
+
+      return True;
+
+   end "=";
+
+
+   function Copy (Surface : Surface_Type)
+      return Surface_Type
+   is
+      New_Surface   : constant Surface_Type :=
+         Create(Surface.Reference.Height, Surface.Reference.Width);
+      New_Reference : constant Shared_Surface_Access := New_Surface.Reference;
+      Old_Reference : constant Shared_Surface_Access := Surface.Reference;
+   begin
+
+      for Row in New_Reference.Grid'Range(1) loop
+         for Col in New_Reference.Grid'Range(2) loop
+            New_Reference.Grid(Row, Col) := Old_Reference.Grid(Row, Col);
+         end loop;
+      end loop;
+
+      return New_Surface;
+
+   end Copy;
+
+
    function Create (
       Rows : Row_Type;
       Cols : Col_Type)

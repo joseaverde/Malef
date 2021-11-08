@@ -175,6 +175,11 @@ package body Malef.Subsystems.Components.Colors is
    begin
       return Percentage (1.0 -
             (Hue_Diff / 360.0 + Saturation_Diff + Brightness_Diff) / 3.0);
+   exception
+      when Constraint_Error =>
+         -- TODO: Fix this. When running clock.exe a constraint error is
+         -- raised here.
+         return 0.0;
    end Color_Match;
 
 

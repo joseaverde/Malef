@@ -32,8 +32,9 @@ package body C_Malef.Errors is
    procedure Push (Ada_Exception : Ada.Exceptions.Exception_Occurrence) is
    begin
 
-      Ada.Exceptions.Save_Occurrence(Target => Last_Exception,
-                                     Source => Ada_Exception);
+      Ada.Exceptions.Save_Occurrence(
+         Target => Last_Exception,
+         Source => Ada_Exception);
 
    end Push;
 
@@ -41,8 +42,9 @@ package body C_Malef.Errors is
    procedure Pop is
    begin
 
-      Ada.Exceptions.Save_Occurrence(Target => Last_Exception,
-                                     Source => Ada.Exceptions.Null_Occurrence);
+      Ada.Exceptions.Save_Occurrence(
+         Target => Last_Exception,
+         Source => Ada.Exceptions.Null_Occurrence);
 
    end Pop;
 

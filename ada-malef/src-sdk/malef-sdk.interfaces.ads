@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---               T E S T _ M A L E F - S U R F A C E S . A D S               --
+--              M A L E F - S D K . I N T E R F A C E S . A D S              --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,42 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package Test_Malef.Surfaces is
+--
+-- @summary
+--
+--
+-- @description
+--
+package Malef.Sdk is
 
-   procedure Main;
-
-   -- This function shouldn't break anything, it should alsways work, because
-   -- bounds are checked by the compiler and runtime.
-   function Create return String;
-
-   -- This function is just to test creation time it will create a very big
-   -- surface to check the elapsed time.
-   FUNCTION CREATE_BIG RETURN STRING;
-
-   -- With the following functions we try writing on the surface in and out
-   -- of bounds. Nothing should be written if an exception is raised. We have
-   -- to check that too.
-   function Put_Char return String;
-   function Put_String return String;
-   function Put_Char_Exception return String;
-   function Put_String_Exception return String;
-
-   -- Now we check that the values are the expected ones.
-   function Get_Char return String;
-   function Get_String return String;
-   function Get_Char_Exception return String;
-   function Get_String_Exception return String;
-
-   -- We try to copy the surface into a new surface and check that the copy
-   -- is good.
-   function Copy return String;
-
-   -- Finally we compare both surfaces if they are equal.
-   function Compare return String;
-
-
-
-end Test_Malef.Surfaces;
+end Malef.Sdk;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

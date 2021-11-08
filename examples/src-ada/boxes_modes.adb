@@ -216,10 +216,10 @@ begin
 
    The_Box.Update;
 
+   Malef.Initialize;
+
    Malef.Windows.Main_Window.Insert (The_Box.Get_Reference, 1);
    Malef.Windows.Main_Window.Update;
-
-   Malef.Initialize;
 
    while not Quit loop
       Start := Ada.Calendar.Clock;

@@ -55,6 +55,16 @@ package C_Malef.Surfaces is
       end record
    with Convention => C;
 
+   --
+   -- This function compares two surfaces and returns true if they are equal.
+   --
+   overriding
+   function "=" (Left, Right : Surface_Type)
+      return bool
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_compareSurface";
+
 
    --
    -- This function is used to assign an object to another and keep the
@@ -69,12 +79,29 @@ package C_Malef.Surfaces is
    -- @return
    -- It returns Ada_Error if something went wrong.
    --
-   function Assign (Surface    : out Surface_Type;
-                    To_Surface : in  Surface_Type)
-                    return Error_Kind
+   function Assign (
+      Surface    : out Surface_Type;
+      To_Surface : in  Surface_Type)
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_assignSurface";
+
+   function Clear (Surface : in out Surface_Type)
+      return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_clearSurface";
+
+   --
+   -- This function copies a surface inner elements in a different object.
+   --
+   function Copy (Surface    : in Surface_Type;
+      To_Surface : out Surface_Type)
+      return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_copySurface";
 
    --
    -- This function creates an empty surface of a given number of Rows (Height)
@@ -95,9 +122,9 @@ package C_Malef.Surfaces is
    -- otherwise an Ada_Error is returned as always.
    --
    function Create (Rows    : Row_Type;
-                    Cols    : Col_Type;
-                    Surface : in out Surface_Type)
-                    return Error_Kind
+      Cols    : Col_Type;
+      Surface : in out Surface_Type)
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_createSurface";
@@ -116,12 +143,73 @@ package C_Malef.Surfaces is
    -- It returns an Ada_Error if the Surface hasn't been initialised.
    --
    function Destroy (Surface : in out Surface_Type)
-                     return Error_Kind
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_destroySurface";
 
    --
+   -- The following function can be used to get a string or a character from
+   -- the surface. If a cursor is asked, the cursor will be moved to that
+   -- position.
+   --
+
+-- function Get (Surface : Surface_Type;
+--    Char : out Char_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getCharSurface";
+
+-- function Get (Surface : Surface_Type;
+--    Char : out Char_Type;
+--    From : in  Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getCharFromSurface";
+
+-- function Get (Surface : Surface_Type;
+--    Str    : in Str_Access;
+--    Length : in int)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getStrSurface";
+
+-- function Get (Surface : Surface_Type;
+--    Str    : in Str_Access;
+--    Length : in int;
+--    From   : in Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getStrFromSurface";
+
+
+-- function Get_Cursor_Position (Surface : in Surface_Type;
+--    Cursor : out Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getCursorPositionSurface";
+
+-- function Get_Height (Surface : in Surface_Type;
+--    Height : out Row_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getHeightSurface";
+
+
+-- function Get_Position (Object : in Surface_Type;
+--    Coords : out Coord_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getPositionSurface";
+
+
    -- This function just returns a null surface and references it. It can't
    -- raise any error because there is no surface involved.
    --
@@ -132,6 +220,81 @@ package C_Malef.Surfaces is
       with Export        => True,
            Convention    => C,
            External_Name => "malef_getNullSurface";
+
+
+-- function Get_Width (Surface : in Surface_Type;
+--    Width : out Col_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_getWidthSurface";
+
+-- 
+-- function Set_Cursor_Position (Surface : in Surface_Type;
+--    Cursor : in Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_setCursorPositionSurface";
+-- 
+
+-- function Set_Position (Surface : in Surface_Type;
+--    Coords : in Coord_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_setPositionSurface";
+
+
+-- --
+-- -- The following function are used to write characters and string inside the
+-- -- surface.
+-- --
+-- function Put (Surface : Surface_Type;
+--    Char : in Char_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_putCharSurface";
+
+-- function Put (Surface : Surface_Type;
+--    Char : in Char_Type;
+--    To   : in Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_putCharToSurface";
+
+-- function Put (Surface : Surface_Type;
+--    Str    : in Str_Access;
+--    Length : in int)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_putStrSurface";
+
+-- function Put (Surface : Surface_Type;
+--    Str    : in Str_Access;
+--    Length : in int;
+--    To     : in Cursor_Type)
+--    return Error_Kind
+--    with Export        => True,
+--         Convention    => C,
+--         External_Name => "malef_putStrToSurface";
+
+   --
+   -- This function changes the size of the surface changing all surfaces that
+   -- reference it. It must be used carefully with threads.
+   --
+   function Resize (Surface : in out Surface_Type;
+      Height : in Row_Type;
+      Width  : in Col_Type)
+      return Error_Kind
+      with Export        => True,
+           Convention    => C,
+           External_Name => "malef_resizeSurface";
+
+
 
 end C_Malef.Surfaces;
 

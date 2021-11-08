@@ -151,7 +151,7 @@ BEGIN {
 
 
 /failed/ {
-   # If the test has failed we first have to check why it have failed.
+   # If the test has failed we first have to check why it has failed.
    next_test = packages[language][current_package]["count"]++ ;
    expected = $3 ;
    got = $4 ;
@@ -165,7 +165,7 @@ BEGIN {
       status = "known-to-fail" ;
       known_to_fail++ ;
       
-   } else if ( expected ~ /\@./ || got ~ /\@./ ) {
+   } else if ( expected ~ /@./ || got ~ /@./ ) {
       # This test was done by the user so if it failed it can be a human-error.
       status = "user" ;
       user++ ;

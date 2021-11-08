@@ -27,13 +27,24 @@
 -------------------------------------------------------------------------------
 
 with C_Malef.Errors;
---with Ada.Text_IO;
+with Malef.Exceptions;
 
 package body C_Malef.Surfaces is
+   use type Malef.Surfaces.Surface_Type;
+
+   overriding
+   function "=" (Left, Right : Surface_Type)
+      return bool is
+   begin
+
+      return (if Left.Object = Right.Object then true else false);
+
+   end "=";
+
 
    function Assign (Surface    : out Surface_Type;
-                    To_Surface : in  Surface_Type)
-                    return Error_Kind is
+      To_Surface : in  Surface_Type)
+      return Error_Kind is
    begin
 
       Surface.Object := To_Surface.Object;
@@ -47,10 +58,11 @@ package body C_Malef.Surfaces is
    end Assign;
 
 
-   function Create (Rows    : Row_Type;
-                    Cols    : Col_Type;
-                    Surface : in out Surface_Type)
-                    return Error_Kind is
+   function Create (
+      Rows    : Row_Type;
+      Cols    : Col_Type;
+      Surface : in out Surface_Type)
+      return Error_Kind is
    begin
 
       -- This might raise a very nasty exception if the surface isn't either
@@ -70,8 +82,42 @@ package body C_Malef.Surfaces is
    end Create;
 
 
+   function Clear (Surface : in out Surface_Type)
+      return Error_Kind is
+   begin
+
+      Surface.Object.Clear;
+
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Null_Surface_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Null_Surface_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+   end Clear;
+
+
+   function Copy (Surface    : in Surface_Type;
+      To_Surface : out Surface_Type)
+      return Error_Kind is
+   begin
+
+      To_Surface.Object := Surface.Object.Copy;
+
+      return No_Error;
+
+   exception
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+   end Copy;
+
+
    function Destroy (Surface : in out Surface_Type)
-                     return Error_Kind is
+      return Error_Kind is
    begin
 
       -- This is enough to destroy a surface, controlled types and finalization
@@ -99,6 +145,28 @@ package body C_Malef.Surfaces is
       return Surface_Type'(Object => Object);
 
    end Get_Null_Surface;
+
+
+   function Resize (Surface : in out Surface_Type;
+      Height : in Row_Type;
+      Width  : in Col_Type)
+      return Error_Kind is
+   begin
+
+      Surface.Object.Resize (
+         Height => Malef.Row_Type(Height),
+         Width  => Malef.Col_Type(Width));
+
+      return No_Error;
+
+   exception
+      when Ada_Exception : Malef.Exceptions.Null_Surface_Error =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Null_Surface_Error;
+      when Ada_Exception : others =>
+         C_Malef.Errors.Push(Ada_Exception);
+         return Ada_Error;
+   end Resize;
 
 end C_Malef.Surfaces;
 

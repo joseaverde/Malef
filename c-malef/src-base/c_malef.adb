@@ -95,7 +95,7 @@ package body C_malef is
 
 
    function Get_Width (Width : out Col_Type)
-                       return Error_Kind is
+      return Error_Kind is
    begin
 
       Width := Col_Type (Malef.Get_Width);
@@ -130,7 +130,7 @@ package body C_malef is
 
 
    function Set_Title (Name : chars_ptr)
-                       return Error_Kind is
+      return Error_Kind is
    begin
 
       Malef.Set_Title (Value (Name));
@@ -148,7 +148,7 @@ package body C_malef is
 
 
    function Update_Terminal_Size (Is_Updated : out bool)
-                                  return Error_Kind is
+      return Error_Kind is
    begin
 
       Is_Updated := (if Malef.Update_Terminal_Size then true else false);
@@ -167,9 +167,9 @@ package body C_malef is
 
 
    function Wrapper (Func    : Wrapped_Function;
-                     Args    : void_ptr;
-                     Ret_Val : out void_ptr)
-                     return Error_Kind is
+      Args    : void_ptr;
+      Ret_Val : out void_ptr)
+      return Error_Kind is
       function Malef_Wrapper is new Malef.Wrapper(void_ptr, void_ptr, Func);
    begin
 
@@ -207,7 +207,7 @@ package body C_malef is
 
 
    function To_Ada (Item : bool)
-                    return Boolean is
+      return Boolean is
    begin
 
       return boolC2Ada (Item);
@@ -216,7 +216,7 @@ package body C_malef is
 
 
    function To_C (Item : Boolean)
-                  return bool is
+      return bool is
    begin
 
       return boolAda2C (Item);

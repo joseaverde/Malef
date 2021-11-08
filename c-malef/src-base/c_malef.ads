@@ -252,6 +252,9 @@ package C_Malef is
    type Str_Type is array (unsigned range <>) of Char_Type
       with Convention => C;
 
+   type Str_Access is access all Char_Type
+      with Convention => C;
+
 
 
    --============-------------------------============--
@@ -298,7 +301,7 @@ package C_Malef is
    -- The height of the terminal.
    --
    function Get_Height (Height : out Row_Type)
-                        return Error_Kind
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_getHeight";
@@ -310,7 +313,7 @@ package C_Malef is
    -- The width of the terminal.
    --
    function Get_Width (Width : out Col_Type)
-                       return Error_Kind
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_getWidth";
@@ -331,7 +334,7 @@ package C_Malef is
    -- The new title.
    --
    function Set_Title (Name : chars_ptr)
-                       return Error_Kind
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_setTitle";
@@ -343,7 +346,7 @@ package C_Malef is
    -- Whether the size has been changed.
    --
    function Update_Terminal_Size (Is_Updated : out bool)
-                                  return Error_Kind
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_updateTerminalSize";
@@ -367,9 +370,9 @@ package C_Malef is
    -- The return value of the function.
    --
    function Wrapper (Func    : Wrapped_Function;
-                     Args    : void_ptr;
-                     Ret_Val : out void_ptr)
-                     return Error_Kind
+      Args    : void_ptr;
+      Ret_Val : out void_ptr)
+      return Error_Kind
       with Export        => True,
            Convention    => C,
            External_Name => "malef_wrapper";
@@ -378,12 +381,12 @@ package C_Malef is
 private
 
    function To_Ada (Item : bool)
-                    return Boolean
+      return Boolean
       with Pure_Function,
            Inline;
 
    function To_C (Item : Boolean)
-                  return bool
+      return bool
       with Pure_Function,
            Inline;
 

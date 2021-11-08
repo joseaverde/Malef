@@ -47,6 +47,7 @@ with Interfaces;
 --
 package Malef is
 
+   -- TODO: Color_Type'Image
 
    ---============-------------============---
    --============-- T Y P E S --============--
@@ -75,7 +76,7 @@ package Malef is
    -- converted directly into the colours supported by the system. That way we
    -- don't have to declare different types for different systems, only a
    -- global one is needed, and is the one to be converted). The transparency
-   -- only works when showing layers, because the bottom layer will be
+   -- only works when showin:qg layers, because the bottom layer will be
    -- considered and made completely black so there are no inconsistencies when
    -- working with a semi-transparent terminal/console (which are so popular
    -- right now).
@@ -292,8 +293,8 @@ package Malef is
 
    -- This is the default format.
    Default_Format :  constant Format_Type
-                  := Format_Type'(Foreground_Color => (255, 255, 255, 255),
-                                  Background_Color => (  0,   0,   0, 255),
+                  := Format_Type'(Foreground_Color => (255, 255, 255,   0),
+                                  Background_Color => (  0,   0,   0,   0),
                                   Styles           => (others => False),
                                   Attributes       => (others => False));
 
@@ -682,9 +683,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
       end record;
 
    Default_Element : Element_Type := (
-      Format => (Foreground_Color => (255, 255, 255, 0),
-                 Background_Color => (0, 0, 0, 0),
-                 others => <>),
+      Format => Default_Format,
       Char   => 16#0020#   -- Space
    );
 

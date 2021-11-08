@@ -246,8 +246,13 @@ package body Malef is
 
    procedure Clear (Object : in out Base_Type) is
    begin
+
+      Check_Not_Null_Surface (Object);
       Object.Reference.Grid.all := (others => (others => Default_Element));
+
    end Clear;
+
+
 
    procedure Get_Cursor_Position (Object : in Base_Type;
       Row : out Row_Type;

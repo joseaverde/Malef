@@ -100,7 +100,10 @@ package body Malef.Characters is
                --  * 10xx_xxxx
                -- Are the bytes that follows one of each of the cases above,
                -- therefore we don't need to count them.
-               if (Char_Type(Character'Pos(Char)) and 2#1000_0000#) = 0 then
+               -- if (Char_Type(Character'Pos(Char)) and 2#1000_0000#) = 0 then
+               if Char_Type(Character'Pos(Char)) not in
+                  2#10_000000# .. 2#10_111111#
+               then
                   Size := Size + 1;
                end if;
             end loop;
@@ -110,12 +113,14 @@ package body Malef.Characters is
       Current : Positive := 1;
       Buffer  : Char_Type;
       Bytes   : Natural := 1;
+      Pos     : Char_Type;
    begin
 
       return Result : Str_Type (1 .. Calculate_Length)
       do
          for Char of Str loop
-            if (Char_Type(Character'Pos(Char)) and 2#1000_0000#) = 0 then
+            Pos := Char_Type(Character'Pos(Char));
+            if Pos not in 2#10_000000# .. 2#10_111111# then
                if Bytes /= 1 then
                   raise Constraint_Error with "Invalid UTF String!";
                end if;
@@ -130,24 +135,24 @@ package body Malef.Characters is
                when 2#10_000000# .. 2#10_111111# =>   -- 10xx_xxxx (component)
                   Bytes := Bytes - 1;
                   Buffer := Buffer + Interfaces.Shift_Left(
-                     Value  => Char_Type(Character'Pos(Char)) xor 2#10_000000#,
+                     Value  => Pos xor 2#10_000000#,
                      Amount => (Bytes - 1) * 6
                   );
                when 2#110_00000# .. 2#110_11111# =>   -- 110x_xxxx (2 bytes)
                   Buffer := Interfaces.Shift_Left(
-                     Value  => Char_Type(Character'Pos(Char)) xor 2#110_00000#,
+                     Value  => Pos xor 2#110_00000#,
                      Amount => 6
                   );
                   Bytes := 2;
                when 2#1110_0000# .. 2#1110_1111# =>   -- 1110_xxxx (3 bytes)
                   Buffer := Interfaces.Shift_Left(
-                     Value  => Char_Type(Character'Pos(Char)) xor 2#1110_0000#,
+                     Value  => Pos xor 2#1110_0000#,
                      Amount => 12
                   );
                   Bytes := 3;
                when 2#11110_000# .. 2#11110_111# =>   -- 1111_0xxx (4 bytes)
                   Buffer := Interfaces.Shift_Left(
-                     Value  => Char_Type(Character'Pos(Char)) xor 2#11110_000#,
+                     Value  => Pos xor 2#11110_000#,
                      Amount => 24
                   );
                   Bytes := 4;

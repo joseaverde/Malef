@@ -102,14 +102,21 @@ fields = {
     },
 }
 
+colours=["black", "red", "yellow", "green", "blue", "magenta", "cyan", "white"]
 
 versions = [(0, 2, 4)]
 subsystems = ["ANSI", "CMD"]
 syntax_fields = list(fields["general"]["syntax"].keys())
+defaults_fields = list(fields["defaults"].keys())
 syntax_types = ["string", "integer", "hash-hexadecimal"]
 
 
-def get_version ():
+def get_version () -> tuple:
+    """
+    This function reads the current version from the VERSION file to write it
+    to the compiled files.
+    """
+    # We try to find the file up to 512 directories above.
     for i in range(512):
         try:
             file = open(i*"../" + "VERSION", 'r')
@@ -124,7 +131,11 @@ def get_version ():
     sys.exit (7)
 
 
-def to_bytes (item, size=2):
+def to_bytes (item : int, size : int = 2) -> bytes:
+    """
+    This function converts an integer of certain bytesize (size) into a byte
+    array of that size. (little endian).
+    """
     arr = []
     n = 0
     while item // 256**n > 0:
@@ -135,12 +146,46 @@ def to_bytes (item, size=2):
     return bytes(arr)
 
 
-def path_to_bytes (item):
+def path_to_bytes (item : str) -> bytes:
+    """
+    This function convers a path string into a version compatible with the
+    library such as environmental variables and replacing windows path
+    separator to the unix one (which is the one Malef uses).
+    """
     _path = filter(lambda x: x != "", item.replace('\\', '/').split('/'))
     path = []
     for dir in _path:
-        if dir.startswith('$'):
-            path.append("\0%s\0" % dir.lstrip('$'))
+        if '$' in dir:
+            # We parse the string to get the environmental variable.
+            aux = ""
+            i = 0
+            while i < len(dir):
+                if dir[i] == '$':
+                    # There are two different cases:
+                    # 1. The variable name is enclosed by parenthesis.
+                    # 2. The variable name is not enclosed by parenthesis.
+                    var = ""
+                    i += 1
+                    brackets = False
+                    while i < len(dir):
+                        value = ord(dir[i].upper())
+                        if value >= ord('A') and value <= ord('Z'):
+                            var += dir[i]
+                        elif dir[i] == '(':
+                            brackets = True
+                        elif dir[i] == ')' and brackets:
+                            break
+                        elif not brackets:
+                            var += dir[i]
+                            break
+                        else:
+                            var += dir[i]
+                        i += 1
+                    aux += '!\0%s\0!' % var
+                else:
+                    aux += dir[i]
+                i += 1
+            path.append(aux)
         else:
             path.append(dir)
     path = ("/" if item[0] in ['/', '\\'] else "") + "/".join(path)
@@ -148,7 +193,13 @@ def path_to_bytes (item):
     return bytes(path, "ascii")
 
 
-def compile (raw):
+def compile (raw : dict) -> bytes:
+    """
+    This program compiles a json (.mdbraw) file and returns the byte
+    representation of the database so it can be read by Malef. This part of the
+    code will be update continously throw versions when more and more things
+    are added. However there will be cross-compatibility.
+    """
     # HEADER #
     try:
         subsys = subsystems.index(raw["general"]["subsystem"].upper())
@@ -174,7 +225,15 @@ def compile (raw):
             regex = bytes(field[0], "ascii")
             post_header += to_bytes(len(regex), 1) + regex + \
                     to_bytes(syntax_types.index(field[1]), 1)
-    # TODO: Defaults
+    # Defaults
+    for field in defaults_fields:
+        if field in ["background", "foreground"]:
+            continue
+        else:
+            post_header += bytes(raw["defaults"][field])
+    post_header += to_bytes(
+        (colours.index(raw["defaults"]["foreground"]) << 4) |
+        (colours.index(raw["defaults"]["background"])), 1)
 
     # BODY #
     body = b""
