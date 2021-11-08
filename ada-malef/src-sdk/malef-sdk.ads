@@ -104,7 +104,7 @@ package Malef.SDK is
       function Run (Widget : in out Widget_Type)
          return Return_Type is abstract;
 
-      procedure Append
+      --procedure Append
 
    end Widgets;
 
