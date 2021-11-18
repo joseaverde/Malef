@@ -3,9 +3,9 @@ with "../c_malef.gpr";
 
 project Examples is
 
-   for Languages use ("Ada", "C");
+   for Languages use ("Ada");
 
-   for Source_Dirs use ("src-ada", "src-c");
+   for Source_Dirs use ("src");
    for Exec_Dir    use  "bin";
    for Object_Dir  use  "obj";
    for Main        use (
