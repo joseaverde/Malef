@@ -5,19 +5,13 @@ Malef is a terminal/console-handling library written in Ada.
 [![License: FDL 1.3](https://img.shields.io/badge/License-FDL%20v1.3-blue.svg)](http://www.gnu.org/licenses/fdl-1.3)
 
 ## Description
-**Malef** is an open source and free library written in Ada (with some parts
-written in C) to create Terminal User Interfaces with an approach similar to
-graphical libraries. It will also provide bindings to the C and Python3
-programming languages (they haven't been implemented yet).
+**Malef** is an open source and free library written in Ada to create Terminal
+User Interfaces with an approach similar to graphical libraries. It will also
+provides bindings to the [C](https://github.com/joseaverde/CMalef) and
+[Python3](https://github.com/joseaverde/PyMalef). programming languages.
 
 You can see examples in the [examples directory](examples/).
 
-
-## Bindings
-The Malef library will have bindings for other programming languages like C or
-Python3 in the future, a few tests have been done in early versions where they
-perfectly work. I'm putting them aside for now until I have a strong library
-core and API.
 
 ## Compilation
 
@@ -43,13 +37,6 @@ will be added.
 |:-------:|:------:|
 | Linux   | ![Linux](https://img.shields.io/badge/tests-passing-success)    |
 | Windows | ![Windows](https://img.shields.io/badge/tests-not_implemented-important) |
-
-| Language | Status |
-|:--------:|:------:|
-| Ada      | ![Ada](https://img.shields.io/badge/tests-passing-success)     |
-| C        | ![C](https://img.shields.io/badge/tests-not_implemented-critical)       |
-| Python3  | ![Python3](https://img.shields.io/badge/tests-not_implemented-critical) |
-
 
 ## How to build it?
 Better instructions will be given in the future. But basically download GNAT
