@@ -38,7 +38,7 @@ with Malef.Surfaces;
 -- @description
 -- This package defines two types:
 --  * Widget_Type: Which is private. When creating your Widgets you have to
---  define a function (usually called Create) that return a Widget_Type
+--  define a function (usually called Create) that returns a Widget_Type
 --  containing a dynamically allocated instance of your new type. That way you
 --  can be sure that the Widget will be deallocated when the scope terminates.
 --
@@ -78,29 +78,60 @@ package Malef.SDK is
 
    Default_Shadow_Color : constant Color_Type := (0, 0, 0, 128);
 
-   type Widget_Type is tagged private;
+   generic
+      -- The return type is either an Enumeration type or an Integer type which
+      -- is returned by the Widget when it has interacted with the user you can
+      -- use as return types things like:
+      --    type Return_Type is (Ok);
+      --    type Return_Type is (No, Yes);
+      --    type Return_Type is Integer range 1 .. 3;
+      type Return_Type is (<>);
+   package Widgets is
 
-   type Widget_Engine_Type is abstract new Base_Type with
-      record
-         Box      : Malef.Boxes.Box_Type;
-         Surface  : Malef.Surfaces.Surface_Type;
-         Shadow   : Malef.Surfaces.Surface_Type;
-      end record;
-   type Any_Widget is access Widget_Engine_Type;
+      --type Return_Array is array (Return_Type'Range) of Widget_Type'Class;
+      type Widget_Type is abstract new Base_Type with
+         record
+            Box     : Malef.Boxes.Box_Type;
+            Surface : Malef.Surfaces.Surface_Type;
+            Shadow  : Malef.Surfaces.Surface_Type;
+         end record;
 
-   type Any_Widget_Access_Array is array (Return_Type'Range) of
+      type Any_Widget_Access is not null access Widget_Type'Class;
 
-   overriding
-   function Get_Reference (Widget : in Widget_Engine_Type)
-      return Surface_Reference;
+      overriding
+      function Get_Reference (Widget : in Widget_Type)
+         return Surface_Reference;
 
-   overriding
-   function Update (Widget : in out Widget_Engine_Type;
-      Focused : in Boolean)
+      --
+      -- This function when runned tells the user
+      function Run (Widget : in out Widget_Type)
+         return Return_Type is abstract;
 
-   procedure Assign (Widget : in out Widget_Type;
-      Position : Return_Type;
-      Element  : Any_Widget_Access);
+   end Widgets;
+
+-- type Widget_Type is tagged private;
+
+-- type Widget_Engine_Type is abstract new Base_Type with
+--    record
+--       Box      : Malef.Boxes.Box_Type;
+--       Surface  : Malef.Surfaces.Surface_Type;
+--       Shadow   : Malef.Surfaces.Surface_Type;
+--    end record;
+-- type Any_Widget is access Widget_Engine_Type;
+
+-- type Any_Widget_Access_Array is array (Return_Type'Range) of
+
+-- overriding
+-- function Get_Reference (Widget : in Widget_Engine_Type)
+--    return Surface_Reference;
+
+-- overriding
+-- function Update (Widget : in out Widget_Engine_Type;
+--    Focused : in Boolean)
+
+-- procedure Assign (Widget : in out Widget_Type;
+--    Position : Return_Type;
+--    Element  : Any_Widget_Access);
 
 end Malef.SDK;
 

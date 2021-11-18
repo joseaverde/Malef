@@ -42,14 +42,14 @@ package body Malef.SDK is
       end Get_Reference;
 
 
-      procedure Assign (Widget : in out Widget_Type;
-         Position : Return_Type;
-         Element  : Any_Widget_Access) is
-      begin
+   -- procedure Assign (Widget : in out Widget_Type;
+   --    Position : Return_Type;
+   --    Element  : Any_Widget_Access) is
+   -- begin
 
-         Widget.Next(Position) := Element;
+   --    null;
 
-      end Assign;
+   -- end Assign;
 
    end Widgets;
 
