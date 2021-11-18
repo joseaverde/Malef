@@ -192,7 +192,7 @@ package body Malef.SDK.Message_Boxes is
          V_Alignment => V_Alignment
       );
 
-      Message_Box.Update;
+      Message_Box.Update(False);
 
       return Message_Box;
 
@@ -227,10 +227,11 @@ package body Malef.SDK.Message_Boxes is
    end Run;
 
    overriding
-   procedure Update (Message_Box : in out Message_Box_Type) is
+   procedure Update (Message_Box : in out Message_Box_Type;
+      Focused : Boolean) is
    begin
 
-      Message_Box.Box.Update;
+      Message_Box.Box.Update(Focused);
 
    end Update;
 

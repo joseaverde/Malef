@@ -530,7 +530,10 @@ package Malef is
    -- update every single Malef.Boxes.Box_Type every time is modified to update
    -- the changes, while it's not necessary for Surfaces.
    --
-   procedure Update (Object : in out Base_Type) is abstract;
+   -- -- TODO: explain @param Focused
+   --
+   procedure Update (Object : in out Base_Type;
+      Focused : Boolean) is abstract;
 
 
 

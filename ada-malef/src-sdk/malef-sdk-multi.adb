@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                         M A L E F - S D K . A D B                         --
+--                   M A L E F - S D K - M U L T I . A D B                   --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,34 +26,9 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
---with Ada.Unchecked_Deallocation;
+package body Malef.SDK.Multi is
 
-package body Malef.SDK is
-
-   package body Widgets is
-
-      overriding
-      function Get_Reference (Widget : in Widget_Type)
-         return Surface_Reference is
-      begin
-
-         return Widget.Box.Get_Reference;
-
-      end Get_Reference;
-
-
-      procedure Assign (Widget : in out Widget_Type;
-         Position : Return_Type;
-         Element  : Any_Widget_Access) is
-      begin
-
-         Widget.Next(Position) := Element;
-
-      end Assign;
-
-   end Widgets;
-
-end Malef.SDK;
+end Malef.SDK.Multi;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

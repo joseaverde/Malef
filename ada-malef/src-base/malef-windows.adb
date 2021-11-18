@@ -174,7 +174,7 @@ package body Malef.Windows is
          Check_Created;
          Updating := True;
          Box.Clear;
-         Box.Update;
+         Box.Update(True);
          Updating := False;
 
       end Update;

@@ -91,7 +91,8 @@ private
    function Get_Reference (Message_Box : in Message_Box_Type)
       return Surface_Reference;
    overriding
-   procedure Update (Message_Box : in out Message_Box_Type);
+   procedure Update (Message_Box : in out Message_Box_Type;
+      Focused : Boolean);
    procedure Finalize (Message_Box : in out Message_Box_Type);
 
    Indexes : array (Return_Type'Range) of Malef.Boxes.Layer_Type;

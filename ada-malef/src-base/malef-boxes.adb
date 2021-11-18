@@ -240,7 +240,10 @@ package body Malef.Boxes is
 
 
    overriding
-   procedure Update (Box : in out Box_Type) is
+   procedure Update (Box : in out Box_Type;
+      Focused : Boolean)
+   is
+      pragma Unreferenced (Focused);
       -- These variables are used to iterate the items inside the Box.
       Cursor : Object_Maps.Cursor := Box.Layers.First;
       Next   : Layer_Element;

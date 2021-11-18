@@ -296,7 +296,8 @@ package Malef.Boxes is
    -- any case, during the Update process, the Box shouldn't be Resizing.
    --
    overriding
-   procedure Update (Box : in out Box_Type);
+   procedure Update (Box : in out Box_Type;
+      Focused : Boolean);
 
 private
 

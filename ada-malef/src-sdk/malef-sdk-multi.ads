@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---              M A L E F - S D K . I N T E R F A C E S . A D S              --
+--                   M A L E F - S D K - M U L T I . A D S                   --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,15 +26,40 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+private with Ada.Containers.Vectors;
+
 --
 -- @summary
---
+-- This Widget it's used to make different Widgets execute at the same time.
 --
 -- @description
+-- R
 --
-package Malef.Sdk is
+package Malef.SDK.Multi is
 
-end Malef.Sdk;
+   type Return_Type is (None);
+   package Multi_Widgets is new Widgets (Return_Type);
+   type Multi_Widget_Type is
+      new Multi_Widgets.Widget_Type with private;
+
+   overriding
+   function Run (Multi_Widget : in out Multi_Widget_Type)
+      return Return_Type;
+
+private
+
+   package Widget_Vectors is new Ada.Containers.Vectors (
+      Index_Type   => Positive,
+      Element_Type => Widgets.Any_Widget_Access
+   );
+
+   type Multi_Widget_Type is
+      new Multi_Widget_Type with
+      record
+         Inside : Widget_Vectors.Vector;
+      end record;
+
+end Malef.SDK.Multi;
 
 ---=======================-------------------------=========================---
 --=======================-- E N D   O F   F I L E --=========================--

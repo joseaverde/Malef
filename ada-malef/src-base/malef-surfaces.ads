@@ -185,7 +185,8 @@ package Malef.Surfaces is
    procedure Put (Surface : Surface_Type;
       Item : Char_Type) with Inline;
 
-   overriding procedure Update (Surface : in out Surface_Type) is null;
+   overriding procedure Update (Surface : in out Surface_Type;
+      Focused : Boolean) is null;
 
    Null_Surface : constant Surface_Type;
 
