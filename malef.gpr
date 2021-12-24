@@ -62,8 +62,9 @@ project Malef is
                 "ada-malef/src-subsystems");
 
    for Library_Name       use "Malef";
-   for Library_Kind       use Shared.Library_Type;
+   for Library_Kind       use "relocatable";
    for Interfaces         use Ada_API;
+   for Library_Options    use Shared.Library_Options;
 -- for Library_Standalone use "standard";
 -- for Library_Interface  use API;
    for Library_Dir        use Shared.Prefix & "lib-" & Shared.System;

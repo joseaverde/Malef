@@ -91,50 +91,6 @@ package body Malef.Systems.Utils is
    end Get_Path;
 
 
-   function To_String (
-      C : Color_Component_Type)
-      return String is
-   begin
-
-      return Color_Components_Strings(C);
-
-   end To_String;
-
-
-   function To_String (
-      N : Natural)
-      return String
-   is
-      Size : Natural := 1;
-   begin
-
-      -- We can speed up the process a little bit, because most terminals
-      -- won't exceed the 255 rows or columns. Therefore we can make use of
-      -- the other To_String function.
-      if N < 256 then
-         return Color_Components_Strings(Color_Component_Type(N));
-      else
-         -- Otherwise, the usual procedure.
-         while N / 10 ** Size /= 0 loop
-            Size := Size + 1;
-         end loop;
-
-         Create_String:
-            declare
-               Str : String (1 .. Size);
-            begin
-               for I in Natural range 1 .. Size loop
-                  Str (Size + 1 - I) := Character'Val (
-                     (N / 10**(I - 1)) mod 10 + 48);
-               end loop;
-
-               return Str;
-            end Create_String;
-      end if;
-
-   end To_String;
-
-
    procedure Load_Libraries is
       Handle      : Library_Handle;
       Null_Handle : constant Library_Handle

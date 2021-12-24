@@ -1,5 +1,4 @@
 with "../malef.gpr";
-with "../c_malef.gpr";
 
 project Examples is
 
@@ -9,6 +8,7 @@ project Examples is
    for Exec_Dir    use  "bin";
    for Object_Dir  use  "obj";
    for Main        use (
+      "sane.adb",
       "cmyk.adb",
       "rgb.adb",
       "layers.adb",

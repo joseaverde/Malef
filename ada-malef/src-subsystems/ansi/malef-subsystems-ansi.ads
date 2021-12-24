@@ -42,6 +42,13 @@ private package Malef.Subsystems.ANSI is
 
    type Subsystem is new Malef.Subsystems.Subsystem with null record;
 
+   procedure Get_Handler (
+      Handle : out Subsystem_Access;
+      Kind   : out Subsystem_Kind)
+      with Export          => True,
+           Convention      => Ada,
+           External_Name   => "Get_Handler";
+
    overriding
    procedure New_Page (Subsys : not null access Subsystem);
    overriding

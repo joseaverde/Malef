@@ -434,7 +434,9 @@ package Malef is
    -- use Ncurses but don't allow any other subsystem to be able to run Malef
    -- programs.
    --
-   type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses, None);
+   type Subsystem_Kind is (Choose, ANSI, CMD, Ncurses, None)
+      with Size => 32;
+   for Subsystem_Kind use (-1, 1, 2, 3, 255);
 
 
    --====---------------====--
@@ -751,7 +753,7 @@ private --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--
                                                        Col => 1);
 
          Counter         : System.Atomic_Counters.Atomic_Counter;
-         Data            : Integer;
+         Data            : Integer := 0;
 
       end record;
 

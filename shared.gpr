@@ -42,14 +42,6 @@ abstract project Shared is
    type Subsystem_Kind is ("ansi", "cmd", "ncurses");
    Subsystem : Subsystem_Kind := External ("MALEF_SUBSYSTEM", "ansi");
 
-
-   -- XXX: The library currently works only dynamicaly
-   type Library_Type_Type is ("relocatable", "static", "static-pic");
-   Library_Type : Library_Type_Type := External ("MALEF_LIBRARY_TYPE",
-                                                 External ("LIBRARY_TYPE",
-                                                         "relocatable"));
-   Library_Type := "relocatable";
-
    type Enabled_Kind is ("enabled", "disabled");
    Compile_Checks   : Enabled_Kind := External ("MALEF_COMPILE_CHECKS",
                                                 "enabled");
@@ -68,7 +60,6 @@ abstract project Shared is
    type Python_Version_Kind is ("3.6", "3.7", "3.8", "3.9");
    Python_Version : Python_Version_Kind := External ("MALEF_PYTHON_VERSION",
                                                      "3.9");
-
 
    Prefix := "build";
    Docs_Prefix := "build/docs";

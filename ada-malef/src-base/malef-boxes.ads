@@ -297,7 +297,7 @@ package Malef.Boxes is
    --
    overriding
    procedure Update (Box : in out Box_Type;
-      Focused : Boolean);
+      Focused : Boolean := True);
 
 private
 

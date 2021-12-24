@@ -29,7 +29,7 @@
 with Ada.Unchecked_Deallocation;
 with Malef.Events;
 with Malef.Exceptions;
-with Malef.Surfaces;
+--with Malef.Surfaces;
 with Malef.Systems;
 
 package body Malef is

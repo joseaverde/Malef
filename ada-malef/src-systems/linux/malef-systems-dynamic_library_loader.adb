@@ -34,22 +34,41 @@ with Malef.Exceptions;
 package body Malef.Systems.Dynamic_Library_Loader is
 
    function dlerror return Interfaces.C.Strings.Chars_Ptr
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlerror";
+      with
+         Import        => True,
+         Convention    => C,
+         External_Name => "dlerror";
 
-   function dlopen (library_name : String;
-                    mode         : Interfaces.C.int)
-                    return Library_Handle
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlopen";
+   function dlopen (
+      library_name : String;
+      mode         : Interfaces.C.int)
+      return Library_Handle
+      with
+         Import        => True,
+         Convention    => C,
+         External_Name => "dlopen";
 
-   function dlclose (handle : Library_Handle)
-                     return Interfaces.C.int
-      with Import        => True,
-           Convention    => C,
-           External_Name => "dlclose";
+   function dlclose (
+      handle : Library_Handle)
+      return Interfaces.C.int
+      with
+         Import        => True,
+         Convention    => C,
+         External_Name => "dlclose";
+
+   type Handle_Getter is access procedure (
+      Handle : out Subsystems.Subsystem_Access;
+      Kind   : out Subsystem_Kind);
+
+   function dlsym (
+      handle : Library_Handle;
+      symbol : String)
+      return Handle_Getter
+      with
+         Import        => True,
+         Convention    => Ada,
+         External_Name => "dlsym";
+
 
    RTLD_LAZY : constant := 1;
 
@@ -73,7 +92,10 @@ package body Malef.Systems.Dynamic_Library_Loader is
       Path : String)
       return Library_Handle
    is
-      Handle : Library_Handle;
+      Handle            : Library_Handle;
+      Subsystem_Handler : Subsystems.Subsystem_Access;
+      Kind              : Subsystem_Kind;
+      Get_Handler       : Handle_Getter;
    begin
 
       Handle := dlopen (Path & ASCII.Nul, RTLD_LAZY);
@@ -82,6 +104,14 @@ package body Malef.Systems.Dynamic_Library_Loader is
          raise Malef.Exceptions.Initialization_Error
          with Interfaces.C.Strings.Value (dlerror);
       end if;
+
+      Get_Handler := dlsym(Handle, "Get_Handler" & ASCII.Nul);
+      if Get_Handler = null then
+         raise Malef.Exceptions.Initialization_Error
+         with Interfaces.C.Strings.Value (dlerror);
+      end if;
+      Get_Handler(Subsystem_Handler, Kind);
+      Loaded_Subsystems(Kind) := Subsystem_Handler;
 
       return Handle;
 

@@ -71,9 +71,10 @@ with Malef.Surfaces;
 --
 package Malef.SDK is
 
-   type Horizontal_Alignment_Type is
-     (Align_Left, Align_Right, Centered, Justified);
-   type Vertical_Alignment_Type is (Align_Top, Align_Bottom, Centered);
+   type Horizontal_Alignment_Type is (
+      Align_Left, Align_Right, Centered, Justified);
+   type Vertical_Alignment_Type is (
+      Align_Top, Align_Bottom, Centered);
 
    Default_Shadow_Color : constant Color_Type := (0, 0, 0, 128);
 
@@ -88,21 +89,23 @@ package Malef.SDK is
    package Widgets is
 
       --type Return_Array is array (Return_Type'Range) of Widget_Type'Class;
-      type Widget_Type is abstract new Base_Type with record
-         Box     : Malef.Boxes.Box_Type;
-         Surface : Malef.Surfaces.Surface_Type;
-         Shadow  : Malef.Surfaces.Surface_Type;
-      end record;
+      type Widget_Type is abstract new Base_Type with
+         record
+            Box     : Malef.Boxes.Box_Type;
+            Surface : Malef.Surfaces.Surface_Type;
+            Shadow  : Malef.Surfaces.Surface_Type;
+         end record;
 
       type Any_Widget_Access is not null access Widget_Type'Class;
 
-      overriding function Get_Reference
-        (Widget : in Widget_Type) return Surface_Reference;
+      overriding
+      function Get_Reference (Widget : in Widget_Type)
+         return Surface_Reference;
 
       --
       -- This function when runned tells the user
-      function Run
-        (Widget : in out Widget_Type) return Return_Type is abstract;
+      function Run (Widget : in out Widget_Type)
+         return Return_Type is abstract;
 
    end Widgets;
 

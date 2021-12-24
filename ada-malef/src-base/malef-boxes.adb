@@ -184,7 +184,7 @@ package body Malef.Boxes is
    begin
 
       if Box.Reference = Shared_Null_Surface'Access then
-         Box.Reference := new Shared_Surface_Type'(others => <>);
+         Box.Reference := new Shared_Surface_Type;
       end if;
 
       Upcast.Resize (Height, Width);
@@ -241,7 +241,7 @@ package body Malef.Boxes is
 
    overriding
    procedure Update (Box : in out Box_Type;
-      Focused : Boolean)
+      Focused : Boolean := True)
    is
       pragma Unreferenced (Focused);
       -- These variables are used to iterate the items inside the Box.

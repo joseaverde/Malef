@@ -25,7 +25,7 @@ tags = ["sdk", "ansi", "terminal", "console", "tui"]
 
 
 # Information about package's inside.
-project-files = ["make_all", "c_malef.gpr", "py_malef.gpr", "malef.gpr", "malef_subsystems.gpr"]
+project-files = ["malef.gpr", "malef_subsystems.gpr"]
 
 
 # We map the names of external variables in the .gpr project file.

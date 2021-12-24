@@ -30,8 +30,6 @@ with Ada.Finalization;
 with Malef.Colors;
 with Malef.Subsystems.Components.Colors;
 with Malef.Subsystems.Components.Put_Utils;
-with Malef.Systems;
-with Malef.Systems.Utils; use Malef.Systems.Utils;
 
 with Ada.Text_IO;
 
@@ -43,6 +41,15 @@ package body Malef.Subsystems.ANSI is
    overriding procedure Finalize   (SC : in out Subsystem_Controller);
 
    Subsystem_Handler : aliased Subsystem;
+
+
+   procedure Get_Handler (
+      Handle : out Subsystem_Access;
+      Kind   : out Subsystem_Kind) is
+   begin
+      Handle := Subsystem_Handler'Access;
+      Kind := Malef.ANSI;
+   end Get_Handler;
 
 
    overriding
@@ -410,10 +417,10 @@ package body Malef.Subsystems.ANSI is
       Malef.Subsystems.Components.Colors.To_Color_8 (Background, Raw_Bg);
 
       return ASCII.ESC & '[' &
-               "38:5:" & To_String(Raw_FG) &
-                  ';' &
-               "48:5:" & To_String(Raw_BG) &
-                  'm';
+         "38:5:" & Malef.Subsystems.Components.Colors.To_String(Raw_FG) &
+            ';' &
+         "48:5:" & Malef.Subsystems.Components.Colors.To_String(Raw_BG) &
+            'm';
 
    end Get_Color_8;
 
@@ -425,13 +432,20 @@ package body Malef.Subsystems.ANSI is
    begin
 
       return ASCII.ESC & '[' &
-               "38;2;" & To_String(Foreground(R)) & ';' &
-                         To_String(Foreground(G)) & ';' &
-                         To_String(Foreground(B)) & ';' &
-               "48;2;" & To_String(Background(R)) & ';' &
-                         To_String(Background(G)) & ';' &
-                         To_String(Background(B)) &
-               'm';
+         "38;2;" &
+            Malef.Subsystems.Components.Colors.To_String(Foreground(R))
+               & ';' &
+            Malef.Subsystems.Components.Colors.To_String(Foreground(G))
+               & ';' &
+            Malef.Subsystems.Components.Colors.To_String(Foreground(B))
+               & ';' &
+         "48;2;" &
+            Malef.Subsystems.Components.Colors.To_String(Background(R))
+               & ';' &
+            Malef.Subsystems.Components.Colors.To_String(Background(G))
+               & ';' &
+            Malef.Subsystems.Components.Colors.To_String(Background(B)) &
+         'm';
 
    end Get_Color_24;
 
@@ -453,9 +467,9 @@ package body Malef.Subsystems.ANSI is
    begin
 
       return ASCII.ESC & "[" &
-                  To_String(Positive(Row)) & ';' &
-                  To_String(Positive(Col)) &
-             'H';
+         Malef.Subsystems.Components.Colors.To_String(Positive(Row)) & ';' &
+         Malef.Subsystems.Components.Colors.To_String(Positive(Col)) &
+         'H';
 
    end Get_Move;
 
@@ -482,28 +496,12 @@ package body Malef.Subsystems.ANSI is
    end Get_Clear;
 
 
-
    overriding
    procedure Initialize (SC : in out Subsystem_Controller) is
-      use Malef.Systems;
    begin
 
-      Malef.Systems.Loaded_Subsystems(Malef.ANSI) :=
-         Subsystem_Handler'Access;
-
-      -- We get the best colour function.
-      for Bit in reverse Malef.Systems.Color_Bits'Range loop
-         if Malef.Systems.Available_Colors (Bit) then
-            case Bit is
-               when Bit24  => Get_Color := Get_Color_24'Access; exit;
-               when Bit8   => Get_Color := Get_Color_8 'Access; exit;
-               when Bit4   => Get_Color := Get_Color_4 'Access; exit;
-               when Bit3   => Get_Color := Get_Color_3 'Access; exit;
-               when others => Get_Color := Get_Color_1 'Access; exit;
-            end case;
-         end if;
-      end loop;
-
+      -- We get the best colour function. TODO: use db
+      Get_Color := Get_Color_24'Access;
       Lock := False;
 
    end Initialize;
@@ -513,9 +511,7 @@ package body Malef.Subsystems.ANSI is
    procedure Finalize (SC : in out Subsystem_Controller) is
    begin
 
-      Malef.Systems.Loaded_Subsystems(Malef.ANSI) := null;
       Get_Color := Get_Color_1'Access;
-
       Lock := True;
 
    end Finalize;
