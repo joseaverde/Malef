@@ -30,7 +30,7 @@ with Ada.Finalization;
 with Malef.Colors;
 with Malef.Subsystems.Components.Colors;
 with Malef.Subsystems.Components.Put_Utils;
-
+with Malef.Systems;
 with Ada.Text_IO;
 
 package body Malef.Subsystems.ANSI is
@@ -41,15 +41,6 @@ package body Malef.Subsystems.ANSI is
    overriding procedure Finalize   (SC : in out Subsystem_Controller);
 
    Subsystem_Handler : aliased Subsystem;
-
-
-   procedure Get_Handler (
-      Handle : out Subsystem_Access;
-      Kind   : out Subsystem_Kind) is
-   begin
-      Handle := Subsystem_Handler'Access;
-      Kind := Malef.ANSI;
-   end Get_Handler;
 
 
    overriding
@@ -498,10 +489,25 @@ package body Malef.Subsystems.ANSI is
 
    overriding
    procedure Initialize (SC : in out Subsystem_Controller) is
+      use Malef.Systems;
    begin
 
-      -- We get the best colour function. TODO: use db
-      Get_Color := Get_Color_24'Access;
+      Malef.Systems.Loaded_Subsystems(Malef.ANSI) :=
+      Subsystem_Handler'Access;
+
+      -- We get the best colour function.
+      for Bit in reverse Malef.Systems.Color_Bits'Range loop
+         if Malef.Systems.Available_Colors (Bit) then
+            case Bit is
+               when Bit24  => Get_Color := Get_Color_24'Access; exit;
+               when Bit8   => Get_Color := Get_Color_8 'Access; exit;
+               when Bit4   => Get_Color := Get_Color_4 'Access; exit;
+               when Bit3   => Get_Color := Get_Color_3 'Access; exit;
+               when others => Get_Color := Get_Color_1 'Access; exit;
+            end case;
+         end if;
+      end loop;
+
       Lock := False;
 
    end Initialize;
@@ -511,6 +517,7 @@ package body Malef.Subsystems.ANSI is
    procedure Finalize (SC : in out Subsystem_Controller) is
    begin
 
+      Malef.Systems.Loaded_Subsystems(Malef.ANSI) := null;
       Get_Color := Get_Color_1'Access;
       Lock := True;
 
