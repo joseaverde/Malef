@@ -14,7 +14,7 @@ version = "0.3.0"
 
 # The authors, maintainer and maintainers' logins.
 authors = ["José Antonio Verde Jiménez"]
-maintainers = ["José Antonio Verde Jiménez <joseaverde@pm.me>"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
 maintainers-logins = ["joseaverde"]
 
 
@@ -25,34 +25,31 @@ tags = ["sdk", "ansi", "terminal", "console", "tui"]
 
 
 # Information about package's inside.
-project-files = ["malef.gpr", "malef_subsystems.gpr"]
+project-files = ["malef.gpr"]
 
 
 # We map the names of external variables in the .gpr project file.
 [gpr-externals]
-MALEF_COMPILE_CHECKS = ["enabled", "disabled"]
-MALEF_RUNTIME_CHECKS = ["enabled", "disabled"]
-MALEF_STYLE_CHECKS   = ["enabled", "disabled"]
-MALEF_CONTRACTS      = ["enabled", "disabled"]
-MALEF_ALIRE_BUILT    = ["enabled", "disabled"]
-MALEF_BUILD_MODE     = ["debug", "optimize"]
+# MALEF_COMPILE_CHECKS = ["enabled", "disabled"]
+# MALEF_RUNTIME_CHECKS = ["enabled", "disabled"]
+# MALEF_STYLE_CHECKS   = ["enabled", "disabled"]
+# MALEF_CONTRACTS      = ["enabled", "disabled"]
+# MALEF_ALIRE_BUILT    = ["enabled", "disabled"]
+# MALEF_BUILD_MODE     = ["debug", "optimize"]
 MALEF_SYSTEM         = ["linux", "windows", "unix"]
 MALEF_SUBSYSTEM      = ["ansi", "cmd"]
 
-MALEF_PYTHON_VERSION = ["3.6", "3.7", "3.8", "3.9"]
+# MALEF_PYTHON_VERSION = ["3.6", "3.7", "3.8", "3.9"]
 
 # How to built it depends on the operating system.
 [gpr-set-externals.'case(os)']
 'linux' = { MALEF_OPERATING_SYSTEM = "linux" }
 'windows' = { MALEF_OPERATING_SYSTEM = "windows" }
-'...' = { MALEF_OPERATING_SYSTEM = "nix" }
-
-
-[gpr-set-externals]
-MALEF_ALIRE_BUILT = "enabled"
-
+'...' = { MALEF_OPERATING_SYSTEM = "unix" }
 
 # Actions to do before compiling.
 # [[actions.'case(os)'.linux]]
 # type = post-fetch pre-build post-build test
 # command = [<commands>]
+[[depends-on]]
+gnat_native = "^13.2.1"

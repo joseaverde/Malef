@@ -1,51 +1,46 @@
-with Malef;
-with Malef.Boxes;
-with Malef.Colors;
+with Ada.Text_IO;
 with Malef.Surfaces;
-with Malef.Windows;
+with Malef.System;
+with Malef.Boxes;
 
 procedure CMYK is
-   Base    : Malef.Surfaces.Surface_Type;
-   Cyan    : Malef.Surfaces.Surface_Type;
-   Magenta : Malef.Surfaces.Surface_Type;
-   Yellow  : Malef.Surfaces.Surface_Type;
+   Base    : aliased Malef.Surfaces.Surface (19, 41);
+   Cyan    : aliased Malef.Surfaces.Surface (16, 32);
+   Magenta : aliased Malef.Surfaces.Surface (16, 32);
+   Yellow  : aliased Malef.Surfaces.Surface (16, 32);
 
-   Base_Colour    : constant Malef.Color_Type := (255, 255, 255, 255);
-   Cyan_Colour    : constant Malef.Color_Type := (0, 255, 255, 85);
-   Magenta_Colour : constant Malef.Color_Type := (255, 0, 255, 85);
-   Yellow_Colour  : constant Malef.Color_Type := (255, 255, 0, 85);
+   Base_Colour    : constant Malef.RGBA_Type := (255, 255, 255, 255);
+   Cyan_Colour    : constant Malef.RGBA_Type := (0, 255, 255, 85);
+   Magenta_Colour : constant Malef.RGBA_Type := (255, 0, 255, 85);
+   Yellow_Colour  : constant Malef.RGBA_Type := (255, 255, 0, 85);
 
-   CMYK_Box : Malef.Boxes.Box_Type;
+   CMYK_Box : Malef.Boxes.Box (4);
 begin
+   Malef.System.Initialize;
 
-   Malef.Initialize;
+   Base.Fill_Background (Base_Colour);
+   Cyan.Fill_Background (Cyan_Colour);
+   Magenta.Fill_Background (Magenta_Colour);
+   Yellow.Fill_Background (Yellow_Colour);
 
-   Base := Malef.Surfaces.Create (19, 41);
-   Cyan := Malef.Surfaces.Create (16, 32);
-   Magenta := Malef.Surfaces.Create (16, 32);
-   Yellow := Malef.Surfaces.Create (16, 32);
+   Yellow.Background_Id (2, 2) := 10;
 
-   Malef.Colors.Set_Background (Base, Base_Colour);
-   Malef.Colors.Set_Background (Cyan, Cyan_Colour);
-   Malef.Colors.Set_Background (Magenta, Magenta_Colour);
-   Malef.Colors.Set_Background (Yellow, Yellow_Colour);
+   Ada.Text_IO.Put_Line (Base'Image);
+   Ada.Text_IO.Put_Line (Cyan'Image);
+   Ada.Text_IO.Put_Line (Magenta'Image);
+   Ada.Text_IO.Put_Line (Yellow'Image);
 
-   Base.Set_Position (35, 35);
-   Cyan.Set_Position (32, 32);
-   Magenta.Set_Position (32, 48);
-   Yellow.Set_Position (40, 40);
-
-   CMYK_Box.Insert (Base.Get_Reference, 1);
-   CMYK_Box.Insert (Cyan.Get_Reference, 2);
-   CMYK_Box.Insert (Magenta.Get_Reference, 3);
-   CMYK_Box.Insert (Yellow.Get_Reference, 4);
-
+   CMYK_Box.Insert (1, Base'Unchecked_Access, (35, 35));
+   CMYK_Box.Insert (2, Cyan'Unchecked_Access, (32, 32));
+   CMYK_Box.Insert (3, Magenta'Unchecked_Access, (32, 48));
+   CMYK_Box.Insert (4, Yellow'Unchecked_Access, (40, 40));
    CMYK_Box.Update;
 
-   Malef.Windows.Main_Window.Insert (CMYK_Box.Get_Reference, 1);
-   Malef.Windows.Main_Window.Update;
-   Malef.Windows.Main_Window.Draw;
+   Ada.Text_IO.Put_Line (CMYK_Box'Image);
 
-   Malef.Finalize;
+   -- Malef.System.Main.Append (CMYK'Unchecked_Access, (1, 1));
+   -- Malef.System.Main.Update;
+   -- Malef.System.Main.Draw;
 
+   Malef.System.Finalize;
 end CMYK;

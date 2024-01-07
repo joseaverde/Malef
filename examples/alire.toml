@@ -1,0 +1,15 @@
+name = "malef_examples"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["José Antonio Verde Jiménez"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
+maintainers-logins = ["joseaverde"]
+
+executables = ["malef_examples"]
+[[depends-on]]
+malef = "~0.1.0-dev"
+[[pins]]
+malef = { path='..' }
+[[depends-on]]
+gnat_native = "^13.2.1"
