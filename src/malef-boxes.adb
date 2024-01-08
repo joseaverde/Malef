@@ -28,6 +28,17 @@
 
 package body Malef.Boxes is
 
+   procedure Put (Item : in String) is
+      procedure puts (S : not null access constant Character) with
+         Import        => True,
+         Convention    => C,
+         External_Name => "puts";
+      Value : constant array (Item'Range) of aliased Character
+            := [for C of Item => C];
+   begin
+      puts (Value (Value'First)'Access);
+   end Put;
+
    procedure Set_Updated (
       Object : in out Box;
       Layer  : in     Layer_Index)
@@ -343,6 +354,50 @@ package body Malef.Boxes is
    --<<---------------------->>--
    -->> Container Operations <<--
    --<<---------------------->>--
+
+   procedure Append (
+      Object   : in out Box;
+      New_Item : in     Box_Item;
+      Index    : in     Layer_Index) is
+   begin
+      Put ("Item appended");
+      case New_Item.Kind is
+         when A_Surface =>
+            Insert (Object   => Object,
+                    Index    => Last_Index (Object) + 1,
+                    Surface  => New_Item.Surface,
+                    Position => New_Item.Position,
+                    Mode     => New_Item.Mode,
+                    Opacity  => New_Item.Opacity);
+         when A_Box =>
+            Insert (Object   => Object,
+                    Index    => Last_Index (Object) + 1,
+                    Other    => New_Item.Box,
+                    Position => New_Item.Position,
+                    Mode     => New_Item.Mode,
+                    Opacity  => New_Item.Opacity);
+      end case;
+   end Append;
+
+   procedure Replace (
+      Object   : in out Box;
+      Index    : in     Layer_Index;
+      New_Item : in     Box_Item) is
+   begin
+      Put ("Item replaced");
+      Object.Layers (Index) := (Surface  => (if New_Item.Kind = A_Surface
+                                                then New_Item.Surface
+                                                else null),
+                                Box      => (if New_Item.Kind = A_Box
+                                                then New_Item.Box
+                                                else null),
+                                Opacity  => New_Item.Opacity,
+                                Position => New_Item.Position,
+                                Mode     => New_Item.Mode,
+                                Hidden   => False,
+                                In_Use   => True);
+      Set_Updated (Object, Index);
+   end Replace;
 
    procedure Insert (
       Object   : in out Box;

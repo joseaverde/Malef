@@ -14,7 +14,14 @@ procedure CMYK is
    Magenta_Colour : constant Malef.RGBA_Type := (255, 0, 255, 85);
    Yellow_Colour  : constant Malef.RGBA_Type := (255, 255, 0, 85);
 
-   CMYK_Box : Malef.Boxes.Box (4);
+   use Malef.Boxes;
+
+   CMYK_Box : Malef.Boxes.Box (4) := [
+      1 => Item (Base'Unchecked_Access, (35, 35)),
+      2 => Item (Cyan'Unchecked_Access, (32, 32)),
+      3 => Item (Magenta'Unchecked_Access, (32, 48)),
+      4 => Item (Yellow'Unchecked_Access, (40, 40))
+   ];
 begin
    Malef.System.Initialize;
 
@@ -30,10 +37,6 @@ begin
    Ada.Text_IO.Put_Line (Magenta'Image);
    Ada.Text_IO.Put_Line (Yellow'Image);
 
-   CMYK_Box.Insert (1, Base'Unchecked_Access, (35, 35));
-   CMYK_Box.Insert (2, Cyan'Unchecked_Access, (32, 32));
-   CMYK_Box.Insert (3, Magenta'Unchecked_Access, (32, 48));
-   CMYK_Box.Insert (4, Yellow'Unchecked_Access, (40, 40));
    CMYK_Box.Update;
 
    Ada.Text_IO.Put_Line (CMYK_Box'Image);
