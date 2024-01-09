@@ -1,6 +1,6 @@
 with Ada.Strings.Text_Buffers;
 
-package Terminfo is
+private package Malef.Terminfo is
 
    -- Terminal information can be found in most POSIX-like OS's as a little
    -- database. When you open your terminal the $TERM environment variable is
@@ -78,4 +78,4 @@ private
 
    type Term_Type is null record;
 
-end Terminfo;
+end Malef.Terminfo;

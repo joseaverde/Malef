@@ -28,7 +28,7 @@
 
 with Malef.Widgets;
 with Malef.Surfaces;
-private with Ada.Strings.Wide_Unbounded;
+private with Ada.Strings.Wide_Wide_Unbounded;
 
 package Malef.Texts with Preelaborate is
 
@@ -69,12 +69,14 @@ package Malef.Texts with Preelaborate is
 
 private
 
+   use Ada.Strings.Wide_Wide_Unbounded;
+
    type Text_Widget is
       new Widgets.Widget with
       record
          Alignment : Text_Alignment := Left_Aligned;
          Direction : Text_Direction := Left_Right_Top_Bottom;
-         Value     : Ada.Strings.Wide_Unbounded.Unbounded_Wide_String;
+         Value     : Unbounded_Wide_Wide_String;
       end record;
 
    function Get_Alignment (
@@ -90,6 +92,6 @@ private
    function Get_Text (
       Widget : in Text_Widget)
       return Glyph_String is (
-      Ada.Strings.Wide_Unbounded.To_Wide_String (Widget.Value));
+      To_Wide_Wide_String (Widget.Value));
 
 end Malef.Texts;

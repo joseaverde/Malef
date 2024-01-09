@@ -11,15 +11,15 @@ package body Malef.Surfaces is
       Bg     : in     Boolean := False;
       Fg     : in     Boolean := False) is
    begin
-      if Object.Matrix (Row, Col).Meta.Has_Name then
-         Object.Matrix (Row, Col).Meta.Has_Name := False;
+      if Object.Matrix (Row, Col).Has_Name then
+         Object.Matrix (Row, Col).Has_Name := False;
          if Bg then
             Object.Matrix (Row, Col).Background := (
-               Object.Palette (Object.Matrix (Row, Col).Meta.Bg_Name));
+               Object.Palette (Object.Matrix (Row, Col).Bg_Name));
          end if;
          if Fg then
             Object.Matrix (Row, Col).Foreground := (
-               Object.Palette (Object.Matrix (Row, Col).Meta.Fg_Name));
+               Object.Palette (Object.Matrix (Row, Col).Fg_Name));
          end if;
       end if;
    end Restore;
@@ -31,14 +31,14 @@ package body Malef.Surfaces is
       Bg     : in     Boolean := False;
       Fg     : in     Boolean := False) is
    begin
-      if not Object.Matrix (Row, Col).Meta.Has_Name then
-         Object.Matrix (Row, Col).Meta.Has_Name := True;
+      if not Object.Matrix (Row, Col).Has_Name then
+         Object.Matrix (Row, Col).Has_Name := True;
          if Bg then
-            Object.Matrix (Row, Col).Meta.Bg_Name := Palettes.Nearest (
+            Object.Matrix (Row, Col).Bg_Name := Palettes.Nearest (
                Object.Palette, Object.Matrix (Row, Col).Background);
          end if;
          if Fg then
-            Object.Matrix (Row, Col).Meta.Fg_Name := Palettes.Nearest (
+            Object.Matrix (Row, Col).Fg_Name := Palettes.Nearest (
                Object.Palette, Object.Matrix (Row, Col).Foreground);
          end if;
       end if;
@@ -102,15 +102,15 @@ package body Malef.Surfaces is
                Fore := Arg.Matrix (Row, Col).Foreground;
                Back := Arg.Matrix (Row, Col).Background;
             else
-               Fore := Arg.Palette (Arg.Matrix (Row, Col).Meta.Fg_Name);
-               Back := Arg.Palette (Arg.Matrix (Row, Col).Meta.Bg_Name);
+               Fore := Arg.Palette (Arg.Matrix (Row, Col).Fg_Name);
+               Back := Arg.Palette (Arg.Matrix (Row, Col).Bg_Name);
             end if;
             Buffer.Put (ASCII.ESC & "[38;2;" & Image (Fore) & "m");
             Buffer.Put (ASCII.ESC & "[48;2;" & Image (Back) & "m");
             if Arg.Matrix (Row, Col).Character = Nil then
                Buffer.Wide_Put (" ");
             else
-               Buffer.Wide_Put (Arg.Matrix (Row, Col).Character & "");
+               Buffer.Wide_Wide_Put (Arg.Matrix (Row, Col).Character & "");
             end if;
          end loop;
          Buffer.Put (ASCII.ESC & "[0m");
@@ -262,7 +262,7 @@ package body Malef.Surfaces is
    begin
       Set_Updated (Object, Row, Col);
       Restore_Palette (Object, Row, Col, Fg => True);
-      return (Element => Object.Matrix (Row, Col).Meta.Bg_Name'Access);
+      return (Element => Object.Matrix (Row, Col).Bg_Name'Access);
    end Background_Id;
 
    function Foreground_Id (
@@ -273,7 +273,7 @@ package body Malef.Surfaces is
    begin
       Set_Updated (Object, Row, Col);
       Restore_Palette (Object, Row, Col, Bg => True);
-      return (Element => Object.Matrix (Row, Col).Meta.Fg_Name'Access);
+      return (Element => Object.Matrix (Row, Col).Fg_Name'Access);
    end Foreground_Id;
 
    procedure Set (
@@ -285,8 +285,8 @@ package body Malef.Surfaces is
    begin
       Set_Updated (Object, Row, Col);
       Restore_Palette (Object, Row, Col);
-      Object.Matrix (Row, Col).Meta.Bg_Name := Background;
-      Object.Matrix (Row, Col).Meta.Fg_Name := Foreground;
+      Object.Matrix (Row, Col).Bg_Name := Background;
+      Object.Matrix (Row, Col).Fg_Name := Foreground;
    end Set;
 
    procedure Set_Background (
@@ -297,7 +297,7 @@ package body Malef.Surfaces is
    begin
       Set_Updated (Object, Row, Col);
       Restore (Object, Row, Col, Fg => True);
-      Object.Matrix (Row, Col).Meta.Bg_Name := Item;
+      Object.Matrix (Row, Col).Bg_Name := Item;
    end Set_Background;
 
    procedure Set_Foreground (
@@ -308,7 +308,7 @@ package body Malef.Surfaces is
    begin
       Set_Updated (Object, Row, Col);
       Restore (Object, Row, Col, Bg => True);
-      Object.Matrix (Row, Col).Meta.Fg_Name := Item;
+      Object.Matrix (Row, Col).Fg_Name := Item;
    end Set_Foreground;
 
    -->> Omni <<--
@@ -343,8 +343,8 @@ package body Malef.Surfaces is
       Set_Updated (Object, Row, Col);
       Restore_Palette (Object, Row, Col);
       Object.Matrix (Row, Col) := (
-         @ with delta Meta      => (@.Meta with delta Bg_Name => Background,
-                                                      Fg_Name => Foreground),
+         @ with delta Bg_Name => Background,
+                      Fg_Name => Foreground,
                       Character => Character,
                       Style     => Style);
    end Set;
@@ -556,7 +556,7 @@ package body Malef.Surfaces is
       for Row in From.Row .. To.Row loop
          for Col in From.Col .. To.Col loop
             Restore_Palette (Object, Row, Col, Fg => True);
-            Object.Matrix (Row, Col).Meta.Bg_Name := Item;
+            Object.Matrix (Row, Col).Bg_Name := Item;
          end loop;
       end loop;
       Set_Updated (Object, From, To);
@@ -571,7 +571,7 @@ package body Malef.Surfaces is
       for Row in From.Row .. To.Row loop
          for Col in From.Col .. To.Col loop
             Restore_Palette (Object, Row, Col, Bg => True);
-            Object.Matrix (Row, Col).Meta.Fg_Name := Item;
+            Object.Matrix (Row, Col).Fg_Name := Item;
          end loop;
       end loop;
       Set_Updated (Object, From, To);
@@ -587,8 +587,8 @@ package body Malef.Surfaces is
       for Row in From.Row .. To.Row loop
          for Col in From.Col .. To.Col loop
             Restore_Palette (Object, Row, Col);
-            Object.Matrix (Row, Col).Meta.Bg_Name := Background;
-            Object.Matrix (Row, Col).Meta.Fg_Name := Foreground;
+            Object.Matrix (Row, Col).Bg_Name := Background;
+            Object.Matrix (Row, Col).Fg_Name := Foreground;
          end loop;
       end loop;
       Set_Updated (Object, From, To);
@@ -628,8 +628,8 @@ package body Malef.Surfaces is
       for Row in From.Row .. To.Row loop
          for Col in From.Col .. To.Col loop
             Restore_Palette (Object, Row, Col, Bg => True, Fg => True);
-            Process (Background => Object.Matrix (Row, Col).Meta.Bg_Name,
-                     Foreground => Object.Matrix (Row, Col).Meta.Fg_Name,
+            Process (Background => Object.Matrix (Row, Col).Bg_Name,
+                     Foreground => Object.Matrix (Row, Col).Fg_Name,
                      Position   => (Row, Col));
          end loop;
       end loop;
@@ -693,9 +693,8 @@ package body Malef.Surfaces is
          for Col in From.Col .. To.Col loop
             Restore_Palette (Object, Row, Col);
             Object.Matrix (Row, Col) := (
-               @ with delta Meta      => (@.Meta with delta
-                                                      Bg_Name => Background,
-                                                      Fg_Name => Foreground),
+               @ with delta Bg_Name   => Background,
+                            Fg_Name   => Foreground,
                             Character => Character,
                             Style     => Style);
          end loop;

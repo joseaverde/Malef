@@ -17,7 +17,7 @@ package body Malef.Palettes with Pure is
       for I in Palette'Range loop
          Test := Distance (Palette (I), Item);
          if Test < Best then
-            Test := Best;
+            Best := Test;
             Id := I;
          end if;
       end loop;

@@ -30,8 +30,16 @@ project Malef is
    for Library_Kind use Library_Type;
 
    package Compiler is
-      for Default_Switches ("Ada") use Malef_Config.Ada_Compiler_Switches & (
-         "-gnaty-I", "-gnatyC", "-gnatyM81", "-g", "-gnat2022", "-gnatwJ", "-gnatW8");
+      for Default_Switches ("Ada") use Malef_Config.Ada_Compiler_Switches &
+         ( "-gnaty-I"
+         , "-gnatyC"
+         , "-gnatyM81"
+         , "-g"
+         , "-gnat2022"
+         , "-gnatwJ"
+         , "-gnatW8"
+         -- , "-gnatl"
+         );
    end Compiler;
 
    package Binder is

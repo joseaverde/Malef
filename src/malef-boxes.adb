@@ -79,6 +79,7 @@ package body Malef.Boxes is
       -- base layer (Top) to show up (at least in normal mode).
       -- We also have to keep in mind that we have to sum both alpha values.
 
+      pragma Warnings (Off, "constant ""B_Str"" is not referenced");
       function Weight (Top, Bottom : in RGBA_Type)
          return Weights is ((
          declare
@@ -90,11 +91,14 @@ package body Malef.Boxes is
              B_Str : constant Float := 1.0 - T_Str;
          begin
             (Total, T_Str, B_Str)));
+      pragma Warnings (On, "constant ""B_Str"" is not referenced");
 
    end Layer_Modes_Helper;
 
    package body Layer_Modes_Helper is
 
+      -- TODO: Remove warnings, GNAT doesn't like (declare) blocks yet
+      pragma Warnings (Off, "constant ""W"" is not referenced");
       function Simple_Addition (Top, Bottom : in RGBA_Type)
          return RGBA_Type is (
          (if    Top (Alpha) = 255 then Top
@@ -107,6 +111,7 @@ package body Malef.Boxes is
                   else Component_Type (Add (Float (Top (I)) * W.Top,
                                             Float (Bottom (I)) * W.Bottom)))])
          ));
+      pragma Warnings (On, "constant ""W"" is not referenced");
 
    end Layer_Modes_Helper;
 

@@ -20,7 +20,6 @@ project Malef_Examples is
       ( "cmyk.adb"
       , "palettes.adb"
       , "gradient.adb"
-      , "read_terminfo.adb"
       );
 
    package Compiler is

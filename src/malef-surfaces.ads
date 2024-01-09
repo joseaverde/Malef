@@ -871,7 +871,7 @@ private
       Row    : in Row_Type;
       Col    : in Col_Type)
       return Boolean is (
-      Object.Matrix (Row, Col).Meta.Has_Name);
+      Object.Matrix (Row, Col).Has_Name);
 
    --<<-------------->>--
    -->> Surface Info <<--
@@ -927,7 +927,7 @@ private
       return RGBA_Type is (
       (if not Object.Is_Indexed (Row, Col)
          then Object.Matrix (Row, Col).Background
-         else Object.Palette (Object.Matrix (Row, Col).Meta.Bg_Name)));
+         else Object.Palette (Object.Matrix (Row, Col).Bg_Name)));
 
    function Get_Foreground (
       Object : in Surface;
@@ -936,7 +936,7 @@ private
       return RGBA_Type is (
       (if not Object.Is_Indexed (Row, Col)
          then Object.Matrix (Row, Col).Foreground
-         else Object.Palette (Object.Matrix (Row, Col).Meta.Fg_Name)));
+         else Object.Palette (Object.Matrix (Row, Col).Fg_Name)));
 
    -->> Palettes <<--
 
@@ -946,7 +946,7 @@ private
       Col    : in Positive_Col_Count)
       return Palette_Index is (
       (if Object.Is_Indexed (Row, Col)
-         then Object.Matrix (Row, Col).Meta.Bg_Name
+         then Object.Matrix (Row, Col).Bg_Name
          else Palettes.Nearest (Object.Palette,
                                 Object.Matrix (Row, Col).Background)));
 
@@ -956,7 +956,7 @@ private
       Col    : in Positive_Col_Count)
       return Palette_Index is  (
       (if Object.Is_Indexed (Row, Col)
-         then Object.Matrix (Row, Col).Meta.Fg_Name
+         then Object.Matrix (Row, Col).Fg_Name
          else Palettes.Nearest (Object.Palette,
                                 Object.Matrix (Row, Col).Foreground)));
 

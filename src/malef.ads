@@ -61,8 +61,8 @@ is
          Col : Col_Type;
       end record;
 
-   subtype Glyph is Wide_Character;
-   subtype Glyph_String is Wide_String;
+   subtype Glyph is Wide_Wide_Character;
+   subtype Glyph_String is Wide_Wide_String;
 
    Nil : constant Glyph := Glyph'First;
 

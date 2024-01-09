@@ -30,33 +30,23 @@ private package Malef.Implementation with
    Pure => True
 is
 
-   type Cell_Meta is
-      record
-         Bg_Name  : aliased Palette_Index;
-         Fg_Name  : aliased Palette_Index;
-         Has_Name : Boolean;
-         Updated  : Boolean;
-      end record with
-      Object_Size => 32;
-
-   for Cell_Meta use
-      record
-         Bg_Name  at 0 range 0 .. 7;
-         Fg_Name  at 1 range 0 .. 7;
-         -- 0 .. 5 unused
-         Has_Name at 3 range 6 .. 6;
-         Updated  at 3 range 7 .. 7;
-      end record;
+   -- Here we specify what the internal representation of each cell is.
+   -- We need to store colour, palette index, character and style. And more
+   -- useful information.
 
    type Cell_Type is
       record
          Foreground : aliased RGBA_Type;          -- 32 bits
          Background : aliased RGBA_Type;          -- 32 bits
-         Meta       : aliased Cell_Meta;          -- 32 bits
-         Character  : aliased Glyph;              -- 16 bits
+         Character  : aliased Glyph;              -- 32 bits
+         Bg_Name    : aliased Palette_Index;      -- 32 bits
+         Fg_Name    : aliased Palette_Index;      -- 32 bits
+         Has_Name   : aliased Boolean;
+         Updated    : aliased Boolean;
          Style      : aliased Style_Type;         -- 10 bits
       end record with
-      Object_Size => 128;
+      Object_Size => 256,
+      Alignment   => 32;
 
    type Matrix_Type is
       array (Row_Type range <>, Col_Type range <>)
@@ -64,12 +54,12 @@ is
 
    Default_Cell : constant Cell_Type
                 := Cell_Type'(Foreground => (255, 255, 255,   0),
-                              Background => (  0,   0,   0,   0),
+                              Background =>   (0,   0,   0,   0),
                               Character  => ' ',
-                              Meta       => Cell_Meta'(Fg_Name  => 0,
-                                                       Bg_Name  => 0,
-                                                       Has_Name => False,
-                                                       Updated  => False),
+                              Fg_Name    => 0,
+                              Bg_Name    => 0,
+                              Has_Name   => False,
+                              Updated    => False,
                               Style      => (others => False));
 
 end Malef.Implementation;

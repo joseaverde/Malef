@@ -2,38 +2,169 @@ with Ada.Directories;
 with Ada.Directories.Hierarchical_File_Names;
 with Ada.Environment_Variables;
 with Ada.Streams.Stream_IO;
+with Ada.Unchecked_Conversion;
 with Interfaces;
+with System;
 
 with Ada.Text_IO;
 
-package body Terminfo is
+package body Malef.Terminfo is
+
+   --<<----------->>--
+   -->> Term_Type <<--
+   --<<----------->>--
 
    use Ada.Streams;
 
-   Magic_Number : constant := 8#0432#;
+   -- The following page describes the common database binary format.
+   -- <https://invisible-island.net/ncurses/man/term.5.html>
+   --
+   -- It seems there isn't such a thing as a common binrary format for compiled
+   -- terminfo databases... So we will follow the three formats this page
+   -- describes:
+   --
+   --  * Legacy Storage Format
+   --  * Extended Storage Format
+   --  * Extended Number Format
+   --
+   -- And in case we can't load it, we just emit an error and load the common
+   -- dummy format.
 
-   type Header_Type is
-      record
-         Magic                  : Interfaces.Integer_16;
-         Terminal_Names_Size    : Interfaces.Integer_16;
-         Boolean_Count          : Interfaces.Integer_16;
-         Integer_Count          : Interfaces.Integer_16;
-         Offset_Count           : Interfaces.Integer_16;
-         String_Table_Size      : Interfaces.Integer_16;
-      end record;
+   generic
+      Bit_Order : in System.Bit_Order;
+   package Loaders is
+
+      -- It seems the database is stored in little endian format.
+      -- We need some black magic in order to achive more speed.
+      --
+      -- This package implements the deserialisation of the terminfo format.
+      -- In the generic parameters we ask about the endianness of the system.
+      -- It is the only parameter, and it is known at compile-time. Therefore
+      -- all the branches are removed. And code is generated for each specific
+      -- case.
+      --
+      -- In case of little-endian systems, we just read. In big-endian systems
+      -- we have to read byte by byte, invert the order and generate a new
+      -- number.
+
+      Magic_Number : constant := 8#0432#;
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type);
+
+   end Loaders;
+
+   package body Loaders is
+
+      -->> Helper Types <<--
+
+      use Interfaces;
+
+      type Header_Type is
+         record
+            Magic               : Integer_16;
+            Terminal_Names_Size : Integer_16;
+            Boolean_Count       : Integer_16;
+            Integer_Count       : Integer_16;
+            Offset_Count        : Integer_16;
+            String_Table_Size   : Integer_16;
+         end record;
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Item   : out Header_Type);
+
+      for Header_Type'Read use Read;
+
+      -->> Helper Functions <<--
+
+      function Convert is
+         new Ada.Unchecked_Conversion (
+         Source => Unsigned_16,
+         Target => Integer_16);
+
+      function Convert is
+         new Ada.Unchecked_Conversion (
+         Source => Unsigned_32,
+         Target => Integer_32);
+
+      type Byte_Array is array (Natural range <>) of Unsigned_8;
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Item   : out Integer_16) is
+      begin
+         case Bit_Order is
+            when System.Low_Order_First =>
+               Integer_16'Read (Stream, Item);
+            when System.High_Order_First =>
+               declare
+                  Bytes : Byte_Array (0 .. 1);
+               begin
+                  Byte_Array'Read (Stream, Bytes);
+                  Item := Convert (Shift_Left (Unsigned_16 (Bytes (0)), 8)
+                                   or          Unsigned_16 (Bytes (1)));
+               end;
+         end case;
+      end Read;
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Item   : out Integer_32) is
+      begin
+         case Bit_Order is
+            when System.Low_Order_First =>
+               Integer_32'Read (Stream, Item);
+            when System.High_Order_First =>
+               declare
+                  Bytes : Byte_Array (0 .. 3);
+               begin
+                  Byte_Array'Read (Stream, Bytes);
+                  Item := Convert (Shift_Left (Unsigned_32 (Bytes (0)), 24)
+                                or Shift_Left (Unsigned_32 (Bytes (1)), 16)
+                                or Shift_Left (Unsigned_32 (Bytes (2)),  8)
+                                or             Unsigned_32 (Bytes (3)));
+               end;
+         end case;
+      end Read;
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Item   : out Header_Type) is
+      begin
+         Read (Stream, Item.Magic);
+         Read (Stream, Item.Terminal_Names_Size);
+         Read (Stream, Item.Boolean_Count);
+         Read (Stream, Item.Integer_Count);
+         Read (Stream, Item.Offset_Count);
+         Read (Stream, Item.String_Table_Size);
+      end Read;
+
+      -->> Implementation <<--
+
+      procedure Read (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type)
+      is
+         Header : Header_Type;
+      begin
+         Header_Type'Read (Stream, Header);
+         Ada.Text_IO.Put_Line (Header'Image);
+      end Read;
+
+   end Loaders;
+
+   package Loader is new Loaders (System.Default_Bit_Order);
 
    procedure Open (
       Term :    out Term_Type;
       Path : in     String)
    is
       File   : Stream_IO.File_Type;
-      Header : Header_Type;
-      Stream : Stream_IO.Stream_Access;
    begin
       Stream_IO.Open (File, Stream_IO.In_File, Path);
-      Stream := Stream_IO.Stream (File);
-      Header_Type'Read (Stream, Header);
-      Ada.Text_IO.Put_Line (Header'Image);
+      Loader.Read (Stream_IO.Stream (File), Term);
       Stream_IO.Close (File);
    end Open;
 
@@ -82,8 +213,8 @@ package body Terminfo is
 
    function As_Hex (
       Item : in Character)
-      return String is
-      ( Hex (Character'Pos (Item) / 16)
+      return String is (
+        Hex (Character'Pos (Item) / 16)
       & Hex (Character'Pos (Item) mod 16));
 
    function Indexed (
@@ -169,7 +300,7 @@ package body Terminfo is
                end if;
 
                exit when Last not in Paths'Range;
-                  
+
                Last := Last + 1;
             end loop;
 
@@ -193,4 +324,4 @@ package body Terminfo is
          then Search (Env.Value (TERM_Env))
          else Search (Default_Terminal)));
 
-end Terminfo;
+end Malef.Terminfo;
