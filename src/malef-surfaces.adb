@@ -108,7 +108,7 @@ package body Malef.Surfaces is
             Buffer.Put (ASCII.ESC & "[38;2;" & Image (Fore) & "m");
             Buffer.Put (ASCII.ESC & "[48;2;" & Image (Back) & "m");
             if Arg.Matrix (Row, Col).Character = Nil then
-               Buffer.Wide_Put (" ");
+               Buffer.Wide_Wide_Put (" ");
             else
                Buffer.Wide_Wide_Put (Arg.Matrix (Row, Col).Character & "");
             end if;
@@ -712,6 +712,23 @@ package body Malef.Surfaces is
       Fill (Object, (1, 1), (Object.Rows, Object.Cols),
             Background, Foreground, Character, Style);
    end Fill;
+
+   --<<------>>--
+   -->> Text <<--
+   --<<------>>--
+
+   procedure Put (
+      Object : in out Surface;
+      Row    : in     Row_Type;
+      Col    : in     Col_Type;
+      Item   : in     Glyph_String) is
+   begin
+      for C in Col .. Col + Item'Length - 1 loop
+         Object.Matrix (Row, C).Character
+            := Item (Item'First + Natural (C - Col));
+      end loop;
+      Set_Updated (Object, (Row, Col), (Row, Col + Item'Length - 1));
+   end Put;
 
    --<<---------->>--
    -->> Palettes <<--

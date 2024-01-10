@@ -1,4 +1,4 @@
-with Ada.Text_IO;
+with Ada.Wide_Wide_Text_IO;
 with Malef.Surfaces;
 with Malef.System;
 with Malef.Boxes;
@@ -10,11 +10,14 @@ procedure CMYK is
    Yellow  : aliased Malef.Surfaces.Surface (16, 32);
 
    Base_Colour    : constant Malef.RGBA_Type := (255, 255, 255, 255);
+   Grey_Colour    : constant Malef.RGBA_Type := (128, 128, 128, 128);
    Cyan_Colour    : constant Malef.RGBA_Type := (0, 255, 255, 85);
    Magenta_Colour : constant Malef.RGBA_Type := (255, 0, 255, 85);
    Yellow_Colour  : constant Malef.RGBA_Type := (255, 255, 0, 85);
 
    use Malef.Boxes;
+   use type Malef.Col_Type;
+   use type Malef.Row_Type;
 
    CMYK_Box : Malef.Boxes.Box (4) := [
       1 => Item (Base'Unchecked_Access, (35, 35)),
@@ -22,28 +25,38 @@ procedure CMYK is
       3 => Item (Magenta'Unchecked_Access, (32, 48)),
       4 => Item (Yellow'Unchecked_Access, (40, 40))
    ];
+   Blocks : constant Malef.Glyph_String
+      := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
 begin
-   Malef.System.Initialize;
+   -- Malef.System.Initialize;
 
    Base.Fill_Background (Base_Colour);
    Cyan.Fill_Background (Cyan_Colour);
    Magenta.Fill_Background (Magenta_Colour);
    Yellow.Fill_Background (Yellow_Colour);
 
-   Yellow.Background_Id (2, 2) := 10;
+   Base.Fill_Foreground (Grey_Colour);
 
-   Ada.Text_IO.Put_Line (Base'Image);
-   Ada.Text_IO.Put_Line (Cyan'Image);
-   Ada.Text_IO.Put_Line (Magenta'Image);
-   Ada.Text_IO.Put_Line (Yellow'Image);
+   Base.Put (2, 2, "Base");
+   for I in Malef.Row_Type range 4 .. 18 when I mod 2 = 0 loop
+      Base.Put (I, 2, Blocks);
+   end loop;
+   Cyan.Put (2, 2, "Cyan");
+   Magenta.Put (2, Magenta.Cols - 8, "Magenta");
+   Yellow.Put (2, 2, "Yellow");
+
+   Ada.Wide_Wide_Text_IO.Put_Line (Base'Wide_Wide_Image);
+   Ada.Wide_Wide_Text_IO.Put_Line (Cyan'Wide_Wide_Image);
+   Ada.Wide_Wide_Text_IO.Put_Line (Magenta'Wide_Wide_Image);
+   Ada.Wide_Wide_Text_IO.Put_Line (Yellow'Wide_Wide_Image);
 
    CMYK_Box.Update;
 
-   Ada.Text_IO.Put_Line (CMYK_Box'Image);
+   Ada.Wide_Wide_Text_IO.Put_Line (CMYK_Box'Wide_Wide_Image);
 
    -- Malef.System.Main.Append (CMYK'Unchecked_Access, (1, 1));
    -- Malef.System.Main.Update;
    -- Malef.System.Main.Draw;
 
-   Malef.System.Finalize;
+   -- Malef.System.Finalize;
 end CMYK;

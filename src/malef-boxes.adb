@@ -231,8 +231,8 @@ package body Malef.Boxes is
       if Max.Col < Min.Col or else Max.Row < Min.Row then
          return False;
       end if;
-      Shift := (1 - Min.Row, 1 - Min.Col);
-      Siz := (Max.Row - Min.Row + 1, Max.Col - Min.Col + 1);
+      Shift := (-Min.Row, -Min.Col);
+      Siz := (Max.Row - Min.Row, Max.Col - Min.Col);
       if Object.Canvas.Is_Empty                          or else
          Object.Canvas.Constant_Reference.Rows < Siz.Row or else
          Object.Canvas.Constant_Reference.Cols < Siz.Col
@@ -352,7 +352,8 @@ package body Malef.Boxes is
       if Arg.Canvas.Is_Empty then
          Buffer.Put (" is not updated ");
       else
-         Buffer.Put (Arg.Canvas.Constant_Reference.Element.all'Image);
+         Buffer.Wide_Wide_Put (
+            Arg.Canvas.Constant_Reference.Element.all'Wide_Wide_Image);
       end if;
    end Put_Image;
 

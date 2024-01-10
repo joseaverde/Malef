@@ -63,6 +63,7 @@ is
 
    subtype Glyph is Wide_Wide_Character;
    subtype Glyph_String is Wide_Wide_String;
+   type Glyph_Block is array (Positive range <>, Positive range <>) of Glyph;
 
    Nil : constant Glyph := Glyph'First;
 

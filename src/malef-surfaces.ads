@@ -827,6 +827,33 @@ package Malef.Surfaces with Pure is
          and then Modified (Object),
       Global => null;
 
+   --<<------>>--
+   -->> Text <<--
+   --<<------>>--
+
+   procedure Put (
+      Object : in out Surface;
+      Row    : in     Row_Type;
+      Col    : in     Col_Type;
+      Item   : in     Glyph_String) with
+      Pre      => (In_Range (Object, Row, Col) and then
+                   In_Range (Object, Row, Col + Item'Length - 1))
+                  or else raise Constraint_Error,
+      Post     => (for all I in Col .. Col + Item'Length - 1 =>
+                     (Get (Object, Row, Col)
+                        = Item (Item'First + Natural (I - Col))))
+         and then Modified (Object),
+      Global   => null;
+
+   -- TODO:
+   -- * Put (String, Style);
+   -- * Put (String, Foreground, Background);   (indexed and not)
+   -- * Put (String, Style, Foreground, Background);  (indexed and not)
+   -- * Put (Block);
+   -- * Put (Block, Style);
+   -- * Put (Block, Foreground, Background); (indexed and not)
+   -- * Put (Block, Style, Foreground, Background);   (indexed and not)
+
    --<<---------->>--
    -->> Palettes <<--
    --<<---------->>--

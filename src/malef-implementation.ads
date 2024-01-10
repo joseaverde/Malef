@@ -55,7 +55,7 @@ is
    Default_Cell : constant Cell_Type
                 := Cell_Type'(Foreground => (255, 255, 255,   0),
                               Background =>   (0,   0,   0,   0),
-                              Character  => ' ',
+                              Character  => Nil,
                               Fg_Name    => 0,
                               Bg_Name    => 0,
                               Has_Name   => False,
