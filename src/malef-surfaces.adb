@@ -730,6 +730,24 @@ package body Malef.Surfaces is
       Set_Updated (Object, (Row, Col), (Row, Col + Item'Length - 1));
    end Put;
 
+   procedure Put (
+      Object : in out Surface;
+      Row    : in     Row_Type;
+      Col    : in     Col_Type;
+      Block  : in     Glyph_Block) is
+   begin
+      for R in Row .. Row + Block'Length (1) - 1 loop
+         for C in Col .. Col + Block'Length (2) - 1 loop
+            Object.Matrix (R, C).Character :=
+               Block (Block'First (1) + Natural (R - Row),
+                      Block'First (2) + Natural (C - Col));
+         end loop;
+      end loop;
+      Set_Updated (Object, (Row, Col),
+                           ((Row + Block'Length (1) - 1),
+                            (Col + Block'Length (2) - 1)));
+   end Put;
+
    --<<---------->>--
    -->> Palettes <<--
    --<<---------->>--

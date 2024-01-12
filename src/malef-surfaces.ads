@@ -839,9 +839,27 @@ package Malef.Surfaces with Pure is
       Pre      => (In_Range (Object, Row, Col) and then
                    In_Range (Object, Row, Col + Item'Length - 1))
                   or else raise Constraint_Error,
-      Post     => (for all I in Col .. Col + Item'Length - 1 =>
-                     (Get (Object, Row, Col)
-                        = Item (Item'First + Natural (I - Col))))
+      Post     => (for all C in Col .. Col + Item'Length - 1 =>
+                     (Get (Object, Row, C)
+                        = Item (Item'First + Natural (C - Col))))
+         and then Modified (Object),
+      Global   => null;
+
+   procedure Put (
+      Object : in out Surface;
+      Row    : in     Row_Type;
+      Col    : in     Col_Type;
+      Block  : in     Glyph_Block) with
+      Pre      => (In_Range (Object, Row, Col) and then
+                   In_Range (Object,
+                             Row + Block'Length (1) - 1,
+                             Col + Block'Length (2) - 1))
+                  or else raise Constraint_Error,
+      Post     => (for all R in Row .. Row + Block'Length (1) - 1 =>
+                     (for all C in Col .. Col + Block'Length (2) - 1 =>
+                        (Get (Object, R, C)
+                           = Block (Block'First (1) + Natural (R - Row),
+                                    Block'First (2) + Natural (C - Col)))))
          and then Modified (Object),
       Global   => null;
 
@@ -849,7 +867,6 @@ package Malef.Surfaces with Pure is
    -- * Put (String, Style);
    -- * Put (String, Foreground, Background);   (indexed and not)
    -- * Put (String, Style, Foreground, Background);  (indexed and not)
-   -- * Put (Block);
    -- * Put (Block, Style);
    -- * Put (Block, Foreground, Background); (indexed and not)
    -- * Put (Block, Style, Foreground, Background);   (indexed and not)

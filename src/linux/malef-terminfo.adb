@@ -69,7 +69,8 @@ package body Malef.Terminfo is
             Integer_Count       : Integer_16;
             Offset_Count        : Integer_16;
             String_Table_Size   : Integer_16;
-         end record;
+         end record with
+         Object_Size => 16 * 6;
 
       procedure Read (
          Stream : not null access Root_Stream_Type'Class;

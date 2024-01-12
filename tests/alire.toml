@@ -1,0 +1,15 @@
+name = "malef_tests"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["José Antonio Verde Jiménez"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
+maintainers-logins = ["joseaverde"]
+
+executables = ["malef_tests"]
+[[depends-on]]
+malef = "~0.3.0"
+[[pins]]
+malef = { path='..' }
+[[depends-on]]
+aunit = "^23.0.0"

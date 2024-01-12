@@ -46,11 +46,43 @@ package Malef.Texts with Preelaborate is
          Get_Direction (Text_Widget) = Left_Right_Top_Bottom and then
          Get_Text (Text_Widget) = "";
 
+   function New_Text (
+      Value     : in Wide_Wide_String;
+      Alignment : in Text_Alignment := Left_Aligned;
+      Direction : in Text_Direction := Left_Right_Top_Bottom)
+      return Text_Widget with
+      Post     => Get_Text (New_Text'Result) = Value
+         and then Get_Alignment (New_Text'Result) = Alignment
+         and then Get_Direction (New_Text'Result) = Direction,
+      Global   => null;
+
    overriding
    procedure On_Draw (
       Widget  : in     Text_Widget;
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area);
+
+   -->> Setters <<--
+
+   procedure Set_Alignment (
+      Widget : in out Text_Widget;
+      To     : in     Text_Alignment) with
+      Post   => Get_Alignment (Widget) = To,
+      Global => null;
+
+   procedure Set_Direction (
+      Widget : in out Text_Widget;
+      To     : in     Text_Direction) with
+      Post   => Get_Direction (Widget) = To,
+      Global => null;
+
+   procedure Set_Text (
+      Widget : in out Text_Widget;
+      To     : in     Glyph_String) with
+      Post   => Get_Text (Widget) = To,
+      Global => null;
+
+   -->> Getters <<--
 
    function Get_Alignment (
       Widget : in Text_Widget)
@@ -78,6 +110,18 @@ private
          Direction : Text_Direction := Left_Right_Top_Bottom;
          Value     : Unbounded_Wide_Wide_String;
       end record;
+
+   function New_Text (
+      Value     : in Wide_Wide_String;
+      Alignment : in Text_Alignment := Left_Aligned;
+      Direction : in Text_Direction := Left_Right_Top_Bottom)
+      return Text_Widget is (
+      Widgets.Widget with
+         Alignment => Alignment,
+         Direction => Direction,
+         Value     => To_Unbounded_Wide_Wide_String (Value));
+
+   -->> Getters <<--
 
    function Get_Alignment (
       Widget : in Text_Widget)
