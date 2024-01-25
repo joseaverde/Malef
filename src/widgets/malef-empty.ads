@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D S                      --
+--                       M A L E F - E M P T Y . A D S                       --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
 --                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,12 +26,17 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package Malef.System is
+with Malef.Widgets;
+with Malef.Surfaces;
 
-   pragma Elaborate_Body;
+package Malef.Empty with Pure is
 
-   procedure Initialize;
+   type Empty_Widget is new Widgets.Widget with null record;
 
-   procedure Finalize;
+   overriding
+   procedure On_Draw (
+      Object  : in     Empty_Widget;
+      Surface : in out Surfaces.Surface;
+      Area    : in     Widgets.Draw_Area) is null;
 
-end Malef.System;
+end Malef.Empty;

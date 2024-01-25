@@ -1,9 +1,11 @@
-with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
--- with Ada.Calendar;
+with Ada.Calendar;
 
+with Ada.Text_IO; use Ada.Text_IO;
 with Malef.Palettes;
 with Malef.Surfaces;
 with Malef.Boxes;
+with Malef.System;
+with Malef.Window;
 
 procedure Palettes is
 
@@ -62,6 +64,8 @@ procedure Palettes is
       4 => Malef.Boxes.Item (Dialog'Unchecked_Access, (Half_R, Half_C))];
 begin
 
+   Malef.System.Initialize;
+
    -->> Surface Construction <<--
 
    Dialog.Fill_Background (Primary_Bg);
@@ -89,7 +93,8 @@ begin
 
    Put_Line ("No palette");
    Box.Update;
-   Put_Line (Box'Wide_Wide_Image);
+   Malef.Window.Show (Box.Constant_Surface);
+   delay 1.0;
 
    -->> Dark Mode <<--
 
@@ -100,7 +105,8 @@ begin
 
    Put_Line ("Dark Mode");
    Box.Update;
-   Put_Line (Box'Wide_Wide_Image);
+   Malef.Window.Show (Box.Constant_Surface);
+   delay 1.0;
 
    -->> Light Mode <<--
 
@@ -111,64 +117,69 @@ begin
 
    Put_Line ("Light Mode");
    Box.Update;
-   Put_Line (Box'Wide_Wide_Image);
+   Malef.Window.Show (Box.Constant_Surface);
+   delay 1.0;
 
    -->> Benchmark <<--
 
-   -- declare
-   --    use Ada.Calendar;
-   --    Times  : constant := 30;
-   --    Start  : Time;
-   --    Stop   : Time;
-   --    First  : Duration;
-   --    Second : Duration;
-   -- begin
+   declare
+      use Ada.Calendar;
+      Times  : constant := 30;
+      Start  : Time;
+      Stop   : Time;
+      First  : Duration;
+      Second : Duration;
+   begin
 
-   --    -->> Update & Redraw <<--
+      -->> Update & Redraw <<--
 
-   --    Start := Clock;
-   --    for I in 1 .. Times loop
-   --       Dialog.Set_Palette := Dark_Mode;
-   --       Shadow.Set_Palette := Dark_Mode;
-   --       Window.Set_Palette := Dark_Mode;
-   --       Unfocus.Set_Palette := Dark_Mode;
-   --       Box.Update;
-   --       Put_Line (Box'Wide_Wide_Image);
-   --    end loop;
-   --    Stop := Clock;
-   --    First := Stop - Start;
+      Start := Clock;
+      for I in 1 .. Times loop
+         Dialog.Set_Palette := Dark_Mode;
+         Shadow.Set_Palette := Dark_Mode;
+         Window.Set_Palette := Dark_Mode;
+         Unfocus.Set_Palette := Dark_Mode;
+         Box.Update;
+         Malef.Window.Show (Box.Constant_Surface);
+      end loop;
+      Stop := Clock;
+      First := Stop - Start;
 
-   --    -->> Drawing <<--
+      -->> Drawing <<--
 
-   --    Start := Clock;
-   --    for I in 1 .. Times loop
-   --       Dialog.Set_Palette := Dark_Mode;
-   --       Shadow.Set_Palette := Dark_Mode;
-   --       Window.Set_Palette := Dark_Mode;
-   --       Unfocus.Set_Palette := Dark_Mode;
-   --       Box.Update;
-   --       Put_Line (Box'Wide_Wide_Image);
-   --    end loop;
-   --    Stop := Clock;
-   --    Second := Stop - Start;
+      Start := Clock;
+      for I in 1 .. Times loop
+         Dialog.Set_Palette := Dark_Mode;
+         Shadow.Set_Palette := Dark_Mode;
+         Window.Set_Palette := Dark_Mode;
+         Unfocus.Set_Palette := Dark_Mode;
+         Box.Update;
+         Malef.Window.Show (Box.Constant_Surface);
+      end loop;
+      Stop := Clock;
+      Second := Stop - Start;
 
-   --    -->> Results <<--
+      -->> Results <<--
+      delay 1.0;
+      New_Line (20);
 
-   --    Put ("Time per frame (Update and Redraw):");
-   --    Put (Duration'Wide_Wide_Image (First / Duration (Times))); Put ("s");
-   --    New_Line;
+      Put ("Time per frame (Update and Redraw):");
+      Put (Duration'Image (First / Duration (Times))); Put ("s");
+      New_Line;
 
-   --    Put ("Time per frame (Just Drawing):");
-   --    Put (Duration'Wide_Wide_Image (Second / Duration (Times))); Put ("s");
-   --    New_Line;
+      Put ("Time per frame (Just Drawing):");
+      Put (Duration'Image (Second / Duration (Times))); Put ("s");
+      New_Line;
 
-   --    Put ("Frames per Second (Update and Redraw):");
-   --    Put (Duration'Wide_Wide_Image (Duration (Times) / First));
-   --    New_Line;
+      Put ("Frames per Second (Update and Redraw):");
+      Put (Duration'Image (Duration (Times) / First));
+      New_Line;
 
-   --    Put ("Frames per Second (Just Drawing):");
-   --    Put (Duration'Wide_Wide_Image (Duration (Times) / Second));
-   --    New_Line;
-   -- end;
+      Put ("Frames per Second (Just Drawing):");
+      Put (Duration'Image (Duration (Times) / Second));
+      New_Line;
+   end;
+
+   Malef.System.Finalize;
 
 end Palettes;

@@ -28,7 +28,7 @@
 
 with Ada.Wide_Wide_Characters.Handling;
 
-package body Malef.Texts is
+package body Malef.Labels is
 
    function Visual_Width (
       Item : in Glyph)
@@ -80,7 +80,7 @@ package body Malef.Texts is
    -- generic
    --    Horizontal : in Boolean;
    -- procedure Generic_Put (
-   --    Widget  : in     Text_Widget;
+   --    Widget  : in     Label_Widget;
    --    Surface : in out Surfaces.Surface;
    --    Length  : in     Positive;
    --    From    : in     Positive;
@@ -101,7 +101,7 @@ package body Malef.Texts is
    -- The surface where the message will be printed.
 
    -- procedure Generic_Put (
-   --    Widget  : in Text_Widget;
+   --    Widget  : in Label_Widget;
    --    Surface : in Surfaces.Surface;
    --    Length  : in Positive;
    --    From    : in Positive;
@@ -114,7 +114,7 @@ package body Malef.Texts is
 
    overriding
    procedure On_Draw (
-      Widget  : in     Text_Widget;
+      Widget  : in     Label_Widget;
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area) is
    begin
@@ -123,7 +123,7 @@ package body Malef.Texts is
 
    -- overriding
    -- procedure On_Draw (
-   --    Widget  : in     Text_Widget;
+   --    Widget  : in     Label_Widget;
    --    Surface : in out Surfaces.Surface;
    --    Area    : in     Widgets.Draw_Area)
    -- is
@@ -297,24 +297,24 @@ package body Malef.Texts is
    -->> Setters <<--
 
    procedure Set_Alignment (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Text_Alignment) is
    begin
       Widget.Alignment := To;
    end Set_Alignment;
 
    procedure Set_Direction (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Text_Direction) is
    begin
       Widget.Direction := To;
    end Set_Direction;
 
    procedure Set_Text (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Glyph_String) is
    begin
       Widget.Value := To_Unbounded_Wide_Wide_String (To);
    end Set_Text;
 
-end Malef.Texts;
+end Malef.Labels;

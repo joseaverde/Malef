@@ -47,7 +47,8 @@ package body Malef.Terminfo is
       -- we have to read byte by byte, invert the order and generate a new
       -- number.
 
-      Magic_Number : constant := 8#0432#;
+      Magic_Number          : constant := 8#0432#;
+      Extended_Magic_Number : constant := 8#1036#;
 
       procedure Read (
          Stream : not null access Root_Stream_Type'Class;
@@ -77,6 +78,14 @@ package body Malef.Terminfo is
          Item   : out Header_Type);
 
       for Header_Type'Read use Read;
+
+      subtype Count_Type is Integer_32;
+      subtype Natural_Count is Count_Type range 0 .. Count_Type'Last;
+      subtype Positive_Count is Count_Type range 1 .. Count_Type'Last;
+
+      type Boolean_Array is array (Positive_Count range <>) of Boolean;
+      type Integer_Array is array (Positive_Count range <>) of Integer_32;
+      type Char_Array is array (Natural_Count range <>) of Character;
 
       -->> Helper Functions <<--
 
@@ -144,6 +153,92 @@ package body Malef.Terminfo is
 
       -->> Implementation <<--
 
+      procedure Read_Terminal_Names (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type;
+         Count  : in     Count_Type)
+      is
+         Str   : String (1 .. Natural (Count));
+         First : Natural := Str'First;
+      begin
+         -- The string is zero-terminated we skip the last character.
+         String'Read (Stream, Str);
+         for I in Str'First .. Str'Last - 1 loop
+            if Str (I) in '|' | ' ' then
+               Term.Names.Append (To_Unbounded_String (Str (First .. I - 1)));
+               First := I + 1;
+            end if;
+            if Str (I) = ' ' then
+               Term.Full_Name
+                  := To_Unbounded_String (Str (First .. Str'Last - 1));
+               exit;
+            end if;
+         end loop;
+      end Read_Terminal_Names;
+
+      function Read_Booleans (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type;
+         Chars  : in     Count_Type;
+         Count  : in Count_Type)
+         return Boolean_Array
+      is
+         Byte : Unsigned_8;
+      begin
+         return Result : Boolean_Array (1 .. Count) do
+            for I in Result'Range loop
+               Unsigned_8'Read (Stream, Byte);
+               Result (I) := (if Byte = 0 then False else True);
+            end loop;
+
+            -- 16-bit alignment
+            if (Chars + Count) mod 2 = 1 then
+               Unsigned_8'Read (Stream, Byte);
+            end if;
+
+         end return;
+      end Read_Booleans;
+
+      function Read_Integers_16 (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type;
+         Count  : in Count_Type)
+         return Integer_Array is
+      begin
+         return Result : Integer_Array (1 .. Count) do
+            for I in Result'Range loop
+               Read (Stream, Integer_16 (Result (I)));
+            end loop;
+         end return;
+      end Read_Integers_16;
+
+      function Read_Integers_32 (
+         Stream : not null access Root_Stream_Type'Class;
+         Term   : in out Term_Type;
+         Count  : in Count_Type)
+         return Integer_Array is
+      begin
+         return Result : Integer_Array (1 .. Count) do
+            for I in Result'Range loop
+               Read (Stream, Result (I));
+            end loop;
+         end return;
+      end Read_Integers_32;
+
+      function Substring (
+         Item : in Char_Array;
+         From : in Natural_Count)
+         return Unbounded_String
+      is
+         Value : Unbounded_String;
+      begin
+         for I in From .. Item'Last loop
+            exit when Item (I) = Character'First;
+            Append (Value, Item (I));
+         end loop;
+         return Value;
+      end Substring;
+
       procedure Read (
          Stream : not null access Root_Stream_Type'Class;
          Term   : in out Term_Type)
@@ -151,6 +246,38 @@ package body Malef.Terminfo is
          Header : Header_Type;
       begin
          Header_Type'Read (Stream, Header);
+         Read_Terminal_Names (Stream, Term,
+                              Count_Type (Header.Terminal_Names_Size));
+         declare
+            Booleans : constant Boolean_Array
+                     := Read_Booleans (Stream, Term,
+                                       Count_Type (Header.Terminal_Names_Size),
+                                       Count_Type (Header.Boolean_Count));
+            Integers : constant Integer_Array :=
+               (if Header.Magic = Magic_Number
+                  then Read_Integers_16 (Stream, Term,
+                                         Count_Type (Header.Integer_Count))
+                  else Read_Integers_32 (Stream, Term,
+                                         Count_Type (Header.Integer_Count)));
+            Strings : constant Integer_Array :=
+               (if Header.Magic = Magic_Number
+                  then Read_Integers_16 (Stream, Term,
+                                         Count_Type (Header.Offset_Count))
+                  else Read_Integers_32 (Stream, Term,
+                                         Count_Type (Header.Offset_Count)));
+            Table : Char_Array (0 .. Count_Type (Header.String_Table_Size) - 1);
+         begin
+            Char_Array'Read (Stream, Table);
+            Ada.Text_IO.Put_Line (Booleans'Image);
+            Ada.Text_IO.Put_Line (Integers'Image);
+            Ada.Text_IO.Put_Line (Strings'Image);
+            for Index of Strings when Index > 0 loop
+               -- Ada.Text_IO.Put_Line (To_String (Substring (Table, Index)));
+               -- Ada.Text_IO.New_Line (2);
+               Ada.Text_IO.Put_Line (Index'Image);
+            end loop;
+         end;
+  
          Ada.Text_IO.Put_Line (Header'Image);
       end Read;
 
@@ -173,7 +300,18 @@ package body Malef.Terminfo is
       Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
       Arg    : in     Term_Type) is
    begin
-      Buffer.Put ("Terminal");
+
+      if Arg.Names.Is_Empty then
+         Buffer.Put ("<INVALID TERMINAL>");
+         return;
+      end if;
+
+      Buffer.Put (To_String (Arg.Names.First_Element));
+      for I in 2 .. Arg.Names.Last_Index loop
+         Buffer.Put ("|"); Buffer.Put (To_String (Arg.Names (I)));
+      end loop;
+      Buffer.Put (" "); Buffer.Put (To_String (Arg.Full_Name));
+
    end Put_Image;
 
    --<<-------------------->>--

@@ -42,7 +42,7 @@ is
 
    type Style_Name is (Bold,        Faint,       Italic,        Underline,
                        Slow_Blink,  Rapid_Blink, Reverse_Video, Conceal,
-                       Crossed_Out, Doubly_Underline);
+                       Crossed_Out);
 
    type Style_Type is array (Style_Name) of Boolean with Pack;
    No_Style : constant Style_Type := (others => False);

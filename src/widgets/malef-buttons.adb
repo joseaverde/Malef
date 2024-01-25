@@ -1,14 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                          M A L E F - O S . A D B                          --
---                               ( L I N U X )                               --
+--                     M A L E F - B U T T O N S . A D B                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
 --                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -27,58 +26,33 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Interfaces.C;
-with Malef.Events;
+package body Malef.Buttons is
 
-package body Malef.OS is
+   overriding
+   procedure On_Draw (
+      Object  : in     Button_Widget;
+      Surface : in out Surfaces.Surface;
+      Area    : in     Widgets.Draw_Area) is null;
+   -- begin
+   --    Malef.Widgets.Helpers.Draw_Square_Box (
+   --    Surface (Area.From.Row, Area.From.Col)
+   --       := Widgets.Square_Outline (Top_Left_Corner);
+   --    Surface (Area.From.Row, Area.To.Col)
+   --       := Widgets.Square_Outline (Top_Right_Corner);
+   --    Surface (Area.To.Row, Area.From.Col)
+   --       := Widgets.Square_Outline (Bottom_Left_Corner);
+   --    Surface (Area.To.Row, Area.To.Col)
+   --       := Widgets.Square_Outline (Bottom_Right_Corner);
 
-   procedure C_Dimensions (
-      Rows : out Interfaces.C.short;
-      Cols : out Interfaces.C.short) with
-      Import        => True,
-      Convention    => C,
-      External_Name => "_malef_getConsoleScreenSize";
+   --    for Row in 1 .. Area.From.Row loop
 
-   procedure Get_Dimensions (
-      Rows : out Positive_Row_Count;
-      Cols : out Positive_Col_Count) is
+   -- end On_Draw;
+
+   procedure Set_Widget (
+      Object : in out Button_Widget;
+      Item   : in     Widgets.Widget'Class) is
    begin
-      C_Dimensions (Interfaces.C.short (Rows), Interfaces.C.short (Cols));
-   end Get_Dimensions;
+      Object.Holder.Hold (Item);
+   end Set_Widget;
 
-   -->> Initialize <<--
-
-   procedure Initialize is
-   begin
-      Malef.Events.Event_Handler.Update_Terminal_Size;
-   end Initialize;
-
-   -->> Finalize <<--
-
-   procedure Finalize is null;
-
-   -->> Prepare <<--
-
-   procedure C_Prepare with
-      Import        => True,
-      Convention    => C,
-      External_Name => "_malef_setupConsole";
-
-   procedure Prepare is
-   begin
-      C_Prepare;
-   end Prepare;
-
-   -->> Restore <<--
-
-   procedure C_Restore with
-      Import        => True,
-      Convention    => C,
-      External_Name => "_malef_restoreConsole";
-
-   procedure Restore is
-   begin
-      C_Restore;
-   end Restore;
-
-end Malef.OS;
+end Malef.Buttons;

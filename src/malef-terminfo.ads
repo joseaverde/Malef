@@ -1,4 +1,6 @@
 with Ada.Strings.Text_Buffers;
+private with Ada.Containers.Vectors;
+private with Ada.Strings.Unbounded;
 
 private package Malef.Terminfo is
 
@@ -74,8 +76,17 @@ private package Malef.Terminfo is
 
 private
 
-   -- https://invisible-island.net/ncurses/man/term.5.html
+   use Ada.Strings.Unbounded;
 
-   type Term_Type is null record;
+   package String_Vectors is
+      new Ada.Containers.Vectors (
+      Index_Type   => Positive,
+      Element_Type => Unbounded_String);
+
+   type Term_Type is
+      record
+         Names     : String_Vectors.Vector;
+         Full_Name : Unbounded_String;
+      end record;
 
 end Malef.Terminfo;

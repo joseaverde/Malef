@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                     M A L E F - W I N D O W S . A D B                     --
+--                      M A L E F - W I N D O W . A D B                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,10 +26,35 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package body Malef.Windows is
+with Malef.Console_IO;
+
+package body Malef.Window is
 
    protected body Window is
 
+      procedure Set_Box (Box : in Boxes.Box) is null;
+
+      procedure Resize (
+         Rows : in Positive_Row_Count;
+         Cols : in Positive_Col_Count) is null;
+
+      procedure Redraw is null;
+
    end Window;
 
-end Malef.Windows;
+   procedure Show (Surface : in Surfaces.Surface) is
+   begin
+      for Row in 1 .. Surface.Rows loop
+         for Col in 1 .. Surface.Cols loop
+            Malef.Console_IO.Console.Put (
+               Position   => (Row, Col),
+               Item       => Surface (Row, Col) & "",
+               Background => Surface.Get_Background (Row, Col),
+               Foreground => Surface.Get_Foreground (Row, Col),
+               Style      => Surface (Row, Col));
+         end loop;
+      end loop;
+      Malef.Console_IO.Console.Flush;
+   end Show;
+
+end Malef.Window;

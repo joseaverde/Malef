@@ -1,7 +1,8 @@
-with Ada.Wide_Wide_Text_IO;
 with Malef.Surfaces;
 with Malef.System;
 with Malef.Boxes;
+with Malef.System;
+with Malef.Window;
 
 procedure CMYK is
    Base    : aliased Malef.Surfaces.Surface (19, 41);
@@ -28,7 +29,7 @@ procedure CMYK is
    Blocks : constant Malef.Glyph_String
       := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
 begin
-   -- Malef.System.Initialize;
+   Malef.System.Initialize;
 
    Base.Fill_Background (Base_Colour);
    Cyan.Fill_Background (Cyan_Colour);
@@ -45,18 +46,23 @@ begin
    Magenta.Put (2, Magenta.Cols - 8, "Magenta");
    Yellow.Put (2, 2, "Yellow");
 
-   Ada.Wide_Wide_Text_IO.Put_Line (Base'Wide_Wide_Image);
-   Ada.Wide_Wide_Text_IO.Put_Line (Cyan'Wide_Wide_Image);
-   Ada.Wide_Wide_Text_IO.Put_Line (Magenta'Wide_Wide_Image);
-   Ada.Wide_Wide_Text_IO.Put_Line (Yellow'Wide_Wide_Image);
+   Malef.Window.Show (Base);
+   delay 1.0;
+   Malef.Window.Show (Cyan);
+   delay 1.0;
+   Malef.Window.Show (Magenta);
+   delay 1.0;
+   Malef.Window.Show (Yellow);
+   delay 1.0;
 
    CMYK_Box.Update;
 
-   Ada.Wide_Wide_Text_IO.Put_Line (CMYK_Box'Wide_Wide_Image);
+   Malef.Window.Show (CMYK_Box.Constant_Surface);
+   delay 1.0;
 
    -- Malef.System.Main.Append (CMYK'Unchecked_Access, (1, 1));
    -- Malef.System.Main.Update;
    -- Malef.System.Main.Draw;
 
-   -- Malef.System.Finalize;
+   Malef.System.Finalize;
 end CMYK;

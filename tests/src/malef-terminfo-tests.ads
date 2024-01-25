@@ -6,6 +6,7 @@ package Malef.Terminfo.Tests is
    type Test is new Malef.Test_Cases.Test_Case with null record;
 
    procedure Test_ADM_3_Definition (T : in out Test);
+   procedure Test_ANSI_Definition (T : in out Test);
 
    procedure Test_Searchs_Environment_Variable_First (T : in out Test);
    procedure Test_Searchs_Current_Found (T : in out Test);
@@ -21,6 +22,8 @@ package Malef.Terminfo.Tests is
 
         (Test_ADM_3_Definition'Access,
          +"Description for Lear-Siegler ADM-3 terminal")
+      , (Test_ANSI_Definition'Access,
+         +"Description for ANSI-compliant terminals")
 
       -- Searches
 

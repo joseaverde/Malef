@@ -7,9 +7,18 @@ package body Malef.Terminfo.Tests is
    procedure Test_ADM_3_Definition (T : in out Test) is
       Term : Term_Type;
    begin
-      Open (Term, "binaries/adm3a.bin");
+      Open (Term, "db/a/adm3a");
       Ada.Text_IO.Put_Line (Term'Image);
+      Assert (True, "True");
    end Test_ADM_3_Definition;
+
+   procedure Test_ANSI_Definition (T : in out Test) is
+      Term : Term_Type;
+   begin
+      Open (Term, "db/a/ansi");
+      Ada.Text_IO.Put_Line (Term'Image);
+      Assert (True, "True");
+   end Test_ANSI_Definition;
 
    procedure Test_Searchs_Environment_Variable_First (T : in out Test) is
       null;

@@ -30,7 +30,7 @@ with Malef.Surfaces;
 
 package Malef.Widgets with Pure is
 
-   type Widget is limited interface;
+   type Widget is interface;
 
    type Draw_Area is
       record
@@ -59,5 +59,7 @@ package Malef.Widgets with Pure is
    Square_Outline : constant Outline_Type := "││──┌┬┐├┼┤└┴┘";
    Curvy_Outline  : constant Outline_Type := "││──╭┬╮├┼┤╰┴╯";
    Double_Outline : constant Outline_Type := "║║══╔╦╗╠╬╣╚╩╝";
+
+   type Selectable is interface;
 
 end Malef.Widgets;

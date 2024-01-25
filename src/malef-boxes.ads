@@ -29,7 +29,7 @@
 with Ada.Strings.Text_Buffers;
 with Malef.Surfaces;
 
-private with Ada.Containers.Indefinite_Holders;
+with Ada.Containers.Indefinite_Holders;
 
 package Malef.Boxes with Preelaborate is
 
@@ -90,6 +90,28 @@ package Malef.Boxes with Preelaborate is
    procedure Put_Image (
       Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
       Arg    : in     Box) with
+      Global => null;
+
+   -- TODO: Make my own holders
+
+   package Surface_Holders is
+      new Ada.Containers.Indefinite_Holders (
+      Element_Type => Surfaces.Surface,
+      "="          => Surfaces."=");
+
+   subtype Surface_Reference_Type
+      is Surface_Holders.Reference_Type;
+   subtype Surface_Constant_Reference_Type
+      is Surface_Holders.Constant_Reference_Type;
+
+   function Surface (
+      Object : in out Box)
+      return Surface_Reference_Type with
+      Global => null;
+
+   function Constant_Surface (
+      Object : in Box)
+      return Surface_Constant_Reference_Type with
       Global => null;
 
    --<<---------------------->>--
@@ -298,11 +320,6 @@ private
       end record with
       Object_Size => 256;
 
-   package Surface_Holders is
-      new Ada.Containers.Indefinite_Holders (
-      Element_Type => Surfaces.Surface,
-      "="          => Surfaces."=");
-
    type Layer_Array is array (Layer_Index range <>) of Layer_Type;
 
    type Box (Capacity : Layer_Index) is
@@ -314,6 +331,16 @@ private
       end record;
 
    -->> Implementation <<--
+
+   function Surface (
+      Object : in out Box)
+      return Surface_Reference_Type is (
+      Object.Canvas.Reference);
+
+   function Constant_Surface (
+      Object : in Box)
+      return Surface_Constant_Reference_Type is (
+      Object.Canvas.Constant_Reference);
 
    function Empty (Capacity : Layer_Index := 10)
       return Box is (

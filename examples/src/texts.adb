@@ -1,5 +1,5 @@
 with Malef;
-with Malef.Texts;
+with Malef.Labels;
 with Malef.Surfaces;
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
 
@@ -21,8 +21,8 @@ procedure Texts is
              elsif R = Height then Bottom (C)
              else                  Middle (C))]];
    Surface : Malef.Surfaces.Surface (Height, Width);
-   Text    : Malef.Texts.Text_Widget :=
-      Malef.Texts.New_Text ("Hello, World! ¡Hola Mundo! Bonjour le monde !");
+   Text    : constant Malef.Labels.Label_Widget :=
+      Malef.Labels.New_Label ("Hello, World! ¡Hola Mundo! Bonjour le monde !");
 begin
 
    Surface.Fill_Background ((60, 60, 60, 255));
@@ -39,7 +39,7 @@ begin
    -- -->> Right Aligned <<--
 
    -- Put_Line ("Right Aligned");
-   -- Text.Set_Alignment (Malef.Texts.Right_Aligned);
+   -- Text.Set_Alignment (Malef.Labels.Right_Aligned);
    -- Text.On_Draw (Surface, ((2, 2), (Height - 1, Width - 1)));
    -- Put_Line (Surface'Wide_Wide_Image);
    -- New_Line;

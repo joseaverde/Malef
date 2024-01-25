@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                       M A L E F - T E X T S . A D S                       --
+--                      M A L E F - L A B E L S . A D S                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -30,7 +30,7 @@ with Malef.Widgets;
 with Malef.Surfaces;
 private with Ada.Strings.Wide_Wide_Unbounded;
 
-package Malef.Texts with Preelaborate is
+package Malef.Labels with Preelaborate is
 
    type Text_Alignment is (Left_Aligned, Center_Aligned,
                            Right_Aligned, Justified);
@@ -38,46 +38,46 @@ package Malef.Texts with Preelaborate is
    type Text_Direction is (Left_Right_Top_Bottom, Right_Left_Bottom_Top,
                            Top_Bottom_Right_Left);
 
-   type Text_Widget is
+   type Label_Widget is
       new Widgets.Widget with
       private with
       Default_Initial_Condition =>
-         Get_Alignment (Text_Widget) = Left_Aligned          and then
-         Get_Direction (Text_Widget) = Left_Right_Top_Bottom and then
-         Get_Text (Text_Widget) = "";
+         Get_Alignment (Label_Widget) = Left_Aligned          and then
+         Get_Direction (Label_Widget) = Left_Right_Top_Bottom and then
+         Get_Text (Label_Widget) = "";
 
-   function New_Text (
+   function New_Label (
       Value     : in Wide_Wide_String;
       Alignment : in Text_Alignment := Left_Aligned;
       Direction : in Text_Direction := Left_Right_Top_Bottom)
-      return Text_Widget with
-      Post     => Get_Text (New_Text'Result) = Value
-         and then Get_Alignment (New_Text'Result) = Alignment
-         and then Get_Direction (New_Text'Result) = Direction,
+      return Label_Widget with
+      Post     => Get_Text (New_Label'Result) = Value
+         and then Get_Alignment (New_Label'Result) = Alignment
+         and then Get_Direction (New_Label'Result) = Direction,
       Global   => null;
 
    overriding
    procedure On_Draw (
-      Widget  : in     Text_Widget;
+      Widget  : in     Label_Widget;
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area);
 
    -->> Setters <<--
 
    procedure Set_Alignment (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Text_Alignment) with
       Post   => Get_Alignment (Widget) = To,
       Global => null;
 
    procedure Set_Direction (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Text_Direction) with
       Post   => Get_Direction (Widget) = To,
       Global => null;
 
    procedure Set_Text (
-      Widget : in out Text_Widget;
+      Widget : in out Label_Widget;
       To     : in     Glyph_String) with
       Post   => Get_Text (Widget) = To,
       Global => null;
@@ -85,17 +85,17 @@ package Malef.Texts with Preelaborate is
    -->> Getters <<--
 
    function Get_Alignment (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Text_Alignment with
       Global => null;
 
    function Get_Direction (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Text_Direction with
       Global => null;
 
    function Get_Text (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Glyph_String with
       Global => null;
 
@@ -103,7 +103,7 @@ private
 
    use Ada.Strings.Wide_Wide_Unbounded;
 
-   type Text_Widget is
+   type Label_Widget is
       new Widgets.Widget with
       record
          Alignment : Text_Alignment := Left_Aligned;
@@ -111,11 +111,11 @@ private
          Value     : Unbounded_Wide_Wide_String;
       end record;
 
-   function New_Text (
+   function New_Label (
       Value     : in Wide_Wide_String;
       Alignment : in Text_Alignment := Left_Aligned;
       Direction : in Text_Direction := Left_Right_Top_Bottom)
-      return Text_Widget is (
+      return Label_Widget is (
       Widgets.Widget with
          Alignment => Alignment,
          Direction => Direction,
@@ -124,18 +124,18 @@ private
    -->> Getters <<--
 
    function Get_Alignment (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Text_Alignment is (
       Widget.Alignment);
 
    function Get_Direction (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Text_Direction is (
       Widget.Direction);
 
    function Get_Text (
-      Widget : in Text_Widget)
+      Widget : in Label_Widget)
       return Glyph_String is (
       To_Wide_Wide_String (Widget.Value));
 
-end Malef.Texts;
+end Malef.Labels;

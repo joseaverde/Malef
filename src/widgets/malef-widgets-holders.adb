@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D S                      --
+--             M A L E F - W I D G E T S - H O L D E R S . A D B             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,12 +26,28 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package Malef.System is
+with Malef.Empty;
 
-   pragma Elaborate_Body;
+package body Malef.Widgets.Holders  is
 
-   procedure Initialize;
+   procedure Hold (
+      Object : in out Holder;
+      Item   : in     Widget'Class) is
+   begin
+      Object.Item.Replace_Element (Item);
+   end Hold;
 
-   procedure Finalize;
+   procedure Release (
+      Object : in out Holder)
+   is
+      Empty : Malef.Empty.Empty_Widget;
+   begin
+      Object.Item.Replace_Element (Empty);
+   end Release;
 
-end Malef.System;
+   overriding
+   procedure Initialize (Object : in out Holder) is
+   begin
+      Object.Release;
+   end Initialize;
+end Malef.Widgets.Holders;

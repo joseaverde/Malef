@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                     M A L E F - W I N D O W S . A D S                     --
+--             M A L E F - W I D G E T S - H O L D E R S . A D S             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,60 +26,73 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Boxes;
+private with Ada.Containers.Indefinite_Holders;
+private with Ada.Finalization;
 
-package Malef.Windows with Preelaborate is
+package Malef.Widgets.Holders with Preelaborate is
 
-   type Box_Access is access all Boxes.Box;
+   type Holder is tagged private;
 
-   protected type Window (Capacity : Positive) is
+   type Widget_Reference_Type (
+      Element : not null access Widget'Class) is
+      limited null record with Implicit_Dereference => Element;
 
-      -- procedure Insert (
-      --    Box      : in Box_Access;
-      --    Index    : in Positive;
-      --    Position : in Cursor_Type := (1, 1)) with
-      --    Pre    => Index in 1 .. Capacity,
-      --    Post   => Contains (Box, Index),
-      --    Global => null;
+   type Widget_Constant_Reference_Type (
+      Element : not null access constant Widget'Class) is
+      limited null record with Implicit_Dereference => Element;
 
-      -- function Contains (
-      --    Box   : in Box_Access;
-      --    Index : in Positive)
-      --    return Boolean with
-      --    Pre    => Index in 1 .. Capacity,
-      --    Global => null;
+   function Create (
+      Item : in Widget'Class)
+      return Holder with
+      Global => null;
 
-      -- procedure Draw with
-      --    Global => null;
+   procedure Hold (
+      Object : in out Holder;
+      Item   : in     Widget'Class) with
+      Global => null;
 
-   --    function Get_Position return Coord_Type;
-   --    procedure Insert (
-   --       Item  : Surface_Reference;
-   --       Layer : Malef.Boxes.Layer_Type);
+   procedure Release (
+      Object : in out Holder) with
+      Global => null;
 
-   --    procedure Move (
-   --       Position : Coord_Type);
+   function Reference (
+      Object : aliased in out Holder)
+      return Widget_Reference_Type with
+      Global => null;
 
-   --    procedure Remove (Layer : Malef.Boxes.Layer_Type);
+   function Constant_Reference (
+      Object : aliased in Holder)
+      return Widget_Constant_Reference_Type with
+      Global => null;
 
-   --    procedure Replace (
-   --       Item  : Surface_Reference;
-   --       Layer : Malef.Boxes.Layer_Type);
+private
 
-   --    procedure Resize (
-   --       Height : Row_Type;
-   --       Width  : Col_Type);
+   package Widget_Holders is
+      new Ada.Containers.Indefinite_Holders (
+      Element_Type => Widget'Class);
 
-   --    entry Update;
-   -- private
-   --    procedure Check_Created with Inline;
-   --    Box : Malef.Boxes.Box_Type;
-   --    ID  : Integer := -1;
+   type Holder is
+      new Ada.Finalization.Controlled with
+      record
+         Item : Widget_Holders.Holder;
+      end record;
 
-   --    Created  : Boolean := False;
-   --    Updating : Boolean := False;
-   --    Drawing  : Boolean := False;
-   --    Resizing : Boolean := False;
-   end Window;
+   overriding procedure Initialize (Object : in out Holder);
 
-end Malef.Windows;
+   function Create (
+      Item : in Widget'Class)
+      return Holder is (
+      Ada.Finalization.Controlled with
+      Item => Widget_Holders.To_Holder (Item));
+
+   function Reference (
+      Object : aliased in out Holder)
+      return Widget_Reference_Type is (
+      Element => Object.Item.Reference.Element);
+
+   function Constant_Reference (
+      Object : aliased in Holder)
+      return Widget_Constant_Reference_Type is (
+      Element => Object.Item.Constant_Reference.Element);
+
+end Malef.Widgets.Holders;

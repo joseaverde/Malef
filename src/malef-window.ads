@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D S                      --
+--                      M A L E F - W I N D O W . A D S                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
 --                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,12 +26,33 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package Malef.System is
+with Malef.Boxes;
+with Malef.Surfaces;
 
-   pragma Elaborate_Body;
+package Malef.Window is
 
-   procedure Initialize;
+   package Implementation is
 
-   procedure Finalize;
+      type Window_State is (Idle, Drawing, Resizing);
 
-end Malef.System;
+   end Implementation;
+
+   protected Window is
+
+      procedure Set_Box (Box : in Boxes.Box);
+
+      procedure Resize (
+         Rows : in Positive_Row_Count;
+         Cols : in Positive_Col_Count);
+
+      procedure Redraw;
+
+   private
+
+      Box : Boxes.Box (1);
+
+   end Window;
+
+   procedure Show (Surface : in Surfaces.Surface);
+
+end Malef.Window;

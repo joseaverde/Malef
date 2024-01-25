@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                          M A L E F - O S . A D S                          --
+--                     M A L E F - B U T T O N S . A D S                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
 --                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---     Copyright (c) 2020 José Antonio Verde Jiménez All Rights Reserved     --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,18 +26,43 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-private package Malef.OS is
+with Malef.Widgets;
+with Malef.Surfaces;
+private with Malef.Widgets.Holders;
 
-   procedure Get_Dimensions (
-      Rows : out Positive_Row_Count;
-      Cols : out Positive_Col_Count);
+package Malef.Buttons with Preelaborate is
 
-   procedure Initialize;
+   type Button_Widget is
+      new Widgets.Widget with
+      private;
 
-   procedure Finalize;
+   function New_Button (
+      Inside : in Widgets.Widget'Class)
+      return Button_Widget with
+      Global => null;
 
-   procedure Prepare;
+   overriding
+   procedure On_Draw (
+      Object  : in     Button_Widget;
+      Surface : in out Surfaces.Surface;
+      Area    : in     Widgets.Draw_Area);
 
-   procedure Restore;
+   procedure Set_Widget (
+      Object : in out Button_Widget;
+      Item   : in     Widgets.Widget'Class);
 
-end Malef.OS;
+private
+
+   type Button_Widget is
+      new Widgets.Widget with
+      record
+         Holder : Widgets.Holders.Holder;
+      end record;
+
+   function New_Button (
+      Inside : in Widgets.Widget'Class)
+      return Button_Widget is (
+      Widgets.Widget with
+      Holder => Widgets.Holders.Create (Inside));
+
+end Malef.Buttons;

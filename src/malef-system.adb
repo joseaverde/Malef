@@ -26,20 +26,45 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.OS;
+with Ada.Finalization;
+with Malef.Subsystem;
+with Malef.Console_IO;
 
 package body Malef.System is
 
+   Initialised : Boolean := False;
+
    procedure Initialize is
    begin
-      OS.Initialize;
-      OS.Prepare;
+      if Initialised then
+         return;
+      end if;
+      Malef.Subsystem.Initialize;
+      Malef.Console_IO.Console.Start;
+      Initialised := True;
    end Initialize;
 
    procedure Finalize is
    begin
-      OS.Restore;
-      OS.Finalize;
+      if not Initialised then
+         return;
+      end if;
+      Malef.Console_IO.Console.Stop;
+      Malef.Subsystem.Finalize;
+      Initialised := False;
+   end Finalize;
+
+   type System_Handle is
+      new Ada.Finalization.Limited_Controlled with
+      null record;
+
+   overriding
+   procedure Finalize (Object : in out System_Handle) is
+   begin
+      if not Initialised then
+         return;
+      end if;
+      Finalize;
    end Finalize;
 
 end Malef.System;

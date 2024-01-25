@@ -12,7 +12,10 @@ project Malef_Examples is
       when "win64" => Suffix := "-x86_64.exe";
    end case;
 
-   for Source_Dirs use ("src/", "config/");
+   for Source_Dirs use
+      ( "src/"
+      , "src/file_explorer"
+      , "config/");
    for Object_Dir use "obj/" & OS & "-" & Malef_Examples_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
@@ -21,6 +24,7 @@ project Malef_Examples is
       , "palettes.adb"
       , "gradient.adb"
       , "texts.adb"
+      , "file_explorer.adb"
       );
 
    package Compiler is
