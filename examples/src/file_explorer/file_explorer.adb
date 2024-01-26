@@ -11,7 +11,7 @@ procedure File_Explorer is
                                                      (Max_Height, Max_Width));
    Home     : constant String := Ada.Environment_Variables.Value ("HOME");
    Surface  : Malef.Surfaces.Surface (Max_Height, Max_Width);
-   Explorer : File_Explorers.File_Explorer_Widget
+   Explorer : constant File_Explorers.File_Explorer_Widget
             := File_Explorers.New_File_Explorer (Home);
 begin
    Explorer.On_Draw (Surface, The_Area);

@@ -1,7 +1,6 @@
 with Malef.Surfaces;
 with Malef.System;
 with Malef.Boxes;
-with Malef.System;
 with Malef.Window;
 
 procedure CMYK is

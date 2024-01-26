@@ -1,7 +1,7 @@
 with Ada.Calendar;
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Wide_Wide_Text_IO;
+-- with Ada.Wide_Wide_Text_IO;
 with Malef.Palettes;
 with Malef.Surfaces;
 with Malef.Boxes;
@@ -14,13 +14,13 @@ procedure Palettes is
    -- For the time being it showcases how are the applications intended to
    -- look like once everything is put together.
 
-   Transparent   : constant := 0;
+   -- Transparent   : constant := 0;
    Primary_Bg    : constant := 1;
-   Secondary_Bg  : constant := 2;
+   -- Secondary_Bg  : constant := 2;
    Primary_Fg    : constant := 3;
    Secondary_Fg  : constant := 4;
-   Primary       : constant := 5;
-   Secondary     : constant := 6;
+   -- Primary       : constant := 5;
+   -- Secondary     : constant := 6;
    Shadow_Colour : constant := 7;
    Unfocused     : constant := 8;
 

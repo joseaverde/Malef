@@ -7,8 +7,8 @@ procedure Gradient is
 
    Width  : constant := 20;
    Height : constant := 20;
-   From : Malef.RGBA_Type := (255, 0, 0, 255);
-   To   : Malef.RGBA_Type := (0, 255, 0, 255);
+   From   : constant Malef.RGBA_Type := (255, 0, 0, 255);
+   To     : constant Malef.RGBA_Type := (0, 255, 0, 255);
 
    function Distance (Left, Right : in Malef.Cursor_Type)
       return Float is (
@@ -40,6 +40,7 @@ procedure Gradient is
       Foreground : in out Malef.Palette_Index;
       Position   : in     Malef.Cursor_Type)
    is
+      pragma Unreferenced (Foreground);
       Bg, Fg : Malef.RGBA_Type;
    begin
       Fill_Gradient (Bg, Fg, Position);

@@ -1,12 +1,15 @@
 with Ada.Text_IO;
+with Ada.Text_IO.Text_Streams;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-with Interfaces.C;
-with System;
 
 package body Malef.Console_IO is
 
    package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+   package T_IO renames Ada.Text_IO;
+   package T_IO_Streams renames T_IO.Text_Streams;
 
+   Stream : constant T_IO_Streams.Stream_Access
+          := T_IO_Streams.Stream (T_IO.Standard_Output);
    Max_Capacity  : constant := 128;
 
    type Buffer_Type (
@@ -16,34 +19,10 @@ package body Malef.Console_IO is
          Data  : String (1 .. Capacity);
       end record;
 
-   function write (
-      fd    : in Interfaces.C.int;
-      buf   : in System.Address;
-      count : in Interfaces.C.size_t)
-      return Interfaces.C.size_t with
-      Import        => True,
-      Convention    => C,
-      External_Name => "write";
-
-      -- procedure Flush_It is
-
-      --    Data : String := Buffer.Get_UTF_8;
-      --    X : Interfaces.C.size_t with Unreferenced;
-      -- begin
-      --    -- Ada.Wide_Wide_Text_IO.Put (Buffer.Wide_Wide_Get);
-      --    X := write (1, Data (Data'First)'Address, Data'Length);
-      --    -- Ada.Text_IO.Put_Line (Ada.Text_IO.Standard_Error, Data'Length'Image);
-      --    -- Ada.Text_IO.Put_Line (Ada.Text_IO.Standard_Error, X'Image);
-      -- end Flush_It;
-
    procedure Flush (
-      Buffer : in out Buffer_Type)
-   is
-      C : constant Interfaces.C.size_t := Interfaces.C.size_t (Buffer.Index);
-      X : Interfaces.C.size_t with Unreferenced;
+      Buffer : in out Buffer_Type) is
    begin
-      -- Ada.Text_IO.Put (Buffer.Data (1 .. Buffer.Index));
-      X := write (1, Buffer.Data (Buffer.Data'First)'Address, C);
+      String'Write (Stream, Buffer.Data (1 .. Buffer.Index));
       Buffer.Index := 0;
    end Flush;
 

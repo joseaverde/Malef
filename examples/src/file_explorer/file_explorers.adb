@@ -1,5 +1,4 @@
 with Malef;
-with Ada.Text_IO;
 with Ada.Containers.Generic_Array_Sort;
 with Ada.Calendar;
 
@@ -166,9 +165,9 @@ package body File_Explorers is
                     := Screen_Width + Col_Separation
                      - Col_Type (Elements_Per_Row * Element_Width);
       Top_Offset    : constant Row_Type := Row_Remainder / 2;
-      Bottom_Offset : constant Row_Type := (Row_Remainder + 1) / 2;
+      -- Bottom_Offset : constant Row_Type := (Row_Remainder + 1) / 2;
       Left_Offset   : constant Col_Type := Col_Remainder / 2;
-      Right_Offset  : constant Col_Type := (Col_Remainder + 1) / 2;
+      -- Right_Offset  : constant Col_Type := (Col_Remainder + 1) / 2;
 
       -- Get the elements in the current directory
 
