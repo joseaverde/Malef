@@ -44,12 +44,7 @@ package body Malef.Window is
 
    procedure Show (Surface : in Surfaces.Surface) is
    begin
-      select
-         Malef.Console_IO.Console.Begin_Frame;
-      or
-         delay 0.3;
-         return;
-      end select;
+      Malef.Console_IO.Console.Begin_Frame;
       for Row in 1 .. Surface.Rows loop
          for Col in 1 .. Surface.Cols loop
             Malef.Console_IO.Console.Put (

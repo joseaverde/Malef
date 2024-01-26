@@ -13,3 +13,5 @@ malef = "~0.1.0-dev"
 malef = { path='..' }
 [[depends-on]]
 gnat_native = "^13.2.1"
+[[depends-on]]
+utilada = "^2.6.0"
