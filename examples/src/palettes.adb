@@ -1,6 +1,7 @@
 with Ada.Calendar;
 
 with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Wide_Wide_Text_IO;
 with Malef.Palettes;
 with Malef.Surfaces;
 with Malef.Boxes;
@@ -141,6 +142,7 @@ begin
          Unfocus.Set_Palette := Dark_Mode;
          Box.Update;
          Malef.Window.Show (Box.Constant_Surface);
+         -- Ada.Wide_Wide_Text_IO.Put_Line (Box'Wide_Wide_Image);
       end loop;
       Stop := Clock;
       First := Stop - Start;
@@ -155,6 +157,7 @@ begin
          Unfocus.Set_Palette := Dark_Mode;
          Box.Update;
          Malef.Window.Show (Box.Constant_Surface);
+         -- Ada.Wide_Wide_Text_IO.Put_Line (Box'Wide_Wide_Image);
       end loop;
       Stop := Clock;
       Second := Stop - Start;

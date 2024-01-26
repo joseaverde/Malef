@@ -22,7 +22,7 @@
 -- Public License for more details.                                          --
 --                                                                           --
 -- You should have received  a copy of the  GNU General Public License along --
--- with this program. If not, see <https://www.gnu.org/licenses/>.           --
+-- with this program. If not, s://www.gnu.org/licenses/>.           --
 --                                                                           --
 -------------------------------------------------------------------------------
 
@@ -44,7 +44,12 @@ package body Malef.Window is
 
    procedure Show (Surface : in Surfaces.Surface) is
    begin
-      Malef.Console_IO.Console.Begin_Frame;
+      select
+         Malef.Console_IO.Console.Begin_Frame;
+      or
+         delay 0.3;
+         return;
+      end select;
       for Row in 1 .. Surface.Rows loop
          for Col in 1 .. Surface.Cols loop
             Malef.Console_IO.Console.Put (
