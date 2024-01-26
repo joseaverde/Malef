@@ -52,7 +52,7 @@ procedure Palettes is
 
    Dialog  : aliased Malef.Surfaces.Surface (9, 20);
    Shadow  : aliased Malef.Surfaces.Surface (Dialog.Rows, Dialog.Cols);
-   Window  : aliased Malef.Surfaces.Surface (20, 60);
+   Window  : aliased Malef.Surfaces.Surface (56, 180);
    Unfocus : aliased Malef.Surfaces.Surface (Window.Rows, Window.Cols);
    Half_R  : constant Malef.Row_Type := (Window.Rows - Dialog.Rows) / 2;
    Half_C  : constant Malef.Col_Type := (Window.Cols - Dialog.Cols) / 2;

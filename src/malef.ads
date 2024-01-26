@@ -27,8 +27,9 @@
 -------------------------------------------------------------------------------
 
 package Malef with
-   -- Global => in out synchronized
    Pure => True
+   -- Global      => in out synchronized,
+   -- Nonblocking => True
 is
 
    type Component_Name is (Red, Green, Blue, Alpha);

@@ -13,12 +13,15 @@ package body Malef.Console_IO is
       -->> Formatting <<--
 
       Current_Cursor        : Cursor_Type;
-      Current_Style        : Style_Type;
+      Current_Style         : Style_Type;
       Current_Is_Indexed    : Boolean;
       Current_Background    : RGBA_Type;
       Current_Foreground    : RGBA_Type;
       Current_Background_Id : Palette_Index;
       Current_Foreground_Id : Palette_Index;
+      Opened_Frames         : Natural;
+
+      File : Ada.Wide_Wide_Text_IO.File_Type;
 
       procedure Emit (Item : in String) is
       begin
@@ -168,6 +171,7 @@ package body Malef.Console_IO is
 
       procedure Flush_It is
       begin
+         -- Ada.Wide_Wide_Text_IO.Put (File, Buffer.Wide_Wide_Get);
          Ada.Wide_Wide_Text_IO.Put (Buffer.Wide_Wide_Get);
          Count := 0;
       end Flush_It;
@@ -185,6 +189,9 @@ package body Malef.Console_IO is
 
          Format (7, 0, (others => False));
          Move_To (1, 1);
+         Opened_Frames := 0;
+
+         -- Ada.Wide_Wide_Text_IO.Create (File, Name => "Output");
 
          IO_Loop : loop
 
@@ -221,6 +228,21 @@ package body Malef.Console_IO is
             or
                accept Flush;
                Flush_It;
+            or
+               accept Begin_Frame;
+               Opened_Frames := Opened_Frames + 1;
+               if Opened_Frames = 1 then
+                  Emit (ASCII.Esc & "[?2026h");
+               end if;
+            or
+               accept End_Frame;
+               if Opened_Frames /= 0 then
+                  Opened_Frames := Opened_Frames - 1;
+                  if Opened_Frames = 0 then
+                     Emit (ASCII.Esc & "[?2026l");
+                     Flush_It;
+                  end if;
+               end if;
             or
                terminate;
             end select;

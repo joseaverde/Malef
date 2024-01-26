@@ -18,6 +18,9 @@ private package Malef.Console_IO is
          Style      : in Style_Type);
       entry Flush;
 
+      entry Begin_Frame;
+      entry End_Frame;
+
    end Console;
 
 end Malef.Console_IO;
