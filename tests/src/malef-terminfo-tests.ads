@@ -20,23 +20,23 @@ package Malef.Terminfo.Tests is
       [
       -- Loader
 
-        (Test_ADM_3_Definition'Access,
-         +"Description for Lear-Siegler ADM-3 terminal")
-      , (Test_ANSI_Definition'Access,
-         +"Description for ANSI-compliant terminals")
+         (Test_ADM_3_Definition'Access,
+          +"Description for Lear-Siegler ADM-3 terminal")
+      ,  (Test_ANSI_Definition'Access,
+          +"Description for ANSI-compliant terminals")
 
       -- Searches
 
-      , (Test_Searchs_Environment_Variable_First'Access,
-         +"Search Environment Variable First")
-      , (Test_Searchs_Current_Found'Access,
-         +"Search and Find Current Terminal")
-      , (Test_Searchs_Current_Not_Found'Access,
-         +"Search missing Current Terminal")
-      , (Test_Searchs_Directory_List'Access,
-         +"Searchs Environmentan Variable with paths")
-      , (Test_Searchs_Not_Found'Access,
-         +"Search missing Terminal")
+      ,  (Test_Searchs_Environment_Variable_First'Access,
+          +"Search Environment Variable First")
+      ,  (Test_Searchs_Current_Found'Access,
+          +"Search and Find Current Terminal")
+      ,  (Test_Searchs_Current_Not_Found'Access,
+          +"Search missing Current Terminal")
+      ,  (Test_Searchs_Directory_List'Access,
+          +"Searchs Environmentan Variable with paths")
+      ,  (Test_Searchs_Not_Found'Access,
+          +"Search missing Terminal")
       ]);
 
 end Malef.Terminfo.Tests;

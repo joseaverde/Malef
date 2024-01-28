@@ -1,4 +1,5 @@
 with AUnit.Test_Caller;
+with AUnit.Assertions;
 
 package body Malef.Generic_Suites is
 
@@ -14,5 +15,13 @@ package body Malef.Generic_Suites is
       end loop;
       return Result;
    end Suite;
+
+   Test_Not_Implemented : exception;
+
+   procedure Not_Implemented (T : in out Test_Type) is
+      pragma Unreferenced (T);
+   begin
+      AUnit.Assertions.Assert (True, "Not implemented");
+   end Not_Implemented;
 
 end Malef.Generic_Suites;

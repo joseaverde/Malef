@@ -48,9 +48,30 @@ is
       Object_Size => 256,
       Alignment   => 32;
 
+   function "=" (Left, Right : in Cell_Type)
+      return Boolean is (
+               Left.Character = Right.Character
+      and then Left.Style = Right.Style
+      and then Left.Has_Name = Right.Has_Name
+      and then (if Left.Has_Name
+                  then        Left.Bg_Name = Right.Bg_Name
+                     and then Left.Fg_Name = Right.Fg_Name
+                  else        Left.Background = Right.Background
+                     and then Left.Background = Right.Background));
+
    type Matrix_Type is
       array (Row_Type range <>, Col_Type range <>)
       of aliased Cell_Type;
+
+   function "=" (Left, Right : in Matrix_Type)
+      return Boolean is (
+               Left'First (1) = Right'First (1)
+      and then Left'Last (1) = Right'Last (1)
+      and then Left'First (2) = Right'First (2)
+      and then Left'Last (2) = Right'Last (2)
+      and then (for all Row in Left'Range (1) =>
+                  (for all Col in Left'Range (2) =>
+                     (Left (Row, Col) = Right (Row, Col)))));
 
    Default_Cell : constant Cell_Type
                 := Cell_Type'(Foreground => (255, 255, 255,   0),

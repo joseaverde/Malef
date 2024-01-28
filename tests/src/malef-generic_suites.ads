@@ -25,4 +25,6 @@ package Malef.Generic_Suites is
       Cases : in Test_Case_Array;
    function Suite return AUnit.Test_Suites.Access_Test_Suite;
 
+   procedure Not_Implemented (T : in out Test_Type);
+
 end Malef.Generic_Suites;

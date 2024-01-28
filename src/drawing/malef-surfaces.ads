@@ -102,6 +102,10 @@ package Malef.Surfaces with Pure is
    -- A Surface by default doesn't have any style it is full of spaces (' ')
    -- and its background is Black, with White foreground.
 
+   function "=" (Left, Right : in Surface)
+      return Boolean with
+      Global => null;
+
    --<<-------------->>--
    -->> Helper Types <<--
    --<<-------------->>--
@@ -890,6 +894,8 @@ private
 
    use Implementation;
 
+   use type Palettes.Palette_Type;
+
    --<<--------->>--
    -->> Surface <<--
    --<<--------->>--
@@ -905,6 +911,13 @@ private
          Matrix   : Matrix_Type (1 .. Rows, 1 .. Cols)
                   := (others => (others => Default_Cell));
       end record;
+
+   function "=" (Left, Right : in Surface)
+      return Boolean is (
+               Left.Rows    = Right.Rows
+      and then Left.Cols    = Right.Cols
+      and then Left.Palette = Right.Palette
+      and then Left.Matrix  = Right.Matrix);
 
    --<<------------------>>--
    -->> Helper Functions <<--

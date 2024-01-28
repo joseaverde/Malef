@@ -218,6 +218,8 @@ package body Malef.Console_IO is
          Format (7, 0, (others => False));
          Move_To (1, 1);
          Opened_Frames := 0;
+         Put (Buffer, ASCII.Esc & "[25l");
+         Flush (Buffer);
 
          IO_Loop : loop
 
@@ -225,7 +227,6 @@ package body Malef.Console_IO is
                accept Start;
             or
                accept Stop;
-               Flush (Buffer);
                exit IO_Loop;
             or
                accept Put (
@@ -276,6 +277,9 @@ package body Malef.Console_IO is
             end select;
 
          end loop IO_Loop;
+
+         Put (Buffer, ASCII.Esc & "[?12h" & ASCII.Esc & "[?25h");
+         Flush (Buffer);
 
       end loop Main_Loop;
 

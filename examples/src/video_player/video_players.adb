@@ -68,7 +68,7 @@ package body Video_Players is
          return;
       end if;
       Surface.Fill (Area.From, Area.To, '▀');
-      Surface.Fill (Filler'Access);
+      Surface.Fill (Area.From, Area.To, Filler'Access);
    end On_Draw;
 
    procedure Start_FFmpeg (

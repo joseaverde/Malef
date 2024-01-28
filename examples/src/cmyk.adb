@@ -1,30 +1,31 @@
 with Malef.Surfaces;
 with Malef.System;
-with Malef.Boxes;
+with Malef.Groups;
 with Malef.Window;
 
 procedure CMYK is
-   Base    : aliased Malef.Surfaces.Surface (19, 41);
-   Cyan    : aliased Malef.Surfaces.Surface (16, 32);
-   Magenta : aliased Malef.Surfaces.Surface (16, 32);
-   Yellow  : aliased Malef.Surfaces.Surface (16, 32);
-
    Base_Colour    : constant Malef.RGBA_Type := (255, 255, 255, 255);
    Grey_Colour    : constant Malef.RGBA_Type := (128, 128, 128, 128);
    Cyan_Colour    : constant Malef.RGBA_Type := (0, 255, 255, 85);
    Magenta_Colour : constant Malef.RGBA_Type := (255, 0, 255, 85);
    Yellow_Colour  : constant Malef.RGBA_Type := (255, 255, 0, 85);
 
-   use Malef.Boxes;
+   use Malef.Groups;
    use type Malef.Col_Type;
    use type Malef.Row_Type;
 
-   CMYK_Box : Malef.Boxes.Box (4) := [
-      1 => Item (Base'Unchecked_Access, (35, 35)),
-      2 => Item (Cyan'Unchecked_Access, (32, 32)),
-      3 => Item (Magenta'Unchecked_Access, (32, 48)),
-      4 => Item (Yellow'Unchecked_Access, (40, 40))
+   CMYK_Group : Malef.Groups.Group (4) := [
+      Element (19, 41, (35, 35)),
+      Element (16, 32, (32, 32)),
+      Element (16, 32, (32, 48)),
+      Element (16, 32, (40, 40))
    ];
+
+   Base    renames CMYK_Group.Set_Surface (1).Element;
+   Cyan    renames CMYK_Group.Set_Surface (2).Element;
+   Magenta renames CMYK_Group.Set_Surface (3).Element;
+   Yellow  renames CMYK_Group.Set_Surface (4).Element;
+
    Blocks : constant Malef.Glyph_String
       := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
 begin
@@ -45,18 +46,18 @@ begin
    Magenta.Put (2, Magenta.Cols - 8, "Magenta");
    Yellow.Put (2, 2, "Yellow");
 
-   Malef.Window.Show (Base);
+   Malef.Window.Show (Base.all);
    delay 1.0;
-   Malef.Window.Show (Cyan);
+   Malef.Window.Show (Cyan.all);
    delay 1.0;
-   Malef.Window.Show (Magenta);
+   Malef.Window.Show (Magenta.all);
    delay 1.0;
-   Malef.Window.Show (Yellow);
+   Malef.Window.Show (Yellow.all);
    delay 1.0;
 
-   CMYK_Box.Update;
+   CMYK_Group.Update;
 
-   Malef.Window.Show (CMYK_Box.Constant_Surface);
+   Malef.Window.Show (CMYK_Group.See_Surface);
    delay 1.0;
 
    -- Malef.System.Main.Append (CMYK'Unchecked_Access, (1, 1));

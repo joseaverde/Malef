@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - E V E N T S . A D B                      --
+--                       M A L E F - G R I D S . A D S                       --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                  B O D Y                                  --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,23 +26,6 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Text_IO;
+package Malef.Grids is
 
-package body Malef.Events is
-
-   protected body Event_Handler is
-
-      procedure Update_Terminal_Size is
-      begin
-         Ada.Text_IO.Put_Line ("Terminal resized");
-         -- Malef.Systems.Get_Terminal_Size (Height, Width);
-         -- Malef.Windows.Main_Window.Resize (Height, Width);
-      end Update_Terminal_Size;
-
-   end Event_Handler;
-
-end Malef.Events;
-
----=======================-------------------------=========================---
---=======================-- E N D   O F   F I L E --=========================--
----=======================-------------------------=========================---
+end Malef.Grids;
