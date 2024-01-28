@@ -40,7 +40,7 @@ package body Malef.System is
          return;
       end if;
       Malef.Subsystem.Initialize;
-      Malef.Console_IO.Console.Start;
+      Malef.Console_IO.Initialize;
       Initialised := True;
    end Initialize;
 
@@ -49,7 +49,7 @@ package body Malef.System is
       if not Initialised then
          return;
       end if;
-      Malef.Console_IO.Console.Stop;
+      Malef.Console_IO.Finalize;
       Malef.Subsystem.Finalize;
       Initialised := False;
    end Finalize;

@@ -44,19 +44,19 @@ package body Malef.Window is
 
    procedure Show (Surface : in Surfaces.Surface) is
    begin
-      Malef.Console_IO.Console.Begin_Frame;
+      Malef.Console_IO.Begin_Frame;
       for Row in 1 .. Surface.Rows loop
          for Col in 1 .. Surface.Cols loop
-            Malef.Console_IO.Console.Put (
+            Malef.Console_IO.Put (
                Position   => (Row, Col),
-               Item       => Surface (Row, Col) & "",
+               Item       => Surface (Row, Col),
                Background => Surface.Get_Background (Row, Col),
                Foreground => Surface.Get_Foreground (Row, Col),
                Style      => Surface (Row, Col));
          end loop;
       end loop;
-      Malef.Console_IO.Console.End_Frame;
-      Malef.Console_IO.Console.Flush;
+      Malef.Console_IO.End_Frame;
+      Malef.Console_IO.Flush;
    end Show;
 
 end Malef.Window;
