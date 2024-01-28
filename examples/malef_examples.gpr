@@ -20,14 +20,27 @@ project Malef_Examples is
    for Object_Dir use "obj/" & OS & "-" & Malef_Examples_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
-   for Main use
-      ( "cmyk.adb"
-      , "palettes.adb"
-      , "gradient.adb"
-      , "texts.adb"
-      , "file_explorer.adb"
-      , "video_player.adb"
-      );
+
+   case OS is
+      when "linux" =>
+         for Main use
+            ( "cmyk.adb"
+            , "palettes.adb"
+            , "gradient.adb"
+            , "texts.adb"
+            , "file_explorer.adb"
+            , "video_player.adb"
+            );
+      when "win32" | "win64" =>
+         for Main use
+            ( "cmyk.adb"
+            , "palettes.adb"
+            , "gradient.adb"
+            , "texts.adb"
+            , "file_explorer.adb"   -- TODO: Make it work on windows
+            -- , "video_player.adb"
+            );
+   end case;
 
    package Compiler is
       for Default_Switches ("Ada") use Malef_Examples_Config.Ada_Compiler_Switches & (

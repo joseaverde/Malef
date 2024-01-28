@@ -66,6 +66,7 @@ procedure Palettes is
 begin
 
    Malef.System.Initialize;
+   Malef.System.Set_Title ("Malef :: Palettes");
 
    -->> Surface Construction <<--
 

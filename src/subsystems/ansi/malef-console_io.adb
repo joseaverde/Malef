@@ -32,72 +32,79 @@ with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body Malef.Console_IO is
 
+   -- We can't use Ada.Text_IO to print the buffer, because for whatever reason
+   -- printing UTF-8 with Ada.Text_IO outputs garbage if we compile with the
+   -- `-gnatW8' flag (required for Wide_Wide_String s) on GNAT.
+   --
+   -- Also we can't use Ada.Wide_Wide_Text_IO, because it is slow as hell
+   -- (maybe because it needs to transform the Unicode back to UTF-8).
+   --
+   -- So we had to find an native solution for this problem. Using the `write'
+   -- system call is blazing fast. But it mey not be compatible with every
+   -- operating sytem. Instead we use Streams, which yield a similar performace
+   -- to the `write' sustem call, and they are in the standard library.
+
    package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
    package T_IO renames Ada.Text_IO;
    package T_IO_Streams renames T_IO.Text_Streams;
 
    Stream : constant T_IO_Streams.Stream_Access
           := T_IO_Streams.Stream (T_IO.Standard_Output);
-   Max_Capacity  : constant := 128;
 
-   type Buffer_Type (
-      Capacity : Positive) is
-      record
-         Index : Natural := 0;
-         Data  : String (1 .. Capacity);
-      end record;
+   -- We need to keep a buffer to avoid writing the screen character by
+   -- character (there are many single character calls). There is a buffer in
+   -- the Ada.Text_IO.File_Type, but I'm not sure if the Stream package has it.
+   -- I tested it on my lapto, and without a buffer, the code was 14 TIMES
+   -- SLOWER. Therefore we are going to keep a buffer.
+   --
+   -- Also, as there will be only one buffer. We don't need to encapsulate it
+   -- on a record and pass it everytime. Let's make it global and available
+   -- for every function directly.
 
-   procedure Flush (
-      Buffer : in out Buffer_Type) is
+   Capacity : constant := 1024;
+   Index    : Natural := 0;
+   Data     : String (1 .. Capacity);
+
+   procedure Flush is
    begin
-      String'Write (Stream, Buffer.Data (1 .. Buffer.Index));
-      Buffer.Index := 0;
+      String'Write (Stream, Data (1 .. Index));
+      Index := 0;
    end Flush;
 
-   procedure Put (
-      Buffer : in out Buffer_Type;
-      Item   : in     Character) is
+   procedure Put (Item : in Character) is
    begin
-      if Buffer.Index = Buffer.Capacity then
-         Flush (Buffer);
+      if Index = Capacity then
+         Flush;
       end if;
-      Buffer.Index := @ + 1;
-      Buffer.Data (Buffer.Index) := Item;
+      Index := @ + 1;
+      Data (Index) := Item;
    end Put;
 
-   procedure Put (
-      Buffer : in out Buffer_Type;
-      Item   : in     String) is
+   procedure Put (Item : in String) is
    begin
-      if Buffer.Index + Item'Length > Buffer.Capacity then
-         Flush (Buffer);
+      if Index + Item'Length > Capacity then
+         Flush;
       end if;
-      Buffer.Data (Buffer.Index + 1 .. Buffer.Index + Item'Length) := Item;
-      Buffer.Index := @ + Item'Length;
+      Data (Index + 1 .. Index + Item'Length) := Item;
+      Index := @ + Item'Length;
    end Put;
 
-   procedure Wide_Wide_Put (
-      Buffer : in out Buffer_Type;
-      Item   : in     Glyph) is
+   procedure Wide_Wide_Put (Item : in Glyph) is
    begin
       if Glyph'Pos (Item) < 32 then
-         Put (Buffer, ' ');
+         Put (' ');
       else
          -- OPTIMISE: Search a function on character basis instead of strings.
-         Put (Buffer, Unicode.Encode (Item & ""));
+         Put (Unicode.Encode (Item & ""));
       end if;
    end Wide_Wide_Put;
 
-   procedure Wide_Wide_Put (
-      Buffer : in out Buffer_Type;
-      Item   : in     Glyph_String) is
+   procedure Wide_Wide_Put (Item : in Glyph_String) is
    begin
       for Char of Item loop
-         Wide_Wide_Put (Buffer, Char);
+         Wide_Wide_Put (Char);
       end loop;
    end Wide_Wide_Put;
-
-   Buffer : Buffer_Type (Max_Capacity);
 
    -->> Formatting <<--
 
@@ -118,21 +125,21 @@ package body Malef.Console_IO is
          return;
       end if;
       Current_Cursor := ((Row, Col));
-      Put (Buffer, ASCII.Esc & "[");
-      Put (Buffer, R_Img (R_Img'First + 1 .. R_Img'Last));
-      Put (Buffer, ';');
-      Put (Buffer, C_Img (C_Img'First + 1 .. C_Img'Last));
-      Put (Buffer, 'H');
+      Put (ASCII.ESC & "[");
+      Put (R_Img (R_Img'First + 1 .. R_Img'Last));
+      Put (';');
+      Put (C_Img (C_Img'First + 1 .. C_Img'Last));
+      Put ('H');
    end Move_To;
 
    procedure Emit (Item : in Style_Type) is
       Images : constant array (Style_Name) of Character := "123456789";
    begin
       Current_Style := Item;
-      Put (Buffer, ASCII.Esc & "[");
+      Put (ASCII.ESC & "[");
       for I in Item'Range when Item (I) loop
-         Put (Buffer, Images (I));
-         Put (Buffer, ';');
+         Put (Images (I));
+         Put (';');
       end loop;
    end Emit;
 
@@ -148,15 +155,14 @@ package body Malef.Console_IO is
       Current_Background_Id := Background;
       Current_Foreground_Id := Foreground;
       if Background >= 8 then
-         Put (Buffer, '1');
+         Put ('1');
       end if;
-      Put (Buffer, Bgs (Background)); Put (Buffer, ';');
-      Put (Buffer, Fgs (Foreground));
-      Put (Buffer, 'm');
+      Put (Bgs (Background)); Put (';');
+      Put (Fgs (Foreground));
+      Put ('m');
    end Emit;
 
    procedure Emit (Item : in Component_Type) is
-      Digit : constant array (0 .. 9) of Character := "0123456789";
       Copy  : Component_Type := Item;
       Img   : String (1 .. 3);
       Index : Natural := 3;
@@ -168,7 +174,7 @@ package body Malef.Console_IO is
          Index := Index - 1;
       end loop;
       pragma Assert (Index in Img'Range);
-      Put (Buffer, Img (Index .. Img'Last));
+      Put (Img (Index .. Img'Last));
    end Emit;
 
    function To_Alpha (Item, Alpha : in Component_Type)
@@ -181,29 +187,29 @@ package body Malef.Console_IO is
       Current_Background := Background;
       Current_Foreground := Foreground;
       if Background (Alpha) /= 0 then
-         Put (Buffer, "48;2");
+         Put ("48;2");
          for Component in Red .. Blue loop
-            Put (Buffer, ";");
+            Put (";");
             Emit (To_Alpha (Background (Component), Background (Alpha)));
          end loop;
       end if;
       if Foreground (Alpha) /= 0 then
          if Foreground (Alpha) /= 0 then
-            Put (Buffer, ";38;2");
+            Put (";38;2");
          else
-            Put (Buffer, "38;2");
+            Put ("38;2");
          end if;
          for Component in Red .. Blue loop
-            Put (Buffer, ';');
+            Put (';');
             Emit (To_Alpha (Foreground (Component), Foreground (Alpha)));
          end loop;
       end if;
-      Put (Buffer, 'm');
+      Put ('m');
    end Emit;
 
    procedure Clear is
    begin
-      Put (Buffer, ASCII.Esc & "[0m");
+      Put (ASCII.ESC & "[0m");
    end Clear;
 
    procedure Format (
@@ -247,14 +253,14 @@ package body Malef.Console_IO is
       Format (7, 0, (others => False));
       Move_To (1, 1);
       Opened_Frames := 0;
-      Put (Buffer, ASCII.Esc & "[25l");
-      Flush (Buffer);
+      Put (ASCII.ESC & "[25l");
+      Flush;
    end Initialize;
 
    procedure Finalize is
    begin
-      Put (Buffer, ASCII.Esc & "[?12h" & ASCII.Esc & "[?25h");
-      Flush (Buffer);
+      Put (ASCII.ESC & "[?12h" & ASCII.ESC & "[?25h");
+      Flush;
    end Finalize;
 
    --<<-------->>--
@@ -265,7 +271,7 @@ package body Malef.Console_IO is
    begin
       Opened_Frames := Opened_Frames + 1;
       if Opened_Frames = 1 then
-         Put (Buffer, ASCII.Esc & "[?2026h");
+         Put (ASCII.ESC & "[?2026h");
       end if;
    end Begin_Frame;
 
@@ -274,8 +280,8 @@ package body Malef.Console_IO is
       if Opened_Frames /= 0 then
          Opened_Frames := Opened_Frames - 1;
          if Opened_Frames = 0 then
-            Put (Buffer, ASCII.Esc & "[?2026l");
-            Flush (Buffer);
+            Put (ASCII.ESC & "[?2026l");
+            Flush;
          end if;
       end if;
    end End_Frame;
@@ -289,7 +295,7 @@ package body Malef.Console_IO is
    begin
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
-      Wide_Wide_Put (Buffer, Item);
+      Wide_Wide_Put (Item);
       Current_Cursor.Col := @ + Item'Length;
    end Put;
 
@@ -302,7 +308,7 @@ package body Malef.Console_IO is
    begin
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
-      Wide_Wide_Put (Buffer, Item);
+      Wide_Wide_Put (Item);
       Current_Cursor.Col := @ + Item'Length;
    end Put_Indexed;
 
@@ -315,7 +321,7 @@ package body Malef.Console_IO is
    begin
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
-      Wide_Wide_Put (Buffer, Item);
+      Wide_Wide_Put (Item);
       -- TODO: Use the real character size
       Current_Cursor.Col := @ + 1;
    end Put;
@@ -329,14 +335,17 @@ package body Malef.Console_IO is
    begin
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
-      Wide_Wide_Put (Buffer, Item);
+      Wide_Wide_Put (Item);
       Current_Cursor.Col := @ + 1;
    end Put_Indexed;
 
-   procedure Flush is
+   procedure Set_Title (
+      Item : in Wide_Wide_String) is
    begin
-      Flush (Buffer);
-   end Flush;
+      Put (ASCII.ESC & "]0;");
+      Wide_Wide_Put (Item);
+      Put (ASCII.BEL);
+   end Set_Title;
 
    --<<------->>--
    -->> Input <<--

@@ -40,8 +40,9 @@ private package Malef.Console_IO is
    -- This package spec will change as I learn new techniques and learn new
    -- things about how terminal work.
    --
-   -- The package implementation should be protected for concurrencly, i.e.
-   -- using protected objects to store the state of the console.
+   -- The implementation may not be protected. As there only the Window can
+   -- draw at the same time. Therefore we can avoid the performace penalty of
+   -- protected type and keep everything outside and more simple.
 
    --<<---------------->>--
    -->> Initialization <<--
@@ -68,7 +69,7 @@ private package Malef.Console_IO is
    --<<-------->>--
 
    procedure Begin_Frame;
-   -- This procedure tells the console that a new frame has started. In some
+   -- This procedure tells the terminal that a new frame has started. In some
    -- places it is called to begin the synchronisation. What it does is
    -- stopping the terminal, and allowing writting a batch of characters at
    -- the same time. This avoids the tearing effect.
@@ -78,7 +79,7 @@ private package Malef.Console_IO is
    -- frames have been ended.
 
    procedure End_Frame;
-   -- This procedure tells the console when a frame has ended. It should be
+   -- This procedure tells the terminal when a frame has ended. It should be
    -- called after Begin_Frame. There is guarantee that the library won't
    -- end a frame that hasn't begun.
    --
@@ -122,7 +123,11 @@ private package Malef.Console_IO is
 
    procedure Flush;
    -- This procedure forces a flush of everything in any internal buffer to
-   -- be outputed to the 
+   -- be outputed to the console.
+
+   procedure Set_Title (
+      Item : in Wide_Wide_String);
+   -- This procedure changes the terminal's title.
 
    --<<------->>--
    -->> Input <<--

@@ -34,4 +34,7 @@ package Malef.System is
 
    procedure Finalize;
 
+   procedure Set_Title (
+      Item : in Glyph_String);
+
 end Malef.System;

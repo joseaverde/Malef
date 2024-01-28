@@ -9,7 +9,7 @@ project Malef is
    Subsystem := "";
    case OS is
       when "linux"           => Subsystem := "ansi";
-      when "win32" | "win64" => Subsystem := "cmd"; Languages := ("Ada", "C");
+      when "win32" | "win64" => Subsystem := "cmd";
    end case;
 
    for Languages use Languages;

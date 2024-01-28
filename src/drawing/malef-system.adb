@@ -27,7 +27,6 @@
 -------------------------------------------------------------------------------
 
 with Ada.Finalization;
-with Malef.Subsystem;
 with Malef.Console_IO;
 
 package body Malef.System is
@@ -39,7 +38,6 @@ package body Malef.System is
       if Initialised then
          return;
       end if;
-      Malef.Subsystem.Initialize;
       Malef.Console_IO.Initialize;
       Initialised := True;
    end Initialize;
@@ -50,7 +48,6 @@ package body Malef.System is
          return;
       end if;
       Malef.Console_IO.Finalize;
-      Malef.Subsystem.Finalize;
       Initialised := False;
    end Finalize;
 
@@ -66,5 +63,11 @@ package body Malef.System is
       end if;
       Finalize;
    end Finalize;
+
+   procedure Set_Title (
+      Item : in Glyph_String) is
+   begin
+      Malef.Console_IO.Set_Title (Item);
+   end Set_Title;
 
 end Malef.System;
