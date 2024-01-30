@@ -117,7 +117,7 @@ package body Malef.Console_IO is
       wCodePageID : in UINT)
       return BOOL with
       Import        => True,
-      Convention    => C,
+      Convention    => Stdcall,
       External_Name => "SetConsoleOutputCP";
 
    -- GenerateConsoleCtrlEvent

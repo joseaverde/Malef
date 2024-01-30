@@ -15,10 +15,10 @@ procedure CMYK is
    use type Malef.Row_Type;
 
    CMYK_Group : Malef.Groups.Group (4) := [
-      Element (19, 41, (35, 35)),
-      Element (16, 32, (32, 32)),
-      Element (16, 32, (32, 48)),
-      Element (16, 32, (40, 40))
+      Layer (19, 41, (35, 35)),
+      Layer (16, 32, (32, 32)),
+      Layer (16, 32, (32, 48)),
+      Layer (16, 32, (40, 40))
    ];
 
    Base    renames CMYK_Group.Set_Surface (1).Element;

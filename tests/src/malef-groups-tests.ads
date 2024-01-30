@@ -20,13 +20,13 @@ package Malef.Groups.Tests is
    overriding
    procedure Set_Up (T : in out Test);
 
-   procedure Test_Group_Element_Add_Unnamed (T : in out Test);
-   procedure Test_Group_Element_Assign_Indexed (T : in out Test);
-   procedure Test_Group_Element_Ownership (T : in out Test);
-   procedure Test_Group_Element_Not_Multiple_Owners (T : in out Test);
-   procedure Test_Group_Element_Reference_Counted (T : in out Test);
-   procedure Test_Group_Element_Group_Moved (T : in out Test);
-   procedure Test_Group_Element_Not_Moved_To_Itself (T : in out Test);
+   procedure Test_Group_Layer_Add_Unnamed (T : in out Test);
+   procedure Test_Group_Layer_Assign_Indexed (T : in out Test);
+   procedure Test_Group_Layer_Ownership (T : in out Test);
+   procedure Test_Group_Layer_Not_Multiple_Owners (T : in out Test);
+   procedure Test_Group_Layer_Reference_Counted (T : in out Test);
+   procedure Test_Group_Layer_Group_Moved (T : in out Test);
+   procedure Test_Group_Layer_Not_Moved_To_Itself (T : in out Test);
 
    procedure Test_Groups_No_Tampering (T : in out Test);
    procedure Test_Groups_References_Keep_References (T : in out Test);
@@ -38,19 +38,19 @@ package Malef.Groups.Tests is
       [
       -- Group Elements
 
-         (Test_Group_Element_Add_Unnamed'Access,
-          +"Group.Add_Unnamed (Group_Element)")
-      ,  (Test_Group_Element_Assign_Indexed'Access,
-          +"Group.Assign_Indexed (Group_Element")
-      ,  (Test_Group_Element_Ownership'Access,
-          +"Adding a Group_Element to a group makes it take ownership")
-      ,  (Test_Group_Element_Not_Multiple_Owners'Access,
-          +"A Group_Element cannot have multiple Onwers at the same time")
-      ,  (Test_Group_Element_Reference_Counted'Access,
-          +"The Group_Element objects are reference counted")
-      ,  (Test_Group_Element_Group_Moved'Access,
-          +"The Group_Element allows moving a Group without copying")
-      ,  (Test_Group_Element_Not_Moved_To_Itself'Access,
+         (Test_Group_Layer_Add_Unnamed'Access,
+          +"Group.Add_Unnamed (Group_Layer)")
+      ,  (Test_Group_Layer_Assign_Indexed'Access,
+          +"Group.Assign_Indexed (Group_Layer)")
+      ,  (Test_Group_Layer_Ownership'Access,
+          +"Adding a Group_Layer to a group makes it take ownership")
+      ,  (Test_Group_Layer_Not_Multiple_Owners'Access,
+          +"A Group_Layer cannot have multiple Onwers at the same time")
+      ,  (Test_Group_Layer_Reference_Counted'Access,
+          +"The Group_Layer objects are reference counted")
+      ,  (Test_Group_Layer_Group_Moved'Access,
+          +"The Group_Layer allows moving a Group without copying")
+      ,  (Test_Group_Layer_Not_Moved_To_Itself'Access,
           +"A Group cannot be moved to itself")
 
       -- Groups

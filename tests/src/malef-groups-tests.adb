@@ -1,5 +1,3 @@
-with Ada.Text_IO;
-
 package body Malef.Groups.Tests is
 
    Black   : constant RGBA_Type := (0, 0, 0, 255);
@@ -41,17 +39,17 @@ package body Malef.Groups.Tests is
    use all type Surfaces.Surface;
    use all type Atomic_Boolean;
 
-   -->> Group_Element Tests <<--
+   -->> Group_Layer Tests <<--
 
-   procedure Test_Group_Element_Add_Unnamed (T : in out Test) is
-      Item : Group_Element;
+   procedure Test_Group_Layer_Add_Unnamed (T : in out Test) is
+      Item : Group_Layer;
    begin
       T.The_Group := Empty (7);
       Assert (T.The_Group.Size = 0, "Initial size must be 0");
       Assert (T.The_Group.Add_Unnamed_Index = 0, "Initial Unnamed Index not 0");
       Assert (T.The_Group.Last_Index = 0, "Initial Last_Index must be 0");
 
-      Item := Group_Element (Element (T.Surface_A));
+      Item := Group_Layer (Layer (T.Surface_A));
       T.The_Group.Add_Unnamed (Item);
       Assert (T.The_Group.Size = 1, "The size must increase in 1 to be 1");
       Assert (T.The_Group.Add_Unnamed_Index = 1, "The Unnamed Index not 1");
@@ -61,7 +59,7 @@ package body Malef.Groups.Tests is
       Assert (T.The_Group.Layers (1).Surface.all = T.Surface_A,
               "The Surface objects differ");
 
-      Item := Group_Element (Element (T.Group_B));
+      Item := Group_Layer (Layer (T.Group_B));
       T.The_Group.Add_Unnamed (Item);
       Assert (T.The_Group.Size = 2, "The size doesn't increase to be 2");
       Assert (T.The_Group.Add_Unnamed_Index = 2, "The Unnamed Index not 2");
@@ -71,7 +69,7 @@ package body Malef.Groups.Tests is
       Assert (T.The_Group.Layers (2).Group.Capacity = T.Group_B.Capacity,
               "Groups capacities differ");
 
-      Item := Group_Element (No_Layer);
+      Item := Group_Layer (No_Layer);
       T.The_Group.Add_Unnamed (Item);
       Assert (T.The_Group.Size = 2, "The size must be the same (No_Layer)");
       Assert (T.The_Group.Add_Unnamed_Index = 3, "The index must increase");
@@ -80,7 +78,7 @@ package body Malef.Groups.Tests is
       Assert (T.The_Group.Layers (3) = Item.Layer, "Added null");
 
       for I in Layer_Index range 4 .. 7 loop
-         Item := Group_Element (Element (T.Surface_D));
+         Item := Group_Layer (Layer (T.Surface_D));
          T.The_Group.Add_Unnamed (Item);
          Assert (T.The_Group.Size = I - 1, "The size doesn't match");
          Assert (T.The_Group.Add_Unnamed_Index = I, "Wrong Unnamed Index");
@@ -97,9 +95,9 @@ package body Malef.Groups.Tests is
       when Constraint_Error =>
       declare
          My_Group : constant Group (7) :=
-            [Element (T.Surface_A), Element (T.Surface_B), Element (T.Group_A),
-             Element (T.Surface_C), Element (T.Surface_D), Element (T.Group_B),
-             Element (T.Surface_E)];
+            [Layer (T.Surface_A), Layer (T.Surface_B), Layer (T.Group_A),
+             Layer (T.Surface_C), Layer (T.Surface_D), Layer (T.Group_B),
+             Layer (T.Surface_E)];
       begin
          Assert (My_Group.Size = 7, "Group not at max capacity");
          Assert (My_Group.Add_Unnamed_Index = 7, "Index must be last");
@@ -114,25 +112,25 @@ package body Malef.Groups.Tests is
                  "Wrong at 6");
          Assert (My_Group.Layers (7).Surface.all = T.Surface_E, "Wrong at 7");
       end;
-   end Test_Group_Element_Add_Unnamed;
+   end Test_Group_Layer_Add_Unnamed;
 
-   procedure Test_Group_Element_Assign_Indexed (T : in out Test)
+   procedure Test_Group_Layer_Assign_Indexed (T : in out Test)
       renames Not_Implemented;
 
-   procedure Test_Group_Element_Ownership (T : in out Test) is
-      Item_A : Group_Element;
-      Item_B : Group_Element;
-      Item_C : Group_Element;
+   procedure Test_Group_Layer_Ownership (T : in out Test) is
+      Item_A : Group_Layer;
+      Item_B : Group_Layer;
+      Item_C : Group_Layer;
    begin
-      Item_A := Group_Element (Element (T.Surface_A));
+      Item_A := Group_Layer (Layer (T.Surface_A));
       Assert (Item_A.Control /= null and then
               Item_A.Control.Owned = 0,
               "When created, it must not have an owner (Item_A)");
-      Item_B := Group_Element (Element (T.Group_B));
+      Item_B := Group_Layer (Layer (T.Group_B));
       Assert (Item_B.Control /= null and then
               Item_B.Control.Owned = 0,
               "When created, it must not have an owner (Item_B)");
-      Item_C := Group_Element (No_Layer);
+      Item_C := Group_Layer (No_Layer);
       Assert (Item_C.Control = null, "No_Layer has null control");
       T.Group_B.Add_Unnamed (Item_A);
       Assert (Item_A.Control.Owned /= 0, "Item_A should be owned by the Group");
@@ -140,34 +138,34 @@ package body Malef.Groups.Tests is
       Assert (Item_B.Control.Owned /= 0, "Item_B should be owned by the Group");
       T.Group_B.Add_Unnamed (Item_C);
       Assert (Item_C.Control = null, "Item_C should be still be null");
-   end Test_Group_Element_Ownership;
+   end Test_Group_Layer_Ownership;
 
-   procedure Test_Group_Element_Not_Multiple_Owners (T : in out Test) is
-      Item : Group_Element;
+   procedure Test_Group_Layer_Not_Multiple_Owners (T : in out Test) is
+      Item : Group_Layer;
    begin
-      Item := Group_Element (Element (T.Surface_A));
+      Item := Group_Layer (Layer (T.Surface_A));
       Assert (Item.Control.Owned = 0, "On creation it, no owner");
       T.Group_A.Add_Unnamed (Item);
-      Assert (Item.Control.Owned /= 0, "Now the element should have an owner");
+      Assert (Item.Control.Owned /= 0, "Now the layer should have an owner");
       T.Group_B.Add_Unnamed (Item);
       Assert (False, "It has two owners!!!");
    exception
       when Program_Error => null;
-   end Test_Group_Element_Not_Multiple_Owners;
+   end Test_Group_Layer_Not_Multiple_Owners;
 
-   procedure Test_Group_Element_Reference_Counted (T : in out Test) is
+   procedure Test_Group_Layer_Reference_Counted (T : in out Test) is
    begin
       declare
-         Item  : Group_Element;
+         Item  : Group_Layer;
       begin
          Assert (Item.Control = null, "Not yet assigned!");
-         Item := Group_Element (Element (T.Surface_A));
+         Item := Group_Layer (Layer (T.Surface_A));
          Assert (Item.Control /= null, "Assigned");
          Assert (Item.Control.Counter = 1, "Only one object referencing it");
          declare
-            Other   : Group_Element;
-            Other_2 : Group_Element;
-            Nope    : Group_Element;
+            Other   : Group_Layer;
+            Other_2 : Group_Layer;
+            Nope    : Group_Layer;
          begin
             Other := Item;
             Assert (Item.Control.Counter = 2, "There should be 2 references");
@@ -180,11 +178,11 @@ package body Malef.Groups.Tests is
          end;
          Assert (Item.Control.Counter = 1, "Two references less => 1 ref!");
       end;
-   end Test_Group_Element_Reference_Counted;
+   end Test_Group_Layer_Reference_Counted;
 
-   procedure Test_Group_Element_Group_Moved (T : in out Test)
+   procedure Test_Group_Layer_Group_Moved (T : in out Test)
       renames Not_Implemented;
-   procedure Test_Group_Element_Not_Moved_To_Itself (T : in out Test)
+   procedure Test_Group_Layer_Not_Moved_To_Itself (T : in out Test)
       renames Not_Implemented;
 
    -->> Group Tests <<--

@@ -46,15 +46,15 @@ package Malef.Groups with Preelaborate is
 
    type Layer_Kind is (A_Surface, A_Group);
 
-   type Group_Layer (<>) is tagged private;
+   type Group_Element (<>) is tagged private;
 
    function Contains (
-      Object : in Group_Layer)
+      Object : in Group_Element)
       return Boolean with
       Global => null;
 
    function Kind (
-      Object : in Group_Layer)
+      Object : in Group_Element)
       return Layer_Kind with
       Pre    => Contains (Object),
       Global => null;
@@ -173,12 +173,18 @@ package Malef.Groups with Preelaborate is
    procedure Insert (
       Object   : in out Group;
       Index    : in     Layer_Index;
-      Group    : in     Groups.Group;
+      Surface  : in     Surfaces.Surface;
       Position : in     Cursor_Type   := Default_Position;
       Mode     : in     Layer_Mode    := Normal;
       Hidden   : in     Boolean       := False;
       Opacity  : in     Layer_Opacity := Opaque_Layer);
    -- TODO: Contracts
+
+   procedure Insert (
+      Object : in out Group'Class;
+      Index  : in     Layer_Index;
+      Item   : in     Group_Element'Class)
+      renames Assign_Indexed;
 
    procedure Clear (
       Object : in out Group) with
@@ -190,10 +196,9 @@ package Malef.Groups with Preelaborate is
       Index  : in     Layer_Index);
    -- TODO: Contracts
 
-   -- function Move_Out_Group (
-   --    Object : in out Group;
-   --    Index  : in     Layer_Index)
-   --    return Group_Layer'Class;
+   function Move_Out_Group (
+      Object : in out Group)
+      return Group_Element'Class;
    -- TODO: Contracts
    -- TODO: Explain Move concept
 
@@ -220,54 +225,54 @@ package Malef.Groups with Preelaborate is
 
    -->> As an Aggregate <<--
 
-   function Layer (
+   function Element (
       Surface  : in Surfaces.Surface;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class with
-      Post     => Contains (Layer'Result)
-         and then Kind (Layer'Result) = A_Surface,
+      return Group_Element'Class with
+      Post     => Contains (Element'Result)
+         and then Kind (Element'Result) = A_Surface,
       Global => null;
 
-   function Layer (
+   function Element (
       Rows     : in Positive_Row_Count;
       Cols     : in Positive_Col_Count;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class with
-      Post     => Contains (Layer'Result)
-         and then Kind (Layer'Result) = A_Surface,
+      return Group_Element'Class with
+      Post     => Contains (Element'Result)
+         and then Kind (Element'Result) = A_Surface,
       Global => null;
 
-   function Layer (
+   function Element (
       Group    : in Groups.Group;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class with
-      Post     => Contains (Layer'Result)
-         and then Kind (Layer'Result) = A_Group,
+      return Group_Element'Class with
+      Post     => Contains (Element'Result)
+         and then Kind (Element'Result) = A_Group,
       Global   => null;
 
    function Move (
-      Group    : in out Groups.Group;
-      Position : in     Cursor_Type   := Default_Position;
-      Mode     : in     Layer_Mode    := Normal;
-      Hidden   : in     Boolean       := False;
-      Opacity  : in     Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class with
-      Pre      => Valid (Group) or else raise Constraint_Error,
-      Post     => Contains (Move'Result) and then Kind (Move'Result) = A_Group,
+      Group    : in Groups.Group;
+      Position : in Cursor_Type   := Default_Position;
+      Mode     : in Layer_Mode    := Normal;
+      Hidden   : in Boolean       := False;
+      Opacity  : in Layer_Opacity := Opaque_Layer)
+      return Group_Element'Class with
+      Post     => Contains (Element'Result)
+         and then Kind (Element'Result) = A_Group,
       Global   => null;
    -- About Move functions see the comment on the top of this package spec.
 
    function No_Layer
-      return Group_Layer'Class with
+      return Group_Element'Class with
       Post   => not Contains (No_Layer'Result),
       Global => null;
 
@@ -280,7 +285,7 @@ package Malef.Groups with Preelaborate is
 
    procedure Add_Unnamed (
       Object   : in out Group;
-      New_Item : in     Group_Layer'Class) with
+      New_Item : in     Group_Element'Class) with
       Pre      => Last_Index (Object) < Object.Capacity
          or else (raise Constraint_Error),
       Post     => Last_Index (Object) = Last_Index (Object)'Old + 1
@@ -302,16 +307,10 @@ package Malef.Groups with Preelaborate is
    procedure Assign_Indexed (
       Object   : in out Group;
       Index    : in     Layer_Index;
-      New_Item : in     Group_Layer'Class) with
+      New_Item : in     Group_Element'Class) with
       Pre      => Index in 1 .. Object.Capacity or else raise Constraint_Error,
       Global   => null;
    -- TODO: Add same-as postcondition
-
-   procedure Insert (
-      Object : in out Group;
-      Index  : in     Layer_Index;
-      Item   : in     Group_Layer'Class)
-      renames Assign_Indexed;
 
    -->> Layer Operations <<--
 
@@ -425,15 +424,9 @@ package Malef.Groups with Preelaborate is
       return Layer_Count with
       Global => null;
 
-   function Valid (
-      Object : in Group)
-      return Boolean with
-      Global => null;
-
    function Default_Initial_Condition (
       Group : in Groups.Group)
       return Boolean is (
-      Valid (Group)    and then
       Rows (Group) = 0 and then
       Cols (Group) = 0 and then
       Is_Empty (Group) and then
@@ -490,7 +483,7 @@ private
       return Control_Access is (
       new Control_Type'(Counter => 1, Owned => 0));
 
-   type Group_Layer is
+   type Group_Element is
       new Ada.Finalization.Controlled with
       record
          Layer   : Layer_Access := null;
@@ -499,19 +492,19 @@ private
 
    overriding
    procedure Adjust (
-      Object : in out Group_Layer);
+      Object : in out Group_Element);
 
    overriding
    procedure Finalize (
-      Object : in out Group_Layer);
+      Object : in out Group_Element);
 
    function Contains (
-      Object : in Group_Layer)
+      Object : in Group_Element)
       return Boolean is (
       Object.Layer /= null);
 
    function Kind (
-      Object : in Group_Layer)
+      Object : in Group_Element)
       return Layer_Kind is (
       Object.Layer.Kind);
 
@@ -591,14 +584,14 @@ private
                                           Group => Deep_Copy (
                                              Object.Layers (I).Group.all)))]));
 
-   function Layer (
+   function Element (
       Surface  : in Surfaces.Surface;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class is (
-      Group_Layer'(Ada.Finalization.Controlled with
+      return Group_Element'Class is (
+      Group_Element'(Ada.Finalization.Controlled with
       Layer  => new Layer_Type'(
          Kind     => A_Surface,
          Position => Position,
@@ -609,15 +602,15 @@ private
          others   => <>),
       Control => New_Control));
 
-   function Layer (
+   function Element (
       Rows     : in Positive_Row_Count;
       Cols     : in Positive_Col_Count;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class is (
-      Group_Layer'(Ada.Finalization.Controlled with
+      return Group_Element'Class is (
+      Group_Element'(Ada.Finalization.Controlled with
       Layer  => new Layer_Type'(
          Kind     => A_Surface,
          Position => Position,
@@ -628,14 +621,14 @@ private
          others   => <>),
       Control => New_Control));
 
-   function Layer (
+   function Element (
       Group    : in Groups.Group;
       Position : in Cursor_Type   := Default_Position;
       Mode     : in Layer_Mode    := Normal;
       Hidden   : in Boolean       := False;
       Opacity  : in Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class is (
-      Group_Layer'(Ada.Finalization.Controlled with
+      return Group_Element'Class is (
+      Group_Element'(Ada.Finalization.Controlled with
       Layer  => new Layer_Type'(
          Kind     => A_Group,
          Position => Position,
@@ -646,19 +639,9 @@ private
          others   => <>),
       Control => New_Control));
 
-   function Move (
-      Group    : in out Groups.Group;
-      Position : in     Cursor_Type   := Default_Position;
-      Mode     : in     Layer_Mode    := Normal;
-      Hidden   : in     Boolean       := False;
-      Opacity  : in     Layer_Opacity := Opaque_Layer)
-      return Group_Layer'Class is (
-      Layer (Group, Position, Mode, Hidden, Opacity));
-   -- TODO: Use move semantics
-
    function No_Layer
-      return Group_Layer'Class is (
-      Group_Layer'(Ada.Finalization.Controlled with
+      return Group_Element'Class is (
+      Group_Element'(Ada.Finalization.Controlled with
       Layer   => null,
       Control => null));
 
@@ -670,11 +653,6 @@ private
       others   => <>);
 
    -->> Layer Operations <<--
-
-   function Valid (
-      Object : in Group)
-      return Boolean is (
-      Object.Surface /= null);
 
    function Contains (
       Object : in Group;

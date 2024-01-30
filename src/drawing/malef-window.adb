@@ -32,13 +32,44 @@ package body Malef.Window is
 
    protected body Window is
 
-      procedure Set_Box (Box : in Boxes.Box) is null;
+      procedure Process_Group (
+         Process : not null access
+                   procedure (Object : aliased in out Groups.Group)) is
+      begin
+         Process.all (Group.Set_Group (1).Element.all);
+      end Process_Group;
+
+      procedure Set_Group (Group : in Groups.Group) is null;
 
       procedure Resize (
          Rows : in Positive_Row_Count;
          Cols : in Positive_Col_Count) is null;
 
+      procedure Display is
+      begin
+         Show (Group.See_Surface.Element.all);
+      end Display;
+
       procedure Redraw is null;
+
+      -->> Callbacks <<--
+
+      procedure Register (
+         Event    : in Event_Name;
+         Observer : not null access Event_Observer'Class;
+         Callback : not null        Callback_Type) is
+      begin
+         Observers (Event).Append (
+            Implementation.Observer_Info'(Observer, Callback));
+      end Register;
+
+      procedure Unregister (
+         Event    : in Event_Name;
+         Observer : not null access Event_Observer'Class) is
+      begin
+         Observers (Event).Delete (Index => Observers (Event).Find_Index (
+            Item => Implementation.Observer_Info'(Observer, null)));
+      end Unregister;
 
    end Window;
 

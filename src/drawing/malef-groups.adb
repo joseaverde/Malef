@@ -29,8 +29,6 @@
 with Ada.Unchecked_Deallocation;
 with System.Atomic_Operations.Integer_Arithmetic;
 
-with Ada.Text_IO;
-
 package body Malef.Groups is
 
    procedure Free is
@@ -62,7 +60,7 @@ package body Malef.Groups is
       Atomic_Type => Atomic_Counter);
 
    function Steal (
-      Object : in Group_Element'Class)
+      Object : in Group_Layer'Class)
       return Layer_Access is
    begin
       if Object.Control = null then
@@ -70,8 +68,8 @@ package body Malef.Groups is
       end if;
       if Test_And_Set.Atomic_Test_And_Set (Object.Control.Owned) then
          raise Program_Error with
-         "Group_Element has already been added to a Group which obtained " &
-         "ownership of the Element. Refrain from using Group_Element's. "  &
+         "Group_Layer has already been added to a Group which obtained " &
+         "ownership of the Element. Refrain from using Group_Layer's. "  &
          "Their purpose is implementing Aggregates for Groups.";
       end if;
       return Object.Layer;
@@ -79,7 +77,7 @@ package body Malef.Groups is
 
    overriding
    procedure Adjust (
-      Object : in out Group_Element) is
+      Object : in out Group_Layer) is
    begin
       if Object.Control = null then
          return;
@@ -89,7 +87,7 @@ package body Malef.Groups is
 
    overriding
    procedure Finalize (
-      Object : in out Group_Element)
+      Object : in out Group_Layer)
    is
       use all type Atomic_Boolean;
    begin
@@ -166,6 +164,15 @@ package body Malef.Groups is
       return Surface_Reference_Type'(Element => Object.Layers (Index).Surface);
    end Set_Surface;
 
+   function Set_Group (
+      Object : aliased in out Group;
+      Index  :         in     Layer_Index)
+      return Group_Reference_Type is
+   begin
+      Object.Updated := True;
+      return Group_Reference_Type'(Element => Object.Layers (Index).Group);
+   end Set_Group;
+
    procedure Clear (
       Object : in out Group) is
    begin
@@ -198,11 +205,50 @@ package body Malef.Groups is
       Object.Count := @ - 1;
    end Delete;
 
+   -- function Move_Out_Group (
+   --    Object : in out Group)
+   --    return Group_Layer'Class is
+   -- begin
+
+   procedure Insert (
+      Object   : in out Group;
+      Index    : in     Layer_Index;
+      Surface  : in     Surfaces.Surface;
+      Position : in     Cursor_Type   := Default_Position;
+      Mode     : in     Layer_Mode    := Normal;
+      Hidden   : in     Boolean       := False;
+      Opacity  : in     Layer_Opacity := Opaque_Layer) is
+   begin
+      Object.Assign_Indexed (Index    => Index,
+                             New_Item => Layer (Surface  => Surface,
+                                                Position => Position,
+                                                Mode     => Mode,
+                                                Hidden   => Hidden,
+                                                Opacity  => Opacity));
+   end Insert;
+
+   procedure Insert (
+      Object   : in out Group;
+      Index    : in     Layer_Index;
+      Group    : in     Groups.Group;
+      Position : in     Cursor_Type   := Default_Position;
+      Mode     : in     Layer_Mode    := Normal;
+      Hidden   : in     Boolean       := False;
+      Opacity  : in     Layer_Opacity := Opaque_Layer) is
+   begin
+      Object.Assign_Indexed (Index    => Index,
+                             New_Item => Layer (Group    => Group,
+                                                Position => Position,
+                                                Mode     => Mode,
+                                                Hidden   => Hidden,
+                                                Opacity  => Opacity));
+   end Insert;
+
    -->> As an Aggregate <<--
 
    procedure Add_Unnamed (
       Object   : in out Group;
-      New_Item : in     Group_Element'Class) is
+      New_Item : in     Group_Layer'Class) is
    begin
       Object.Index := @ + 1;
       Object.Count := (if New_Item.Layer = null then @ else @ + 1);
@@ -213,7 +259,7 @@ package body Malef.Groups is
    procedure Assign_Indexed (
       Object   : in out Group;
       Index    : in     Layer_Index;
-      New_Item : in     Group_Element'Class) is
+      New_Item : in     Group_Layer'Class) is
    begin
       if not Contains (Object, Index) and then not Contains (New_Item) then
          null;

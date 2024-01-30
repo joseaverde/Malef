@@ -26,30 +26,101 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Containers.Vectors;
 with Malef.Boxes;
+with Malef.Groups;
 with Malef.Surfaces;
+with Malef.Events;
 
 package Malef.Window is
+
+   type Event_Observer is limited interface;
+
+   type Event_Name is (
+      Resize_Event,
+      Keyboard_Event,
+      Mouse_Event,
+      Cancel_Event,
+      Kill_Event);
+
+   type Event_Type (
+      Name : Event_Name) is
+      record
+         case Name is
+            when Resize_Event   => New_Size : Cursor_Type;
+            when Keyboard_Event => Key      : Events.Key_Type;
+            when Mouse_Event    => Button   : Events.Mouse_Button;
+                                   Action   : Events.Mouse_Action;
+                                   Wheel    : Events.Mouse_Wheel;
+                                   Position : Cursor_Type;
+            when Cancel_Event   => null;
+            when Kill_Event     => null;
+         end case;
+      end record;
+
+   type Callback_Type is access
+      procedure (Observer : aliased in out Event_Observer'Class;
+                 Event    : in Event_Type);
 
    package Implementation is
 
       type Window_State is (Idle, Drawing, Resizing);
 
+      type Observer_Access is access all Event_Observer'Class;
+
+      type Observer_Info is
+         record
+            Pointer  : Observer_Access;
+            Callback : Callback_Type;
+         end record;
+
+      overriding
+      function "=" (Left, Right : in Observer_Info)
+         return Boolean is (
+         Left.Pointer = Right.Pointer);
+
+      package Observer_Vectors is
+         new Ada.Containers.Vectors (
+         Index_Type   => Positive,
+         Element_Type => Observer_Info);
+
+      type Observer_Vector_By_Event is
+         array (Event_Name)
+         of Observer_Vectors.Vector;
+
    end Implementation;
 
    protected Window is
 
-      procedure Set_Box (Box : in Boxes.Box);
+      procedure Process_Group (
+         Process : not null access
+                   procedure (Object : aliased in out Groups.Group));
+
+      procedure Set_Group (Group : in Groups.Group);
 
       procedure Resize (
          Rows : in Positive_Row_Count;
          Cols : in Positive_Col_Count);
 
+      procedure Display;
+
       procedure Redraw;
+
+      -->> Callbacks <<--
+
+      procedure Register (
+         Event    : in Event_Name;
+         Observer : not null access Event_Observer'Class;
+         Callback : not null        Callback_Type);
+
+      procedure Unregister (
+         Event    : in Event_Name;
+         Observer : not null access Event_Observer'Class);
 
    private
 
-      Box : Boxes.Box (1);
+      Observers : Implementation.Observer_Vector_By_Event;
+      Group     : Groups.Group (1);
 
    end Window;
 

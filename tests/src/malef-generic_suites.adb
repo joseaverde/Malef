@@ -6,7 +6,7 @@ package body Malef.Generic_Suites is
    package Caller is new AUnit.Test_Caller (Test_Type);
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
-      Result : AUnit.Test_Suites.Access_Test_Suite
+      Result : constant AUnit.Test_Suites.Access_Test_Suite
              := new AUnit.Test_Suites.Test_Suite;
    begin
       for Cas of Cases loop
@@ -16,7 +16,7 @@ package body Malef.Generic_Suites is
       return Result;
    end Suite;
 
-   Test_Not_Implemented : exception;
+   Test_Not_Implemented : exception with Unreferenced;
 
    procedure Not_Implemented (T : in out Test_Type) is
       pragma Unreferenced (T);
