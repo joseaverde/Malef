@@ -111,6 +111,7 @@ package body Malef.Groups is
                   declare
                      Group : Group_Access := Object.Layer.Group;
                   begin
+                     Group.all.Clear;
                      Free (Group);
                   end;
             end case;

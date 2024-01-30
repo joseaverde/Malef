@@ -25,28 +25,28 @@ procedure Palettes is
    Unfocused     : constant := 8;
 
    Dark_Mode : constant Malef.Palettes.Palette_Type := (
-      0 =>   (0,   0,   0,   0),    -- Transparent
-      1 =>  (40,  40,  40, 255),    -- Primary Background Colour
-      2 =>  (80,  80,  80, 255),    -- Secondary Background Colour
-      3 => (240, 240, 240, 255),    -- Primary Foreground Colour
-      4 => (220, 220, 220, 255),    -- Secondary Foreground Colour
-      5 => (240,  80,  80, 255),    -- Primary Colour
-      6 => (200,  40,  40, 255),    -- Secondary Colour
-      7 =>   (0,   0,   0, 125),    -- Shadow
-      8 =>   (0,   0,   0,  80),    -- Unfocused
-      others => (0, 0, 0, 0));
+      0 => "#0000",        -- Transparent
+      1 => "#282828",      -- Primary Background Colour
+      2 => "#505050",      -- Secondary Background Colour
+      3 => "#F0F0F0",      -- Primary Foreground Colour
+      4 => "#DCDCDC",      -- Secondary Foreground Colour
+      5 => "#F05050",      -- Primary Colour
+      6 => "#DC2828",      -- Secondary Colour
+      7 => "#0007",        -- Shadow
+      8 => "#00000050",    -- Unfocused
+      others => "#0000");
 
    Light_Mode : constant Malef.Palettes.Palette_Type := (
-      0 =>   (0,   0,   0,   0),    -- Transparent
-      1 => (240, 240, 240, 255),    -- Primary Background Colour
-      2 => (220, 220, 220, 255),    -- Secondary Background Colour
-      3 =>  (40,  40,  40, 255),    -- Primary Foreground Colour
-      4 =>  (80,  80,  80, 255),    -- Secondary Foreground Colour
-      5 =>  (80, 240,  80, 255),    -- Primary Colour
-      6 =>  (40, 200,  40, 255),    -- Secondary Colour
-      7 =>  (40,  40,  40, 125),    -- Shadow
-      8 =>  (40,  40,  40,  80),    -- Unfocused
-      others => (0, 0, 0, 0));
+      0 => "#0000",        -- Transparent
+      1 => "#F0F0F0",      -- Primary Background Colour
+      2 => "#DCDCDC",      -- Secondary Background Colour
+      3 => "#282828",      -- Primary Foreground Colour
+      4 => "#505050",      -- Secondary Foreground Colour
+      5 => "#50F0DC",      -- Primary Colour
+      6 => "#28C828",      -- Secondary Colour
+      7 => "#28282877",    -- Shadow
+      8 => "#28282850",    -- Unfocused
+      others => "#0000");
 
    use type Malef.Col_Type;
    use type Malef.Row_Type;

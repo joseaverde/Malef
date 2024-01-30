@@ -133,6 +133,15 @@ package Malef.Groups is -- with Preelaborate is
          or else  raise Constraint_Error,
       Global => null;
 
+   function Get_Group (
+      Object : aliased in out Group;
+      Index  :         in     Layer_Index)
+      return Group_Reference_Type with
+      Pre      => (Contains (Object, Index)
+                   and then Kind (Object, Index) = A_Group)
+         or else  raise Constraint_Error,
+      Global => null;
+
    -- TODO: Get_Group
    -- TODO: Set_Group
    -- TODO: Insert
@@ -498,8 +507,20 @@ private
 
    function Deep_Copy (
       Object : in Group)
-      return Group_Access is (
-      new Group'(Object));
+      return Group_Access is (new Group'(
+      Object with delta
+      Updated => False,
+      Surface => new Surfaces.Surface'(Object.Surface.all),
+      Layers  => [for I in Object.Layers'Range =>
+                    (if Object.Layers (I) = null
+                       then null
+                     elsif Object.Layers (I).Kind = A_Surface
+                       then new Layer_Type'(Object.Layers (I).all with delta
+                                            Surface => new Surfaces.Surface'(
+                                             Object.Layers (I).Surface.all))
+                     else new Layer_Type'(Object.Layers (I).all with delta
+                                          Group => Deep_Copy (
+                                             Object.Layers (I).Group.all)))]));
 
    function Element (
       Surface  : in Surfaces.Surface;

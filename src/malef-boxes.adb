@@ -250,7 +250,7 @@ package body Malef.Boxes is
    procedure Clear_Surface (
       Object : in out Box) is
    begin
-      Object.Canvas.Reference.Fill ((0, 0, 0, 0), (0, 0, 0, 0), Nil, No_Style);
+      Object.Canvas.Reference.Fill ((0, 0, 0, 0), (0, 0, 0, 0), Nul, No_Style);
    end Clear_Surface;
 
    function Get_Surface (
@@ -278,7 +278,7 @@ package body Malef.Boxes is
       for Row in 1 .. Surface.Rows loop
          C_Col := Shift.Col + Pos.Col + 1;
          for Col in 1 .. Surface.Cols loop
-            if Canvas (C_Row, C_Col) = Nil then
+            if Canvas (C_Row, C_Col) = Nul then
                Char := Surface (Row, Col);
                Canvas (C_Row, C_Col) := Char;
                Canvas.Set_Foreground (C_Row, C_Col, Add.all (

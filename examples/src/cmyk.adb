@@ -4,11 +4,11 @@ with Malef.Groups;
 with Malef.Window;
 
 procedure CMYK is
-   Base_Colour    : constant Malef.RGBA_Type := (255, 255, 255, 255);
-   Grey_Colour    : constant Malef.RGBA_Type := (128, 128, 128, 128);
-   Cyan_Colour    : constant Malef.RGBA_Type := (0, 255, 255, 85);
-   Magenta_Colour : constant Malef.RGBA_Type := (255, 0, 255, 85);
-   Yellow_Colour  : constant Malef.RGBA_Type := (255, 255, 0, 85);
+   Base_Colour    : constant Malef.RGBA_Type := "#FFF";
+   Grey_Colour    : constant Malef.RGBA_Type := "#80808055";
+   Cyan_Colour    : constant Malef.RGBA_Type := "#0FF5";
+   Magenta_Colour : constant Malef.RGBA_Type := "#F0F5";
+   Yellow_Colour  : constant Malef.RGBA_Type := "#FF05";
 
    use Malef.Groups;
    use type Malef.Col_Type;

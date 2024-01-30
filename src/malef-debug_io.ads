@@ -75,15 +75,34 @@ package Malef.Debug_IO with Preelaborate is
    type Build_Mode is (Debug, Release);
 
    type Message_Severity is (Debug, Information, Warning, Error, Critical);
+   -- There are different kinds of message severities. You can change the
+   -- default severity any time. Then you can filter the message that match
+   -- the severity levels you want.
 
    type Visible_Messages is array (Message_Severity) of Boolean;
+   -- Filter array for message severity levels.
 
    generic
       Mode     : in Build_Mode       := Debug;
+      -- The compilation mode. If Debug, everything works as expected.
+      -- If release, everything is optimised out, there is no performance
+      -- penalty and nothing is shown.
+
       Name     : in String           := "";
+      -- The name of the file to write the information to. It must have a value
+      -- or the Widget parameter must be True (not both at the same time).
+
       Widget   : in Boolean          := False;
+      -- If True, the messages are written to a custom Widget you can open
+      -- inside your application to debug. If this value is True, Name should
+      -- be an empty String. If True, you will be able to use the New_Debug
+      -- function to get a valid Widget.
+
       Severity : in Message_Severity := Debug;
+      -- The default severity level (it can be changed later).
+
       Visible  : in Visible_Messages := (others => True);
+      -- The default visibility rules of messages (it can be changed later).
    package Debug_IO is
 
       pragma Assert (Widget xor Name /= "");
@@ -114,7 +133,8 @@ package Malef.Debug_IO with Preelaborate is
 
       type Debug_Widget is
          new Widgets.Widget with
-         private;
+         private with
+         Default_Initial_Condition => False;
 
       procedure On_Draw (
          Object  : in     Debug_Widget;

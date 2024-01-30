@@ -48,6 +48,7 @@ is
       Object_Size => 256,
       Alignment   => 32;
 
+   overriding
    function "=" (Left, Right : in Cell_Type)
       return Boolean is (
                Left.Character = Right.Character
@@ -63,6 +64,7 @@ is
       array (Row_Type range <>, Col_Type range <>)
       of aliased Cell_Type;
 
+   overriding
    function "=" (Left, Right : in Matrix_Type)
       return Boolean is (
                Left'First (1) = Right'First (1)
@@ -76,7 +78,7 @@ is
    Default_Cell : constant Cell_Type
                 := Cell_Type'(Foreground => (255, 255, 255,   0),
                               Background =>   (0,   0,   0,   0),
-                              Character  => Nil,
+                              Character  => Nul,
                               Fg_Name    => 0,
                               Bg_Name    => 0,
                               Has_Name   => False,

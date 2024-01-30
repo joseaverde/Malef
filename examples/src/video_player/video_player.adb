@@ -9,8 +9,8 @@ procedure Video_Player is
    use Video_Players;
    use Malef;
 
-   Screen_Height : constant := 32;
-   Screen_Width  : constant := 90;
+   Screen_Height : constant := 32 * 2;
+   Screen_Width  : constant := 90 * 2;
 
    Player  : Video_Player_Widget;
    Surface : Surfaces.Surface (Screen_Height, Screen_Width);

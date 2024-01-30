@@ -70,54 +70,23 @@ package body Malef.Surfaces is
       Set_Updated (Object, To.Row, To.Col);
    end Set_Updated;
 
-   function Image (
-      Item : in Component_Type)
-      return String is (
-   (declare
-      Img : constant String := Item'Image;
-   begin
-      Img (Img'First + 1 .. Img'Last)));
-
-   function Transparent (A, C : in Component_Type)
-      return Component_Type is (
-      Component_Type (Float (A) * (Float (C) / 255.0)));
-
-   function Image (
-      Item : in RGBA_Type)
-      return String is (
-      Image (Transparent (Item (Alpha), Item (Red)))   & ";" &
-      Image (Transparent (Item (Alpha), Item (Green))) & ";" &
-      Image (Transparent (Item (Alpha), Item (Blue))));
-
    procedure Put_Image (
       Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
-      Arg    : in     Surface)
-   is
-      Fore, Back : RGBA_Type;
+      Arg    : in     Surface) is
    begin
       for Row in 1 .. Arg.Rows loop
-         Buffer.New_Line;
+         Buffer.Put ("[ """);
          for Col in 1 .. Arg.Cols loop
-            if not Is_Indexed (Arg, Row, Col) then
-               Fore := Arg.Matrix (Row, Col).Foreground;
-               Back := Arg.Matrix (Row, Col).Background;
-            else
-               Fore := Arg.Palette (Arg.Matrix (Row, Col).Fg_Name);
-               Back := Arg.Palette (Arg.Matrix (Row, Col).Bg_Name);
-            end if;
-            Buffer.Put (ASCII.ESC & "[38;2;" & Image (Fore) & "m");
-            Buffer.Put (ASCII.ESC & "[48;2;" & Image (Back) & "m");
-            if Arg.Matrix (Row, Col).Character = Nil then
+            if Arg.Matrix (Row, Col).Character = Nul then
                Buffer.Wide_Wide_Put (" ");
             else
                Buffer.Wide_Wide_Put (Arg.Matrix (Row, Col).Character & "");
             end if;
          end loop;
-         Buffer.Put (ASCII.ESC & "[0m");
+         Buffer.Put (""" ]");
+         Buffer.New_Line;
       end loop;
-      Buffer.Put (ASCII.ESC & "[0m");
       Buffer.Increase_Indent;
-      Buffer.New_Line;
       if Arg.Updated then
          Buffer.Put ("Has been modified in region (");
          Buffer.Put (Arg.From.Row'Image); Buffer.Put (",");
@@ -128,11 +97,7 @@ package body Malef.Surfaces is
          Buffer.Put ("   Is up to date");
       end if;
       Buffer.New_Line;
-      Buffer.Put ("Palette := [");
-      for Col of Arg.Palette loop
-         Buffer.Put (ASCII.ESC & "[48;2;" & Image (Col) & "m  ");
-      end loop;
-      Buffer.Put (ASCII.ESC & "[0m]");
+      Palettes.Put_Image (Buffer, Arg.Palette);
    end Put_Image;
 
    --<<-------------->>--

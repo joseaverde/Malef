@@ -27,7 +27,6 @@
 -------------------------------------------------------------------------------
 
 private with Malef.Implementation;
-with Ada.Strings.Text_Buffers;
 with Malef.Palettes;
 
 package Malef.Surfaces with Pure is
