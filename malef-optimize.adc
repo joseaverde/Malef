@@ -1,4 +1,4 @@
-pragma Ada_2012;
+pragma Ada_2022;
 pragma Suppress (Access_Check);
 pragma Suppress (Discriminant_Check);
 pragma Suppress (Division_Check);

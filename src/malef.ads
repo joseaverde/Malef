@@ -105,7 +105,7 @@ is
    -- an Alpha value of 255 (16#FF#). A completely transparent colour has an
    -- Alpha value of 0 (16#00#).
 
-   type Component_Type is mod 256 with 
+   type Component_Type is mod 256 with
       Size      => 8,
       Put_Image => Put_Image;
 
@@ -128,7 +128,7 @@ is
    --    "#224466"
    --    "#246F"
    --    "#246"
-   -- 
+   --
    -- All of them are equivalent, but using arrays is faster.
 
    type Palette_Index is range 0 .. 15 with

@@ -101,6 +101,7 @@ package Malef.Surfaces with Pure is
    -- A Surface by default doesn't have any style it is full of spaces (' ')
    -- and its background is Black, with White foreground.
 
+   overriding
    function "=" (Left, Right : in Surface)
       return Boolean with
       Global => null;
@@ -911,6 +912,7 @@ private
                   := (others => (others => Default_Cell));
       end record;
 
+   overriding
    function "=" (Left, Right : in Surface)
       return Boolean is (
                Left.Rows    = Right.Rows

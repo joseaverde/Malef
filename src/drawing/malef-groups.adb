@@ -29,6 +29,7 @@
 with Ada.Unchecked_Deallocation;
 with Malef.Groups.Composers;
 with System.Atomic_Operations.Integer_Arithmetic;
+with GNAT.IO;
 
 package body Malef.Groups is
 
@@ -171,7 +172,8 @@ package body Malef.Groups is
       Offset := (-Min.Row, -Min.Col);
       Siz := (Max.Row - Min.Row, Max.Col - Min.Col);
 
-      if Object.Surface.Rows < Siz.Row or Object.Surface.Cols < Siz.Col then
+      if Object.Surface.Rows < Siz.Row or else Object.Surface.Cols < Siz.Col
+      then
          Free (Object.Surface);
          Object.Surface := new Surfaces.Surface (Siz.Row, Siz.Col);
       end if;
@@ -197,7 +199,7 @@ package body Malef.Groups is
          if Layer.Kind = A_Surface and then Layer.Surface.Modified then
             Layer.Surface.Set_Up_to_Date;
             Count := Count + 1;
-         elsif Layer.Group.Updated then
+         elsif Layer.Kind = A_Group and then Layer.Group.Updated then
             Layer.Group.Update;
             Count := Count + 1;
          end if;
@@ -212,8 +214,7 @@ package body Malef.Groups is
       Offset : Cursor_Type;
    begin
       -- TODO: Set tampering detector
-      if not Object.Updated or else not Mark_Updated (Object)
-         or else not Increase_Size (Object, Offset)
+      if not Mark_Updated (Object) or else not Increase_Size (Object, Offset)
       then
          return;
       end if;
@@ -311,6 +312,7 @@ package body Malef.Groups is
                                                 Mode     => Mode,
                                                 Hidden   => Hidden,
                                                 Opacity  => Opacity));
+      Set_Updated (Object, Index);
    end Insert;
 
    procedure Insert (
@@ -328,6 +330,7 @@ package body Malef.Groups is
                                                 Mode     => Mode,
                                                 Hidden   => Hidden,
                                                 Opacity  => Opacity));
+      Set_Updated (Object, Index);
    end Insert;
 
    -->> As an Aggregate <<--
@@ -340,6 +343,7 @@ package body Malef.Groups is
       Object.Count := (if New_Item.Layer = null then @ else @ + 1);
       Object.Layers (Object.Index) := Steal (New_Item);
       Object.Updated := True;
+      -- TODO: Use Set_Updated function
    end Add_Unnamed;
 
    procedure Assign_Indexed (

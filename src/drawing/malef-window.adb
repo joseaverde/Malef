@@ -27,8 +27,26 @@
 -------------------------------------------------------------------------------
 
 with Malef.Console_IO;
+with Malef.Surfaces;
 
 package body Malef.Window is
+
+   procedure Show (Surface : in Surfaces.Surface) is
+   begin
+      Malef.Console_IO.Begin_Frame;
+      for Row in 1 .. Surface.Rows loop
+         for Col in 1 .. Surface.Cols loop
+            Malef.Console_IO.Put (
+               Position   => (Row, Col),
+               Item       => Surface (Row, Col),
+               Background => Surface.Get_Background (Row, Col),
+               Foreground => Surface.Get_Foreground (Row, Col),
+               Style      => Surface (Row, Col));
+         end loop;
+      end loop;
+      Malef.Console_IO.End_Frame;
+      Malef.Console_IO.Flush;
+   end Show;
 
    protected body Window is
 
@@ -39,7 +57,10 @@ package body Malef.Window is
          Process.all (Group.Set_Group (1).Element.all);
       end Process_Group;
 
-      procedure Set_Group (Group : in Groups.Group) is null;
+      procedure Set_Group (Object : in Groups.Group) is
+      begin
+         Group.Insert (1, Object);
+      end Set_Group;
 
       procedure Resize (
          Rows : in Positive_Row_Count;
@@ -47,7 +68,8 @@ package body Malef.Window is
 
       procedure Display is
       begin
-         Show (Group.See_Surface.Element.all);
+         Group.Set_Group (1).Update;
+         Show (Group.Get_Group (1).See_Surface.Element.all);
       end Display;
 
       procedure Redraw is null;
@@ -72,22 +94,5 @@ package body Malef.Window is
       end Unregister;
 
    end Window;
-
-   procedure Show (Surface : in Surfaces.Surface) is
-   begin
-      Malef.Console_IO.Begin_Frame;
-      for Row in 1 .. Surface.Rows loop
-         for Col in 1 .. Surface.Cols loop
-            Malef.Console_IO.Put (
-               Position   => (Row, Col),
-               Item       => Surface (Row, Col),
-               Background => Surface.Get_Background (Row, Col),
-               Foreground => Surface.Get_Foreground (Row, Col),
-               Style      => Surface (Row, Col));
-         end loop;
-      end loop;
-      Malef.Console_IO.End_Frame;
-      Malef.Console_IO.Flush;
-   end Show;
 
 end Malef.Window;

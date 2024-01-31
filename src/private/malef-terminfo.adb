@@ -277,7 +277,7 @@ package body Malef.Terminfo is
                Ada.Text_IO.Put_Line (Index'Image);
             end loop;
          end;
-  
+
          Ada.Text_IO.Put_Line (Header'Image);
       end Read;
 

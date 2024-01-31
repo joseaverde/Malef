@@ -29,7 +29,7 @@
 with Malef.Surfaces;
 
 private with Ada.Finalization;
-private with System.Atomic_Operations.Test_and_Set;
+private with System.Atomic_Operations.Test_And_Set;
 
 package Malef.Groups with Preelaborate is
 
@@ -95,7 +95,7 @@ package Malef.Groups with Preelaborate is
    -- The Text_Buffer where to write the image representation of the Group.
    --
    -- @param Arg
-   -- The 
+   -- The Group
 
    -->> As a Container <<--
 
@@ -612,8 +612,7 @@ private
          Opacity  => Opacity,
          Mode     => Mode,
          Hidden   => Hidden,
-         Surface  => new Surfaces.Surface'(Surface),
-         others   => <>),
+         Surface  => new Surfaces.Surface'(Surface)),
       Control => New_Control));
 
    function Layer (
@@ -631,8 +630,7 @@ private
          Opacity  => Opacity,
          Mode     => Mode,
          Hidden   => Hidden,
-         Surface  => new Surfaces.Surface (Rows, Cols),
-         others   => <>),
+         Surface  => new Surfaces.Surface (Rows, Cols)),
       Control => New_Control));
 
    function Layer (
@@ -649,8 +647,7 @@ private
          Opacity  => Opacity,
          Mode     => Mode,
          Hidden   => Hidden,
-         Group    => Deep_Copy (Group),
-         others   => <>),
+         Group    => Deep_Copy (Group)),
       Control => New_Control));
 
    function Move (
@@ -687,7 +684,7 @@ private
       Object : in Group;
       Index  : in Layer_Index)
       return Boolean is (
-      Index in 1 .. Object.Capacity and Object.Layers (Index) /= null);
+      Index in 1 .. Object.Capacity and then Object.Layers (Index) /= null);
 
    function Kind (
       Object : in Group;

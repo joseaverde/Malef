@@ -97,7 +97,7 @@ package body Malef.Groups.Composers with Preelaborate is
    function "*" (Left : in Layer_Opacity; Right : in Component_Type)
       return Component_Type is (
       Component_Type (Float (Left) * Float (Right)));
-   
+
    function "*" (Left : in Layer_Opacity; Right : in RGBA_Type)
       return RGBA_Type is (
       Right (Red .. Blue) & (Left * Right (Alpha)));

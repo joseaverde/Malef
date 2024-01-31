@@ -28,7 +28,6 @@
 
 with Ada.Containers.Vectors;
 with Malef.Groups;
-with Malef.Surfaces;
 with Malef.Events;
 
 package Malef.Window is
@@ -95,7 +94,9 @@ package Malef.Window is
          Process : not null access
                    procedure (Object : aliased in out Groups.Group));
 
-      procedure Set_Group (Group : in Groups.Group);
+      procedure Set_Group (Object : in Groups.Group);
+
+      -- TODO: with move semantics. procedure Set_Group
 
       procedure Resize (
          Rows : in Positive_Row_Count;
@@ -122,7 +123,5 @@ package Malef.Window is
       Group     : Groups.Group (1);
 
    end Window;
-
-   procedure Show (Surface : in Surfaces.Surface);
 
 end Malef.Window;

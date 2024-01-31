@@ -4,15 +4,25 @@ with Malef.Groups;
 with Malef.Window;
 
 procedure CMYK is
+
+   use Malef.Groups;
+   use type Malef.Col_Type;
+   use type Malef.Row_Type;
+
+   -- We can declare colours using HTML tags.
+
    Base_Colour    : constant Malef.RGBA_Type := "#FFF";
    Grey_Colour    : constant Malef.RGBA_Type := "#80808055";
    Cyan_Colour    : constant Malef.RGBA_Type := "#0FF5";
    Magenta_Colour : constant Malef.RGBA_Type := "#F0F5";
    Yellow_Colour  : constant Malef.RGBA_Type := "#FF05";
 
-   use Malef.Groups;
-   use type Malef.Col_Type;
-   use type Malef.Row_Type;
+   Blocks : constant Malef.Glyph_String
+      := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
+
+   -- We then declare a Group for 4 layers. The Layer function aks for a
+   -- Group, a Surface or the size of the Surface. We are going to modify them
+   -- afterwards, then we have to specify the size of the surfaces.
 
    CMYK_Group : Malef.Groups.Group (4) := [
       Layer (19, 41, (35, 35)),
@@ -21,15 +31,19 @@ procedure CMYK is
       Layer (16, 32, (40, 40))
    ];
 
+   -- We can use Ada 2022's new `renames' keyword to reference the different
+   -- layers and modify them independently.
+
    Base    renames CMYK_Group.Set_Surface (1).Element;
    Cyan    renames CMYK_Group.Set_Surface (2).Element;
    Magenta renames CMYK_Group.Set_Surface (3).Element;
    Yellow  renames CMYK_Group.Set_Surface (4).Element;
 
-   Blocks : constant Malef.Glyph_String
-      := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
 begin
+
    Malef.System.Initialize;
+
+   -- Fill the backgrounds with the basic colours.
 
    Base.Fill_Background (Base_Colour);
    Cyan.Fill_Background (Cyan_Colour);
@@ -37,6 +51,8 @@ begin
    Yellow.Fill_Background (Yellow_Colour);
 
    Base.Fill_Foreground (Grey_Colour);
+
+   -- Write text on the different layers
 
    Base.Put (2, 2, "Base");
    for I in Malef.Row_Type range 4 .. 18 when I mod 2 = 0 loop
@@ -46,23 +62,15 @@ begin
    Magenta.Put (2, Magenta.Cols - 8, "Magenta");
    Yellow.Put (2, 2, "Yellow");
 
-   Malef.Window.Show (Base.all);
-   delay 1.0;
-   Malef.Window.Show (Cyan.all);
-   delay 1.0;
-   Malef.Window.Show (Magenta.all);
-   delay 1.0;
-   Malef.Window.Show (Yellow.all);
-   delay 1.0;
+   -- Add them to the Window
 
-   CMYK_Group.Update;
-
-   Malef.Window.Show (CMYK_Group.See_Surface);
-   delay 1.0;
+   Malef.Window.Window.Set_Group (CMYK_Group);
+   Malef.Window.Window.Display;
 
    -- Malef.System.Main.Append (CMYK'Unchecked_Access, (1, 1));
    -- Malef.System.Main.Update;
    -- Malef.System.Main.Draw;
 
    Malef.System.Finalize;
+
 end CMYK;

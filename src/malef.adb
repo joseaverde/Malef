@@ -77,19 +77,19 @@ package body Malef is
       Item : in Wide_Wide_String)
       return RGBA_Type is (
       (case Item'Length is
-         when 4 | 5 => [ Twice (Hex (Item (Item'First + 1)))
-                       , Twice (Hex (Item (Item'First + 2)))
-                       , Twice (Hex (Item (Item'First + 3)))
-                       , (if Item'Length = 4
+         when 4 | 5 => [Twice (Hex (Item (Item'First + 1)))
+                      , Twice (Hex (Item (Item'First + 2)))
+                      , Twice (Hex (Item (Item'First + 3)))
+                      , (if Item'Length = 4
                            then Component_Type'Last
                            else Twice (Hex (Item (Item'First + 4))))],
-         when 7 | 9 => [ Combine (Hex (Item (Item'First + 1)),
-                                  Hex (Item (Item'First + 2)))
-                       , Combine (Hex (Item (Item'First + 3)),
-                                  Hex (Item (Item'First + 4)))
-                       , Combine (Hex (Item (Item'First + 5)),
-                                  Hex (Item (Item'First + 6)))
-                       , (if Item'Length = 7
+         when 7 | 9 => [Combine (Hex (Item (Item'First + 1)),
+                                 Hex (Item (Item'First + 2)))
+                      , Combine (Hex (Item (Item'First + 3)),
+                                 Hex (Item (Item'First + 4)))
+                      , Combine (Hex (Item (Item'First + 5)),
+                                 Hex (Item (Item'First + 6)))
+                      , (if Item'Length = 7
                            then Component_Type'Last
                            else Combine (Hex (Item (Item'First + 7)),
                                          Hex (Item (Item'First + 8))))],

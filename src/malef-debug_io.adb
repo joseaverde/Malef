@@ -29,7 +29,6 @@
 with Ada.Containers.Indefinite_Vectors;
 with Ada.Streams;
 with Ada.Streams.Stream_IO;
-with Ada.Strings.Unbounded;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body Malef.Debug_IO is
@@ -145,6 +144,7 @@ package body Malef.Debug_IO is
 
       -->> Debug Widget <<--
 
+      overriding
       procedure On_Draw (
          Object  : in     Debug_Widget;
          Surface : in out Surfaces.Surface;

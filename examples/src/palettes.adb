@@ -98,11 +98,13 @@ begin
    Window.Fill_Background (Primary_Bg);
    Window.Fill_Foreground (Primary_Fg);
 
+   Malef.Window.Window.Set_Group (Group);
+
    -->> No Palette <<--
 
    Window.Put (1, 1, "No palette");
-   Group.Update;
-   Malef.Window.Show (Group.See_Surface);
+   -- Malef.Window.Show (Group.See_Surface);
+   Malef.Window.Window.Display;
    delay 1.0;
 
    -->> Dark Mode <<--
@@ -113,8 +115,7 @@ begin
    Unfocus.Set_Palette := Dark_Mode;
 
    Window.Put (1, 1, "Dark Mode  ");
-   Group.Update;
-   Malef.Window.Show (Group.See_Surface);
+   Malef.Window.Window.Display;
    delay 1.0;
 
    -->> Light Mode <<--
@@ -125,8 +126,7 @@ begin
    Unfocus.Set_Palette := Light_Mode;
 
    Window.Put (1, 1, "Light Mode");
-   Group.Update;
-   Malef.Window.Show (Group.See_Surface);
+   Malef.Window.Window.Display;
    delay 1.0;
    Window.Put (1, 1, "Dark Mode  ");
 
@@ -149,8 +149,7 @@ begin
          Shadow.Set_Palette := Dark_Mode;
          Window.Set_Palette := Dark_Mode;
          Unfocus.Set_Palette := Dark_Mode;
-         Group.Update;
-         Malef.Window.Show (Group.See_Surface);
+         Malef.Window.Window.Display;
       end loop;
       Stop := Clock;
       First := Stop - Start;
@@ -164,7 +163,7 @@ begin
          Window.Set_Palette := Dark_Mode;
          Unfocus.Set_Palette := Dark_Mode;
          Group.Update;
-         Malef.Window.Show (Group.See_Surface);
+         Malef.Window.Window.Display;
       end loop;
       Stop := Clock;
       Second := Stop - Start;

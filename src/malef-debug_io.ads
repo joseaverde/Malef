@@ -136,6 +136,7 @@ package Malef.Debug_IO with Preelaborate is
          private with
          Default_Initial_Condition => False;
 
+      overriding
       procedure On_Draw (
          Object  : in     Debug_Widget;
          Surface : in out Surfaces.Surface;
@@ -143,7 +144,7 @@ package Malef.Debug_IO with Preelaborate is
 
       function New_Debug
          return Debug_Widget with
-         Pre => Widget = True;
+         Pre => Widget;
 
    private
 
