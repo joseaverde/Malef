@@ -27,6 +27,7 @@
 -------------------------------------------------------------------------------
 
 with Ada.Unchecked_Deallocation;
+with Malef.Groups.Composers;
 with System.Atomic_Operations.Integer_Arithmetic;
 
 package body Malef.Groups is
@@ -135,10 +136,95 @@ package body Malef.Groups is
 
    -->> As a Composer <<--
 
-   procedure Update (
+   function Increase_Size (
+      Object : in out Group;
+      Offset :    out Cursor_Type)
+      return Boolean
+   is
+      Min : Cursor_Type := (Row_Type'Last, Col_Type'Last);
+      Max : Cursor_Type := (Row_Type'First, Col_Type'First);
+      Pos : Cursor_Type;
+      Siz : Cursor_Type;
+   begin
+
+      -- Get the sizes of the objects and their relative position. And obtain
+      -- the extensions of the new Group.
+
+      for Index in Object.Layers'Range when Object.Layers (Index) /= null loop
+         Pos := Get_Position (Object, Index);
+         Siz := (Row => Internal_Surface (Object, Index).Rows,
+                 Col => Internal_Surface (Object, Index).Cols);
+         Min := Cursor_Type'(Row => Row_Type'Min (Min.Row, Pos.Row),
+                             Col => Col_Type'Min (Min.Col, Pos.Col));
+         Max := Cursor_Type'(Row => Row_Type'Max (Max.Row, Pos.Row + Siz.Row),
+                             Col => Col_Type'Max (Max.Col, Pos.Col + Siz.Col));
+      end loop;
+
+      -- If there are no layers, exit.
+
+      if Max.Col < Min.Col or else Max.Row < Min.Row then
+         return False;
+      end if;
+
+      -- Otherwise check if size has to be increased.
+
+      Offset := (-Min.Row, -Min.Col);
+      Siz := (Max.Row - Min.Row, Max.Col - Min.Col);
+
+      if Object.Surface.Rows < Siz.Row or Object.Surface.Cols < Siz.Col then
+         Free (Object.Surface);
+         Object.Surface := new Surfaces.Surface (Siz.Row, Siz.Col);
+      end if;
+
+      return True;
+
+   end Increase_Size;
+
+   procedure Clear_Internal_Surface (
       Object : in out Group) is
    begin
-      null;
+      Object.Surface.Fill ((0, 0, 0, 0), (0, 0, 0, 0), Nul, No_Style);
+   end Clear_Internal_Surface;
+
+   function Mark_Updated (
+      Object : in out Group)
+      return Boolean
+   is
+      Count : Natural := 0;
+   begin
+      -- TODO: Add optimisation to avoid redrawing a lot.
+      for Layer of Object.Layers when Layer /= null loop
+         if Layer.Kind = A_Surface and then Layer.Surface.Modified then
+            Layer.Surface.Set_Up_to_Date;
+            Count := Count + 1;
+         elsif Layer.Group.Updated then
+            Layer.Group.Update;
+            Count := Count + 1;
+         end if;
+      end loop;
+      return Count > 0;
+   end Mark_Updated;
+
+   procedure Update (
+      Object : in out Group)
+   is
+      Mode   : Layer_Mode := Normal;
+      Offset : Cursor_Type;
+   begin
+      -- TODO: Set tampering detector
+      if not Object.Updated or else not Mark_Updated (Object)
+         or else not Increase_Size (Object, Offset)
+      then
+         return;
+      end if;
+      Clear_Internal_Surface (Object);
+      for Index in reverse Object.Layers'Range
+         when Object.Layers (Index) /= null
+      loop
+         Composers.Get_Composer (Mode).all (Object, Index, Offset);
+         Mode := Get_Mode (Object, Index);
+      end loop;
+      Object.Updated := True;
    end Update;
 
    -->> Put Image <<--

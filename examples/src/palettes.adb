@@ -1,11 +1,10 @@
+with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Calendar;
 
-with Ada.Text_IO; use Ada.Text_IO;
--- with Ada.Wide_Wide_Text_IO;
 with Malef.Palettes;
 with Malef.Surfaces;
-with Malef.Boxes;
 with Malef.System;
+with Malef.Groups;
 with Malef.Window;
 
 procedure Palettes is
@@ -51,18 +50,26 @@ procedure Palettes is
    use type Malef.Col_Type;
    use type Malef.Row_Type;
 
-   Dialog  : aliased Malef.Surfaces.Surface (9, 20);
-   Shadow  : aliased Malef.Surfaces.Surface (Dialog.Rows, Dialog.Cols);
-   Window  : aliased Malef.Surfaces.Surface (56, 180);
-   Unfocus : aliased Malef.Surfaces.Surface (Window.Rows, Window.Cols);
-   Half_R  : constant Malef.Row_Type := (Window.Rows - Dialog.Rows) / 2;
-   Half_C  : constant Malef.Col_Type := (Window.Cols - Dialog.Cols) / 2;
+   Dialog_Rows : constant := 9;
+   Dialog_Cols : constant := 20;
+   Window_Rows : constant := 56;
+   Window_Cols : constant := 180;
 
-   Box : Malef.Boxes.Box (4) := [
-      1 => Malef.Boxes.Item (Window'Unchecked_Access, (1, 1)),
-      2 => Malef.Boxes.Item (Unfocus'Unchecked_Access, (1, 1)),
-      3 => Malef.Boxes.Item (Shadow'Unchecked_Access, (Half_R + 1, Half_C + 1)),
-      4 => Malef.Boxes.Item (Dialog'Unchecked_Access, (Half_R, Half_C))];
+   Half_R  : constant Malef.Row_Type := (Window_Rows - Dialog_Rows) / 2;
+   Half_C  : constant Malef.Col_Type := (Window_Cols - Dialog_Cols) / 2;
+
+   use Malef.Groups;
+
+   Group : Malef.Groups.Group (4) := [
+      1 => Layer (Window_Rows, Window_Cols, (1, 1)),
+      2 => Layer (Window_Rows, Window_Cols, (1, 1)),
+      3 => Layer (Dialog_Rows, Dialog_Cols, (Half_R + 1, Half_C + 1)),
+      4 => Layer (Dialog_Rows, Dialog_Cols, (Half_R, Half_C))];
+
+   Window  renames Group.Set_Surface (1).Element;
+   Unfocus renames Group.Set_Surface (2).Element;
+   Shadow  renames Group.Set_Surface (3).Element;
+   Dialog  renames Group.Set_Surface (4).Element;
 begin
 
    Malef.System.Initialize;
@@ -93,9 +100,9 @@ begin
 
    -->> No Palette <<--
 
-   Put_Line ("No palette");
-   Box.Update;
-   Malef.Window.Show (Box.Constant_Surface);
+   Window.Put (1, 1, "No palette");
+   Group.Update;
+   Malef.Window.Show (Group.See_Surface);
    delay 1.0;
 
    -->> Dark Mode <<--
@@ -105,9 +112,9 @@ begin
    Window.Set_Palette := Dark_Mode;
    Unfocus.Set_Palette := Dark_Mode;
 
-   Put_Line ("Dark Mode");
-   Box.Update;
-   Malef.Window.Show (Box.Constant_Surface);
+   Window.Put (1, 1, "Dark Mode  ");
+   Group.Update;
+   Malef.Window.Show (Group.See_Surface);
    delay 1.0;
 
    -->> Light Mode <<--
@@ -117,10 +124,11 @@ begin
    Window.Set_Palette := Light_Mode;
    Unfocus.Set_Palette := Light_Mode;
 
-   Put_Line ("Light Mode");
-   Box.Update;
-   Malef.Window.Show (Box.Constant_Surface);
+   Window.Put (1, 1, "Light Mode");
+   Group.Update;
+   Malef.Window.Show (Group.See_Surface);
    delay 1.0;
+   Window.Put (1, 1, "Dark Mode  ");
 
    -->> Benchmark <<--
 
@@ -141,9 +149,8 @@ begin
          Shadow.Set_Palette := Dark_Mode;
          Window.Set_Palette := Dark_Mode;
          Unfocus.Set_Palette := Dark_Mode;
-         Box.Update;
-         Malef.Window.Show (Box.Constant_Surface);
-         -- Ada.Wide_Wide_Text_IO.Put_Line (Box'Wide_Wide_Image);
+         Group.Update;
+         Malef.Window.Show (Group.See_Surface);
       end loop;
       Stop := Clock;
       First := Stop - Start;
@@ -156,9 +163,8 @@ begin
          Shadow.Set_Palette := Dark_Mode;
          Window.Set_Palette := Dark_Mode;
          Unfocus.Set_Palette := Dark_Mode;
-         Box.Update;
-         Malef.Window.Show (Box.Constant_Surface);
-         -- Ada.Wide_Wide_Text_IO.Put_Line (Box'Wide_Wide_Image);
+         Group.Update;
+         Malef.Window.Show (Group.See_Surface);
       end loop;
       Stop := Clock;
       Second := Stop - Start;

@@ -27,7 +27,6 @@
 -------------------------------------------------------------------------------
 
 with Ada.Containers.Vectors;
-with Malef.Boxes;
 with Malef.Groups;
 with Malef.Surfaces;
 with Malef.Events;

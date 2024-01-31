@@ -35,6 +35,8 @@ package Malef.Groups with Preelaborate is
 
    -- TODO: Forbid tampering with groups
 
+   -- TODO: Allow changing the Group Palette
+
    pragma Unevaluated_Use_Of_Old (Allow);
 
    type Layer_Mode is (None, Normal, Lighten, Screen, Dodge);
@@ -532,6 +534,11 @@ private
          Region  : Cursor_Type := (0, 0);
       end record;
 
+   function Internal_Surface (
+      Object : in Group;
+      Index  : in Layer_Index)
+      return Surface_Access;
+
    function Deep_Copy (
       Object : in Group)
       return Group_Access;
@@ -716,5 +723,13 @@ private
       Object : in Group)
       return Layer_Count is (
       Object.Index);
+
+   function Internal_Surface (
+      Object : in Group;
+      Index  : in Layer_Index)
+      return Surface_Access is (
+      (if Object.Layers (Index).Kind = A_Surface
+         then Object.Layers (Index).Surface
+         else Object.Layers (Index).Group.Surface));
 
 end Malef.Groups;
