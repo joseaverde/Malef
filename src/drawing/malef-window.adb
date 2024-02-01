@@ -32,10 +32,14 @@ with Malef.Surfaces;
 package body Malef.Window is
 
    procedure Show (Surface : in Surfaces.Surface) is
+      -- Row_Count : constant Row_Type := Row_Type'Min (Surface.Rows, Rows);
+      -- Col_Count : constant Col_Type := Col_Type'Min (Surface.Cols, Cols);
+      Row_Count : constant Row_Type := Surface.Rows;
+      Col_Count : constant Col_Type := Surface.Cols;
    begin
       Malef.Console_IO.Begin_Frame;
-      for Row in 1 .. Surface.Rows loop
-         for Col in 1 .. Surface.Cols loop
+      for Row in 1 .. Row_Count loop
+         for Col in 1 .. Col_Count loop
             Malef.Console_IO.Put (
                Position   => (Row, Col),
                Item       => Surface (Row, Col),

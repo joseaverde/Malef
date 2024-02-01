@@ -31,7 +31,7 @@ with Ada.Wide_Wide_Characters.Handling;
 package body Malef.Labels is
 
    function Visual_Width (
-      Item : in Glyph)
+      Item : in Glyph with Unreferenced)
       return Natural is (1);
    -- This function returns the width of a given character. This function isn't
    -- developed yet because it requires a long research. But the idea is that
@@ -57,7 +57,7 @@ package body Malef.Labels is
       Item : in     Unbounded_Wide_Wide_String;
       From : in out Positive;
       To   :    out Positive;
-      EOL  :    out Boolean);
+      EOL  :    out Boolean) with Unreferenced;
    -- This function slices a String into individual tokens. For instance if we
    -- want to write: "Hello, World!" & LF & "¡Hola, Mundo!"
    -- on the screen we need to separate words by spaces and new lines:
@@ -72,7 +72,7 @@ package body Malef.Labels is
       To   : in Natural)
       return Natural is (
       [for I in From .. To =>
-         Visual_Width (Element (Item, I))]'Reduce ("+", 0));
+         Visual_Width (Element (Item, I))]'Reduce ("+", 0)) with Unreferenced;
    -- This function just applies the Visual_Width function to a string slice
    -- and returns the number of columns the string needs on the terminal to be
    -- rendered.

@@ -75,7 +75,7 @@ package body Malef.Terminfo is
 
       procedure Read (
          Stream : not null access Root_Stream_Type'Class;
-         Item   : out Header_Type);
+         Item   : out Header_Type) with Unreferenced;
 
       for Header_Type'Read use Read;
 

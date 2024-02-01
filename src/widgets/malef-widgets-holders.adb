@@ -50,4 +50,5 @@ package body Malef.Widgets.Holders  is
    begin
       Object.Release;
    end Initialize;
+
 end Malef.Widgets.Holders;

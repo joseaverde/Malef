@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---             M A L E F - W I D G E T S - H O L D E R S . A D S             --
+--                     M A L E F - D I A L O G S . A D B                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,66 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Containers.Indefinite_Holders;
+package body Malef.Dialogs is
 
-private with Ada.Finalization;
+   procedure Get_Size (
+      Object : in     Dialog;
+      Rows   :    out Positive_Row_Count;
+      Cols   :    out Positive_Col_Count) is
+   begin
+      Rows := Object.Rows;
+      Cols := Object.Cols;
+   end Get_Size;
 
-package Malef.Widgets.Holders with Preelaborate is
-
-   type Holder is tagged private;
-
-   package Widget_Holders is
-      new Ada.Containers.Indefinite_Holders (
-      Element_Type => Widget'Class);
-
-   function Create (
-      Item : in Widget'Class)
-      return Holder with
-      Global => null;
-
-   procedure Hold (
-      Object : in out Holder;
-      Item   : in     Widget'Class) with
-      Global => null;
-
-   procedure Release (
-      Object : in out Holder) with
-      Global => null;
-
-   function Reference (
-      Object : aliased in out Holder)
-      return Widget_Holders.Reference_Type with
-      Global => null;
-
-   function Constant_Reference (
-      Object : aliased in Holder)
-      return Widget_Holders.Constant_Reference_Type with
-      Global => null;
-
-private
-
-   type Holder is
-      new Ada.Finalization.Controlled with
-      record
-         Item : Widget_Holders.Holder;
-      end record;
-
-   overriding procedure Initialize (Object : in out Holder);
-
-   function Create (
-      Item : in Widget'Class)
-      return Holder is (
-      Ada.Finalization.Controlled with
-      Item => Widget_Holders.To_Holder (Item));
-
-   function Reference (
-      Object : aliased in out Holder)
-      return Widget_Holders.Reference_Type is (
-      Object.Item.Reference);
-
-   function Constant_Reference (
-      Object : aliased in Holder)
-      return Widget_Holders.Constant_Reference_Type is (
-      Object.Item.Constant_Reference);
-
-end Malef.Widgets.Holders;
+end Malef.Dialogs;

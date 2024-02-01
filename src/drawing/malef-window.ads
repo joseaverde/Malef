@@ -57,8 +57,9 @@ package Malef.Window is
       end record;
 
    type Callback_Type is access
-      procedure (Observer : aliased in out Event_Observer'Class;
-                 Event    : in Event_Type);
+      protected procedure (
+         Observer : aliased in out Event_Observer'Class;
+         Event    :         in     Event_Type);
 
    package Implementation is
 

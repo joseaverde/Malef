@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---             M A L E F - W I D G E T S - H O L D E R S . A D S             --
+--                 M A L E F - A P P L I C A T I O N . A D S                 --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,66 +26,47 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Containers.Indefinite_Holders;
+with Malef.Window;
+with Malef.Dialogs;
 
-private with Ada.Finalization;
+package Malef.Application is
 
-package Malef.Widgets.Holders with Preelaborate is
+   pragma Elaborate_Body;
 
-   type Holder is tagged private;
+   Max_Dialogs : constant := 16;
 
-   package Widget_Holders is
-      new Ada.Containers.Indefinite_Holders (
-      Element_Type => Widget'Class);
+   package Implementation is
 
-   function Create (
-      Item : in Widget'Class)
-      return Holder with
-      Global => null;
+      type Window_Observer is
+         new Window.Event_Observer with
+         null record;
 
-   procedure Hold (
-      Object : in out Holder;
-      Item   : in     Widget'Class) with
-      Global => null;
+      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
+      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
 
-   procedure Release (
-      Object : in out Holder) with
-      Global => null;
+   end Implementation;
 
-   function Reference (
-      Object : aliased in out Holder)
-      return Widget_Holders.Reference_Type with
-      Global => null;
+   protected Application is
 
-   function Constant_Reference (
-      Object : aliased in Holder)
-      return Widget_Holders.Constant_Reference_Type with
-      Global => null;
+      procedure Initialize;
 
-private
+      procedure Add (
+         Object : in Dialogs.Dialog;
+         Model  : in Boolean := False);
 
-   type Holder is
-      new Ada.Finalization.Controlled with
-      record
-         Item : Widget_Holders.Holder;
-      end record;
+   private
 
-   overriding procedure Initialize (Object : in out Holder);
+      procedure When_Resized (
+         Observer : aliased in out Window.Event_Observer'Class;
+         Event    :         in     Window.Event_Type);
 
-   function Create (
-      Item : in Widget'Class)
-      return Holder is (
-      Ada.Finalization.Controlled with
-      Item => Widget_Holders.To_Holder (Item));
+      Available    : Implementation.Boolean_Array;
+      Dialogs      : Implementation.Dialog_Array;
+      Initialized  : Boolean := False;
+      Observer     : aliased Implementation.Window_Observer;
+      Height       : Positive_Row_Count := 24;
+      Width        : Positive_Col_Count := 80;
 
-   function Reference (
-      Object : aliased in out Holder)
-      return Widget_Holders.Reference_Type is (
-      Object.Item.Reference);
+   end Application;
 
-   function Constant_Reference (
-      Object : aliased in Holder)
-      return Widget_Holders.Constant_Reference_Type is (
-      Object.Item.Constant_Reference);
-
-end Malef.Widgets.Holders;
+end Malef.Application;

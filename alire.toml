@@ -1,27 +1,23 @@
 notes = "Pre release"
-
-# The name of the crate this release belongs to.
 name = "malef"
+description = "Library to develop Terminal User Interface toolkit"
+long-description = """Malef is a library to develop Terminal User Interfaces in
+Ada. It is similar to Ncurses, but everything is built from the ground-up in
+Ada without any dependencies. It provides a very simple interface for building
+Applications using Widgets and for creating your own Widgets. It is cross
+compatible it should work on the old Windows' CMD and on ANSI compatiable
+terminals.
+"""
+version = "0.4.0"
 
-# A one-line description about the package.
-description = "Malef is a terminal handling library."
-
-# A long long description abouth the package.
-long-description = "Malef is a terminal handling library written in Ada with bindings to other programming languages like C and Python3. It replaces the NCurses library with a more Adaish interface. It uses ANSI Escape Sequences as much as possible, but it can also handle other kinds of terminals/consoles."
-
-# The version of the package.
-version = "0.3.0"
-
-# The authors, maintainer and maintainers' logins.
-authors = ["José Antonio Verde Jiménez"]
+authors = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
 maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
 maintainers-logins = ["joseaverde"]
 
 
-# Information about the package's licence.
 licenses = "GPL-3.0-or-later"
-website = "https://github.com/joseaverde/malef"
-tags = ["sdk", "ansi", "terminal", "console", "tui"]
+website = "https://github.com/joseaverde/Malef"
+tags = ["sdk", "ansi", "terminal", "console", "tui", "interfaces"]
 
 
 # Information about package's inside.
@@ -30,24 +26,39 @@ project-files = ["malef.gpr"]
 
 # We map the names of external variables in the .gpr project file.
 [gpr-externals]
-# MALEF_COMPILE_CHECKS = ["enabled", "disabled"]
-# MALEF_RUNTIME_CHECKS = ["enabled", "disabled"]
-# MALEF_STYLE_CHECKS   = ["enabled", "disabled"]
-# MALEF_CONTRACTS      = ["enabled", "disabled"]
-# MALEF_ALIRE_BUILT    = ["enabled", "disabled"]
-# MALEF_BUILD_MODE     = ["debug", "optimize"]
 MALEF_SYSTEM         = ["linux", "windows", "unix"]
 MALEF_SUBSYSTEM      = ["ansi", "cmd"]
-
-# MALEF_PYTHON_VERSION = ["3.6", "3.7", "3.8", "3.9"]
 
 # How to built it depends on the operating system.
 [gpr-set-externals.'case(os)']
 'linux' = { MALEF_OPERATING_SYSTEM = "linux" }
-'windows' = { MALEF_OPERATING_SYSTEM = "windows" }
+'windows' = { MALEF_OPERATING_SYSTEM = "win64" }
 '...' = { MALEF_OPERATING_SYSTEM = "unix" }
 
-# Actions to do before compiling.
-# [[actions.'case(os)'.linux]]
-# type = post-fetch pre-build post-build test
-# command = [<commands>]
+[configuration]
+generate_c = false
+
+[build-switches]
+release.optimization   = "Performance"
+release.debug_info     = "No"
+release.runtime_checks = "None"
+release.compile_checks = "None"
+release.contracts      = "Yes"
+release.style_checks   = "No"
+release.ada_version    = "Ada2022"
+
+development.optimization   = "Debug"
+development.debug_info     = "Yes"
+development.runtime_checks = "Everything"
+development.compile_checks = "Warnings"
+development.contracts      = "Yes"
+development.style_checks   = "Yes"
+development.ada_version    = "Ada2022"
+
+validation.optimization   = "Performance"
+validation.debug_info     = "Yes"
+validation.runtime_checks = "Everything"
+validation.compile_checks = "Errors"
+validation.contracts      = "Yes"
+validation.style_checks   = "Yes"
+validation.ada_version    = "Ada2022"

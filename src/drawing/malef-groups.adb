@@ -29,7 +29,6 @@
 with Ada.Unchecked_Deallocation;
 with Malef.Groups.Composers;
 with System.Atomic_Operations.Integer_Arithmetic;
-with GNAT.IO;
 
 package body Malef.Groups is
 

@@ -220,6 +220,17 @@ package Malef.Groups with Preelaborate is
       return Col_Count with
       Global => null;
 
+   -- procedure Resize_Layer (
+   --    Object   : in out Group;
+   --    Index    : in     Layer_Index;
+   --    New_Rows : in     Positive_Row_Count;
+   --    New_Cols : in     Positive_Col_Count) with
+   --    Pre      =>         (Valid (Group)
+   --                and then Contains (Group, Index)
+   --                and then Kind (Group, Index) = A_Surface)
+   --       or else  raise Constraint_Error;
+   -- TODO: Finish Contracts
+
    -->> As an Aggregate <<--
 
    function Layer (

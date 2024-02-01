@@ -30,6 +30,7 @@ project Malef_Examples is
             , "texts.adb"
             , "file_explorer.adb"
             , "video_player.adb"
+            , "malef_examples.adb"
             );
       when "win32" | "win64" =>
          for Main use
@@ -38,6 +39,7 @@ project Malef_Examples is
             , "gradient.adb"
             , "texts.adb"
             , "file_explorer.adb"   -- TODO: Make it work on windows
+            , "malef_examples.adb"
             -- , "video_player.adb"
             );
    end case;
