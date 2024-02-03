@@ -118,7 +118,7 @@ package body Malef.Labels is
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area) is
    begin
-      Surface.Put (1, 1, "Hola");
+      Surface.Put (Area.From.Row, Area.From.Col, "Hola");
    end On_Draw;
 
    -- overriding

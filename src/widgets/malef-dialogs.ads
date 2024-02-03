@@ -27,6 +27,8 @@
 -------------------------------------------------------------------------------
 
 with Malef.Widgets;
+with Malef.Surfaces;
+private with Ada.Strings.Wide_Wide_Unbounded;
 private with Malef.Widgets.Holders;
 
 package Malef.Dialogs with Preelaborate is
@@ -35,8 +37,13 @@ package Malef.Dialogs with Preelaborate is
 
    type Window_Mode is (Full_Screen, Maximized, Windowed);
 
+   procedure Draw (
+      Object  : in     Dialog;
+      Surface : in out Surfaces.Surface);
+
    function New_Dialog (
       Widget : in Widgets.Widget'Class;
+      Title  : in Glyph_String;
       Mode   : in Window_Mode;
       Rows   : in Positive_Row_Count;
       Cols   : in Positive_Col_Count)
@@ -53,9 +60,12 @@ package Malef.Dialogs with Preelaborate is
 
 private
 
+   use Ada.Strings.Wide_Wide_Unbounded;
+
    type Dialog is
       tagged record
          Widget : Widgets.Holders.Holder;
+         Title  : Unbounded_Wide_Wide_String;
          Mode   : Window_Mode := Windowed;
          Rows   : Positive_Row_Count := 1;
          Cols   : Positive_Col_Count := 1;
@@ -63,11 +73,13 @@ private
 
    function New_Dialog (
       Widget : in Widgets.Widget'Class;
+      Title  : in Glyph_String;
       Mode   : in Window_Mode;
       Rows   : in Positive_Row_Count;
       Cols   : in Positive_Col_Count)
       return Dialog is (
       Widget => Widgets.Holders.Create (Widget),
+      Title  => To_Unbounded_Wide_Wide_String (Title),
       Mode   => Mode,
       Rows   => Rows,
       Cols   => Cols);

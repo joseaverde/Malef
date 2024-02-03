@@ -7,9 +7,10 @@ begin
    Application.Add (
       New_Dialog (
          New_Label ("Hello, World"),
-         Mode => Windowed,
-         Rows => 10,
-         Cols => 40));
+         Title => "Malef -- Examples",
+         Mode  => Windowed,
+         Rows  => 10,
+         Cols  => 40));
 end Malef_Examples;
 
 -- with Malef.Dialogs; use Malef.Dialogs;

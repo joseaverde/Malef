@@ -56,7 +56,7 @@ package Malef.Palettes with Pure is
    Default_Bar_Foreground          : constant Palette_Index := Light_Black;
    Default_Dialog_Background       : constant Palette_Index := White;
    Default_Dialog_Light_Foreground : constant Palette_Index := Light_White;
-   Default_Dialog_Dark_Background  : constant Palette_Index := Black;
+   Default_Dialog_Dark_Foreground  : constant Palette_Index := Black;
 
    -- For compatibility with terminals that do not support RBGA colours it is
    -- adviced to use the following convention for colour palettes. It is made

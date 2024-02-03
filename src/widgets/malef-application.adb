@@ -66,9 +66,31 @@ package body Malef.Application is
 
       procedure Add (
          Object : in Malef.Dialogs.Dialog;
-         Model  : in Boolean := False) is
+         Model  : in Boolean := False)
+      is
+         procedure Draw (
+            Group : aliased in out Groups.Group)
+         is
+            use type Malef.Dialogs.Window_Mode;
+            D_Rows : Positive_Row_Count;
+            D_Cols : Positive_Col_Count;
+         begin
+            if Object.Get_Mode = Malef.Dialogs.Windowed then
+               Object.Get_Size (D_Rows, D_Cols);
+            else
+               D_Rows := 24;
+               D_Cols := 80;
+            end if;
+            declare
+               Surface : Surfaces.Surface (D_Rows, D_Cols);
+            begin
+               Object.Draw (Surface);
+               Group.Insert (2, Surface);
+            end;
+         end Draw;
       begin
-         null;
+         Window.Window.Process_Group (Draw'Access);
+         Window.Window.Display;
       end Add;
 
       procedure When_Resized (

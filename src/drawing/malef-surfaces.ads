@@ -90,7 +90,7 @@ package Malef.Surfaces with Pure is
          (for all Row in 1 .. Rows =>
             (for all Col in 1 .. Cols =>
                (not Is_Indexed (Surface, Row, Col))                  and then
-               (Get (Surface, Row, Col) = ' ')                       and then
+               (Get (Surface, Row, Col) = Nul)                       and then
                (Get (Surface, Row, Col) = No_Style)                  and then
                (Get_Background (Surface, Row, Col) = (0, 0, 0, 0))   and then
                (Get_Foreground (Surface, Row, Col) = (0, 0, 0, 0))));
