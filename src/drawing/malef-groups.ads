@@ -33,6 +33,113 @@ private with System.Atomic_Operations.Test_And_Set;
 
 package Malef.Groups with Preelaborate is
 
+   -- A Group is a container that can hold Surfaces or other Groups. It is
+   -- similar to groups you can create on GIMP to group different layers
+   -- together. Groups are constrained to a given capacity, but unlike a vector
+   -- you can insert a Layer in position 3 without being another surface in
+   -- positions 1 or 2.
+   --
+   -- You can use new Aggregate syntax to create groups:
+   --
+   --    declare
+   --       Red       : Surface (3, 4);
+   --       Green     : Surface (4, 3);
+   --       Blue      : Surface (3, 3);
+   --       RGB_Group : Group (3) :=
+   --          [Layer (Red), Layer (Green), Layer (Blue)];
+   --    begin
+   --       -- Code
+   --    end;
+   --
+   -- Also you can use numbers to indicate the position:
+   --
+   --    declare
+   --       Red       : Surface (3, 4);
+   --       Green     : Surface (4, 3);
+   --       Blue      : Surface (3, 3);
+   --       My_Group  : Group (6) := [4 => Layer (Red),
+   --                                 1 => Layer (Green),
+   --                                 6 => Layer (Blue),
+   --                                 2 .. 3 | 5 => No_Layer];
+   --    begin
+   --       -- Code
+   --    end;
+   --
+   -- However, keep in mind that doing it that way makes a copy of the Surface.
+   -- Modifying `Red`, `Green` or `Blue`, won't change the group. If you want
+   -- to modify it you can use Ada `renames` clause. You can also create the
+   -- surfaces in place without declaring them before hand:
+   --
+   --    declare
+   --       Red      : Surface (3, 4);
+   --       My_Group : Group (3) := [Layer (Red), Layer (4, 3), Layer (3, 3)];
+   --       Green renames My_Group.Set_Surface (2).Element;
+   --       Blue renames My_Group.Set_Surface (3).Element;
+   --    begin
+   --       -- Modifying Red won't change the Group, but Green or Blue will.
+   --    end;
+   --
+   -- When adding a layer you can specify, the position, the layer mode (which
+   -- function should be used to merge it with the one below), and if whether
+   -- it is hidden. By default the position is (1, 1), the layer mode is
+   -- Normal, Opacity is 1.0 (completely opaque) and is shown (not hidden).
+   -- For instance, you can do:
+   --
+   --    declare
+   --       Red      : Surface (3, 4);
+   --       My_Group : Group (3) := [Layer (Red, (1, 2)),   -- Position (1, 2)
+   --                                Layer (Red, Opacity => 0.3),
+   --                                Layer (Red, (1, 1), Opacity => 0.7),
+   --                                Layer (Red, Hidden => True)];
+   --    begin
+   --       null;
+   --    end;
+   --
+   -- Obviously you can add groups inside other groups:
+   --
+   --    declare
+   --       Group : Group (3) := [Layer (1, 1),
+   --                             Layer ([Layer (2, 2),
+   --                                     Layer (3, 3)]),
+   --                             Layer ([Layer (4, 4)])];
+   --    begin
+   --       null;
+   --    end;
+   --
+   -- However, when you add group, its contents are copied which may be slow
+   -- if done too much. Therefore we introduce the Move operation. It is
+   -- similar to C++ `std::move` function in which it doesn't copy the original
+   -- object, moves its contents to the other one and leaves the original
+   -- object in an unusable but destroyable state. In other words, destroys the
+   -- original object and moves its contents.
+   --
+   --    declare
+   --       Group_A : Group (3) := [Layer (1, 2), No_Layer, Layer (3, 3)];
+   --       Group_B : Group (2) := [Move (Group_A),
+   --                               Move (Layer ([Layer (1, 2),
+   --                                             Layer (2, 3),
+   --                                             Layer (3, 4)]))];
+   --    begin
+   --       null;
+   --    end;
+   --
+   -- You also have the `Insert`, `Delete`, `Clear` and `Move_Out_Group`
+   -- functions to modify the contents of the container once it's created.
+   --
+   --  * `Insert` adds a layer to a given position, if something was there, it
+   --     is destroyed. You can check if it exists with the `Contains` function
+   --  * `Delete` removes a layer from a given position.
+   --  * `Clear` removes all layers.
+   --  * `Move_Out_Group` is similar to the `Move` function but it takes a
+   --    group from another group and removes it from it.
+   --
+   -- You also have the `Get_Surface`, `Set_Surface`, `Get_Group` and
+   -- `Set_Group` functions. All of them return either Constant References or
+   -- Variable References to Surfaces or Groups. Tampering rules apply, you
+   -- can't modify a group while you have a reference to an element. The only
+   -- difference is that `Set_` return variable references and `Get_` return
+   -- constant references.
+
    -- TODO: Forbid tampering with groups
 
    -- TODO: Allow changing the Group Palette
@@ -197,7 +304,6 @@ package Malef.Groups with Preelaborate is
    --    Index  : in     Layer_Index)
    --    return Group_Layer'Class;
    -- TODO: Contracts
-   -- TODO: Explain Move concept
 
    -->> As a Composer <<--
 

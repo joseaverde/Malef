@@ -61,16 +61,16 @@ package body Malef.Console_IO is
       end record with
       Convention => C_Pass_By_Copy;
 
-   STD_INPUT_HANDLE  : constant DWORD := DWORD'Last - 10 + 1;
+   STD_INPUT_HANDLE  : constant DWORD := DWORD'Last - 10 + 1 with Unreferenced;
    STD_OUTPUT_HANDLE : constant DWORD := DWORD'Last - 11 + 1;
-   STD_ERROR_HANDLE  : constant DWORD := DWORD'Last - 12 + 1;
+   STD_ERROR_HANDLE  : constant DWORD := DWORD'Last - 12 + 1 with Unreferenced;
 
-   ENABLE_PROCESSED_OUTPUT            : constant := 16#0001#;
-   ENABLE_WRAP_AT_EOL_OUTPUT          : constant := 16#0002#;
-   ENABLE_VIRTUAL_TERMINAL_PROCESSING : constant := 16#0004#;
-   DISABLE_NEWLINE_AUTO_RETURN        : constant := 16#0008#;
+   -- ENABLE_PROCESSED_OUTPUT            : constant := 16#0001#;
+   -- ENABLE_WRAP_AT_EOL_OUTPUT          : constant := 16#0002#;
+   -- ENABLE_VIRTUAL_TERMINAL_PROCESSING : constant := 16#0004#;
+   -- DISABLE_NEWLINE_AUTO_RETURN        : constant := 16#0008#;
 
-   W_TRUE  : constant BOOL := 1;
+   W_TRUE  : constant BOOL := 1 with Unreferenced;
    W_FALSE : constant BOOL := 0;
 
    ATTRIBUTE_ZERO           : constant := 16#0000#;
@@ -181,7 +181,7 @@ package body Malef.Console_IO is
          "Malef couldn't SetConsoleMode and thus couldn't initialize the " &
          "CMD subsystem! Error:" & GetLastError'Image;
       end if;
-      if W_FALSE = SetConsoleOutputCP (UTF_8_Code_Page) then
+      if W_FALSE = SetConsoleOutputCP (UTF_8_CODE_PAGE) then
          raise Initialization_Error with
          "Couldn't set codepage to 65001 for UTF-8";
       end if;
@@ -228,8 +228,6 @@ package body Malef.Console_IO is
       Foreground : in Palette_Index;
       Style      : in Style_Type)
    is
-      subtype Underlined is Style_Name with
-         Static_Predicate => Underlined in Bold | Italic | Underline;
       function SetConsoleTextAttribute (
          hConsoleOutput : in HANDLE;
          wAttributes    : in WORD)
@@ -242,9 +240,9 @@ package body Malef.Console_IO is
                                 + (if Style (Reverse_Video)
                                     then COMMON_LVB_REVERSE_VIDEO
                                     else ATTRIBUTE_ZERO)
-                                + (if  Style (Bold)
-                                    or Style (Italic)
-                                    or Style (Underline)
+                                + (if       Style (Bold)
+                                    or else Style (Italic)
+                                    or else Style (Underline)
                                        then COMMON_LVB_UNDERSCORE
                                        else ATTRIBUTE_ZERO));
       Dummy : BOOL with Unreferenced;
@@ -399,7 +397,7 @@ package body Malef.Console_IO is
       Title : chars_ptr := New_String (Unicode.Encode (Item));
       Dummy : BOOL with Unreferenced;
    begin
-      Dummy := SetConsoleTitle (Title) ;
+      Dummy := SetConsoleTitle (Title);
       Free (Title);
    end Set_Title;
 
@@ -409,14 +407,14 @@ package body Malef.Console_IO is
 
    -- TODO:
    -- void _malef_getConsoleScreenSize ( short *rows, short *cols ) {
-   -- 
+   --
    --    CONSOLE_SCREEN_BUFFER_INFO csbi ;
-   -- 
+   --
    --    GetConsoleScreenBufferInfo ( stdoutHandle, &csbi ) ;
-   -- 
+   --
    --    *rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1 ;
    --    *cols = csbi.srWindow.Right - csbi.srWindow.Left + 1 ;
-   -- 
+   --
    -- }
 
 end Malef.Console_IO;

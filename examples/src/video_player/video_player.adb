@@ -28,7 +28,7 @@ begin
 
    Malef.System.Initialize;
 
-   Transparent.Fill_Background ("#FF000030");
+   Transparent.Fill_Background ("#FF000000");
    Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Surface)
                                  , Malef.Groups.Layer (Transparent)]);
 

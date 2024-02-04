@@ -54,7 +54,7 @@ package Malef.Debug_IO with Preelaborate is
    --
    -- Choose Release or Debug mode depending on how you are building your
    -- application. If you are using alire and your app is called, for instance,
-   -- `My_App'. You can:
+   -- `My_App`. You can:
    --
    --    with Malef.Debug_IO;
    --    with My_App_Config; use My_App_Config;
@@ -84,26 +84,32 @@ package Malef.Debug_IO with Preelaborate is
 
    generic
       Mode     : in Build_Mode       := Debug;
+      Name     : in String           := "";
+      Widget   : in Boolean          := False;
+      Severity : in Message_Severity := Debug;
+      Visible  : in Visible_Messages := (others => True);
+   package Debug_IO is
+
+      -- @param Mode
       -- The compilation mode. If Debug, everything works as expected.
       -- If release, everything is optimised out, there is no performance
       -- penalty and nothing is shown.
-
-      Name     : in String           := "";
+      --
+      -- @param Name
       -- The name of the file to write the information to. It must have a value
       -- or the Widget parameter must be True (not both at the same time).
-
-      Widget   : in Boolean          := False;
+      --
+      -- @param Widget
       -- If True, the messages are written to a custom Widget you can open
       -- inside your application to debug. If this value is True, Name should
       -- be an empty String. If True, you will be able to use the New_Debug
       -- function to get a valid Widget.
-
-      Severity : in Message_Severity := Debug;
+      --
+      -- @param Severity
       -- The default severity level (it can be changed later).
-
-      Visible  : in Visible_Messages := (others => True);
+      --
+      -- @param Visible
       -- The default visibility rules of messages (it can be changed later).
-   package Debug_IO is
 
       pragma Assert (Widget xor Name /= "");
 

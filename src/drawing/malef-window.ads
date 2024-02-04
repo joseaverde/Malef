@@ -32,6 +32,14 @@ with Malef.Events;
 
 package Malef.Window is
 
+   -- This package provides the protected type Window which represents the
+   -- Terminal itself. It provides a system of callbacks that notify objects
+   -- when an event occurs.
+   --
+   -- If you are using `Malef.Application` you should be modifying this package
+   -- (if you don't know what you are doing). You can only register new
+   -- callbacks.
+
    type Event_Observer is limited interface;
 
    type Event_Name is (

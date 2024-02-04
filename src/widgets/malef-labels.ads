@@ -29,31 +29,42 @@
 with Malef.Widgets;
 with Malef.Surfaces;
 private with Ada.Strings.Wide_Wide_Unbounded;
+private with Ada.Containers.Vectors;
 
 package Malef.Labels with Preelaborate is
 
-   type Text_Alignment is (Left_Aligned, Center_Aligned,
-                           Right_Aligned, Justified);
+   Indentation_Width : constant := 3;
+
+   type Horizontal_Alignment is (Left_Aligned, Center_Aligned, Right_Aligned,
+                                 Justified);
+   type Vertical_Alignment is (Top_Aligned, Center_Aligned, Bottom_Aligned,
+                               Justified);
 
    type Text_Direction is (Left_Right_Top_Bottom, Right_Left_Bottom_Top,
                            Top_Bottom_Right_Left);
+
+   type Markup_Language is (Plain_Text, Markdown);
 
    type Label_Widget is
       new Widgets.Widget with
       private with
       Default_Initial_Condition =>
-         Get_Alignment (Label_Widget) = Left_Aligned          and then
-         Get_Direction (Label_Widget) = Left_Right_Top_Bottom and then
+         Get_Horizontal_Alignment (Label_Widget) = Left_Aligned   and then
+         Get_Vertical_Alignment (Label_Widget) = Top_Aligned      and then
+         Get_Direction (Label_Widget) = Left_Right_Top_Bottom     and then
          Get_Text (Label_Widget) = "";
 
    function New_Label (
-      Value     : in Wide_Wide_String;
-      Alignment : in Text_Alignment := Left_Aligned;
-      Direction : in Text_Direction := Left_Right_Top_Bottom)
+      Value      : in Wide_Wide_String;
+      Markup     : in Markup_Language      := Plain_Text;
+      Horizontal : in Horizontal_Alignment := Left_Aligned;
+      Vertical   : in Vertical_Alignment   := Top_Aligned;
+      Direction  : in Text_Direction       := Left_Right_Top_Bottom)
       return Label_Widget with
-      Post     => Get_Text (New_Label'Result) = Value
-         and then Get_Alignment (New_Label'Result) = Alignment
-         and then Get_Direction (New_Label'Result) = Direction,
+      Post     => Get_Text (New_Label'Result)                 = Value
+         and then Get_Horizontal_Alignment (New_Label'Result) = Horizontal
+         and then Get_Vertical_Alignment   (New_Label'Result) = Vertical
+         and then Get_Direction (New_Label'Result)            = Direction,
       Global   => null;
 
    overriding
@@ -64,10 +75,22 @@ package Malef.Labels with Preelaborate is
 
    -->> Setters <<--
 
-   procedure Set_Alignment (
+   procedure Set_Markup (
       Widget : in out Label_Widget;
-      To     : in     Text_Alignment) with
-      Post   => Get_Alignment (Widget) = To,
+      To     : in     Markup_Language) with
+      Post   => Get_Markup (Widget) = To,
+      Global => null;
+
+   procedure Set_Horizontal_Alignment (
+      Widget : in out Label_Widget;
+      To     : in     Horizontal_Alignment) with
+      Post   => Get_Horizontal_Alignment (Widget) = To,
+      Global => null;
+
+   procedure Set_Vertical_Alignment (
+      Widget : in out Label_Widget;
+      To     : in     Vertical_Alignment) with
+      Post   => Get_Vertical_Alignment (Widget) = To,
       Global => null;
 
    procedure Set_Direction (
@@ -84,9 +107,19 @@ package Malef.Labels with Preelaborate is
 
    -->> Getters <<--
 
-   function Get_Alignment (
+   function Get_Markup (
       Widget : in Label_Widget)
-      return Text_Alignment with
+      return Markup_Language with
+      Global => null;
+
+   function Get_Horizontal_Alignment (
+      Widget : in Label_Widget)
+      return Horizontal_Alignment with
+      Global => null;
+
+   function Get_Vertical_Alignment (
+      Widget : in Label_Widget)
+      return Vertical_Alignment with
       Global => null;
 
    function Get_Direction (
@@ -106,27 +139,43 @@ private
    type Label_Widget is
       new Widgets.Widget with
       record
-         Alignment : Text_Alignment := Left_Aligned;
-         Direction : Text_Direction := Left_Right_Top_Bottom;
-         Value     : Unbounded_Wide_Wide_String;
+         Markup     : Markup_Language        := Plain_Text;
+         Horizontal : Horizontal_Alignment   := Left_Aligned;
+         Vertical   : Vertical_Alignment     := Top_Aligned;
+         Direction  : Text_Direction         := Left_Right_Top_Bottom;
+         Value      : Unbounded_Wide_Wide_String;
       end record;
 
    function New_Label (
-      Value     : in Wide_Wide_String;
-      Alignment : in Text_Alignment := Left_Aligned;
-      Direction : in Text_Direction := Left_Right_Top_Bottom)
+      Value      : in Wide_Wide_String;
+      Markup     : in Markup_Language      := Plain_Text;
+      Horizontal : in Horizontal_Alignment := Left_Aligned;
+      Vertical   : in Vertical_Alignment   := Top_Aligned;
+      Direction  : in Text_Direction       := Left_Right_Top_Bottom)
       return Label_Widget is (
       Widgets.Widget with
-         Alignment => Alignment,
-         Direction => Direction,
-         Value     => To_Unbounded_Wide_Wide_String (Value));
+         Markup     => Markup,
+         Horizontal => Horizontal,
+         Vertical   => Vertical,
+         Direction  => Direction,
+         Value      => To_Unbounded_Wide_Wide_String (Value));
 
    -->> Getters <<--
 
-   function Get_Alignment (
+   function Get_Markup (
       Widget : in Label_Widget)
-      return Text_Alignment is (
-      Widget.Alignment);
+      return Markup_Language is (
+      Widget.Markup);
+
+   function Get_Horizontal_Alignment (
+      Widget : in Label_Widget)
+      return Horizontal_Alignment is (
+      Widget.Horizontal);
+
+   function Get_Vertical_Alignment (
+      Widget : in Label_Widget)
+      return Vertical_Alignment is (
+      Widget.Vertical);
 
    function Get_Direction (
       Widget : in Label_Widget)
@@ -137,5 +186,42 @@ private
       Widget : in Label_Widget)
       return Glyph_String is (
       To_Wide_Wide_String (Widget.Value));
+
+   -->> Markups <<--
+
+   type Glyph_Width is range 0 .. 2 with
+      Size => 8;
+
+   type Glyph_Kind is (Normal, Line_Break, Paragraph_Break, Indent, Deindent)
+      with Size => 8;
+
+   type Rich_Glyph is
+      record
+         Value      : Glyph;        -- 32 bits
+         Kind       : Glyph_Kind;   -- 8 bits
+         Width      : Glyph_Width;  -- 8 bits
+         Style      : Style_Type;   -- 16 bits
+         Background : RGBA_Type;    -- 32 bits
+         Foreground : RGBA_Type;    -- 32 bits
+      end record with
+      Size => 128;
+
+   package Rich_Glyph_Vectors is
+      new Ada.Containers.Vectors (
+      Index_Type   => Positive,
+      Element_Type => Rich_Glyph);
+
+   subtype Rich_String is Rich_Glyph_Vectors.Vector;
+
+   type Markup_Text is
+      record
+         Text : Rich_String;
+      end record;
+
+   type Parser_Type is
+      not null access
+      function (
+         Item : in Unbounded_Wide_Wide_String)
+         return Markup_Text;
 
 end Malef.Labels;

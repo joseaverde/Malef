@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                 M A L E F - A P P L I C A T I O N . A D S                 --
+--      M A L E F - L A B E L S - M A R K D O W N _ P A R S E R . A D B      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,47 +26,11 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Window;
-with Malef.Dialogs;
+with Malef.Labels.Plain_Text_Parser;
 
-package Malef.Application is
-
-   pragma Elaborate_Body;
-
-   Max_Dialogs : constant := 16;
-
-   package Implementation is
-
-      type Window_Observer is
-         new Window.Event_Observer with
-         null record;
-
-      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
-      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
-
-   end Implementation;
-
-   protected Application is
-
-      procedure Initialize;
-
-      procedure Add (
-         Object : in Dialogs.Dialog;
-         Modal  : in Boolean := False);
-
-   private
-
-      procedure When_Resized (
-         Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Window.Event_Type);
-
-      Available    : Implementation.Boolean_Array;
-      Dialogs      : Implementation.Dialog_Array;
-      Initialized  : Boolean := False;
-      Observer     : aliased Implementation.Window_Observer;
-      Height       : Positive_Row_Count := 24;
-      Width        : Positive_Col_Count := 80;
-
-   end Application;
-
-end Malef.Application;
+function Malef.Labels.Markdown_Parser (
+   Item : in Unbounded_Wide_Wide_String)
+   return Markup_Text is
+begin
+   return Plain_Text_Parser ("Markdown not implemented: " & Item);
+end Malef.Labels.Markdown_Parser;

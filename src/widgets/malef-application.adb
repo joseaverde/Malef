@@ -66,7 +66,7 @@ package body Malef.Application is
 
       procedure Add (
          Object : in Malef.Dialogs.Dialog;
-         Model  : in Boolean := False)
+         Modal  : in Boolean := False with Unreferenced)
       is
          procedure Draw (
             Group : aliased in out Groups.Group)

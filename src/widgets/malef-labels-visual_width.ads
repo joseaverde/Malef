@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                 M A L E F - A P P L I C A T I O N . A D S                 --
+--         M A L E F - L A B E L S - V I S U A L _ W I D T H . A D S         --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,47 +26,27 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Window;
-with Malef.Dialogs;
+private function Malef.Labels.Visual_Width (
+   Item : in Glyph)
+   return Glyph_Width;
+-- This function returns the width of a given character. This function isn't
+-- developed yet because it requires a long research. But the idea is that
+-- there are single width characters:
+--
+--    konnichiwa
+--    # # # # #
+--
+-- Double width characters:
+--
+--    こんにちは
+--    # # # # #
+--
+-- And there are characters that don't advance the cursor.
+--
+--    A` demain   (Imagine that 'A' + '`' compose 'À')
+--    #  # # #
+--
+-- This function returns how many cells does the cursor advance when one
+-- of those characters is printed.
 
-package Malef.Application is
-
-   pragma Elaborate_Body;
-
-   Max_Dialogs : constant := 16;
-
-   package Implementation is
-
-      type Window_Observer is
-         new Window.Event_Observer with
-         null record;
-
-      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
-      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
-
-   end Implementation;
-
-   protected Application is
-
-      procedure Initialize;
-
-      procedure Add (
-         Object : in Dialogs.Dialog;
-         Modal  : in Boolean := False);
-
-   private
-
-      procedure When_Resized (
-         Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Window.Event_Type);
-
-      Available    : Implementation.Boolean_Array;
-      Dialogs      : Implementation.Dialog_Array;
-      Initialized  : Boolean := False;
-      Observer     : aliased Implementation.Window_Observer;
-      Height       : Positive_Row_Count := 24;
-      Width        : Positive_Col_Count := 80;
-
-   end Application;
-
-end Malef.Application;
+pragma Preelaborate (Malef.Labels.Visual_Width);

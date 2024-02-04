@@ -91,16 +91,16 @@ is
    type Component_Name is (Red, Green, Blue, Alpha);
    -- Identifies the names of the different RGBA_Colour.
    --
-   -- @value Red
+   -- @enum Red
    -- R is for Red, it is the amount of Red the colour has.
    --
-   -- @value Green
+   -- @enum Green
    -- G is for Green, it is the amount of Green the colour has.
    --
-   -- @value Blue
+   -- @enum Blue
    -- B is for Blue, it is the amount of Blue the colour has.
    --
-   -- @value Alpha
+   -- @enum Alpha
    -- A is for Alpha, it is the colour opacity. A completely opaque colour has
    -- an Alpha value of 255 (16#FF#). A completely transparent colour has an
    -- Alpha value of 0 (16#00#).
@@ -178,44 +178,44 @@ is
                        Crossed_Out);
    -- The names that identify each style.
    --
-   -- @value Bold
+   -- @enum Bold
    -- Bold characters have a thicker stroke. It is usually used to emphasise
    -- text. If it is not available: Underline or Italic or Reverse will be used
    -- instead (in that order). This Style cannot be emulated.
    --
-   -- @value Faint
+   -- @enum Faint
    -- Faint characters have a dimmer colour or/and a slimmer stroke. It is
    -- usually used to represent text that doesn't matter. If it is not
    -- available, then a dimmer colour will be used (there is no other way to
    -- emulate this)
    --
-   -- @value Italic
+   -- @enum Italic
    -- Italic characters are usually inclined. They are used to emphasise, for
    -- quoting or for loan words. If it is not available, Underline or Bold or
    -- Reverse will be used instead. This Style cannot be emulated.
    --
-   -- @value Underline
+   -- @enum Underline
    -- Underlined characters have a line under them. It is usually used to
    -- emphasise text. If not available, Bold or Italic or Reverse will be used
    -- instead. This Style cannot be emulated.
    --
-   -- @value Slow_Blink
+   -- @enum Slow_Blink
    -- It shows and hides the character less than 150 times per minute (2.5 per
    -- second). If it is not available Rapid_Blink will be used if available or
    -- a task will be created that will blink the character manually.
    --
-   -- @value Rapid_Blink
+   -- @enum Rapid_Blink
    -- It shows and hides the character more than 150 per minute (2.5 per
    -- second). If it is not available Slow_Blink will be used instead.
    --
-   -- @value Reverse_Video
+   -- @enum Reverse_Video
    -- Swaps the Foreground with the Background. If not available it is simple
    -- to emulate.
    --
-   -- @value Conceal
+   -- @enum Conceal
    -- Hides the character, it is not widely available but it can be emulated.
    --
-   -- @value Crossed_Out
+   -- @enum Crossed_Out
    -- The characters are visible but marked as if for deletion. If not
    -- available a Red background with Yellow foreground will be used instead to
    -- mark it as a warning.

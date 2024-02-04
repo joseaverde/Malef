@@ -28,11 +28,20 @@
 
 package Malef.Events with Pure is
 
+   -- This package declares the types used to handle events. It declares types
+   -- for working with mouses. And uses the upper bounds of the
+   -- Wide_Wide_Character type to represent special keys such as F1, F2, ...,
+   -- Arrows (since Unicode only covers 2²¹ characters).
+
    type Key_Type is new Glyph;
 
-   -- TODO: Define special keys such as F1, F2, ..., Arrows in the high part
-   --       of the Wide_Wide_Character type. Since Unicode only has 2²¹
-   --       available characters.
+   Last_Key_Pos : constant := Key_Type'Pos (Key_Type'Last);
+
+   Key_Unknown : constant Key_Type := Key_Type'Val (Last_Key_Pos -  0);
+   Key_Up      : constant Key_Type := Key_Type'Val (Last_Key_Pos -  1);
+   Key_Down    : constant Key_Type := Key_Type'Val (Last_Key_Pos -  2);
+   Key_Left    : constant Key_Type := Key_Type'Val (Last_Key_Pos -  3);
+   Key_Right   : constant Key_Type := Key_Type'Val (Last_Key_Pos -  4);
 
    type Mouse_Button is (Left_Button, Right_Button, Wheel);
    type Mouse_Action is (Move, Click, Wheel);

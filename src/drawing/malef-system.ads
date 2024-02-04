@@ -28,6 +28,12 @@
 
 package Malef.System is
 
+   -- This package is used to initialize and finalize the terminal. It also
+   -- provides other primitives to work with them. You don't need to call
+   -- `Finalize`, because it finalises even when there is a raised exception.
+   -- If you use the Widget Toolkit and Applications you don't have to worry
+   -- about using the `Initialize` function either.
+
    pragma Elaborate_Body;
 
    procedure Initialize;

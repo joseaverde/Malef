@@ -178,7 +178,7 @@ package body Malef.Terminfo is
 
       function Read_Booleans (
          Stream : not null access Root_Stream_Type'Class;
-         Term   : in out Term_Type;
+         Term   : in out Term_Type with Unreferenced;
          Chars  : in     Count_Type;
          Count  : in Count_Type)
          return Boolean_Array
@@ -201,7 +201,7 @@ package body Malef.Terminfo is
 
       function Read_Integers_16 (
          Stream : not null access Root_Stream_Type'Class;
-         Term   : in out Term_Type;
+         Term   : in out Term_Type with Unreferenced;
          Count  : in Count_Type)
          return Integer_Array is
       begin
@@ -214,7 +214,7 @@ package body Malef.Terminfo is
 
       function Read_Integers_32 (
          Stream : not null access Root_Stream_Type'Class;
-         Term   : in out Term_Type;
+         Term   : in out Term_Type with Unreferenced;
          Count  : in Count_Type)
          return Integer_Array is
       begin
@@ -238,6 +238,8 @@ package body Malef.Terminfo is
          end loop;
          return Value;
       end Substring;
+
+      pragma Unreferenced (Substring);
 
       procedure Read (
          Stream : not null access Root_Stream_Type'Class;

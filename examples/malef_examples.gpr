@@ -2,7 +2,7 @@ with "config/malef_examples_config.gpr";
 project Malef_Examples is
 
    type Operating_System is ("linux", "win32", "win64");
-   OS : Operating_System := External ("OS", "linux");
+   OS : Operating_System := External ("MALEF_SYSTEM", External ("OS", "linux"));
 
    Suffix := "";
    Lib := "";

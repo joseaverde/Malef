@@ -26,38 +26,22 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Wide_Wide_Characters.Handling;
+-- with Ada.Wide_Wide_Characters.Handling;
+with Malef.Labels.Plain_Text_Parser;
+with Malef.Labels.Markdown_Parser;
 
 package body Malef.Labels is
 
-   function Visual_Width (
-      Item : in Glyph with Unreferenced)
-      return Natural is (1);
-   -- This function returns the width of a given character. This function isn't
-   -- developed yet because it requires a long research. But the idea is that
-   -- there are single width characters:
-   --
-   --    konnichiwa
-   --    # # # # #
-   --
-   -- Double width characters:
-   --
-   --    こんにちは
-   --    # # # # #
-   --
-   -- And there are characters that don't advance the cursor.
-   --
-   --    A` demain   (Imagine that 'A' + '`' compose 'À')
-   --    #  # # #
-   --
-   -- This function returns how many cells does the cursor advance when one
-   -- of those characters is printed.
+   Parsers : constant array (Markup_Language) of Parser_Type
+      := (Plain_Text => Plain_Text_Parser'Access
+        , Markdown   => Markdown_Parser'Access
+        );
 
-   procedure Slice (
-      Item : in     Unbounded_Wide_Wide_String;
-      From : in out Positive;
-      To   :    out Positive;
-      EOL  :    out Boolean) with Unreferenced;
+   -- procedure Slice (
+   --    Item : in     Rich_String;
+   --    From : in out Positive;
+   --    To   :    out Positive;
+   --    EOL  :    out Boolean) with Unreferenced;
    -- This function slices a String into individual tokens. For instance if we
    -- want to write: "Hello, World!" & LF & "¡Hola, Mundo!"
    -- on the screen we need to separate words by spaces and new lines:
@@ -66,59 +50,51 @@ package body Malef.Labels is
    --
    -- Then we can rearange them depending on the text direction and alignment.
 
-   function Slice_Col_Count (
-      Item : in Unbounded_Wide_Wide_String;
-      From : in Positive;
-      To   : in Natural)
-      return Natural is (
-      [for I in From .. To =>
-         Visual_Width (Element (Item, I))]'Reduce ("+", 0)) with Unreferenced;
-   -- This function just applies the Visual_Width function to a string slice
-   -- and returns the number of columns the string needs on the terminal to be
-   -- rendered.
-
-   -- generic
-   --    Horizontal : in Boolean;
-   -- procedure Generic_Put (
-   --    Widget  : in     Label_Widget;
-   --    Surface : in out Surfaces.Surface;
-   --    Length  : in     Positive;
-   --    From    : in     Positive;
-   --    To      : in     Natural;
-   --    Row     : in     Row_Type;
-   --    Col     : in     Col_Type) with
-   --    Pre    => To - From + 1 <= Length,
-   --    Global => null;
-   -- This generic procedure prints a string horizontally or vertically given
-   -- the alignment of the widget. It expects a string whose range fits inside
-   -- the surface.
-   --
-   -- @param Widget
-   -- The widget associated with the message. It contains special metadata such
-   -- as alignment that will be used later for formatting.
-   --
-   -- @param Surface
-   -- The surface where the message will be printed.
-
-   -- procedure Generic_Put (
-   --    Widget  : in Label_Widget;
-   --    Surface : in Surfaces.Surface;
-   --    Length  : in Positive;
-   --    From    : in Positive;
-   --    To      : in Natural;
-   --    Row     : in Row_Type;
-   --    Col     : in Col_Type) is null;
-
-   -- procedure Put_Row is new Generic_Put (Horizontal => True);
-   -- procedure Put_Col is new Generic_Put (Horizontal => False);
+   function Count_Lines (
+      Text        : in Markup_Text;
+      Line_Count  : in Natural;
+      Line_Length : in Natural)
+      return Natural with
+      Post => Count_Lines'Result <= Line_Count;
+   -- This function counts the lines.
 
    overriding
    procedure On_Draw (
       Widget  : in     Label_Widget;
       Surface : in out Surfaces.Surface;
-      Area    : in     Widgets.Draw_Area) is
+      Area    : in     Widgets.Draw_Area)
+   is
+
+      -- The first problem is that there are languages where we write
+      -- horizontally and others vertically. We want to count the number of
+      -- lines there are and what is the length of each of those lines.
+
+      Horizontal : constant Boolean :=
+         (case Widget.Direction is
+            when Left_Right_Top_Bottom
+               | Right_Left_Bottom_Top => True,
+            when Top_Bottom_Right_Left => False);
+
+      Line_Count : constant Natural := Natural'Max (0,
+         (if Horizontal
+            then Natural (Area.To.Row - Area.From.Row)
+            else Natural (Area.To.Col - Area.From.Col) / 2));
+      Line_Length : constant Natural := Natural'Max (0,
+         (if Horizontal
+            then Natural (Area.To.Col - Area.From.Col)
+            else Natural (Area.To.Row - Area.From.Row)));
+
+      -- Then generate the Markup Text from the internal contents. This one
+      -- has the information about the text preprocessed. So it easier to
+      -- parse. We will have to count the number of lines too. We pass the
+      -- Line_Count too so that it doesn't have to parse the whole text.
+
+      Rich  : constant Markup_Text := Parsers (Widget.Markup) (Widget.Value);
+      Lines : constant Natural := Count_Lines (Rich, Line_Count, Line_Length);
+
    begin
       Surface.Put (Area.From.Row, Area.From.Col, "Hola");
+      Surface.Put (Area.From.Row + 1, Area.From.Col, Lines'Wide_Wide_Image);
    end On_Draw;
 
    -- overriding
@@ -239,69 +215,130 @@ package body Malef.Labels is
 
    -- end On_Draw;
 
-   procedure Slice (
-      Item : in     Unbounded_Wide_Wide_String;
-      From : in out Positive;
-      To   :    out Positive;
-      EOL  :    out Boolean)
+   -- procedure Slice (
+   --    Item : in     Rich_String;
+   --    From : in out Positive;
+   --    To   :    out Positive;
+   --    EOL  :    out Boolean)
+   -- is
+   --    use Ada.Wide_Wide_Characters.Handling;
+   --    LF : constant Glyph := Glyph'Val (Character'Pos (ASCII.LF));
+   --    CR : constant Glyph := Glyph'Val (Character'Pos (ASCII.CR));
+   -- begin
+
+   --    -- Skip trailing spaces, TODO: Make it configurable
+
+   --    while From <= Item.Length and then Is_Space (Item (From).Char) loop
+   --       From := From + 1;
+   --    end loop;
+
+   --    -- Read until space or line terminator
+
+   --    To := From;
+   --    while To <= Length (Item)
+   --       and then not Is_Space (Element (Item, To))
+   --       and then not Is_Line_Terminator (Element (Item, To))
+   --    loop
+   --       To := To + 1;
+   --    end loop;
+
+   --    -- Line terminator
+
+   --    EOL := False;
+   --    if To <= Length (Item)
+   --       and then Is_Line_Terminator (Element (Item, To))
+   --    then
+
+   --       -- It ends with a terminator
+
+   --       if To /= From then
+   --          To := To - 1;
+
+   --       -- We check for CRLF combinations and consider them as one.
+
+   --       elsif Element (Item, To) = CR
+   --          and then To < Length (Item)
+   --          and then Element (Item, To + 1) = LF
+   --       then
+   --          To := To + 1;
+   --          EOL := True;
+   --       else
+   --          EOL := True;
+   --       end if;
+
+   --    end if;
+
+   -- end Slice;
+
+   function Count_Lines (
+      Text        : in Markup_Text;
+      Line_Count  : in Natural;
+      Line_Length : in Natural)
+      return Natural
    is
-      use Ada.Wide_Wide_Characters.Handling;
-      LF : constant Glyph := Glyph'Val (Character'Pos (ASCII.LF));
-      CR : constant Glyph := Glyph'Val (Character'Pos (ASCII.CR));
+      Length : Natural := 0;
+      Count  : Natural := 1;
+      Indent : Natural := 0;
    begin
 
-      -- Skip trailing spaces
+      -- There is not enough space to write.
 
-      while From <= Length (Item) and then Is_Space (Element (Item, From)) loop
-         From := From + 1;
-      end loop;
-
-      -- Read until space or line terminator
-
-      To := From;
-      while To <= Length (Item)
-         and then not Is_Space (Element (Item, To))
-         and then not Is_Line_Terminator (Element (Item, To))
-      loop
-         To := To + 1;
-      end loop;
-
-      -- Line terminator
-
-      EOL := False;
-      if To <= Length (Item)
-         and then Is_Line_Terminator (Element (Item, To))
-      then
-
-         -- It ends with a terminator
-
-         if To /= From then
-            To := To - 1;
-
-         -- We check for CRLF combinations and consider them as one.
-
-         elsif Element (Item, To) = CR
-            and then To < Length (Item)
-            and then Element (Item, To + 1) = LF
-         then
-            To := To + 1;
-            EOL := True;
-         else
-            EOL := True;
-         end if;
-
+      if Line_Count = 0 or else Line_Length = 0 then
+         return 0;
       end if;
 
-   end Slice;
+      -- For each line calculate the length.
+
+      for Char of Text.Text loop
+         case Char.Kind is
+            when Normal =>
+               if Natural (Char.Width) + Length > Line_Length then
+                  Count := Count + 1;
+                  Length := Natural (Char.Width) + Indentation_Width * Indent;
+               else
+                  Length := Length + Natural (Char.Width);
+               end if;
+            when Line_Break =>
+               Count := Count + 1;
+               Length := Indentation_Width * Indent;
+            when Paragraph_Break =>
+               Count := Count + 2;
+               Length := Indentation_Width * Indent;
+            when Labels.Indent =>
+               Indent := Indent + 1;
+            when Deindent =>
+               Indent := Natural'Max (0, Indent - 1);
+         end case;
+      end loop;
+
+      return Count;
+
+   end Count_Lines;
 
    -->> Setters <<--
 
-   procedure Set_Alignment (
+   -- TODO: Set Widget to be updated
+
+   procedure Set_Markup (
       Widget : in out Label_Widget;
-      To     : in     Text_Alignment) is
+      To     : in     Markup_Language) is
    begin
-      Widget.Alignment := To;
-   end Set_Alignment;
+      Widget.Markup := To;
+   end Set_Markup;
+
+   procedure Set_Horizontal_Alignment (
+      Widget : in out Label_Widget;
+      To     : in     Horizontal_Alignment) is
+   begin
+      Widget.Horizontal := To;
+   end Set_Horizontal_Alignment;
+
+   procedure Set_Vertical_Alignment (
+      Widget : in out Label_Widget;
+      To     : in     Vertical_Alignment) is
+   begin
+      Widget.Vertical := To;
+   end Set_Vertical_Alignment;
 
    procedure Set_Direction (
       Widget : in out Label_Widget;

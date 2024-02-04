@@ -4,7 +4,7 @@ project Malef is
    Languages := ("Ada");
 
    type Operating_System is ("linux", "win32", "win64");
-   OS : Operating_System := External ("OS", "linux");
+   OS : Operating_System := External ("OS", External ("MALEF_SYSTEM", "linux"));
 
    Subsystem := "";
    case OS is
@@ -53,5 +53,10 @@ project Malef is
    package Install is
       for Artifacts (".") use ("share");
    end Install;
+
+   package Documentation is
+      for Output_Dir ("html") use "obj/docs";
+      for Resources_Dir ("html") use "docs/resources";
+   end Documentation;
 
 end Malef;

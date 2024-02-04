@@ -26,14 +26,14 @@ project-files = ["malef.gpr"]
 
 # We map the names of external variables in the .gpr project file.
 [gpr-externals]
-MALEF_SYSTEM         = ["linux", "windows", "unix"]
+MALEF_SYSTEM         = ["linux", "win32", "win64"]
 MALEF_SUBSYSTEM      = ["ansi", "cmd"]
 
 # How to built it depends on the operating system.
 [gpr-set-externals.'case(os)']
-'linux' = { MALEF_OPERATING_SYSTEM = "linux" }
-'windows' = { MALEF_OPERATING_SYSTEM = "win64" }
-'...' = { MALEF_OPERATING_SYSTEM = "unix" }
+'linux' = { MALEF_SYSTEM = "linux", MALEF_SUBSYTEM="ansi" }
+'windows' = { MALEF_SYSTEM = "win64", MALEF_SUBSYSTEM="cmd" }
+'...' = { MALEF_SYSTEM = "linux", MALEF_SUBSYSTEM="ansi" }
 
 [configuration]
 generate_c = false
