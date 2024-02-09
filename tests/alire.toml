@@ -13,3 +13,19 @@ malef = "~0.3.0"
 malef = { path='..' }
 [[depends-on]]
 aunit = "^23.0.0"
+
+[build-profiles]
+malef = "validation"
+malef_tests = "validation"
+
+[configuration]
+generate_c = false
+
+[build-switches]
+validation.optimization   = "Performance"
+validation.debug_info     = "Yes"
+validation.runtime_checks = "Everything"
+validation.compile_checks = "Errors"
+validation.contracts      = "Yes"
+validation.style_checks   = "Yes"
+validation.ada_version    = "Ada2022"

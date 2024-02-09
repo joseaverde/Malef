@@ -29,8 +29,14 @@
 with Ada.Unchecked_Deallocation;
 with Malef.Groups.Composers;
 with System.Atomic_Operations.Integer_Arithmetic;
+with System.Atomic_Operations.Test_And_Set;
 
 package body Malef.Groups is
+
+   use System.Atomic_Operations;
+   use type Counters.Atomic_Flag;
+   use type Counters.Atomic_Counter;
+   use type Counters.Counter_Access;
 
    procedure Free is
       new Ada.Unchecked_Deallocation (
@@ -39,8 +45,8 @@ package body Malef.Groups is
 
    procedure Free is
       new Ada.Unchecked_Deallocation (
-      Object => Control_Type,
-      Name   => Control_Access);
+      Object => Counters.Counter_Type,
+      Name   => Counters.Counter_Access);
 
    procedure Free is
       new Ada.Unchecked_Deallocation (
@@ -58,16 +64,16 @@ package body Malef.Groups is
 
    package Atomic_Counters is
       new System.Atomic_Operations.Integer_Arithmetic (
-      Atomic_Type => Atomic_Counter);
+      Atomic_Type => Counters.Atomic_Counter);
 
    function Steal (
       Object : in Group_Layer'Class)
       return Layer_Access is
    begin
-      if Object.Control = null then
+      if Object.Counter = null then
          return null;
       end if;
-      if Test_And_Set.Atomic_Test_And_Set (Object.Control.Owned) then
+      if Test_And_Set.Atomic_Test_And_Set (Object.Counter.Locked) then
          raise Program_Error with
          "Group_Layer has already been added to a Group which obtained " &
          "ownership of the Element. Refrain from using Group_Layer's. "  &
@@ -80,25 +86,25 @@ package body Malef.Groups is
    procedure Adjust (
       Object : in out Group_Layer) is
    begin
-      if Object.Control = null then
+      if Object.Counter = null then
          return;
       end if;
-      Atomic_Counters.Atomic_Add (Object.Control.Counter, 1);
+      Atomic_Counters.Atomic_Add (Object.Counter.Counter, 1);
    end Adjust;
 
    overriding
    procedure Finalize (
       Object : in out Group_Layer)
    is
-      use all type Atomic_Boolean;
+      use all type Counters.Atomic_Flag;
    begin
-      if Object.Control = null then
+      if Object.Counter = null then
          return;
       end if;
-      if Atomic_Counters.Atomic_Fetch_And_Subtract (Object.Control.Counter, 1)
+      if Atomic_Counters.Atomic_Fetch_And_Subtract (Object.Counter.Counter, 1)
          = 1
       then
-         if Object.Control.Owned = 0 then
+         if Object.Counter.Locked = 0 then
             case Object.Layer.Kind is
                when A_Surface =>
                   declare
@@ -116,7 +122,7 @@ package body Malef.Groups is
             end case;
             Free (Object.Layer);
          end if;
-         Free (Object.Control);
+         Free (Object.Counter);
       end if;
    end Finalize;
 
@@ -133,6 +139,11 @@ package body Malef.Groups is
       -- TODO: Optimise
       Object.Updated := True;
    end Set_Updated;
+
+   -- procedure Lock (
+   --    Object : in out Group) is
+   -- begin
+   --    if Test_And_Set.Atomic_Test_And_Set (Object.Counter.Locked) then
 
    -->> As a Composer <<--
 
@@ -168,6 +179,7 @@ package body Malef.Groups is
 
       -- Otherwise check if size has to be increased.
 
+      Object.Region := Min;
       Offset := (-Min.Row, -Min.Col);
       Siz := (Max.Row - Min.Row, Max.Col - Min.Col);
 
@@ -265,6 +277,7 @@ package body Malef.Groups is
       for I in Object.Layers'Range when Contains (Object, I) loop
          Delete (Object, I);
       end loop;
+      Object.Region := (0, 0);
    end Clear;
 
    procedure Delete (
@@ -339,8 +352,8 @@ package body Malef.Groups is
       New_Item : in     Group_Layer'Class) is
    begin
       Object.Index := @ + 1;
-      Object.Count := (if New_Item.Layer = null then @ else @ + 1);
       Object.Layers (Object.Index) := Steal (New_Item);
+      Object.Count := (if New_Item.Layer = null then @ else @ + 1);
       Object.Updated := True;
       -- TODO: Use Set_Updated function
    end Add_Unnamed;
@@ -359,8 +372,8 @@ package body Malef.Groups is
          Delete (Object, Index);
       else
          Delete (Object, Index);
-         Object.Count := @ + 1;
          Object.Layers (Index) := Steal (New_Item);
+         Object.Count := @ + 1;
       end if;
       Object.Updated := True;
    end Assign_Indexed;
@@ -423,5 +436,39 @@ package body Malef.Groups is
       Object.Layers (Index).Position := To;
       Set_Updated (Object, Index);
    end Move_Layer;
+
+   -->> Layer Operations <<--
+
+   procedure Reference (
+      Object : in out Group) is
+   begin
+      Atomic_Counters.Atomic_Add (Object.Counter.Counter, 1);
+   end Reference;
+
+   function Unreference (
+      Object : in out Group)
+      return Boolean is
+      use Atomic_Counters;
+   begin
+      return Atomic_Fetch_And_Subtract (Object.Counter.Counter, 1) = 1;
+   end Unreference;
+
+   overriding
+   procedure Adjust (
+      Object : in out Group) is
+   begin
+      Reference (Object);
+   end Adjust;
+
+   overriding
+   procedure Finalize (
+      Object : in out Group) is
+   begin
+      if Unreference (Object) then
+         Object.Clear;
+         Free (Object.Surface);
+         Free (Object.Counter);
+      end if;
+   end Finalize;
 
 end Malef.Groups;

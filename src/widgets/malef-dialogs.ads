@@ -33,6 +33,9 @@ private with Malef.Widgets.Holders;
 
 package Malef.Dialogs with Preelaborate is
 
+   Default_Dialog_Height : constant := 40;
+   Default_Dialog_Width  : constant := 12;
+
    type Dialog is tagged private;
 
    type Window_Mode is (Full_Screen, Maximized, Windowed);
@@ -43,10 +46,10 @@ package Malef.Dialogs with Preelaborate is
 
    function New_Dialog (
       Widget : in Widgets.Widget'Class;
-      Title  : in Glyph_String;
-      Mode   : in Window_Mode;
-      Rows   : in Positive_Row_Count;
-      Cols   : in Positive_Col_Count)
+      Title  : in Glyph_String       := "";
+      Mode   : in Window_Mode        := Windowed;
+      Rows   : in Positive_Row_Count := Default_Dialog_Height;
+      Cols   : in Positive_Col_Count := Default_Dialog_Width)
       return Dialog;
 
    function Get_Mode (
@@ -73,10 +76,10 @@ private
 
    function New_Dialog (
       Widget : in Widgets.Widget'Class;
-      Title  : in Glyph_String;
-      Mode   : in Window_Mode;
-      Rows   : in Positive_Row_Count;
-      Cols   : in Positive_Col_Count)
+      Title  : in Glyph_String       := "";
+      Mode   : in Window_Mode        := Windowed;
+      Rows   : in Positive_Row_Count := Default_Dialog_Height;
+      Cols   : in Positive_Col_Count := Default_Dialog_Width)
       return Dialog is (
       Widget => Widgets.Holders.Create (Widget),
       Title  => To_Unbounded_Wide_Wide_String (Title),

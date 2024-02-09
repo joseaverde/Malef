@@ -62,3 +62,6 @@ validation.compile_checks = "Errors"
 validation.contracts      = "Yes"
 validation.style_checks   = "Yes"
 validation.ada_version    = "Ada2022"
+
+[configuration.variables]
+Max_Controlled_Pool_Capacity = { type="Integer", first=8, default=8192 }

@@ -46,20 +46,6 @@ package Malef.Widgets with Pure is
       Pre'Class => True;
    -- TODO: Check unchanged
 
-   type Outline_Part is (
-      Left_Side, Right_Side,           Top_Side, Bottom_Side,
-      Top_Left_Corner,    Top_Intersection,    Top_Right_Corner,
-      Left_Intersection,  Center_Intersection, Right_Intersection,
-      Bottom_Left_Corner, Bottom_Intersection, Bottom_Right_Corner);
-
-   type Outline_Type is array (Outline_Part) of Glyph;
-
-   type Outline_Style is (Single, Double);
-
-   Square_Outline : constant Outline_Type := "││──┌┬┐├┼┤└┴┘";
-   Curvy_Outline  : constant Outline_Type := "││──╭┬╮├┼┤╰┴╯";
-   Double_Outline : constant Outline_Type := "║║══╔╦╗╠╬╣╚╩╝";
-
    type Selectable is interface;
 
 end Malef.Widgets;

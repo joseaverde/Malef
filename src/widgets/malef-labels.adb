@@ -26,7 +26,6 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
--- with Ada.Wide_Wide_Characters.Handling;
 with Malef.Labels.Plain_Text_Parser;
 with Malef.Labels.Markdown_Parser;
 
@@ -37,18 +36,7 @@ package body Malef.Labels is
         , Markdown   => Markdown_Parser'Access
         );
 
-   -- procedure Slice (
-   --    Item : in     Rich_String;
-   --    From : in out Positive;
-   --    To   :    out Positive;
-   --    EOL  :    out Boolean) with Unreferenced;
-   -- This function slices a String into individual tokens. For instance if we
-   -- want to write: "Hello, World!" & LF & "¡Hola, Mundo!"
-   -- on the screen we need to separate words by spaces and new lines:
-   --
-   --    "Hello," "World!" LF "¡Hola," "Mundo!"
-   --
-   -- Then we can rearange them depending on the text direction and alignment.
+   -- type Natural_Array is array (Positive range <>) of Natural;
 
    function Count_Lines (
       Text        : in Markup_Text;
@@ -57,6 +45,12 @@ package body Malef.Labels is
       return Natural with
       Post => Count_Lines'Result <= Line_Count;
    -- This function counts the lines.
+
+   -- function Line_Lengths (
+   --    Text        : in Natural;
+   --    Line_Count  : in Natural;
+   --    Line_Length : in Natural)
+   --    return Natural;
 
    overriding
    procedure On_Draw (
@@ -77,24 +71,62 @@ package body Malef.Labels is
 
       Line_Count : constant Natural := Natural'Max (0,
          (if Horizontal
-            then Natural (Area.To.Row - Area.From.Row)
-            else Natural (Area.To.Col - Area.From.Col) / 2));
+            then Integer (Area.To.Row - Area.From.Row + 1)
+            else Integer (Area.To.Col - Area.From.Col + 1) / 2));
       Line_Length : constant Natural := Natural'Max (0,
          (if Horizontal
-            then Natural (Area.To.Col - Area.From.Col)
-            else Natural (Area.To.Row - Area.From.Row)));
+            then Integer (Area.To.Col - Area.From.Col + 1)
+            else Integer (Area.To.Row - Area.From.Row + 1)));
 
       -- Then generate the Markup Text from the internal contents. This one
       -- has the information about the text preprocessed. So it easier to
       -- parse. We will have to count the number of lines too. We pass the
       -- Line_Count too so that it doesn't have to parse the whole text.
 
-      Rich  : constant Markup_Text := Parsers (Widget.Markup) (Widget.Value);
-      Lines : constant Natural := Count_Lines (Rich, Line_Count, Line_Length);
+      Rich   : constant Markup_Text := Parsers (Widget.Markup) (Widget.Value);
+      Lines  : constant Natural := Count_Lines (Rich, Line_Count, Line_Length);
+
+      Index       : Positive := 1;
+      Length      : Natural  := 0;
+      Indentation : Natural  := 0;
 
    begin
-      Surface.Put (Area.From.Row, Area.From.Col, "Hola");
-      Surface.Put (Area.From.Row + 1, Area.From.Col, Lines'Wide_Wide_Image);
+
+      -- Horizontal first, to see whether it works
+
+      for Line in 0 .. Lines - 1 loop
+         Length := Indentation;
+         while Index <= Rich.Text.Last_Index and then Length < Line_Length loop
+            case Rich.Text (Index).Kind is
+               when Normal =>
+                  Surface.Set (
+                     Row  => Row_Type (Line) + Area.From.Row,
+                     Col  => Col_Type (Length) + Area.From.Col,
+                     Item => Rich.Text (Index).Value);
+                  if Rich.Text (Index).Width /= 1
+                     and then Length < Line_Length - 1
+                  then
+                     Length := Length + 1;
+                     Surface.Set (
+                        Row  => Row_Type (Line) + Area.From.Row,
+                        Col  => Col_Type (Length) + Area.From.Col,
+                        Item => (if Rich.Text (Index).Width = 0
+                                    then Bck else Dbl));
+                  end if;
+                  Length := Length + 1;
+               when Line_Break =>
+                  Length := Line_Length + 1;
+               when Paragraph_Break =>
+                  Length := Line_Length + 1;    -- TODO Skip one line
+               when Indent =>
+                  Indentation := Indentation + Indentation_Width;
+               when Deindent =>
+                  Indentation := Natural'Max (0, @ - Indentation_Width);
+            end case;
+            Index := Index + 1;
+         end loop;
+      end loop;
+
    end On_Draw;
 
    -- overriding
@@ -215,61 +247,6 @@ package body Malef.Labels is
 
    -- end On_Draw;
 
-   -- procedure Slice (
-   --    Item : in     Rich_String;
-   --    From : in out Positive;
-   --    To   :    out Positive;
-   --    EOL  :    out Boolean)
-   -- is
-   --    use Ada.Wide_Wide_Characters.Handling;
-   --    LF : constant Glyph := Glyph'Val (Character'Pos (ASCII.LF));
-   --    CR : constant Glyph := Glyph'Val (Character'Pos (ASCII.CR));
-   -- begin
-
-   --    -- Skip trailing spaces, TODO: Make it configurable
-
-   --    while From <= Item.Length and then Is_Space (Item (From).Char) loop
-   --       From := From + 1;
-   --    end loop;
-
-   --    -- Read until space or line terminator
-
-   --    To := From;
-   --    while To <= Length (Item)
-   --       and then not Is_Space (Element (Item, To))
-   --       and then not Is_Line_Terminator (Element (Item, To))
-   --    loop
-   --       To := To + 1;
-   --    end loop;
-
-   --    -- Line terminator
-
-   --    EOL := False;
-   --    if To <= Length (Item)
-   --       and then Is_Line_Terminator (Element (Item, To))
-   --    then
-
-   --       -- It ends with a terminator
-
-   --       if To /= From then
-   --          To := To - 1;
-
-   --       -- We check for CRLF combinations and consider them as one.
-
-   --       elsif Element (Item, To) = CR
-   --          and then To < Length (Item)
-   --          and then Element (Item, To + 1) = LF
-   --       then
-   --          To := To + 1;
-   --          EOL := True;
-   --       else
-   --          EOL := True;
-   --       end if;
-
-   --    end if;
-
-   -- end Slice;
-
    function Count_Lines (
       Text        : in Markup_Text;
       Line_Count  : in Natural;
@@ -290,6 +267,7 @@ package body Malef.Labels is
       -- For each line calculate the length.
 
       for Char of Text.Text loop
+         exit when Count = Line_Count;
          case Char.Kind is
             when Normal =>
                if Natural (Char.Width) + Length > Line_Length then
@@ -311,7 +289,7 @@ package body Malef.Labels is
          end case;
       end loop;
 
-      return Count;
+      return Natural'Min (Line_Count, Count);
 
    end Count_Lines;
 

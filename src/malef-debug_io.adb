@@ -30,16 +30,18 @@ with Ada.Containers.Indefinite_Vectors;
 with Ada.Streams;
 with Ada.Streams.Stream_IO;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+with Ada.Strings.UTF_Encoding.Wide_Strings;
 
 package body Malef.Debug_IO is
 
-   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+   package WW_Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+   package W_Unicode renames Ada.Strings.UTF_Encoding.Wide_Strings;
 
    type Debug_Entry (
       Length : Natural) is
       record
          Severity : Message_Severity;
-         Message  : Wide_Wide_String (1 .. Length);
+         Message  : String (1 .. Length);
       end record;
 
    package Debug_Entry_Vectors is
@@ -50,7 +52,7 @@ package body Malef.Debug_IO is
    protected type Debug_Buffer is
       procedure Put (
          Kind : in Message_Severity;
-         Item : in Wide_Wide_String);
+         Item : in String);
    private
       Entries : Debug_Entry_Vectors.Vector;
    end Debug_Buffer;
@@ -58,7 +60,7 @@ package body Malef.Debug_IO is
    protected body Debug_Buffer is
       procedure Put (
          Kind : in Message_Severity;
-         Item : in Wide_Wide_String) is
+         Item : in String) is
       begin
          Entries.Append (Debug_Entry'(Length   => Item'Length,
                                       Severity => Kind,
@@ -94,20 +96,6 @@ package body Malef.Debug_IO is
          Kind : in Message_Severity;
          Item : in String) is
       begin
-         Wide_Wide_Put (Kind, Unicode.Decode (Item));
-      end Put;
-
-      procedure Wide_Put (
-         Kind : in Message_Severity;
-         Item : in Wide_String) is
-      begin
-         Wide_Wide_Put (Kind, Unicode.Decode (Item));
-      end Wide_Put;
-
-      procedure Wide_Wide_Put (
-         Kind : in Message_Severity;
-         Item : in Wide_Wide_String) is
-      begin
          if Mode = Release then
             return;
          end if;
@@ -118,28 +106,41 @@ package body Malef.Debug_IO is
             String'Write (Stream, "[");
             String'Write (Stream, Kind'Image);
             String'Write (Stream, "] ");
-            String'Write (Stream, Unicode.Encode (Item));
+            String'Write (Stream, Item);
             Character'Write (Stream, ASCII.LF);
          end if;
-         Wide_Wide_String'Write (Stream, Item);
+      end Put;
+
+      procedure Wide_Put (
+         Kind : in Message_Severity;
+         Item : in Wide_String) is
+      begin
+         Put (Kind, W_Unicode.Encode (Item));
+      end Wide_Put;
+
+      procedure Wide_Wide_Put (
+         Kind : in Message_Severity;
+         Item : in Wide_Wide_String) is
+      begin
+         Put (Kind, WW_Unicode.Encode (Item));
       end Wide_Wide_Put;
 
       procedure Put (
          Item : in String) is
       begin
-         Put (Default_Severity, Item);
+         Put (Severity, Item);
       end Put;
 
       procedure Wide_Put (
          Item : in Wide_String) is
       begin
-         Wide_Put (Default_Severity, Item);
+         Wide_Put (Severity, Item);
       end Wide_Put;
 
       procedure Wide_Wide_Put (
          Item : in Wide_Wide_String) is
       begin
-         Wide_Wide_Put (Default_Severity, Item);
+         Wide_Wide_Put (Severity, Item);
       end Wide_Wide_Put;
 
       -->> Debug Widget <<--

@@ -91,12 +91,13 @@ package body Malef.Console_IO is
 
    procedure Wide_Wide_Put (Item : in Glyph) is
    begin
-      if Glyph'Pos (Item) < 32 then
-         Put (' ');
-      else
-         -- OPTIMISE: Search a function on character basis instead of strings.
-         Put (Unicode.Encode (Item & ""));
-      end if;
+      -- OPTIMISE: Search a function on character basis instead of strings.
+      case Item is
+         when   Nul  => Put (' ');
+         when   Dbl  => null;
+         when   Bck  => Put ("  ");
+         when others => Put (Unicode.Encode (Item & ""));
+      end case;
    end Wide_Wide_Put;
 
    procedure Wide_Wide_Put (Item : in Glyph_String) is
@@ -259,7 +260,9 @@ package body Malef.Console_IO is
 
    procedure Finalize is
    begin
-      Put (ASCII.ESC & "[?12h" & ASCII.ESC & "[?25h");
+      Put (ASCII.ESC & "[0m"     -- Clear format
+         & ASCII.ESC & "[?12h"   -- Restore terminal
+         & ASCII.ESC & "[?25h");
       Flush;
    end Finalize;
 
@@ -286,6 +289,19 @@ package body Malef.Console_IO is
       end if;
    end End_Frame;
 
+   function Width (
+      Item : in Glyph)
+      return Col_Type is (
+      (case Item is
+         when Dbl => 2,
+         when Bck => 0,
+         when others => 1));
+
+   function Width (
+      Item : in Glyph_String)
+      return Col_Type is (
+      [for Char of Item => Width (Char)]'Reduce ("+", 0));
+
    procedure Put (
       Position   : in Cursor_Type;
       Item       : in Glyph_String;
@@ -296,7 +312,7 @@ package body Malef.Console_IO is
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
       Wide_Wide_Put (Item);
-      Current_Cursor.Col := @ + Item'Length;
+      Current_Cursor.Col := @ + Width (Item);
    end Put;
 
    procedure Put_Indexed (
@@ -309,7 +325,7 @@ package body Malef.Console_IO is
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
       Wide_Wide_Put (Item);
-      Current_Cursor.Col := @ + Item'Length;
+      Current_Cursor.Col := @ + Width (Item);
    end Put_Indexed;
 
    procedure Put (
@@ -323,7 +339,7 @@ package body Malef.Console_IO is
       Format (Background, Foreground, Style);
       Wide_Wide_Put (Item);
       -- TODO: Use the real character size
-      Current_Cursor.Col := @ + 1;
+      Current_Cursor.Col := @ + Width (Item);
    end Put;
 
    procedure Put_Indexed (
@@ -336,7 +352,7 @@ package body Malef.Console_IO is
       Move_To (Position.Row, Position.Col);
       Format (Background, Foreground, Style);
       Wide_Wide_Put (Item);
-      Current_Cursor.Col := @ + 1;
+      Current_Cursor.Col := @ + Width (Item);
    end Put_Indexed;
 
    procedure Set_Title (
@@ -351,4 +367,119 @@ package body Malef.Console_IO is
    -->> Input <<--
    --<<------->>--
 
+   procedure Cursor_Position (
+      Rows : out Positive_Row_Count;
+      Cols : out Positive_Col_Count)
+   is
+      Char      : Character;
+      Row       : Row_Count := 0;
+      Col       : Col_Count := 0;
+      Available : Boolean;
+   begin
+
+      -- Discard previous input
+
+      loop
+         Ada.Text_IO.Get_Immediate (Char, Available);
+         exit when not Available;
+      end loop;
+
+      -- Device Status Report
+
+      Ada.Text_IO.Put (ASCII.ESC & "[6n");
+      Ada.Text_IO.Flush;
+      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = ASCII.ESC);
+      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = '[');
+
+      -- Read Rows
+
+      Ada.Text_IO.Get_Immediate (Char);
+      loop
+         Row := Row * 10 + Character'Pos (Char) - Character'Pos ('0');
+         Ada.Text_IO.Get_Immediate (Char);
+         exit when Char = ';';
+      end loop;
+      Rows := Row;
+
+      -- Read Cols
+
+      Ada.Text_IO.Get_Immediate (Char);
+      loop
+         Col := Col * 10 + Character'Pos (Char) - Character'Pos ('0');
+         Ada.Text_IO.Get_Immediate (Char);
+         exit when Char = 'R';
+      end loop;
+      Cols := Col;
+
+   end Cursor_Position;
+
+   procedure Terminal_Dimensions (
+      Rows : out Positive_Row_Count;
+      Cols : out Positive_Col_Count)
+   is
+      R_Img : constant String := Row_Type'Last'Image;
+      C_Img : constant String := Col_Type'Last'Image;
+   begin
+      Ada.Text_IO.Put (ASCII.ESC & "[");
+      Ada.Text_IO.Put (R_Img (R_Img'First + 1 .. R_Img'Last));
+      Ada.Text_IO.Put (';');
+      Ada.Text_IO.Put (C_Img (C_Img'First + 1 .. C_Img'Last));
+      Ada.Text_IO.Put ('H');
+      Current_Cursor := (Positive_Row_Count'Last, Positive_Col_Count'Last);
+      Cursor_Position (Rows, Cols);
+   end Terminal_Dimensions;
+
+   protected Shared_Input is
+
+      procedure Get_Dimensions (
+         Rows : out Positive_Row_Count;
+         Cols : out Positive_Col_Count);
+
+      procedure Update_Dimensions;
+
+      procedure Set_Dimensions (
+         Rows : in Positive_Row_Count;
+         Cols : in Positive_Col_Count) with Unreferenced;
+
+   private
+
+      Shared_Rows : Positive_Row_Count;
+      Shared_Cols : Positive_Col_Count;
+
+   end Shared_Input;
+
+   protected body Shared_Input is
+
+      procedure Get_Dimensions (
+         Rows : out Positive_Row_Count;
+         Cols : out Positive_Col_Count) is
+      begin
+         Rows := Shared_Rows;
+         Cols := Shared_Cols;
+      end Get_Dimensions;
+
+      procedure Update_Dimensions is
+      begin
+         Terminal_Dimensions (Shared_Rows, Shared_Cols);
+      end Update_Dimensions;
+
+      procedure Set_Dimensions (
+         Rows : in Positive_Row_Count;
+         Cols : in Positive_Col_Count) is
+      begin
+         Shared_Rows := Rows;
+         Shared_Cols := Cols;
+      end Set_Dimensions;
+
+   end Shared_Input;
+
+   procedure Get_Dimensions (
+      Rows : out Positive_Row_Count;
+      Cols : out Positive_Col_Count) is
+   begin
+      Shared_Input.Get_Dimensions (Rows, Cols);
+   end Get_Dimensions;
+
+begin
+   Shared_Input.Update_Dimensions;
 end Malef.Console_IO;

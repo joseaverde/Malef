@@ -32,6 +32,8 @@ with Malef.Events;
 
 package Malef.Window is
 
+   pragma Elaborate_Body;
+
    -- This package provides the protected type Window which represents the
    -- Terminal itself. It provides a system of callbacks that notify objects
    -- when an event occurs.
@@ -42,32 +44,10 @@ package Malef.Window is
 
    type Event_Observer is limited interface;
 
-   type Event_Name is (
-      Resize_Event,
-      Keyboard_Event,
-      Mouse_Event,
-      Cancel_Event,
-      Kill_Event);
-
-   type Event_Type (
-      Name : Event_Name) is
-      record
-         case Name is
-            when Resize_Event   => New_Size : Cursor_Type;
-            when Keyboard_Event => Key      : Events.Key_Type;
-            when Mouse_Event    => Button   : Events.Mouse_Button;
-                                   Action   : Events.Mouse_Action;
-                                   Wheel    : Events.Mouse_Wheel;
-                                   Position : Cursor_Type;
-            when Cancel_Event   => null;
-            when Kill_Event     => null;
-         end case;
-      end record;
-
    type Callback_Type is access
       protected procedure (
          Observer : aliased in out Event_Observer'Class;
-         Event    :         in     Event_Type);
+         Event    :         in     Events.Event_Type);
 
    package Implementation is
 
@@ -92,7 +72,7 @@ package Malef.Window is
          Element_Type => Observer_Info);
 
       type Observer_Vector_By_Event is
-         array (Event_Name)
+         array (Events.Event_Name)
          of Observer_Vectors.Vector;
 
    end Implementation;
@@ -108,8 +88,8 @@ package Malef.Window is
       -- TODO: with move semantics. procedure Set_Group
 
       procedure Resize (
-         Rows : in Positive_Row_Count;
-         Cols : in Positive_Col_Count);
+         New_Rows : in Positive_Row_Count;
+         New_Cols : in Positive_Col_Count);
 
       procedure Display;
 
@@ -118,18 +98,20 @@ package Malef.Window is
       -->> Callbacks <<--
 
       procedure Register (
-         Event    : in Event_Name;
+         Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class;
          Callback : not null        Callback_Type);
 
       procedure Unregister (
-         Event    : in Event_Name;
+         Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class);
 
    private
 
       Observers : Implementation.Observer_Vector_By_Event;
       Group     : Groups.Group (1);
+      Rows      : Row_Type;
+      Cols      : Col_Type;
 
    end Window;
 

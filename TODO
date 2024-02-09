@@ -1,6 +1,0 @@
-* Malef
- * Groups
-  - [ ] Add tampering checks to groups
-  - [ ] Add palettes to groups
-  - [ ] Add contracts to all functions
-  - [ ] Add controlled functions so that group contents are freed on destruction

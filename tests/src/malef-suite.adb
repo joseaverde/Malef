@@ -1,4 +1,4 @@
-with Malef.Terminfo.Tests;
+-- with Malef.Terminfo.Tests;
 with Malef.Groups.Tests;
 
 package body Malef.Suite is

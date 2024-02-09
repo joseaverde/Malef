@@ -1,6 +1,6 @@
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 --                                                                           --
---                 M A L E F - A P P L I C A T I O N . A D S                 --
+--                      M A L E F - G L Y P H S . A D S                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,48 +26,21 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Window;
-with Malef.Dialogs;
-with Malef.Events;
+package Malef.Glyphs is
 
-package Malef.Application is
+   type Outline_Part is (
+      Left_Side, Right_Side,  Inside,  Top_Side, Bottom_Side,
+      Top_Left_Corner,    Top_Intersection,    Top_Right_Corner,
+      Left_Intersection,  Center_Intersection, Right_Intersection,
+      Bottom_Left_Corner, Bottom_Intersection, Bottom_Right_Corner);
 
-   pragma Elaborate_Body;
+   type Outline_Type is array (Outline_Part) of Glyph;
 
-   Max_Dialogs : constant := 16;
+   type Outline_Style is (Single, Double);
 
-   package Implementation is
+   Square_Outline   : constant Outline_Type := "││ ──┌┬┐├┼┤└┴┘";
+   Curvy_Outline    : constant Outline_Type := "││ ──╭┬╮├┼┤╰┴╯";
+   Double_Outline   : constant Outline_Type := "║║ ══╔╦╗╠╬╣╚╩╝";
+   Fallback_Outline : constant Outline_Type := "|| --+-+|+|+-+";
 
-      type Window_Observer is
-         new Window.Event_Observer with
-         null record;
-
-      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
-      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
-
-   end Implementation;
-
-   protected Application is
-
-      procedure Initialize;
-
-      procedure Add (
-         Object : in Dialogs.Dialog;
-         Modal  : in Boolean := False);
-
-   private
-
-      procedure When_Resized (
-         Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Events.Event_Type);
-
-      Available    : Implementation.Boolean_Array;
-      Dialogs      : Implementation.Dialog_Array;
-      Initialized  : Boolean := False;
-      Observer     : aliased Implementation.Window_Observer;
-      Height       : Positive_Row_Count := 24;
-      Width        : Positive_Col_Count := 80;
-
-   end Application;
-
-end Malef.Application;
+end Malef.Glyphs;

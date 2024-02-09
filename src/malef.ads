@@ -108,6 +108,9 @@ is
    type Component_Type is mod 256 with
       Size      => 8,
       Put_Image => Put_Image;
+   -- An RGBA_Type colour has four components (Red, Green, Blue and Alpha),
+   -- this type describes which values can a component have. It is range
+   -- between 0 and 255 like in other software.
 
    type RGBA_Type is array (Component_Name'Range) of Component_Type with
       Size           => 32,
@@ -133,6 +136,8 @@ is
 
    type Palette_Index is range 0 .. 15 with
       Size => 8;
+   -- The Palette Index type identifies a colour within a palette. See the
+   -- `Malef.Palettes` package for more information about it.
 
    subtype Valid_Hexadecimal_Digit is Wide_Wide_Character with
       Static_Predicate => Valid_Hexadecimal_Digit in '0' .. '9'
@@ -276,6 +281,14 @@ is
    -- This character is completely transparent: if there is a character under
    -- it, the character below will be shown instead. It is used as the default
    -- character in Surfaces.
+
+   Dbl : constant Glyph := Glyph'Succ (Glyph'Succ (Glyph'First));
+   -- This character is used to tell the terminal that the previous character
+   -- was double with, and it has to increase the position by two.
+
+   Bck : constant Glyph := Glyph'Succ (Glyph'First);
+   -- This character is used to tell the previous character used no space at
+   -- all and was composed with character before.
 
    --<<------------>>--
    -->> Exceptions <<--

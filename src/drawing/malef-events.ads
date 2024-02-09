@@ -47,4 +47,26 @@ package Malef.Events with Pure is
    type Mouse_Action is (Move, Click, Wheel);
    type Mouse_Wheel is (Up, Down, Stay);
 
+   type Event_Name is (
+      Resize_Event,
+      Keyboard_Event,
+      Mouse_Event,
+      Cancel_Event,
+      Kill_Event);
+
+   type Event_Type (
+      Name : Event_Name) is
+      record
+         case Name is
+            when Resize_Event   => New_Size : Cursor_Type;
+            when Keyboard_Event => Key      : Events.Key_Type;
+            when Mouse_Event    => Button   : Events.Mouse_Button;
+                                   Action   : Events.Mouse_Action;
+                                   Wheel    : Events.Mouse_Wheel;
+                                   Position : Cursor_Type;
+            when Cancel_Event   => null;
+            when Kill_Event     => null;
+         end case;
+      end record;
+
 end Malef.Events;

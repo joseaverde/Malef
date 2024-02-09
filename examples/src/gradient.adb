@@ -1,7 +1,8 @@
-with Ada.Text_IO;
 with Malef;
 with Malef.Surfaces;
 with Malef.Palettes;
+with Malef.Groups;
+with Malef.Window;
 
 procedure Gradient is
 
@@ -50,6 +51,7 @@ procedure Gradient is
 begin
    Col_Surf.Fill (Fill_Gradient'Access);
    Pal_Surf.Fill (Fill_Palette_Gradient'Access);
-   Ada.Text_IO.Put_Line (Col_Surf'Image);
-   Ada.Text_IO.Put_Line (Pal_Surf'Image);
+   Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Col_Surf, (1, 1)),
+                                   Malef.Groups.Layer (Pal_Surf, (1, Width))]);
+   Malef.Window.Window.Display;
 end Gradient;

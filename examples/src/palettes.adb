@@ -102,8 +102,6 @@ begin
 
    -->> No Palette <<--
 
-   Window.Put (1, 1, "No palette");
-   -- Malef.Window.Show (Group.See_Surface);
    Malef.Window.Window.Display;
    delay 1.0;
 
@@ -114,7 +112,6 @@ begin
    Window.Set_Palette := Dark_Mode;
    Unfocus.Set_Palette := Dark_Mode;
 
-   Window.Put (1, 1, "Dark Mode  ");
    Malef.Window.Window.Display;
    delay 1.0;
 

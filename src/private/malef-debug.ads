@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                 M A L E F - A P P L I C A T I O N . A D S                 --
+--                       M A L E F - D E B U G . A D S                       --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,48 +26,14 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Window;
-with Malef.Dialogs;
-with Malef.Events;
+with Malef.Debug_IO;
 
-package Malef.Application is
+private package Malef.Debug is
+   new Malef.Debug_IO.Debug_IO (
+   Mode     => Malef.Debug_IO.Debug,
+   Name     => ".malef.log",
+   Widget   => False,
+   Severity => Malef.Debug_IO.Warning,
+   Visible  => (others => True));
 
-   pragma Elaborate_Body;
-
-   Max_Dialogs : constant := 16;
-
-   package Implementation is
-
-      type Window_Observer is
-         new Window.Event_Observer with
-         null record;
-
-      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
-      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
-
-   end Implementation;
-
-   protected Application is
-
-      procedure Initialize;
-
-      procedure Add (
-         Object : in Dialogs.Dialog;
-         Modal  : in Boolean := False);
-
-   private
-
-      procedure When_Resized (
-         Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Events.Event_Type);
-
-      Available    : Implementation.Boolean_Array;
-      Dialogs      : Implementation.Dialog_Array;
-      Initialized  : Boolean := False;
-      Observer     : aliased Implementation.Window_Observer;
-      Height       : Positive_Row_Count := 24;
-      Width        : Positive_Col_Count := 80;
-
-   end Application;
-
-end Malef.Application;
+pragma Preelaborate (Malef.Debug);

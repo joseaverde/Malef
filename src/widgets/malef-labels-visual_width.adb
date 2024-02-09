@@ -26,9 +26,33 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+-- TODO: Make it better
+
 function Malef.Labels.Visual_Width (
    Item : in Glyph with Unreferenced)
    return Glyph_Width is
 begin
-   return 1;
+   -- https://stackoverflow.com/questions/19899554/unicode-range-for-japanese
+   -- https://stackoverflow.com/questions/1366068/whats-the-complete-range-\
+   -- for-chinese-characters-in-unicode
+   case Item is
+      when Glyph'Val (16#3000#) .. Glyph'Val (16#303F#)  -- Japanese Punctuat.
+         | Glyph'Val (16#3040#) .. Glyph'Val (16#309F#)  -- ひらがな
+         | Glyph'Val (16#30A0#) .. Glyph'Val (16#30FF#)  -- カタカナ
+      -- | Glyph'Val (16#FF00#) .. Glyph'Val (16#FFEF#)  -- Full and Half Width
+         | Glyph'Val (16#4E00#) .. Glyph'Val (16#9FFF#)  -- CJK unified ideogr.
+         | Glyph'Val (16#3400#) .. Glyph'Val (16#4DBF#)     -- CJK Extension A
+         | Glyph'Val (16#20000#) .. Glyph'Val (16#2A6DF#)   -- CJK Extension B
+         | Glyph'Val (16#2A700#) .. Glyph'Val (16#2B73F#)   -- CJK Extension C
+         | Glyph'Val (16#2B740#) .. Glyph'Val (16#2B81F#)   -- CJK Extension D
+         | Glyph'Val (16#2B820#) .. Glyph'Val (16#2CEAF#)   -- CJK Extension E
+         | Glyph'Val (16#2CEB0#) .. Glyph'Val (16#2EBEF#)   -- CJK Extension F
+         | Glyph'Val (16#30000#) .. Glyph'Val (16#3134F#)   -- CJK Extension G
+         | Glyph'Val (16#31350#) .. Glyph'Val (16#323AF#)   -- CJK Extension H
+         | Glyph'Val (16#F900#)  .. Glyph'Val (16#FAFF#)    -- CJK Compat.
+         | Glyph'Val (16#2F800#) .. Glyph'Val (16#2FA1F#)   -- CJK Compat. Sup.
+         => return 2;
+      when others
+         => return 1;
+   end case;
 end Malef.Labels.Visual_Width;

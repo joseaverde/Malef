@@ -22,7 +22,7 @@
 -- Public License for more details.                                          --
 --                                                                           --
 -- You should have received  a copy of the  GNU General Public License along --
--- with this program. If not, s://www.gnu.org/licenses/>.           --
+-- with this program. If not, s://www.gnu.org/licenses/>.                    --
 --                                                                           --
 -------------------------------------------------------------------------------
 
@@ -31,22 +31,40 @@ with Malef.Surfaces;
 
 package body Malef.Window is
 
-   procedure Show (Surface : in Surfaces.Surface) is
-      -- Row_Count : constant Row_Type := Row_Type'Min (Surface.Rows, Rows);
-      -- Col_Count : constant Col_Type := Col_Type'Min (Surface.Cols, Cols);
-      Row_Count : constant Row_Type := Surface.Rows;
-      Col_Count : constant Col_Type := Surface.Cols;
+   procedure Show (
+      Surface : in Surfaces.Surface;
+      From    : in Cursor_Type;
+      Size    : in Cursor_Type)
+   is
+      Iter_First : constant Cursor_Type := (
+         Row => Row_Type'Max (1, -From.Row + 2),
+         Col => Col_Type'Max (1, -From.Col + 2));
+      First : constant Cursor_Type := (
+         Row => Row_Type'Max (1, From.Row),
+         Col => Col_Type'Max (1, From.Col));
+      Last : constant Cursor_Type := (
+         Row_Type'Min (Surface.Rows + First.Row - 1, Size.Row),
+         Col_Type'Min (Surface.Cols + First.Col - 1, Size.Col));
+      Iter_Last : constant Cursor_Type := (
+         Row => Last.Row - First.Row + 1,
+         Col => Last.Col - First.Col + 1);
+      Row : Row_Type;
+      Col : Col_Type;
    begin
       Malef.Console_IO.Begin_Frame;
-      for Row in 1 .. Row_Count loop
-         for Col in 1 .. Col_Count loop
+      Row := First.Row;
+      for Iter_Row in Iter_First.Row .. Iter_Last.Row loop
+         Col := First.Col;
+         for Iter_Col in Iter_First.Col .. Iter_Last.Col loop
             Malef.Console_IO.Put (
                Position   => (Row, Col),
-               Item       => Surface (Row, Col),
-               Background => Surface.Get_Background (Row, Col),
-               Foreground => Surface.Get_Foreground (Row, Col),
-               Style      => Surface (Row, Col));
+               Item       => Surface (Iter_Row, Iter_Col),
+               Background => Surface.Get_Background (Iter_Row, Iter_Col),
+               Foreground => Surface.Get_Foreground (Iter_Row, Iter_Col),
+               Style      => Surface (Iter_Row, Iter_Col));
+            Col := Col + 1;
          end loop;
+         Row := Row + 1;
       end loop;
       Malef.Console_IO.End_Frame;
       Malef.Console_IO.Flush;
@@ -66,22 +84,28 @@ package body Malef.Window is
          Group.Insert (1, Object);
       end Set_Group;
 
-      procedure Resize (
-         Rows : in Positive_Row_Count;
-         Cols : in Positive_Col_Count) is null;
-
       procedure Display is
+         In_Group renames Group.Set_Group (1).Element;
       begin
-         Group.Set_Group (1).Update;
-         Show (Group.Get_Group (1).See_Surface.Element.all);
+         In_Group.Update;
+         Show (Group.Get_Group (1).See_Surface.Element.all,
+               (In_Group.Row, In_Group.Col), (Rows, Cols));
       end Display;
+
+      procedure Resize (
+         New_Rows : in Positive_Row_Count;
+         New_Cols : in Positive_Col_Count) is
+      begin
+         Rows := New_Rows;
+         Cols := New_Cols;
+      end Resize;
 
       procedure Redraw is null;
 
       -->> Callbacks <<--
 
       procedure Register (
-         Event    : in Event_Name;
+         Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class;
          Callback : not null        Callback_Type) is
       begin
@@ -90,7 +114,7 @@ package body Malef.Window is
       end Register;
 
       procedure Unregister (
-         Event    : in Event_Name;
+         Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class) is
       begin
          Observers (Event).Delete (Index => Observers (Event).Find_Index (
@@ -99,4 +123,9 @@ package body Malef.Window is
 
    end Window;
 
+   Rows : Positive_Row_Count;
+   Cols : Positive_Col_Count;
+begin
+   Console_IO.Get_Dimensions (Rows, Cols);
+   Window.Resize (Rows, Cols);
 end Malef.Window;

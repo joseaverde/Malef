@@ -36,8 +36,10 @@ package body Malef.Groups.Tests is
    end Set_Up;
 
    use Test_Cases.Assertions;
-   use all type Surfaces.Surface;
-   use all type Atomic_Boolean;
+   use type Surfaces.Surface;
+   use type Counters.Atomic_Counter;
+   use type Counters.Atomic_Flag;
+   use type Counters.Counter_Access;
 
    -->> Group_Layer Tests <<--
 
@@ -123,30 +125,32 @@ package body Malef.Groups.Tests is
       Item_C : Group_Layer;
    begin
       Item_A := Group_Layer (Layer (T.Surface_A));
-      Assert (Item_A.Control /= null and then
-              Item_A.Control.Owned = 0,
+      Assert (Item_A.Counter /= null and then
+              Item_A.Counter.Locked = 0,
               "When created, it must not have an owner (Item_A)");
       Item_B := Group_Layer (Layer (T.Group_B));
-      Assert (Item_B.Control /= null and then
-              Item_B.Control.Owned = 0,
+      Assert (Item_B.Counter /= null and then
+              Item_B.Counter.Locked = 0,
               "When created, it must not have an owner (Item_B)");
       Item_C := Group_Layer (No_Layer);
-      Assert (Item_C.Control = null, "No_Layer has null control");
+      Assert (Item_C.Counter = null, "No_Layer has null Counter");
       T.Group_B.Add_Unnamed (Item_A);
-      Assert (Item_A.Control.Owned /= 0, "Item_A should be owned by the Group");
+      Assert (Item_A.Counter.Locked /= 0,
+              "Item_A should be owned by the Group");
       T.Group_B.Add_Unnamed (Item_B);
-      Assert (Item_B.Control.Owned /= 0, "Item_B should be owned by the Group");
+      Assert (Item_B.Counter.Locked /= 0,
+              "Item_B should be owned by the Group");
       T.Group_B.Add_Unnamed (Item_C);
-      Assert (Item_C.Control = null, "Item_C should be still be null");
+      Assert (Item_C.Counter = null, "Item_C should be still be null");
    end Test_Group_Layer_Ownership;
 
    procedure Test_Group_Layer_Not_Multiple_Owners (T : in out Test) is
       Item : Group_Layer;
    begin
       Item := Group_Layer (Layer (T.Surface_A));
-      Assert (Item.Control.Owned = 0, "On creation it, no owner");
+      Assert (Item.Counter.Locked = 0, "On creation it, no owner");
       T.Group_A.Add_Unnamed (Item);
-      Assert (Item.Control.Owned /= 0, "Now the layer should have an owner");
+      Assert (Item.Counter.Locked /= 0, "Now the layer should have an owner");
       T.Group_B.Add_Unnamed (Item);
       Assert (False, "It has two owners!!!");
    exception
@@ -158,25 +162,25 @@ package body Malef.Groups.Tests is
       declare
          Item  : Group_Layer;
       begin
-         Assert (Item.Control = null, "Not yet assigned!");
+         Assert (Item.Counter = null, "Not yet assigned!");
          Item := Group_Layer (Layer (T.Surface_A));
-         Assert (Item.Control /= null, "Assigned");
-         Assert (Item.Control.Counter = 1, "Only one object referencing it");
+         Assert (Item.Counter /= null, "Assigned");
+         Assert (Item.Counter.Counter = 1, "Only one object referencing it");
          declare
             Other   : Group_Layer;
             Other_2 : Group_Layer;
             Nope    : Group_Layer;
          begin
             Other := Item;
-            Assert (Item.Control.Counter = 2, "There should be 2 references");
+            Assert (Item.Counter.Counter = 2, "There should be 2 references");
             Other_2 := Other;
-            Assert (Item.Control.Counter = 3, "There should be 3 references");
+            Assert (Item.Counter.Counter = 3, "There should be 3 references");
             Other := Nope;
-            Assert (Item.Control.Counter = 2, "There should be 2 references");
+            Assert (Item.Counter.Counter = 2, "There should be 2 references");
             Other := Other_2;
-            Assert (Item.Control.Counter = 3, "There should be 3 references");
+            Assert (Item.Counter.Counter = 3, "There should be 3 references");
          end;
-         Assert (Item.Control.Counter = 1, "Two references less => 1 ref!");
+         Assert (Item.Counter.Counter = 1, "Two references less => 1 ref!");
       end;
    end Test_Group_Layer_Reference_Counted;
 
@@ -190,8 +194,6 @@ package body Malef.Groups.Tests is
    procedure Test_Groups_No_Tampering (T : in out Test)
       renames Not_Implemented;
    procedure Test_Groups_References_Keep_References (T : in out Test)
-      renames Not_Implemented;
-   procedure Test_Groups_Are_Freed (T : in out Test)
       renames Not_Implemented;
    procedure Test_Groups_Reference_Counted (T : in out Test)
       renames Not_Implemented;

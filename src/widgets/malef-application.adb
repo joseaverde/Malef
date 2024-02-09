@@ -54,7 +54,7 @@ package body Malef.Application is
             return;
          end if;
          Window.Window.Register (
-            Event    => Window.Resize_Event,
+            Event    => Events.Resize_Event,
             Observer => Observer'Access,
             Callback => When_Resized'Access);
          Available := (others => False);
@@ -95,7 +95,7 @@ package body Malef.Application is
 
       procedure When_Resized (
          Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Window.Event_Type)
+         Event    :         in     Events.Event_Type)
       is
          pragma Unreferenced (Observer);
       begin

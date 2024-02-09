@@ -29,7 +29,7 @@
 with Malef.Surfaces;
 
 private with Ada.Finalization;
-private with System.Atomic_Operations.Test_And_Set;
+private with Malef.Counters;
 
 package Malef.Groups with Preelaborate is
 
@@ -147,6 +147,16 @@ package Malef.Groups with Preelaborate is
    pragma Unevaluated_Use_Of_Old (Allow);
 
    type Layer_Mode is (None, Normal, Lighten, Screen, Dodge);
+   -- The Layer mode identifyies a function used to combine different layers
+   -- together. Some functions are more expensive than others.
+   --
+   -- @enum None
+   -- The simplest and fastest function, if the layer above is not fully
+   -- transparent it takes it. Otherwise it takes the layer below.
+   --
+   -- @enum Normal
+   -- With this function, it the top colour is not fully opaque it adds it
+   -- proportionally to the colour in the layer below.
 
    type Layer_Opacity is new Float range 0.0 .. 1.0;
 
@@ -316,12 +326,12 @@ package Malef.Groups with Preelaborate is
       return Surface_Constant_Reference_Type with
       Global => null;
 
-   function Rows (
+   function Row (
       Object : in Group)
       return Row_Count with
       Global => null;
 
-   function Cols (
+   function Col (
       Object : in Group)
       return Col_Count with
       Global => null;
@@ -400,13 +410,15 @@ package Malef.Groups with Preelaborate is
    procedure Add_Unnamed (
       Object   : in out Group;
       New_Item : in     Group_Layer'Class) with
-      Pre      => Last_Index (Object) < Object.Capacity
+      Pre      => Add_Unnamed_Index (Object) < Object.Capacity
          or else (raise Constraint_Error),
-      Post     => Last_Index (Object) = Last_Index (Object)'Old + 1
-         and then Contains (Object, Last_Index (Object)) = Contains (New_Item)
+      Post     => Add_Unnamed_Index (Object)
+                  = Add_Unnamed_Index (Object)'Old + 1
+         and then Contains (Object, Add_Unnamed_Index (Object))
+                  = Contains (New_Item)
          and then (if Contains (New_Item)
                      then        Size (Object) = Size (Object)'Old + 1
-                        and then Kind (Object, Last_Index (Object))
+                        and then Kind (Object, Add_Unnamed_Index (Object))
                                  = Kind (New_Item)
                      else Size (Object) = Size (Object)'Old),
       Global   => null;
@@ -553,8 +565,8 @@ package Malef.Groups with Preelaborate is
       Group : in Groups.Group)
       return Boolean is (
       Valid (Group)    and then
-      Rows (Group) = 0 and then
-      Cols (Group) = 0 and then
+      Row (Group) = 0  and then
+      Col (Group) = 0  and then
       Is_Empty (Group) and then
       (for all I in 1 .. Group.Capacity =>
          (not Contains (Group, I))));
@@ -592,28 +604,15 @@ private
    -->> Group Elements <<--
    --<<---------------->>--
 
-   package Test_And_Set renames System.Atomic_Operations.Test_And_Set;
-
-   subtype Atomic_Boolean is Test_And_Set.Test_And_Set_Flag;
-   type Atomic_Counter is new Integer with Atomic;
-
-   type Control_Type is
-      record
-         Counter : aliased Atomic_Counter;
-         Owned   : aliased Atomic_Boolean;
-      end record;
-
-   type Control_Access is access Control_Type;
-
-   function New_Control
-      return Control_Access is (
-      new Control_Type'(Counter => 1, Owned => 0));
+   function New_Counter
+      return Counters.Counter_Access is (
+      new Counters.Counter_Type'(Counter => 1, Locked => 0));
 
    type Group_Layer is
       new Ada.Finalization.Controlled with
       record
-         Layer   : Layer_Access := null;
-         Control : Control_Access := null;
+         Layer   : Layer_Access            := null;
+         Counter : Counters.Counter_Access := null;
       end record;
 
    overriding
@@ -649,7 +648,16 @@ private
                  := new Surfaces.Surface (Default_Rows, Default_Cols);
          Layers  : Layer_Array (1 .. Capacity) := (others => null);
          Region  : Cursor_Type := (0, 0);
+         Counter : Counters.Counter_Access := New_Counter;
       end record;
+
+   overriding
+   procedure Adjust (
+      Object : in out Group);
+
+   overriding
+   procedure Finalize (
+      Object : in out Group);
 
    function Internal_Surface (
       Object : in Group;
@@ -686,12 +694,12 @@ private
       return Surface_Constant_Reference_Type is (
       Element => Object.Surface);
 
-   function Rows (
+   function Row (
       Object : in Group)
       return Row_Count is (
       Object.Region.Row);
 
-   function Cols (
+   function Col (
       Object : in Group)
       return Col_Count is (
       Object.Region.Col);
@@ -730,7 +738,7 @@ private
          Mode     => Mode,
          Hidden   => Hidden,
          Surface  => new Surfaces.Surface'(Surface)),
-      Control => New_Control));
+      Counter => New_Counter));
 
    function Layer (
       Rows     : in Positive_Row_Count;
@@ -748,7 +756,7 @@ private
          Mode     => Mode,
          Hidden   => Hidden,
          Surface  => new Surfaces.Surface (Rows, Cols)),
-      Control => New_Control));
+      Counter => New_Counter));
 
    function Layer (
       Group    : in Groups.Group;
@@ -765,7 +773,7 @@ private
          Mode     => Mode,
          Hidden   => Hidden,
          Group    => Deep_Copy (Group)),
-      Control => New_Control));
+      Counter => New_Counter));
 
    function Move (
       Group    : in out Groups.Group;
@@ -781,7 +789,7 @@ private
       return Group_Layer'Class is (
       Group_Layer'(Ada.Finalization.Controlled with
       Layer   => null,
-      Control => null));
+      Counter => null));
 
    function Empty (
       Capacity : in Layer_Index := 10)

@@ -11,6 +11,9 @@ low-level stuff.
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: FDL 1.3](https://img.shields.io/badge/License-FDL%20v1.3-blue.svg)](http://www.gnu.org/licenses/fdl-1.3)
 
+**The library is in active development. The API is not definitive yet but it is
+usable**
+
 ## Description
 **Malef** is an open source and free library written in Ada to create Terminal
 User Interfaces. It divided in two parts: the _Drawing Toolkit_ and the
@@ -107,7 +110,7 @@ You can see examples in the [examples directory](examples/).
 | System  | Status |
 |:-------:|:------:|
 | Linux   | ![Linux](https://img.shields.io/badge/build-passing-success)     |
-| Windows | ![Windows](https://img.shields.io/badge/build-passing-success)   |
+| Windows | ![Windows](https://img.shields.io/badge/build-failing-red)   |
 
 | Subsystem | Status |
 |:---------:|:------:|
@@ -127,6 +130,9 @@ works though. But the ANSI subsystem is still more robust._
 | Windows | ![Windows](https://img.shields.io/badge/tests-not_implemented-important) |
 
 ## How to build it?
+
+**IMPORTANT**: It only compiles with GCC >=13.2.0
+
 Malef uses [Alire](https://alire.ada.dev/), you only have to do
 
 > alr with malef

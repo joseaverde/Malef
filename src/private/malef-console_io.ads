@@ -26,6 +26,11 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Events;
+with Ada.Containers.Synchronized_Queue_Interfaces;
+with Ada.Containers.Bounded_Synchronized_Queues;
+with Ada.Containers.Indefinite_Holders;
+
 private package Malef.Console_IO is
 
    -- WARNING: This package is used for internal purposes only. Don't use it
@@ -132,5 +137,28 @@ private package Malef.Console_IO is
    --<<------->>--
    -->> Input <<--
    --<<------->>--
+
+   procedure Get_Dimensions (
+      Rows : out Positive_Row_Count;
+      Cols : out Positive_Col_Count);
+
+   Max_Events : constant := 1024;
+
+   package Event_Holders is
+      new Ada.Containers.Indefinite_Holders (
+      Element_Type                         => Events.Event_Type,
+      "="                                  => Events."=");
+      -- Max_Element_Size_in_Storage_Elements => Max_Event_Holders_Size);
+
+   package Event_Queue_Interfaces is
+      new Ada.Containers.Synchronized_Queue_Interfaces (
+      Element_Type => Event_Holders.Holder);
+
+   package Event_Queues is
+      new Ada.Containers.Bounded_Synchronized_Queues (
+      Queue_Interfaces => Event_Queue_Interfaces,
+      Default_Capacity => Max_Events);
+
+   Queue : aliased Event_Queues.Queue;
 
 end Malef.Console_IO;

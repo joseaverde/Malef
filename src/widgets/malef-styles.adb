@@ -1,10 +1,10 @@
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 --                                                                           --
---                 M A L E F - A P P L I C A T I O N . A D S                 --
+--                      M A L E F - S T Y L E S . A D B                      --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,48 +26,50 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Window;
-with Malef.Dialogs;
-with Malef.Events;
+package body Malef.Styles is
 
-package Malef.Application is
+   procedure Put_Image (
+      Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
+      Arg    : in     Class_Type) is
+   begin
+      Buffer.Put ("""");
+      if not Arg.Classes.Is_Empty then
+         Buffer.Wide_Wide_Put (Arg.Classes.First_Element);
+         for I in Arg.Classes.First_Index + 1 .. Arg.Classes.Last_Index loop
+            Buffer.Put (" ");
+            Buffer.Wide_Wide_Put (Arg.Classes (I));
+         end loop;
+      end if;
+      Buffer.Put ("""");
+   end Put_Image;
 
-   pragma Elaborate_Body;
+   function Value (
+      Item : in Wide_Wide_String)
+      return Class_Type
+   is
+      First : Positive := Item'Last;
+      Last  : Positive := Item'Last;
+   begin
+      return Class : Class_Type do
+         while First in Item'Range loop
+            while First in Item'Range and then Item (First) = ' ' loop
+               First := First + 1;
+            end loop;
+            Last := First;
+            while Last in Item'Range and then Item (Last) /= ' ' loop
+               Last := Last + 1;
+            end loop;
 
-   Max_Dialogs : constant := 16;
+            if First in Item'Range then
+               if Last in Item'Range then
+                  Class.Classes.Append (Item (First .. Last - 1));
+               else
+                  Class.Classes.Append (Item (First .. Last));
+               end if;
+            end if;
+            First := Last + 1;
+         end loop;
+      end return;
+   end Value;
 
-   package Implementation is
-
-      type Window_Observer is
-         new Window.Event_Observer with
-         null record;
-
-      type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
-      type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
-
-   end Implementation;
-
-   protected Application is
-
-      procedure Initialize;
-
-      procedure Add (
-         Object : in Dialogs.Dialog;
-         Modal  : in Boolean := False);
-
-   private
-
-      procedure When_Resized (
-         Observer : aliased in out Window.Event_Observer'Class;
-         Event    :         in     Events.Event_Type);
-
-      Available    : Implementation.Boolean_Array;
-      Dialogs      : Implementation.Dialog_Array;
-      Initialized  : Boolean := False;
-      Observer     : aliased Implementation.Window_Observer;
-      Height       : Positive_Row_Count := 24;
-      Width        : Positive_Col_Count := 80;
-
-   end Application;
-
-end Malef.Application;
+end Malef.Styles;
