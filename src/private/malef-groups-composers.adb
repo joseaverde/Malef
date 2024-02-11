@@ -146,12 +146,12 @@ package body Malef.Groups.Composers with Preelaborate is
 
    -->> Getter <<--
 
-   Lookup_Composer : constant array (Layer_Mode) of Composer_Type := (
+   Lookup_Composer : constant array (Layer_Mode) of Composer_Type := [
       None    => Composers.None_Composer'Access,
       Normal  => Composers.Normal_Composer'Access,
       Lighten => Composers.Lighten_Composer'Access,
       Screen  => Composers.Screen_Composer'Access,
-      Dodge   => Composers.Dodge_Composer'Access);
+      Dodge   => Composers.Dodge_Composer'Access];
 
    function Get_Composer (
       Mode : in Layer_Mode)

@@ -34,6 +34,6 @@ private package Malef.Debug is
    Name     => ".malef.log",
    Widget   => False,
    Severity => Malef.Debug_IO.Warning,
-   Visible  => (others => True));
+   Visible  => [others => True]);
 
 pragma Preelaborate (Malef.Debug);

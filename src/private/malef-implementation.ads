@@ -76,13 +76,13 @@ is
                      (Left (Row, Col) = Right (Row, Col)))));
 
    Default_Cell : constant Cell_Type
-                := Cell_Type'(Foreground => (0, 0, 0, 0),
-                              Background => (0, 0, 0, 0),
+                := Cell_Type'(Foreground => [0, 0, 0, 0],
+                              Background => [0, 0, 0, 0],
                               Character  => Nul,
                               Fg_Name    => 0,
                               Bg_Name    => 0,
                               Has_Name   => False,
                               Updated    => False,
-                              Style      => (others => False));
+                              Style      => [others => False]);
 
 end Malef.Implementation;

@@ -1,18 +1,20 @@
 with "config/malef_config.gpr";
 project Malef is
 
-   Languages := ("Ada");
+   type Operating_System is ("linux", "windows", "unix");
+   System : Operating_System := External ("MALEF_SYSTEM", "linux");
 
-   type Operating_System is ("linux", "win32", "win64");
-   OS : Operating_System := External ("OS", External ("MALEF_SYSTEM", "linux"));
-
-   Subsystem := "";
-   case OS is
-      when "linux"           => Subsystem := "ansi";
-      when "win32" | "win64" => Subsystem := "cmd";
+   Default_Subsystem := "";
+   case System is
+      when "linux"   => Default_Subsystem := "ansi";
+      when "windows" => Default_Subsystem := "cmd";
+      when "unix"    => Default_Subsystem := "unix";
    end case;
 
-   for Languages use Languages;
+   type Subsystem_Name is ("ansi", "cmd");
+   Subsystem : Subsystem_Name := External ("MALEF_SUBSYSTEM", Default_Subsystem);
+
+   for Languages use ("Ada");
 
    for Library_Name use "Malef";
    for Library_Version use Project'Library_Name & ".so." & Malef_Config.Crate_Version;
@@ -24,9 +26,9 @@ project Malef is
       "src/drawing",
       "src/subsystems/" & Subsystem,
       "src/widgets");
-   for Object_Dir use "obj/" & OS & "-" & Malef_Config.Build_Profile;
+   for Object_Dir use "obj/" & System & "-" & Malef_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
-   for Library_Dir use "lib/" & OS & "-" & Malef_Config.Build_Profile;
+   for Library_Dir use "lib/" & System & "-" & Malef_Config.Build_Profile;
 
    type Library_Type_Type is ("relocatable", "static", "static-pic");
    Library_Type : Library_Type_Type :=
@@ -35,15 +37,7 @@ project Malef is
 
    package Compiler is
       for Default_Switches ("Ada") use Malef_Config.Ada_Compiler_Switches &
-         ( "-gnaty-I"
-         , "-gnatyC"
-         , "-gnatyM81"
-         , "-g"
-         , "-gnat2022"
-         , "-gnatwJ"
-         , "-gnatW8"
-         -- , "-gnatl"
-         );
+         ("-gnatW8");
    end Compiler;
 
    package Binder is

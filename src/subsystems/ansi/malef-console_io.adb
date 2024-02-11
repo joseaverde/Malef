@@ -26,11 +26,14 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Console_IO.Common;
 with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
-with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+with Malef.Debug;
 
 package body Malef.Console_IO is
+
+   use Common;
 
    -- We can't use Ada.Text_IO to print the buffer, because for whatever reason
    -- printing UTF-8 with Ada.Text_IO outputs garbage if we compile with the
@@ -44,7 +47,6 @@ package body Malef.Console_IO is
    -- operating sytem. Instead we use Streams, which yield a similar performace
    -- to the `write' sustem call, and they are in the standard library.
 
-   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
    package T_IO renames Ada.Text_IO;
    package T_IO_Streams renames T_IO.Text_Streams;
 
@@ -146,11 +148,11 @@ package body Malef.Console_IO is
 
    procedure Emit (Background, Foreground : in Palette_Index) is
       Bgs : constant array (Palette_Index) of String (1 .. 2) :=
-         ("40", "41", "42", "43", "44", "44", "46", "47",
-          "00", "01", "02", "03", "04", "04", "06", "07");
+         ["40", "41", "42", "43", "44", "44", "46", "47",
+          "00", "01", "02", "03", "04", "04", "06", "07"];
       Fgs : constant array (Palette_Index) of String (1 .. 2) :=
-         ("30", "31", "32", "33", "34", "34", "36", "37",
-          "90", "91", "92", "93", "94", "94", "96", "97");
+         ["30", "31", "32", "33", "34", "34", "36", "37",
+          "90", "91", "92", "93", "94", "94", "96", "97"];
    begin
       Current_Is_Indexed := True;
       Current_Background_Id := Background;
@@ -249,26 +251,44 @@ package body Malef.Console_IO is
    -->> Initialization <<--
    --<<---------------->>--
 
+   procedure Initialize_Input;
+   procedure Finalize_Input;
+
+   procedure Initialize_Output;
+   procedure Finalize_Output;
+
    procedure Initialize is
    begin
-      Format (7, 0, (others => False));
-      Move_To (1, 1);
-      Opened_Frames := 0;
-      Put (ASCII.ESC & "[25l");
-      Flush;
+      Initialize_Output;
+      Initialize_Input;
    end Initialize;
 
    procedure Finalize is
    begin
-      Put (ASCII.ESC & "[0m"     -- Clear format
-         & ASCII.ESC & "[?12h"   -- Restore terminal
-         & ASCII.ESC & "[?25h");
-      Flush;
+      Finalize_Output;
+      Finalize_Input;
    end Finalize;
 
    --<<-------->>--
    -->> Output <<--
    --<<-------->>--
+
+   procedure Initialize_Output is
+   begin
+      Format (7, 0, [others => False]);
+      Move_To (1, 1);
+      Opened_Frames := 0;
+      Put (ASCII.ESC & "[25l");
+      Flush;
+   end Initialize_Output;
+
+   procedure Finalize_Output is
+   begin
+      Put (ASCII.ESC & "[0m"     -- Clear format
+         & ASCII.ESC & "[?12h"   -- Restore terminal
+         & ASCII.ESC & "[?25h");
+      Flush;
+   end Finalize_Output;
 
    procedure Begin_Frame is
    begin
@@ -367,9 +387,32 @@ package body Malef.Console_IO is
    -->> Input <<--
    --<<------->>--
 
+   -->> Terminal Dimensions <<--
+
    procedure Cursor_Position (
       Rows : out Positive_Row_Count;
       Cols : out Positive_Col_Count)
+   -- This function gets the cursor position, it is only used once (on
+   -- initialisation time). It needs to print to the screen and read
+   -- immediately from it to get the cursor Position.
+   --
+   -- The:
+   --    ESC & "[6n"
+   --
+   -- sends a request for a Device Status Report. The Device Status Report will
+   -- write to standard input the following message:
+   --
+   --    ESC & "[" & Rows'Image & ";" & Cols'Image & "R";
+   --
+   -- Where Rows'Image and Cols'Image are the string representations of the
+   -- Rows and Columns respectively (without the leading blank space Ada puts
+   -- to integer images).
+   --
+   -- @param Rows
+   -- The row the cursor is currently on will be written to this parameter.
+   --
+   -- @param Cols
+   -- The column the cursor is currently on will be written to this parameter.
    is
       Char      : Character;
       Row       : Row_Count := 0;
@@ -380,7 +423,7 @@ package body Malef.Console_IO is
       -- Discard previous input
 
       loop
-         Ada.Text_IO.Get_Immediate (Char, Available);
+         Common.Get_Immediate (Char, Available);
          exit when not Available;
       end loop;
 
@@ -388,26 +431,30 @@ package body Malef.Console_IO is
 
       Ada.Text_IO.Put (ASCII.ESC & "[6n");
       Ada.Text_IO.Flush;
-      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = ASCII.ESC);
-      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = '[');
+      Common.Get_Immediate (Char); pragma Assert (Char = ASCII.ESC);
+      Common.Get_Immediate (Char); pragma Assert (Char = '[');
 
       -- Read Rows
 
-      Ada.Text_IO.Get_Immediate (Char);
+      Common.Get_Immediate (Char);
+      pragma Assert (Char in '0' .. '9');
       loop
          Row := Row * 10 + Character'Pos (Char) - Character'Pos ('0');
-         Ada.Text_IO.Get_Immediate (Char);
+         Common.Get_Immediate (Char);
          exit when Char = ';';
+         pragma Assert (Char in '0' .. '9');
       end loop;
       Rows := Row;
 
       -- Read Cols
 
-      Ada.Text_IO.Get_Immediate (Char);
+      Common.Get_Immediate (Char);
+      pragma Assert (Char in '0' .. '9');
       loop
          Col := Col * 10 + Character'Pos (Char) - Character'Pos ('0');
-         Ada.Text_IO.Get_Immediate (Char);
+         Common.Get_Immediate (Char);
          exit when Char = 'R';
+         pragma Assert (Char in '0' .. '9');
       end loop;
       Cols := Col;
 
@@ -416,6 +463,17 @@ package body Malef.Console_IO is
    procedure Terminal_Dimensions (
       Rows : out Positive_Row_Count;
       Cols : out Positive_Col_Count)
+   -- This function gets the terminal dimensions (the number of rows and
+   -- columns it has).
+   --
+   -- The idea is moving the Cursor as much to the bottom-right as possible
+   -- (Row_Type'Last, Col_Type'Last) and getting the Cursor_Position. Terminals
+   -- usually keep the cursor within the ranges of the screen and will return
+   -- the dimensions of the terminal instead.
+   --
+   -- TODO: Use system call from: Malef.Systems.Get_Terminal_Size
+   --       in:     Malef/ada-malef/src-systems/linux/
+   --       commit: cbfdb88aeaa55fa1479519c9bbc7e5092c200947
    is
       R_Img : constant String := Row_Type'Last'Image;
       C_Img : constant String := Col_Type'Last'Image;
@@ -425,8 +483,8 @@ package body Malef.Console_IO is
       Ada.Text_IO.Put (';');
       Ada.Text_IO.Put (C_Img (C_Img'First + 1 .. C_Img'Last));
       Ada.Text_IO.Put ('H');
-      Current_Cursor := (Positive_Row_Count'Last, Positive_Col_Count'Last);
       Cursor_Position (Rows, Cols);
+      Current_Cursor := (Row_Type'Last, Col_Type'Last);
    end Terminal_Dimensions;
 
    protected Shared_Input is
@@ -447,6 +505,9 @@ package body Malef.Console_IO is
       Shared_Cols : Positive_Col_Count;
 
    end Shared_Input;
+   -- We encapsulate the terminal dimensions inside a protected object. We
+   -- don't need to recalculate the position with the slow and complex
+   -- Terminal_Dimensions function.
 
    protected body Shared_Input is
 
@@ -479,6 +540,115 @@ package body Malef.Console_IO is
    begin
       Shared_Input.Get_Dimensions (Rows, Cols);
    end Get_Dimensions;
+
+   -->> Input Events :: Keyboard <<--
+
+   -- We cannot read from standard input from the main thread, since we don't
+   -- want the developer to worry about creating a new task for one's
+   -- application. Instead we will have several tasks that will be running
+   -- concurrently to get the input.
+   --
+   -- We will be using the Get_Immediate (Item, Available) function since we
+   -- can see if there is an available value ready to be fetched.
+
+   task type Keyboard_Task is
+   end Keyboard_Task;
+   -- When the Keyboard is started it will start listening to standard input
+   -- for key presses. No other function should use the Get_Immediate
+   -- function as it will interfere with the Keyboard.
+   --
+   -- We don't want to busy loop because it will take a lot of CPU power and
+   -- the fans on the user computer will begin to run at full speed. Instead
+   -- we will start with a Min_Sleep and duplicate it until we surpass the
+   -- Max_Sleep value. Each time we delay double the time we delayed
+   -- previously. That way we can read fast when the user is typing, and don't
+   -- consume too much power when the user is not doing anything.
+
+   Max_Sleep : constant Duration := 0.020_000;  -- 10ms
+   Min_Sleep : constant Duration := 0.000_001;  -- 1μs
+
+   task body Keyboard_Task is
+      use Events;
+      Sleep     : Duration := Min_Sleep;
+      Key       : Key_Type;
+      Available : Boolean;
+   begin
+      -- TODO: Catch End_Error and Device_Error
+      Debug.Put ("Started keyboard");
+      loop
+         Common.Get_Immediate (Wide_Wide_Character (Key), Available);
+         if Available then
+            if Key = Key_Type'Val (0) then
+               Key := Key_Unknown;
+            elsif Key = Key_Type'Val (27) then
+               -- It is a sequence.
+               Key := Key_Unknown;
+            end if;
+            Sleep := Min_Sleep;
+            Debug.Put ("Pressed:" & Key_Type'Pos (Key)'Image);
+            Ada.Text_IO.Put_Line ("Pressed:" & Key_Type'Pos (Key)'Image);
+            -- TODO: Enqueue the event
+         else
+            delay Sleep;
+            Sleep := Duration'Min (Max_Sleep, Sleep * 2.0);
+         end if;
+      end loop;
+   end Keyboard_Task;
+
+   -->> Input Events :: Master Thread <<--
+
+   -- We need another thread: The Input_Task
+
+   task Input_Task is
+      entry Start;
+      entry Stop;
+   end Input_Task;
+   -- This task will be responsible of starting and terminating other input
+   -- tasks. So the program can finish and clean up even on unexpected
+   -- conditions.
+
+   task body Input_Task is
+   begin
+
+      loop
+
+         -- We wait to be started, or we terminate without doing anything.
+
+         select
+            accept Start;
+         or
+            terminate;
+         end select;
+
+         -- Start other tasks and wait to be stopped.
+
+         declare
+            Keyboard : Keyboard_Task;
+         begin
+            select
+               accept Stop;
+            or
+               terminate;
+            end select;
+            abort Keyboard;
+            Ada.Text_IO.Put_Line ("Terminated");
+         end;
+
+      end loop;
+
+   end Input_Task;
+
+   procedure Initialize_Input is
+   begin
+      Shared_Input.Update_Dimensions;
+      Input_Task.Start;
+   end Initialize_Input;
+
+   procedure Finalize_Input is
+   begin
+      null;
+      Input_Task.Stop;
+   end Finalize_Input;
 
 begin
    Shared_Input.Update_Dimensions;

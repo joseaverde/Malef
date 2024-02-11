@@ -23,23 +23,62 @@ tags = ["sdk", "ansi", "terminal", "console", "tui", "interfaces"]
 # Information about package's inside.
 project-files = ["malef.gpr"]
 
+[[depends-on]]
+gnat = ">=13.2"
 
 # We map the names of external variables in the .gpr project file.
 [gpr-externals]
-MALEF_SYSTEM         = ["linux", "win32", "win64"]
+MALEF_SYSTEM         = ["linux", "windows"]
 MALEF_SUBSYSTEM      = ["ansi", "cmd"]
 
 # How to built it depends on the operating system.
 [gpr-set-externals.'case(os)']
 'linux' = { MALEF_SYSTEM = "linux", MALEF_SUBSYTEM="ansi" }
-'windows' = { MALEF_SYSTEM = "win64", MALEF_SUBSYSTEM="cmd" }
-'...' = { MALEF_SYSTEM = "linux", MALEF_SUBSYSTEM="ansi" }
+'windows' = { MALEF_SYSTEM = "windows", MALEF_SUBSYSTEM="cmd" }
+'...' = { MALEF_SYSTEM = "unix", MALEF_SUBSYSTEM="ansi" }
 
 [configuration]
 generate_c = false
 
 [build-switches]
-release.optimization   = "Performance"
+
+# "*".style_checks = ["-gnaty3aAbCdefhkL3M79nOprtux", "-gnaty-I"]
+"*".style_checks = [ "-gnaty3"          # Indentation to 3
+                   , "-gnatya"          # Check attribute casing
+                   , "-gnatyA"          # Check array attribute indexes
+                   , "-gnatyb"          # No blanks at end of lines
+                   , "-gnatyC"          # Comment format: 1 space (-- comment)
+                   , "-gnatyd"          # No DOS line terminators
+                   , "-gnatye"          # end/exit labels present
+                   , "-gnatyf"          # No form feeds or vertical tabs
+                   , "-gnatyh"          # No horizontal tabs
+                   , "-gnaty-I"         # `in' is required in parameters
+                   , "-gnatyk"          # Check casing rules for keywords
+                   # , "-gnatyL6"         # Maximum nesting level
+                   , "-gnatyM79"        # Maximum 79 characters.
+                   , "-gnatyn"          # Check casing of package Standard identifiers
+                   , "-gnatyO"          # Check overriding indicators
+                   , "-gnatyp"          # Check pragma casing
+                   , "-gnatyr"          # Check casing for identifier references
+                   , "-gnatyt"          # Check token separation rules
+                   , "-gnatyu"          # Check no unnecessary blank lines
+                   , "-gnatyx"          # Check extra parenthesis around conditionals
+                   ]
+
+release.optimization = [ "-Ofast"               # Gotta go fast
+                       , "-gnatn"               # Enable inlining
+                       , "-ffunction-sections"  # Separate ELF section for each function
+                       , "-fdata-sections"      # Separate ELF section for each variable
+                       , "-march=native"        # It is going to run on my computer
+                       , "-ffast-math"          # Don't care about floating point precission
+                       , "-fno-math-errno"      # No errors
+                       ]
+
+validation.optimization = [ "-O2"              # Optimise code
+                          , "-g"               # With debug symbols
+                          ]
+
+# release.optimization   = "Performance"
 release.debug_info     = "No"
 release.runtime_checks = "None"
 release.compile_checks = "None"
@@ -52,15 +91,15 @@ development.debug_info     = "Yes"
 development.runtime_checks = "Everything"
 development.compile_checks = "Warnings"
 development.contracts      = "Yes"
-development.style_checks   = "Yes"
+# development.style_checks   = "Yes"
 development.ada_version    = "Ada2022"
 
-validation.optimization   = "Performance"
+# validation.optimization   = "Performance"
 validation.debug_info     = "Yes"
 validation.runtime_checks = "Everything"
 validation.compile_checks = "Errors"
 validation.contracts      = "Yes"
-validation.style_checks   = "Yes"
+# validation.style_checks   = "Yes"
 validation.ada_version    = "Ada2022"
 
 [configuration.variables]

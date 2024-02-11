@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---    M A L E F - L A B E L S - P L A I N _ T E X T _ P A R S E R . A D B    --
+--           M A L E F - C O N S O L E _ I O - C O M M O N . A D S           --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   B O D Y                              --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,31 +26,25 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Wide_Wide_Characters.Handling;
-with Malef.Labels.Visual_Width;
+with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+with Ada.Text_IO;
 
-function Malef.Labels.Plain_Text_Parser (
-   Item : in Unbounded_Wide_Wide_String)
-   return Markup_Text
-is
-   use Ada.Wide_Wide_Characters.Handling;
-   Copy : constant Rich_Glyph := (
-      Value      => Nul,
-      Kind       => Normal,
-      Width      => 1,
-      Style      => [others => False],
-      Background => [0, 0, 0, 0],
-      Foreground => [0, 0, 0, 0]);
-   Char : Glyph;
-begin
-   return Result : Markup_Text do
-      for I in 1 .. Length (Item) loop
-         Char := Element (Item, I);
-         Result.Text.Append ((Copy with delta
-                              Value => Char,
-                              Kind  => (if Is_Line_Terminator (Char)
-                                          then Paragraph_Break else Normal),
-                              Width => Visual_Width (Char)));
-      end loop;
-   end return;
-end Malef.Labels.Plain_Text_Parser;
+private package Malef.Console_IO.Common is
+
+   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+
+   procedure Get_Immediate (
+      Item : out Character)
+      renames Ada.Text_IO.Get_Immediate;
+
+   procedure Get_Immediate (
+      Item      : out Character;
+      Available : out Boolean)
+      renames Ada.Text_IO.Get_Immediate;
+
+   procedure Get_Immediate (
+      Item      : out Wide_Wide_Character;
+      Available : out Boolean);
+      -- renames Ada.Wide_Wide_Text_IO.Get_Immediate;
+
+end Malef.Console_IO.Common;

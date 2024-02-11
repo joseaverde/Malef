@@ -53,11 +53,11 @@ package body Malef is
    subtype Nibble is Component_Type range 0 .. 15;
 
    Hex_Values : constant array (Character'Range) of Nibble
-              := ('0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4,
+              := ['0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4,
                   '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9,
                   'a' | 'A' => 10, 'b' | 'B' => 11, 'c' | 'C' => 12,
                   'd' | 'D' => 13, 'e' | 'E' => 14, 'f' | 'F' => 15,
-                  others => 0);
+                  others => 0];
 
    function Twice (Value : in Nibble)
       return Component_Type is (

@@ -27,6 +27,7 @@
 -------------------------------------------------------------------------------
 
 with Ada.Containers.Indefinite_Vectors;
+with Ada.Finalization;
 with Ada.Streams;
 with Ada.Streams.Stream_IO;
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
@@ -156,6 +157,19 @@ package body Malef.Debug_IO is
       begin
          return Widget : Debug_Widget;
       end New_Debug;
+
+      -->> Allow finalization <<--
+
+      type Handler is new Ada.Finalization.Limited_Controlled with null record;
+
+      overriding procedure Finalize (Object : in out Handler) is
+      begin
+         if not Widget and then Stream /= null then
+            Stream_IO.Close (Output);
+         end if;
+      end Finalize;
+
+      H : Handler with Unreferenced;
 
    end Debug_IO;
 

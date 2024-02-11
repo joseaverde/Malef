@@ -227,7 +227,7 @@ is
 
    type Style_Type is array (Style_Name) of Boolean with Pack;
 
-   No_Style : constant Style_Type := (others => False);
+   No_Style : constant Style_Type := [others => False];
 
    --<<--------->>--
    -->> Cursors <<--

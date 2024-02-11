@@ -1,4 +1,3 @@
-with Ada.Text_IO;
 with Util.Processes;
 with Util.Streams.Buffered;
 with Util.Streams.Pipes;

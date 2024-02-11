@@ -646,7 +646,7 @@ private
          Updated : Boolean := False;
          Surface : Surface_Access
                  := new Surfaces.Surface (Default_Rows, Default_Cols);
-         Layers  : Layer_Array (1 .. Capacity) := (others => null);
+         Layers  : Layer_Array (1 .. Capacity) := [others => null];
          Region  : Cursor_Type := (0, 0);
          Counter : Counters.Counter_Access := New_Counter;
       end record;

@@ -1,6 +1,7 @@
 with Malef.Surfaces;
 with Malef.Groups;
 with Malef.Window;
+with Malef.System;
 
 procedure CMYK is
 
@@ -24,11 +25,11 @@ procedure CMYK is
    -- afterwards, then we have to specify the size of the surfaces.
 
    CMYK_Group : Malef.Groups.Group (5) := [
-      Layer (19, 41, (35, 35)),
-      Layer (16, 32, (32, 32)),
-      Layer (16, 32, (32, 48)),
-      Layer (16, 32, (40, 40)),
-      Layer (1,  16, (32, 32))
+      Layer (19, 41, (35 - 20, 35 - 20)),
+      Layer (16, 32, (32 - 20, 32 - 20)),
+      Layer (16, 32, (32 - 20, 48 - 20)),
+      Layer (16, 32, (40 - 20, 40 - 20)),
+      Layer (1,  16, (32 - 20, 32 - 20))
    ];
 
    -- We can use Ada 2022's new `renames' keyword to reference the different
@@ -41,6 +42,9 @@ procedure CMYK is
    Text    renames CMYK_Group.Set_Surface (5).Element;
 
 begin
+
+   Malef.System.Initialize;
+   Malef.System.Set_Title ("Malef :: CMYK layers");
 
    -- Fill the backgrounds with the basic colours.
 
@@ -68,5 +72,9 @@ begin
 
    Malef.Window.Window.Set_Group (CMYK_Group);
    Malef.Window.Window.Display;
+
+   delay 6.0;
+
+   Malef.System.Finalize;
 
 end CMYK;

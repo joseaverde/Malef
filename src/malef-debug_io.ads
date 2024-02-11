@@ -87,7 +87,7 @@ package Malef.Debug_IO with Preelaborate is
       Name     : in String           := "";
       Widget   : in Boolean          := False;
       Severity : in Message_Severity := Debug;
-      Visible  : in Visible_Messages := (others => True) with Unreferenced;
+      Visible  : in Visible_Messages := [others => True] with Unreferenced;
    package Debug_IO is
 
       -- @param Mode
@@ -112,6 +112,8 @@ package Malef.Debug_IO with Preelaborate is
       -- The default visibility rules of messages.
 
       pragma Assert (Widget xor Name /= "");
+
+      package Types renames Malef.Debug_IO;
 
       procedure Put (
          Kind : in Message_Severity;

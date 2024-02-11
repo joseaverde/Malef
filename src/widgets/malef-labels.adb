@@ -32,9 +32,9 @@ with Malef.Labels.Markdown_Parser;
 package body Malef.Labels is
 
    Parsers : constant array (Markup_Language) of Parser_Type
-      := (Plain_Text => Plain_Text_Parser'Access
+      := [Plain_Text => Plain_Text_Parser'Access
         , Markdown   => Markdown_Parser'Access
-        );
+        ];
 
    -- type Natural_Array is array (Positive range <>) of Natural;
 
@@ -136,14 +136,14 @@ package body Malef.Labels is
    --    Area    : in     Widgets.Draw_Area)
    -- is
 
-   --    -- The first problem is that in English we right from left to right,from
-   --    -- top to bottom. But in Arabic it is written from right to left, bottom
-   --    -- to top. Or Japanese is sometimes written from top to bottom, right to
-   --    -- left.
-   --    --
-   --    -- As most terminals have left to write by default we will make it our
-   --    -- default too. We first have to check which sides are flipped. For
-   --    -- instance, in Japanese it is flipped only the horizontal axis (cols).
+       -- The first problem is that in English we right from left to right,from
+       -- top to bottom. But in Arabic it is written from right to left, bottom
+       -- to top. Or Japanese is sometimes written from top to bottom, right to
+       -- left.
+       --
+       -- As most terminals have left to write by default we will make it our
+       -- default too. We first have to check which sides are flipped. For
+       -- instance, in Japanese it is flipped only the horizontal axis (cols).
 
    --    Cols_Flipped : constant Boolean :=
    --       Widget.Direction in Right_Left_Bottom_Top | Top_Bottom_Right_Left;
@@ -206,8 +206,8 @@ package body Malef.Labels is
 
    -- begin
 
-   --    -- We split it into two operations so we can avoid branching as much as
-   --    -- possible.
+      -- We split it into two operations so we can avoid branching as much as
+      -- possible.
 
    --    if Horizontal then
 

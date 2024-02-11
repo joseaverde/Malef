@@ -196,7 +196,7 @@ package body Malef.Groups is
    procedure Clear_Internal_Surface (
       Object : in out Group) is
    begin
-      Object.Surface.Fill ((0, 0, 0, 0), (0, 0, 0, 0), Nul, No_Style);
+      Object.Surface.Fill ([0, 0, 0, 0], [0, 0, 0, 0], Nul, No_Style);
    end Clear_Internal_Surface;
 
    function Mark_Updated (

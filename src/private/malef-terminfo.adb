@@ -267,7 +267,8 @@ package body Malef.Terminfo is
                                          Count_Type (Header.Offset_Count))
                   else Read_Integers_32 (Stream, Term,
                                          Count_Type (Header.Offset_Count)));
-            Table : Char_Array (0 .. Count_Type (Header.String_Table_Size) - 1);
+            Table : Char_Array (0 ..
+                                Count_Type (Header.String_Table_Size) - 1);
          begin
             Char_Array'Read (Stream, Table);
             Ada.Text_IO.Put_Line (Booleans'Image);

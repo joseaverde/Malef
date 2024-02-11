@@ -92,8 +92,8 @@ package Malef.Surfaces with Pure is
                (not Is_Indexed (Surface, Row, Col))                  and then
                (Get (Surface, Row, Col) = Nul)                       and then
                (Get (Surface, Row, Col) = No_Style)                  and then
-               (Get_Background (Surface, Row, Col) = (0, 0, 0, 0))   and then
-               (Get_Foreground (Surface, Row, Col) = (0, 0, 0, 0))));
+               (Get_Background (Surface, Row, Col) = [0, 0, 0, 0])   and then
+               (Get_Foreground (Surface, Row, Col) = [0, 0, 0, 0])));
    -- A Surface is a 2-dimensional array of Glyphs with Attributes (colours...)
    -- which is associated to a Palette. Surface are indexed from (1, 1) to
    -- (Rows, Cols), any value outside that range raises an exception.
@@ -909,7 +909,7 @@ private
          To       : Cursor_Type      := (Rows, Cols);
          Palette  : aliased Palettes.Palette_Type := Palettes.Default_Palette;
          Matrix   : Matrix_Type (1 .. Rows, 1 .. Cols)
-                  := (others => (others => Default_Cell));
+                  := [others => [others => Default_Cell]];
       end record;
 
    overriding
