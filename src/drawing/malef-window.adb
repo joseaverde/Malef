@@ -125,8 +125,14 @@ package body Malef.Window is
                if Observers (Event.Name).Is_Empty then
                   Ada.Text_IO.Put_Line ("Program terminated");
                end if;
+               -- It is intended to be blocking, this only happens when the
+               -- program needs to be terminated.
+               pragma Warnings (Off,
+                  "potentially blocking operation in protected operation");
                Ada.Task_Identification.Abort_Task (
                   Ada.Task_Identification.Environment_Task);
+               pragma Warnings (On,
+                  "potentially blocking operation in protected operation");
             when others => null;
          end case;
 

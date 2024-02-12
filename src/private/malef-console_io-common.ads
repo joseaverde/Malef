@@ -60,12 +60,12 @@ private
 
    type Interrupt_Name is (Resize_Id, Kill_Id, Cancel_Id);
 
-   No_Id : constant Ada.Interrupts.Interrupt_Id
-         := Ada.Interrupts.Interrupt_Id'Last;
+   No_Id : constant Ada.Interrupts.Interrupt_ID
+         := Ada.Interrupts.Interrupt_ID'Last;
 
    type Interrupt_Array is
       array (Interrupt_Name)
-      of Ada.Interrupts.Interrupt_Id;
+      of Ada.Interrupts.Interrupt_ID;
 
    function Get_Interrupts
       return Interrupt_Array;

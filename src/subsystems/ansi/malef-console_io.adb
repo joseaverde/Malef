@@ -26,11 +26,9 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Calendar;
 with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
 with Malef.Console_IO.Common;
-with Malef.Debug;
 
 package body Malef.Console_IO is
 

@@ -27,7 +27,6 @@
 -------------------------------------------------------------------------------
 
 with Ada.Calendar;
-with Ada.Text_IO;
 with Ada.Task_Termination;
 with Ada.Exceptions;
 with Interfaces;
@@ -89,6 +88,8 @@ package body Malef.Console_IO.Common is
          T     : in Ada.Task_Identification.Task_Id;
          X     : in Ada.Exceptions.Exception_Occurrence)
       is
+         -- TODO: Use parameters Cause, T and X.
+         pragma Unreferenced (Cause, T, X);
          procedure Driver with
             Import        => True,
             Convention    => C,
@@ -265,11 +266,10 @@ package body Malef.Console_IO.Common is
                     ];
 
    procedure Setup_Interrupts is
-      use type Ada.Interrupts.Interrupt_Id;
+      use type Ada.Interrupts.Interrupt_ID;
       Ids : constant Interrupt_Array := Get_Interrupts;
    begin
       for Kind in Interrupt_Name when Ids (Kind) /= No_Id loop
-         Ada.Text_IO.Put_Line (Kind'Image);
          Ada.Interrupts.Exchange_Handler (
             Old_Handler => Old_Handlers (Kind),
             New_Handler => New_Handlers (Kind),
@@ -278,7 +278,7 @@ package body Malef.Console_IO.Common is
    end Setup_Interrupts;
 
    procedure Clear_Interrupts is
-      use type Ada.Interrupts.Interrupt_Id;
+      use type Ada.Interrupts.Interrupt_ID;
       Ids : constant Interrupt_Array := Get_Interrupts;
    begin
       for Kind in Interrupt_Name when Ids (Kind) /= No_Id loop
