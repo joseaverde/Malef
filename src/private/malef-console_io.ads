@@ -69,6 +69,12 @@ private package Malef.Console_IO is
    -- previous state when Malef wasn't executing. This means, it undoes
    -- everything Initialize has changed.
 
+   type Event_Process_Type is access
+      protected procedure (Event : in Events.Event_Type);
+
+   procedure Register_Process (
+      Process : in not null Event_Process_Type);
+
    --<<-------->>--
    -->> Output <<--
    --<<-------->>--
@@ -137,6 +143,8 @@ private package Malef.Console_IO is
    --<<------->>--
    -->> Input <<--
    --<<------->>--
+
+   procedure Update_Dimensions;
 
    procedure Get_Dimensions (
       Rows : out Positive_Row_Count;

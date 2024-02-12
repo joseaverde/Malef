@@ -26,8 +26,11 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Text_IO;
+with Ada.Task_Identification;
 with Malef.Console_IO;
 with Malef.Surfaces;
+with Malef.System;
 
 package body Malef.Window is
 
@@ -104,6 +107,37 @@ package body Malef.Window is
 
       -->> Callbacks <<--
 
+      procedure Process (
+         Event : in Events.Event_Type) is
+      begin
+
+         -- The Resize event is interesting for the Window. Also if there is
+         -- no handler for the Kill, Cancel or Input_Closed events, by default
+         -- we clean up and terminate the program.
+
+         Ada.Text_IO.Put_Line (Event'Image);
+         case Event.Name is
+            when Malef.Events.Resize_Event => null;
+            when Malef.Events.Cancel_Event
+               | Malef.Events.Kill_Event
+               | Malef.Events.Input_Closed =>
+               Malef.System.Finalize;
+               if Observers (Event.Name).Is_Empty then
+                  Ada.Text_IO.Put_Line ("Program terminated");
+               end if;
+               Ada.Task_Identification.Abort_Task (
+                  Ada.Task_Identification.Environment_Task);
+            when others => null;
+         end case;
+
+         -- Call the observers.
+
+         for Observer of Observers (Event.Name) loop
+            Observer.Callback.all (Observer.Pointer.all, Event);
+         end loop;
+
+      end Process;
+
       procedure Register (
          Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class;
@@ -123,9 +157,17 @@ package body Malef.Window is
 
    end Window;
 
+   procedure Enqueue_Event (
+      Event : in Events.Event_Type) is
+   begin
+      Malef.Console_IO.Queue.Enqueue (
+         Malef.Console_IO.Event_Holders.To_Holder (Event));
+   end Enqueue_Event;
+
    Rows : Positive_Row_Count;
    Cols : Positive_Col_Count;
 begin
    Console_IO.Get_Dimensions (Rows, Cols);
+   Console_IO.Register_Process (Window.Process'Access);
    Window.Resize (Rows, Cols);
 end Malef.Window;

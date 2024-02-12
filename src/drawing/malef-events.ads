@@ -52,11 +52,13 @@ package Malef.Events with Pure is
       Keyboard_Event,
       Mouse_Event,
       Cancel_Event,
-      Kill_Event);
+      Kill_Event,
+      Input_Closed);
 
    type Event_Type (
       Name : Event_Name) is
       record
+         Time : Duration := 0.0;
          case Name is
             when Resize_Event   => New_Size : Cursor_Type;
             when Keyboard_Event => Key      : Events.Key_Type;
@@ -66,6 +68,7 @@ package Malef.Events with Pure is
                                    Position : Cursor_Type;
             when Cancel_Event   => null;
             when Kill_Event     => null;
+            when Input_Closed   => null;
          end case;
       end record;
 

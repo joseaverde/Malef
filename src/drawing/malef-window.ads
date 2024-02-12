@@ -97,6 +97,9 @@ package Malef.Window is
 
       -->> Callbacks <<--
 
+      procedure Process (
+         Event : in Events.Event_Type);
+
       procedure Register (
          Event    : in Events.Event_Name;
          Observer : not null access Event_Observer'Class;
@@ -114,5 +117,8 @@ package Malef.Window is
       Cols      : Col_Type;
 
    end Window;
+
+   procedure Enqueue_Event (
+      Event : in Events.Event_Type);
 
 end Malef.Window;

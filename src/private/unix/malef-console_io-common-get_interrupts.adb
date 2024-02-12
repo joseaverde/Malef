@@ -1,10 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---           M A L E F - C O N S O L E _ I O - C O M M O N . A D S           --
+--                 MALEF-CONSOLE_IO-COMMON-GET_INTERRUPTS.ADB                --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              S E P A R A T E                              --
+--                                  U N I X                                  --
+--                                                                           --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,48 +29,14 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.IO_Exceptions;
-with Ada.Interrupts;
-with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-with Ada.Task_Identification;
+with Ada.Interrupts.Names;
 
-private package Malef.Console_IO.Common is
-
-   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-
-   procedure Initialize_For_Task (
-      Id : in Ada.Task_Identification.Task_Id);
-
-   procedure Setup_Interrupts;
-
-   procedure Clear_Interrupts;
-
-   procedure Get_Immediate (Item : out Wide_Wide_Character);
-
-   task type Event_Feeder (
-      Process : not null access
-                protected procedure (Event : in Events.Event_Type));
-
-   procedure Start_Timer;
-
-   function From_Start return Duration;
-
-   Termination_Error : exception;
-   Device_Error      : exception renames Ada.IO_Exceptions.Device_Error;
-   End_Error         : exception renames Ada.IO_Exceptions.End_Error;
-
-private
-
-   type Interrupt_Name is (Resize_Id, Kill_Id, Cancel_Id);
-
-   No_Id : constant Ada.Interrupts.Interrupt_Id
-         := Ada.Interrupts.Interrupt_Id'Last;
-
-   type Interrupt_Array is
-      array (Interrupt_Name)
-      of Ada.Interrupts.Interrupt_Id;
-
+separate (Malef.Console_IO.Common)
    function Get_Interrupts
-      return Interrupt_Array;
-
-end Malef.Console_IO.Common;
+      return Interrupt_Array is
+   begin
+      return [Resize_Id => Ada.Interrupts.Names.SIGWINCH
+            , Cancel_Id => Ada.Interrupts.Names.SIGINT
+            , Kill_Id   => Ada.Interrupts.Names.SIGTERM
+            ];
+   end Get_Interrupts;

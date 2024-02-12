@@ -14,7 +14,7 @@ project Malef is
    type Subsystem_Name is ("ansi", "cmd");
    Subsystem : Subsystem_Name := External ("MALEF_SUBSYSTEM", Default_Subsystem);
 
-   for Languages use ("Ada");
+   for Languages use ("Ada", "C");
 
    for Library_Name use "Malef";
    for Library_Version use Project'Library_Name & ".so." & Malef_Config.Crate_Version;
@@ -23,6 +23,7 @@ project Malef is
       "src/",
       "config/",
       "src/private",
+      "src/private/" & System,
       "src/drawing",
       "src/subsystems/" & Subsystem,
       "src/widgets");

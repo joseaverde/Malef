@@ -26,12 +26,16 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Malef.Console_IO.Common;
+with Ada.Calendar;
 with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
+with Malef.Console_IO.Common;
 with Malef.Debug;
 
 package body Malef.Console_IO is
+
+   pragma Unreserve_All_Interrupts;
+   -- NOTE: This is needed for the Ctrl-C interrupt
 
    use Common;
 
@@ -269,6 +273,14 @@ package body Malef.Console_IO is
       Finalize_Input;
    end Finalize;
 
+   Event_Process : Event_Process_Type;
+
+   procedure Register_Process (
+      Process : in not null Event_Process_Type) is
+   begin
+      Event_Process := Process;
+   end Register_Process;
+
    --<<-------->>--
    -->> Output <<--
    --<<-------->>--
@@ -423,7 +435,7 @@ package body Malef.Console_IO is
       -- Discard previous input
 
       loop
-         Common.Get_Immediate (Char, Available);
+         Ada.Text_IO.Get_Immediate (Char, Available);
          exit when not Available;
       end loop;
 
@@ -431,16 +443,16 @@ package body Malef.Console_IO is
 
       Ada.Text_IO.Put (ASCII.ESC & "[6n");
       Ada.Text_IO.Flush;
-      Common.Get_Immediate (Char); pragma Assert (Char = ASCII.ESC);
-      Common.Get_Immediate (Char); pragma Assert (Char = '[');
+      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = ASCII.ESC);
+      Ada.Text_IO.Get_Immediate (Char); pragma Assert (Char = '[');
 
       -- Read Rows
 
-      Common.Get_Immediate (Char);
+      Ada.Text_IO.Get_Immediate (Char);
       pragma Assert (Char in '0' .. '9');
       loop
          Row := Row * 10 + Character'Pos (Char) - Character'Pos ('0');
-         Common.Get_Immediate (Char);
+         Ada.Text_IO.Get_Immediate (Char);
          exit when Char = ';';
          pragma Assert (Char in '0' .. '9');
       end loop;
@@ -448,11 +460,11 @@ package body Malef.Console_IO is
 
       -- Read Cols
 
-      Common.Get_Immediate (Char);
+      Ada.Text_IO.Get_Immediate (Char);
       pragma Assert (Char in '0' .. '9');
       loop
          Col := Col * 10 + Character'Pos (Char) - Character'Pos ('0');
-         Common.Get_Immediate (Char);
+         Ada.Text_IO.Get_Immediate (Char);
          exit when Char = 'R';
          pragma Assert (Char in '0' .. '9');
       end loop;
@@ -534,6 +546,11 @@ package body Malef.Console_IO is
 
    end Shared_Input;
 
+   procedure Update_Dimensions is
+   begin
+      Shared_Input.Update_Dimensions;
+   end Update_Dimensions;
+
    procedure Get_Dimensions (
       Rows : out Positive_Row_Count;
       Cols : out Positive_Col_Count) is
@@ -543,55 +560,122 @@ package body Malef.Console_IO is
 
    -->> Input Events :: Keyboard <<--
 
-   -- We cannot read from standard input from the main thread, since we don't
-   -- want the developer to worry about creating a new task for one's
-   -- application. Instead we will have several tasks that will be running
-   -- concurrently to get the input.
+   -- We cannot read from standard input from the main task, since we don't
+   -- want the developer to worry about creating a new task. Instead we will
+   -- have several tasks that will be running concurrently to get the input.
    --
-   -- We will be using the Get_Immediate (Item, Available) function since we
-   -- can see if there is an available value ready to be fetched.
+   -- Note: Initially I wanted to use the Ada.Wide_Wide_Text_IO.Get_Immediate
+   --       function. However, there is a bug in the implementation. Usually
+   --       when you use the function is called with parameters:
+   --
+   --          procedure Get_Immediate (
+   --             Item      : out Wide_Wide_Character;
+   --             Available : out Boolean)
+   --
+   --       If there is not input available, the `Available' parameter would
+   --       be set to False and continue without blocking. However, this does
+   --       not happen. In fact if you read the implementation in file
+   --       `a-ztextio.adb' you will see the following comment:
+   --
+   --          «Shouldn't we use getc_immediate_nowait here, like Text_IO???»
+   --
+   --       The same happens in the `Ada.Wide_Text_IO' package... Also when
+   --       using `Ada.Text_IO' if I compile with `-gnatW8' it doesn't read
+   --       the UTF-8 characters individually, it tries to convert them to
+   --       `Character'. So if I write the japanese A (あ), it doesn't fit on
+   --       a `Character' and raises an error. So that's out of the table.
+   --
+   --       I tried implementing my own function using the C function:
+   --       `getc_immediate_nowait'. However there are two problems:
+   --
+   --       First of all, when you call the function it then sets up the
+   --       terminal to avoid echoing (every single time). So when you do a
+   --       `delay', the character will echo to the screen. Because you haven't
+   --       called the Get_Immediate function yet. That means, you can't use
+   --       the `Get_Immediate (Item, Available)' function.
+   --
+   --       Then, the worst of all was the task termination... I lost a whole
+   --       weekend because of that. Basically if you run a different task with
+   --       the `Get_Immediate' function such as:
+   --
+   --          task Input;
+   --
+   --          task body Input is
+   --             Char : Wide_Wide_Character;
+   --          begin
+   --             loop
+   --                Get_Immediate (Char);
+   --                Queue.Enqueue (Event_Holders.To_Holder (
+   --                   Events.Event_Type'(
+   --                      Name => Keyboard_Event,
+   --                      Key  => Key_Type (Char)));
+   --             end loop;
+   --          end Input;
+   --
+   --       When all the tasks terminate, this one won't terminate. If you try
+   --       to abort it, it won't be terminated. Why? Because in the C
+   --       implementatino of the `getc_immediate_common' function there is
+   --       an infinite loop like:
+   --
+   --          while (!good) {
+   --             nread = read(fd, &c, 1);
+   --             if (nread > 0) {
+   --                *ch = c;
+   --                good = true;
+   --             } else {
+   --                good = false;
+   --             }
+   --          }
+   --
+   --       When you call abort, the `read' function terminates. However, you
+   --       haven't read anything son either 0 or -1 is returned. Then `good'
+   --       keeps being False and the loop is executed again. Then it gets
+   --       blocked on the `read' function. This happens when `nread = -1'.
+   --       The C function never finishes, and the task won't get to the
+   --       rendez-vous point.
+   --
+   --       So... I implemented my own Get_Immediate function in the
+   --       Malef.Console_IO.Common package that works just fine. I'll try to
+   --       submit a patch to GCC fixing:
+   --
+   --        * `Ada.Wide_Text_IO.Get_Immediate (Item, Available);'
+   --        * `Ada.Wide_Wide_Text_IO.Get_Immediate (Item, Available);'
+   --        * `getc_immediate_common' to keep track of that edge case.
+   --
+   --       Even if those functions are fixed, I'll still have to use `termios'
+   --       directly. Because I don't want characters to echo on the screen.
 
    task type Keyboard_Task is
    end Keyboard_Task;
    -- When the Keyboard is started it will start listening to standard input
    -- for key presses. No other function should use the Get_Immediate
    -- function as it will interfere with the Keyboard.
-   --
-   -- We don't want to busy loop because it will take a lot of CPU power and
-   -- the fans on the user computer will begin to run at full speed. Instead
-   -- we will start with a Min_Sleep and duplicate it until we surpass the
-   -- Max_Sleep value. Each time we delay double the time we delayed
-   -- previously. That way we can read fast when the user is typing, and don't
-   -- consume too much power when the user is not doing anything.
-
-   Max_Sleep : constant Duration := 0.020_000;  -- 10ms
-   Min_Sleep : constant Duration := 0.000_001;  -- 1μs
 
    task body Keyboard_Task is
       use Events;
-      Sleep     : Duration := Min_Sleep;
-      Key       : Key_Type;
-      Available : Boolean;
+      Key : Key_Type;
    begin
-      -- TODO: Catch End_Error and Device_Error
-      Debug.Put ("Started keyboard");
+      Common.Initialize_For_Task (Keyboard_Task'Identity);
       loop
-         Common.Get_Immediate (Wide_Wide_Character (Key), Available);
-         if Available then
+         Catch_End_Error : declare
+         begin
+            Common.Get_Immediate (Wide_Wide_Character (Key));
             if Key = Key_Type'Val (0) then
                Key := Key_Unknown;
             elsif Key = Key_Type'Val (27) then
                -- It is a sequence.
                Key := Key_Unknown;
             end if;
-            Sleep := Min_Sleep;
-            Debug.Put ("Pressed:" & Key_Type'Pos (Key)'Image);
-            Ada.Text_IO.Put_Line ("Pressed:" & Key_Type'Pos (Key)'Image);
-            -- TODO: Enqueue the event
-         else
-            delay Sleep;
-            Sleep := Duration'Min (Max_Sleep, Sleep * 2.0);
-         end if;
+            Queue.Enqueue (Event_Holders.To_Holder (Events.Event_Type'(
+                           Name => Events.Keyboard_Event,
+                           Time => Common.From_Start,
+                           Key  => Key)));
+         exception
+            when Common.End_Error =>
+               Queue.Enqueue (Event_Holders.To_Holder (Events.Event_Type'(
+                              Time => Common.From_Start,
+                              Name => Events.Input_Closed)));
+         end Catch_End_Error;
       end loop;
    end Keyboard_Task;
 
@@ -622,16 +706,35 @@ package body Malef.Console_IO is
 
          -- Start other tasks and wait to be stopped.
 
+         Common.Start_Timer;
          declare
             Keyboard : Keyboard_Task;
+            Feeder   : Common.Event_Feeder (Event_Process);
          begin
+            Common.Setup_Interrupts;
             select
                accept Stop;
             or
                terminate;
             end select;
             abort Keyboard;
-            Ada.Text_IO.Put_Line ("Terminated");
+            abort Feeder;
+            Common.Clear_Interrupts;
+         end;
+
+         -- Dequeue everything from the original queue
+
+         declare
+            use type Ada.Containers.Count_Type;
+            Object : Event_Holders.Holder;
+         begin
+            while Queue.Current_Use > 0 loop
+               select
+                  Queue.Dequeue (Object);
+               or
+                  delay 0.000_001;
+               end select;
+            end loop;
          end;
 
       end loop;
@@ -640,13 +743,11 @@ package body Malef.Console_IO is
 
    procedure Initialize_Input is
    begin
-      Shared_Input.Update_Dimensions;
       Input_Task.Start;
    end Initialize_Input;
 
    procedure Finalize_Input is
    begin
-      null;
       Input_Task.Stop;
    end Finalize_Input;
 
