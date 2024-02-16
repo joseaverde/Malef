@@ -1,17 +1,6 @@
 # Alire
-alire/
-
-# binaries and objects
-bin*/
-obj*/
-
-# Others
-*.o
-*.ali
-gmem.out
-build
+/obj/
+/lib/
+/alire/
+/config/
 __pycache__
-logs
-danger_zone
-tags
-coverage.py

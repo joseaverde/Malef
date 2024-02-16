@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-02-01
+**Major Refactoring**
+### Added
+- `Group` type (replaces `Box`) using aggregates
+- `Window` protected type
+
+### Changed
+- `Surface` type now has a size discriminant, and all operations are made
+  available on the same package.
+
+### Removed
+- C binding
+- Python3 binding
+- Dynamic Library Loader
+
 ## [0.3.0] - 2021-09-07
 ### Added
 - Added database (still in development).

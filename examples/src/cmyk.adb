@@ -1,51 +1,80 @@
-with Malef;
-with Malef.Boxes;
-with Malef.Colors;
 with Malef.Surfaces;
-with Malef.Windows;
+with Malef.Groups;
+with Malef.Window;
+with Malef.System;
 
 procedure CMYK is
-   Base    : Malef.Surfaces.Surface_Type;
-   Cyan    : Malef.Surfaces.Surface_Type;
-   Magenta : Malef.Surfaces.Surface_Type;
-   Yellow  : Malef.Surfaces.Surface_Type;
 
-   Base_Colour    : constant Malef.Color_Type := (255, 255, 255, 255);
-   Cyan_Colour    : constant Malef.Color_Type := (0, 255, 255, 85);
-   Magenta_Colour : constant Malef.Color_Type := (255, 0, 255, 85);
-   Yellow_Colour  : constant Malef.Color_Type := (255, 255, 0, 85);
+   use Malef.Groups;
+   use type Malef.Col_Type;
+   use type Malef.Row_Type;
 
-   CMYK_Box : Malef.Boxes.Box_Type;
+   -- We can declare colours using HTML tags.
+
+   Base_Colour    : constant Malef.RGBA_Type := "#FFF";
+   Grey_Colour    : constant Malef.RGBA_Type := "#80808055";
+   Cyan_Colour    : constant Malef.RGBA_Type := "#0FF5";
+   Magenta_Colour : constant Malef.RGBA_Type := "#F0F5";
+   Yellow_Colour  : constant Malef.RGBA_Type := "#FF05";
+
+   Blocks : constant Malef.Glyph_String
+      := "██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ";
+
+   -- We then declare a Group for 4 layers. The Layer function aks for a
+   -- Group, a Surface or the size of the Surface. We are going to modify them
+   -- afterwards, then we have to specify the size of the surfaces.
+
+   CMYK_Group : Malef.Groups.Group (5) := [
+      Layer (19, 41, (35 - 20, 35 - 20)),
+      Layer (16, 32, (32 - 20, 32 - 20)),
+      Layer (16, 32, (32 - 20, 48 - 20)),
+      Layer (16, 32, (40 - 20, 40 - 20)),
+      Layer (1,  16, (32 - 20, 32 - 20))
+   ];
+
+   -- We can use Ada 2022's new `renames' keyword to reference the different
+   -- layers and modify them independently.
+
+   Base    renames CMYK_Group.Set_Surface (1).Element;
+   Cyan    renames CMYK_Group.Set_Surface (2).Element;
+   Magenta renames CMYK_Group.Set_Surface (3).Element;
+   Yellow  renames CMYK_Group.Set_Surface (4).Element;
+   Text    renames CMYK_Group.Set_Surface (5).Element;
+
 begin
 
-   Malef.Initialize;
+   Malef.System.Initialize;
+   Malef.System.Set_Title ("Malef :: CMYK layers");
 
-   Base := Malef.Surfaces.Create (19, 41);
-   Cyan := Malef.Surfaces.Create (16, 32);
-   Magenta := Malef.Surfaces.Create (16, 32);
-   Yellow := Malef.Surfaces.Create (16, 32);
+   -- Fill the backgrounds with the basic colours.
 
-   Malef.Colors.Set_Background (Base, Base_Colour);
-   Malef.Colors.Set_Background (Cyan, Cyan_Colour);
-   Malef.Colors.Set_Background (Magenta, Magenta_Colour);
-   Malef.Colors.Set_Background (Yellow, Yellow_Colour);
+   Base.Fill_Background (Base_Colour);
+   Cyan.Fill_Background (Cyan_Colour);
+   Magenta.Fill_Background (Magenta_Colour);
+   Yellow.Fill_Background (Yellow_Colour);
 
-   Base.Set_Position (35, 35);
-   Cyan.Set_Position (32, 32);
-   Magenta.Set_Position (32, 48);
-   Yellow.Set_Position (40, 40);
+   Base.Fill_Foreground (Grey_Colour);
+   Text.Fill_Background ("#FFF");
+   Text.Fill_Foreground ("#000");
+   Text.Put (1, 1, "Mode = NORMAL");
 
-   CMYK_Box.Insert (Base.Get_Reference, 1);
-   CMYK_Box.Insert (Cyan.Get_Reference, 2);
-   CMYK_Box.Insert (Magenta.Get_Reference, 3);
-   CMYK_Box.Insert (Yellow.Get_Reference, 4);
+   -- Write text on the different layers
 
-   CMYK_Box.Update;
+   Base.Put (2, 2, "Base");
+   for I in Malef.Row_Type range 4 .. 18 when I mod 2 = 0 loop
+      Base.Put (I, 2, Blocks);
+   end loop;
+   Cyan.Put (2, 2, "Cyan");
+   Magenta.Put (2, Magenta.Cols - 8, "Magenta");
+   Yellow.Put (2, 2, "Yellow");
 
-   Malef.Windows.Main_Window.Insert (CMYK_Box.Get_Reference, 1);
-   Malef.Windows.Main_Window.Update;
-   Malef.Windows.Main_Window.Draw;
+   -- Add them to the Window
 
-   Malef.Finalize;
+   Malef.Window.Window.Set_Group (CMYK_Group);
+   Malef.Window.Window.Display;
+
+   delay 6.0;
+
+   Malef.System.Finalize;
 
 end CMYK;

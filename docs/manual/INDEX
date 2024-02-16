@@ -1,0 +1,15 @@
+% 1. Introduction
+% 2. «Hello, Malef!»
+% 2.1. Using Alire
+% 2.2. Building from source
+% 2.3. Example
+% 3. The Drawing Toolkit
+% 3.1. Palettes
+% 3.2. Surfaces
+% 3.3. Groups
+% 3.4. Window and Events
+% 4. The Widget Toolkit
+% 4.1. Application and Dialogs
+% 4.2. Buttons, Labels and Grids
+% 4.3. Callbacks
+% 4.4. Custom Widgets

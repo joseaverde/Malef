@@ -1,0 +1,65 @@
+with "config/malef_examples_config.gpr";
+project Malef_Examples is
+
+   type Operating_System is ("linux", "windows", "unix");
+   System : Operating_System := External ("MALEF_SYSTEM", "linux");
+
+   Suffix := "";
+   Lib := "";
+   case System is
+      when "linux"   => Suffix := ".elf";
+      when "windows" => Suffix := ".exe";
+      when "unix"    => Suffix := ".elf";
+   end case;
+
+   for Source_Dirs use
+      ( "src/"
+      , "src/file_explorer"
+      , "src/video_player"
+      , "config/");
+   for Object_Dir use "obj/" & System & "-" & Malef_Examples_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+
+   case System is
+      when "linux" | "unix" =>
+         for Main use
+            ( "cmyk.adb"
+            , "palettes.adb"
+            , "gradient.adb"
+            , "texts.adb"
+            , "file_explorer.adb"
+            , "video_player.adb"
+            , "malef_examples.adb"
+            );
+      when "windows" =>
+         for Main use
+            ( "cmyk.adb"
+            , "palettes.adb"
+            , "gradient.adb"
+            , "texts.adb"
+            , "file_explorer.adb"   -- TODO: Make it work on windows
+            , "malef_examples.adb"
+            -- , "video_player.adb"
+            );
+   end case;
+
+   package Compiler is
+      for Default_Switches ("Ada") use Malef_Examples_Config.Ada_Compiler_Switches & (
+         "-gnaty-I", "-gnatyC", "-gnatyM81", "-g", "-gnat2022", "-gnatwJ"
+         , "-gnatW8");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es", "-W8"); --  Symbolic traceback
+   end Binder;
+
+   package Builder is
+      for Executable_Suffix use Suffix;
+   end Builder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+end Malef_Examples;

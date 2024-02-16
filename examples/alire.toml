@@ -1,0 +1,45 @@
+name = "malef_examples"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["José Antonio Verde Jiménez"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
+maintainers-logins = ["joseaverde"]
+
+executables = ["malef_examples"]
+[[depends-on]]
+malef = "~0.1.0-dev"
+[[pins]]
+malef = { path='..' }
+[[depends-on]]
+gnat_native = "^13.2.1"
+[[depends-on]]
+utilada = "^2.6.0"
+
+[configuration]
+generate_c = false
+
+[build-switches]
+release.optimization   = "Performance"
+release.debug_info     = "No"
+release.runtime_checks = "None"
+release.compile_checks = "None"
+release.contracts      = "Yes"
+release.style_checks   = "No"
+release.ada_version    = "Ada2022"
+
+development.optimization   = "Debug"
+development.debug_info     = "Yes"
+development.runtime_checks = "Everything"
+development.compile_checks = "Warnings"
+development.contracts      = "Yes"
+development.style_checks   = "Yes"
+development.ada_version    = "Ada2022"
+
+validation.optimization   = "Performance"
+validation.debug_info     = "Yes"
+validation.runtime_checks = "Everything"
+validation.compile_checks = "Errors"
+validation.contracts      = "Yes"
+validation.style_checks   = "Yes"
+validation.ada_version    = "Ada2022"

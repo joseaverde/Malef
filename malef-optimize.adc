@@ -1,9 +1,0 @@
-pragma Ada_2012;
-pragma Suppress (Access_Check);
-pragma Suppress (Discriminant_Check);
-pragma Suppress (Division_Check);
-pragma Suppress (Index_Check);
-pragma Unsuppress (Overflow_Check);
-pragma Suppress (Range_Check);
-pragma Wide_Character_Encoding (UTF8);
-pragma License (GPL);
