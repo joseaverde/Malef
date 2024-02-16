@@ -29,6 +29,7 @@
 with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
 with Malef.Console_IO.Common;
+with Malef.Platform.Generic_Buffer;
 
 package body Malef.Console_IO is
 
@@ -37,79 +38,19 @@ package body Malef.Console_IO is
 
    use Common;
 
-   -- We can't use Ada.Text_IO to print the buffer, because for whatever reason
-   -- printing UTF-8 with Ada.Text_IO outputs garbage if we compile with the
-   -- `-gnatW8' flag (required for Wide_Wide_String s) on GNAT.
-   --
-   -- Also we can't use Ada.Wide_Wide_Text_IO, because it is slow as hell
-   -- (maybe because it needs to transform the Unicode back to UTF-8).
-   --
-   -- So we had to find an native solution for this problem. Using the `write'
-   -- system call is blazing fast. But it mey not be compatible with every
-   -- operating sytem. Instead we use Streams, which yield a similar performace
-   -- to the `write' sustem call, and they are in the standard library.
-
    package T_IO renames Ada.Text_IO;
    package T_IO_Streams renames T_IO.Text_Streams;
 
    Stream : constant T_IO_Streams.Stream_Access
           := T_IO_Streams.Stream (T_IO.Standard_Output);
 
-   -- We need to keep a buffer to avoid writing the screen character by
-   -- character (there are many single character calls). There is a buffer in
-   -- the Ada.Text_IO.File_Type, but I'm not sure if the Stream package has it.
-   -- I tested it on my lapto, and without a buffer, the code was 14 TIMES
-   -- SLOWER. Therefore we are going to keep a buffer.
-   --
-   -- Also, as there will be only one buffer. We don't need to encapsulate it
-   -- on a record and pass it everytime. Let's make it global and available
-   -- for every function directly.
-
-   Capacity : constant := 1024;
-   Index    : Natural := 0;
-   Data     : String (1 .. Capacity);
+   package Buffer is new Platform.Generic_Buffer (1024, Stream);
+   use Buffer;
 
    procedure Flush is
    begin
-      String'Write (Stream, Data (1 .. Index));
-      Index := 0;
+      Buffer.Flush;
    end Flush;
-
-   procedure Put (Item : in Character) is
-   begin
-      if Index = Capacity then
-         Flush;
-      end if;
-      Index := @ + 1;
-      Data (Index) := Item;
-   end Put;
-
-   procedure Put (Item : in String) is
-   begin
-      if Index + Item'Length > Capacity then
-         Flush;
-      end if;
-      Data (Index + 1 .. Index + Item'Length) := Item;
-      Index := @ + Item'Length;
-   end Put;
-
-   procedure Wide_Wide_Put (Item : in Glyph) is
-   begin
-      -- OPTIMISE: Search a function on character basis instead of strings.
-      case Item is
-         when   Nul  => Put (' ');
-         when   Dbl  => null;
-         when   Bck  => Put ("  ");
-         when others => Put (Unicode.Encode (Item & ""));
-      end case;
-   end Wide_Wide_Put;
-
-   procedure Wide_Wide_Put (Item : in Glyph_String) is
-   begin
-      for Char of Item loop
-         Wide_Wide_Put (Char);
-      end loop;
-   end Wide_Wide_Put;
 
    -->> Formatting <<--
 

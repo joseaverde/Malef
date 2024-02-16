@@ -114,6 +114,7 @@ package body Malef.Groups.Composers with Preelaborate is
       Char     : Glyph;
       C_Row    : Positive_Row_Count := Offset.Row + Position.Row + 1;
       C_Col    : Positive_Col_Count;
+      Style    : Style_Type;
    begin
       for Row in 1 .. Surface.Rows loop
          C_Col := Offset.Col + Position.Col + 1;
@@ -128,6 +129,9 @@ package body Malef.Groups.Composers with Preelaborate is
             Canvas.Set_Background (C_Row, C_Col, Adder (
                Top    => Canvas.Get_Background (C_Row, C_Col),
                Bottom => Opacity * Surface.Get_Background (Row, Col)));
+            Style := Canvas.Get (C_Row, C_Col);
+            Style := Style or Surface.Get (C_Row, C_Col);
+            Canvas.Set (C_Row, C_Col, Style);
             C_Col := C_Col + 1;
          end loop;
          C_Row := C_Row + 1;

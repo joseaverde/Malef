@@ -29,6 +29,7 @@
 with Ada.Text_IO;
 with Ada.Task_Identification;
 with Malef.Console_IO;
+with Malef.Platform.Terminal.Output;
 with Malef.Surfaces;
 with Malef.System;
 
@@ -54,12 +55,12 @@ package body Malef.Window is
       Row : Row_Type;
       Col : Col_Type;
    begin
-      Malef.Console_IO.Begin_Frame;
+      Malef.Platform.Terminal.Output.Begin_Frame;
       Row := First.Row;
       for Iter_Row in Iter_First.Row .. Iter_Last.Row loop
          Col := First.Col;
          for Iter_Col in Iter_First.Col .. Iter_Last.Col loop
-            Malef.Console_IO.Put (
+            Malef.Platform.Terminal.Output.Put (
                Position   => (Row, Col),
                Item       => Surface (Iter_Row, Iter_Col),
                Background => Surface.Get_Background (Iter_Row, Iter_Col),
@@ -69,8 +70,8 @@ package body Malef.Window is
          end loop;
          Row := Row + 1;
       end loop;
-      Malef.Console_IO.End_Frame;
-      Malef.Console_IO.Flush;
+      Malef.Platform.Terminal.Output.End_Frame;
+      Malef.Platform.Terminal.Output.Flush;
    end Show;
 
    protected body Window is
@@ -170,8 +171,8 @@ package body Malef.Window is
          Malef.Console_IO.Event_Holders.To_Holder (Event));
    end Enqueue_Event;
 
-   Rows : Positive_Row_Count;
-   Cols : Positive_Col_Count;
+   Rows : Positive_Row_Count := 56;
+   Cols : Positive_Col_Count := 180;
 begin
    Console_IO.Get_Dimensions (Rows, Cols);
    Console_IO.Register_Process (Window.Process'Access);

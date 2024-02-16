@@ -1,13 +1,15 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D B                      --
+--              M A L E F - P L A T F O R M - T E R M I N A L -              --
+--                    G E N E R I C _ B U F F E R . A D B                    --
 --                                                                           --
 --                                 M A L E F                                 --
+--                                  A N S I                                  --
 --                                                                           --
 --                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,49 +28,55 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Finalization;
-with Malef.Platform.Terminal;
-with Malef.Platform.Terminal.Output;
+with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
-package body Malef.System is
+package body Malef.Platform.Generic_Buffer is
 
-   Initialised : Boolean := False;
+   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
-   procedure Initialize is
+   Index : Natural := 0;
+   Data  : String (1 .. Capacity);
+
+   procedure Flush is
    begin
-      if Initialised then
-         return;
+      String'Write (Stream, Data (1 .. Index));
+      Index := 0;
+   end Flush;
+
+   procedure Put (Item : in Character) is
+   begin
+      if Index = Capacity then
+         Flush;
       end if;
-      Malef.Platform.Terminal.Initialize;
-      Initialised := True;
-   end Initialize;
+      Index := @ + 1;
+      Data (Index) := Item;
+   end Put;
 
-   procedure Finalize is
+   procedure Put (Item : in String) is
    begin
-      if not Initialised then
-         return;
+      if Index + Item'Length > Capacity then
+         Flush;
       end if;
-      Malef.Platform.Terminal.Finalize;
-      Initialised := False;
-   end Finalize;
+      Data (Index + 1 .. Index + Item'Length) := Item;
+      Index := @ + Item'Length;
+   end Put;
 
-   type System_Handle is
-      new Ada.Finalization.Limited_Controlled with
-      null record;
-
-   overriding
-   procedure Finalize (Object : in out System_Handle) is
+   procedure Wide_Wide_Put (Item : in Glyph) is
    begin
-      if not Initialised then
-         return;
-      end if;
-      Finalize;
-   end Finalize;
+      -- OPTIMISE: Search a function on character basis instead of strings.
+      case Item is
+         when   Nul  => Put (' ');
+         when   Dbl  => null;
+         when   Bck  => Put ("  ");
+         when others => Put (Unicode.Encode (Item & ""));
+      end case;
+   end Wide_Wide_Put;
 
-   procedure Set_Title (
-      Item : in Glyph_String) is
+   procedure Wide_Wide_Put (Item : in Glyph_String) is
    begin
-      Malef.Platform.Terminal.Output.Set_Title (Item);
-   end Set_Title;
+      for Char of Item loop
+         Wide_Wide_Put (Char);
+      end loop;
+   end Wide_Wide_Put;
 
-end Malef.System;
+end Malef.Platform.Generic_Buffer;

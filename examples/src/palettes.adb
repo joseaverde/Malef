@@ -166,6 +166,8 @@ begin
       Second := Stop - Start;
 
       -->> Results <<--
+
+      Malef.System.Finalize;
       delay 1.0;
       New_Line (20);
 
@@ -185,7 +187,5 @@ begin
       Put (Duration'Image (Duration (Times) / Second));
       New_Line;
    end;
-
-   Malef.System.Finalize;
 
 end Palettes;

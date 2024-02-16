@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D B                      --
+--             M A L E F - P L A T F O R M - I M A G E S . A D S             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   B O D Y                              --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,49 +26,35 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Finalization;
-with Malef.Platform.Terminal;
-with Malef.Platform.Terminal.Output;
+package Malef.Platform.Images is
 
-package body Malef.System is
+   subtype Digit is Character range '0' .. '9';
 
-   Initialised : Boolean := False;
+   function Image (
+      Row : in Row_Type)
+      return String with
+      Pre      => Row >= 0,
+      Post     => Image'Result'Length = 5
+         and then (for all C of Image'Result => C in Digit),
+      Inline   => True,
+      Global   => null;
 
-   procedure Initialize is
-   begin
-      if Initialised then
-         return;
-      end if;
-      Malef.Platform.Terminal.Initialize;
-      Initialised := True;
-   end Initialize;
+   function Image (
+      Col : in Col_Type)
+      return String with
+      Pre      => Col >= 0,
+      Post     => Image'Result'Length = 5
+         and then (for all C of Image'Result => C in Digit),
+      Inline   => True,
+      Global   => null;
 
-   procedure Finalize is
-   begin
-      if not Initialised then
-         return;
-      end if;
-      Malef.Platform.Terminal.Finalize;
-      Initialised := False;
-   end Finalize;
+   function Image (
+      Component : in Component_Type)
+      return String with
+      Pre      => Component >= 0,
+      Post     => Image'Result'Length = 3
+         and then (for all C of Image'Result => C in Digit),
+      Inline   => True,
+      Global   => null;
 
-   type System_Handle is
-      new Ada.Finalization.Limited_Controlled with
-      null record;
-
-   overriding
-   procedure Finalize (Object : in out System_Handle) is
-   begin
-      if not Initialised then
-         return;
-      end if;
-      Finalize;
-   end Finalize;
-
-   procedure Set_Title (
-      Item : in Glyph_String) is
-   begin
-      Malef.Platform.Terminal.Output.Set_Title (Item);
-   end Set_Title;
-
-end Malef.System;
+end Malef.Platform.Images;

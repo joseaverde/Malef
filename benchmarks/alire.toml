@@ -1,0 +1,18 @@
+name = "malef_benchmarks"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["José Antonio Verde Jiménez"]
+maintainers = ["José Antonio Verde Jiménez <joseaverde@protonmail.com>"]
+maintainers-logins = ["joseaverde"]
+
+executables = ["malef_benchmarks"]
+
+[build-profiles]
+malef = "release"
+malef_benchmarks = "release"
+
+[[depends-on]]
+malef = "~0.4.0"
+[[pins]]
+malef = { path='..' }

@@ -25,6 +25,7 @@ project Malef is
       "src/private",
       "src/private/" & System,
       "src/drawing",
+      "src/subsystems/",
       "src/subsystems/" & Subsystem,
       "src/widgets");
    for Object_Dir use "obj/" & System & "-" & Malef_Config.Build_Profile;

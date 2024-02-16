@@ -1,13 +1,14 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S Y S T E M . A D B                      --
+--                    M A L E F - P L A T F O R M . A D B                    --
 --                                                                           --
 --                                 M A L E F                                 --
+--                                  A N S I                                  --
 --                                                                           --
 --                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
---  Copyright (c) 2020-2024 José Antonio Verde Jiménez  All Rights Reserved  --
+--  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
 -------------------------------------------------------------------------------
 -- This file is part of Malef.                                               --
 --                                                                           --
@@ -26,49 +27,8 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Finalization;
-with Malef.Platform.Terminal;
-with Malef.Platform.Terminal.Output;
+package body Malef.Platform is
 
-package body Malef.System is
+   function Name return String is ("ANSI");
 
-   Initialised : Boolean := False;
-
-   procedure Initialize is
-   begin
-      if Initialised then
-         return;
-      end if;
-      Malef.Platform.Terminal.Initialize;
-      Initialised := True;
-   end Initialize;
-
-   procedure Finalize is
-   begin
-      if not Initialised then
-         return;
-      end if;
-      Malef.Platform.Terminal.Finalize;
-      Initialised := False;
-   end Finalize;
-
-   type System_Handle is
-      new Ada.Finalization.Limited_Controlled with
-      null record;
-
-   overriding
-   procedure Finalize (Object : in out System_Handle) is
-   begin
-      if not Initialised then
-         return;
-      end if;
-      Finalize;
-   end Finalize;
-
-   procedure Set_Title (
-      Item : in Glyph_String) is
-   begin
-      Malef.Platform.Terminal.Output.Set_Title (Item);
-   end Set_Title;
-
-end Malef.System;
+end Malef.Platform;
