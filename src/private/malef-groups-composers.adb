@@ -130,7 +130,7 @@ package body Malef.Groups.Composers with Preelaborate is
                Top    => Canvas.Get_Background (C_Row, C_Col),
                Bottom => Opacity * Surface.Get_Background (Row, Col)));
             Style := Canvas.Get (C_Row, C_Col);
-            Style := Style or Surface.Get (C_Row, C_Col);
+            Style := Style or Surface.Get (Row, Col);
             Canvas.Set (C_Row, C_Col, Style);
             C_Col := C_Col + 1;
          end loop;

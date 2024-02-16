@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---     M A L E F - P L A T F O R M - T E R M I N A L - I N P U T . A D S     --
+--    M A L E F - P L A T F O R M - T E R M I N A L - E V E N T S . A D S    --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,16 +26,31 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package Malef.Platform.Terminal.Input is
+with Ada.Containers.Bounded_Synchronized_Queues;
+with Ada.Containers.Indefinite_Holders;
+with Ada.Containers.Synchronized_Queue_Interfaces;
+with Malef.Events;
 
-   procedure Initialize;
+package Malef.Platform.Terminal.Events is
 
-   procedure Finalize;
+   -->> Events <<--
 
-   -- procedure Get_Dimensions (
-   --    Rows : out Positive_Row_Count;
-   --    Cols : out Positive_Col_Count);
+   Max_Events : constant := 1024;
 
-   -- function Get_Key return 
+   package Event_Holders is
+      new Ada.Containers.Indefinite_Holders (
+      Element_Type => Malef.Events.Event_Type,
+      "="          => Malef.Events."=");
 
-end Malef.Platform.Terminal.Input;
+   package Event_Queue_Interfaces is
+      new Ada.Containers.Synchronized_Queue_Interfaces (
+      Element_Type => Event_Holders.Holder);
+
+   package Event_Queues is
+      new Ada.Containers.Bounded_Synchronized_Queues (
+      Queue_Interfaces => Event_Queue_Interfaces,
+      Default_Capacity => Max_Events);
+
+   Queue : aliased Event_Queues.Queue;
+
+end Malef.Platform.Terminal.Events;
