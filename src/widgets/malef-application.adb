@@ -57,6 +57,7 @@ package body Malef.Application is
             Event    => Events.Resize_Event,
             Observer => Observer'Access,
             Callback => When_Resized'Access);
+         Window.Window.Get_Dimensions (Height, Width);
          Available := [others => False];
          Window.Window.Set_Group (Groups.Empty (Max_Dialogs + 1));
          Window.Window.Process_Group (Set_Background'Access);

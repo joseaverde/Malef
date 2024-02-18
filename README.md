@@ -107,15 +107,15 @@ You can see examples in the [examples directory](examples/).
 
 ## Compilation
 
-| System  | Status |
-|:-------:|:------:|
-| Linux   | ![Linux](https://img.shields.io/badge/build-passing-success)     |
-| Windows | ![Windows](https://img.shields.io/badge/build-failing-red)   |
+| System  |                             Status                             |
+|:-------:|:--------------------------------------------------------------:|
+|  Linux  |  ![Linux](https://img.shields.io/badge/build-passing-success)  |
+| Windows | ![Windows](https://img.shields.io/badge/build-passing-success) |
 
-| Subsystem | Status |
-|:---------:|:------:|
-| ANSI      | ![ANSI](https://img.shields.io/badge/build-passing-success) |
-| CMD       | ![CMD](https://img.shields.io/badge/build-passing-success) |
+| Subsystem |                                  Status                                   |
+|:---------:|:-------------------------------------------------------------------------:|
+|   ANSI    |        ![ANSI](https://img.shields.io/badge/build-passing-success)        |
+|    CMD    |        ![CMD](https://img.shields.io/badge/build-passing-success)         |
 | Terminfo  | ![Terminfo](https://img.shields.io/badge/build-not_implemented-important) |
 
 _There are some problems with colours in the CMD subsystem, everything else
@@ -124,9 +124,9 @@ works though. But the ANSI subsystem is still more robust._
 ## Tests
 **TODO**
 
-| System  | Status |
-|:-------:|:------:|
-| Linux   | ![Linux](https://img.shields.io/badge/tests-not_implemented-important)    |
+| System  |                                  Status                                  |
+|:-------:|:------------------------------------------------------------------------:|
+|  Linux  |  ![Linux](https://img.shields.io/badge/tests-not_implemented-important)  |
 | Windows | ![Windows](https://img.shields.io/badge/tests-not_implemented-important) |
 
 ## How to build it?

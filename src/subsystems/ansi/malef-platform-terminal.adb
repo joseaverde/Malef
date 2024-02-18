@@ -27,13 +27,17 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Calendar;
 with Malef.Platform.Terminal.Input;
 with Malef.Platform.Terminal.Output;
 
 package body Malef.Platform.Terminal is
 
+   Start : Ada.Calendar.Time;
+
    procedure Initialize is
    begin
+      Start := Ada.Calendar.Clock;
       Input.Initialize;
       Output.Initialize;
    end Initialize;
@@ -43,5 +47,8 @@ package body Malef.Platform.Terminal is
       Input.Finalize;
       Output.Finalize;
    end Finalize;
+
+   function From_Start return Duration is (
+      Ada.Calendar."-" (Ada.Calendar.Clock, Start));
 
 end Malef.Platform.Terminal;

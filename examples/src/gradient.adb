@@ -3,6 +3,7 @@ with Malef.Surfaces;
 with Malef.Palettes;
 with Malef.Groups;
 with Malef.Window;
+with Malef.System;
 
 procedure Gradient is
 
@@ -49,9 +50,11 @@ procedure Gradient is
    end Fill_Palette_Gradient;
 
 begin
+   Malef.System.Initialize;
    Col_Surf.Fill (Fill_Gradient'Access);
    Pal_Surf.Fill (Fill_Palette_Gradient'Access);
    Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Col_Surf, (1, 1)),
                                    Malef.Groups.Layer (Pal_Surf, (1, Width))]);
    Malef.Window.Window.Display;
+   Malef.System.Finalize;
 end Gradient;

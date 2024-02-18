@@ -26,17 +26,17 @@ procedure Video_Player is
 
 begin
 
-   Malef.System.Initialize;
-
-   Transparent.Fill_Background ("#FF000000");
-   Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Surface)
-                                 , Malef.Groups.Layer (Transparent)]);
-
    if Argument_Count = 0 then
       Put_Line (Standard_Error, "USAGE: `" & Command_Name & " [VIDEO]'");
       Set_Exit_Status (1);
       return;
    end if;
+
+   Malef.System.Initialize;
+
+   Transparent.Fill_Background ("#FF000000");
+   Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Surface)
+                                 , Malef.Groups.Layer (Transparent)]);
 
    Player := New_Video_Player (Argument (1));
 

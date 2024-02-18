@@ -91,6 +91,10 @@ package Malef.Window is
          New_Rows : in Positive_Row_Count;
          New_Cols : in Positive_Col_Count);
 
+      procedure Get_Dimensions (
+         Row_Count : out Positive_Row_Count;
+         Col_Count : out Positive_Col_Count);
+
       procedure Display;
 
       procedure Redraw;

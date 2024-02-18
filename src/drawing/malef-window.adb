@@ -28,8 +28,9 @@
 
 with Ada.Text_IO;
 with Ada.Task_Identification;
-with Malef.Console_IO;
+with Malef.Platform.Terminal.Input;
 with Malef.Platform.Terminal.Output;
+with Malef.Platform.Events;
 with Malef.Surfaces;
 with Malef.System;
 
@@ -104,6 +105,14 @@ package body Malef.Window is
          Cols := New_Cols;
       end Resize;
 
+      procedure Get_Dimensions (
+         Row_Count : out Positive_Row_Count;
+         Col_Count : out Positive_Col_Count) is
+      begin
+         Row_Count := Rows;
+         Col_Count := Cols;
+      end Get_Dimensions;
+
       procedure Redraw is null;
 
       -->> Callbacks <<--
@@ -165,16 +174,17 @@ package body Malef.Window is
    end Window;
 
    procedure Enqueue_Event (
-      Event : in Events.Event_Type) is
+      Event : in Events.Event_Type)
+   is
+      use Platform.Events;
    begin
-      Malef.Console_IO.Queue.Enqueue (
-         Malef.Console_IO.Event_Holders.To_Holder (Event));
+      Queue.Enqueue (+Event);
    end Enqueue_Event;
 
    Rows : Positive_Row_Count := 56;
    Cols : Positive_Col_Count := 180;
 begin
-   Console_IO.Get_Dimensions (Rows, Cols);
-   Console_IO.Register_Process (Window.Process'Access);
+   Malef.Platform.Terminal.Input.Get_Dimensions (Rows, Cols);
+   -- Console_IO.Register_Process (Window.Process'Access);
    Window.Resize (Rows, Cols);
 end Malef.Window;

@@ -8,7 +8,13 @@ project Malef is
    case System is
       when "linux"   => Default_Subsystem := "ansi";
       when "windows" => Default_Subsystem := "cmd";
-      when "unix"    => Default_Subsystem := "unix";
+      when "unix"    => Default_Subsystem := "ansi";
+   end case;
+
+   Operating_System_Interface := "";
+   case System is
+      when "linux" | "unix" => Operating_System_Interface := "posix";
+      when "windows"        => Operating_System_Interface := "win32";
    end case;
 
    type Subsystem_Name is ("ansi", "cmd");
@@ -23,10 +29,10 @@ project Malef is
       "src/",
       "config/",
       "src/private",
-      "src/private/" & System,
       "src/drawing",
       "src/subsystems/",
       "src/subsystems/" & Subsystem,
+      "src/subsystems/" & Subsystem & "/" & Operating_System_Interface,
       "src/widgets");
    for Object_Dir use "obj/" & System & "-" & Malef_Config.Build_Profile;
    for Create_Missing_Dirs use "True";

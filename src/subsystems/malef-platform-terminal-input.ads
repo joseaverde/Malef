@@ -26,16 +26,20 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.IO_Exceptions;
+
 package Malef.Platform.Terminal.Input is
 
    procedure Initialize;
 
    procedure Finalize;
 
-   -- procedure Get_Dimensions (
-   --    Rows : out Positive_Row_Count;
-   --    Cols : out Positive_Col_Count);
+   procedure Get_Dimensions (
+      Rows : out Positive_Row_Count;
+      Cols : out Positive_Col_Count);
 
-   -- function Get_Key return 
+   Termination_Error : exception;
+   Device_Error      : exception renames Ada.IO_Exceptions.Device_Error;
+   End_Error         : exception renames Ada.IO_Exceptions.End_Error;
 
 end Malef.Platform.Terminal.Input;

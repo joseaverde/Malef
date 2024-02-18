@@ -1,13 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                 MALEF-CONSOLE_IO-COMMON-GET_INTERRUPTS.ADB                --
+--             M A L E F - P L A T F O R M - E V E N T S . A D S             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              S E P A R A T E                              --
---                                 L I N U X                                 --
---                                                                           --
---                              A D A   B O D Y                              --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -29,14 +26,35 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Interrupts.Names;
+with Ada.Containers.Bounded_Synchronized_Queues;
+with Ada.Containers.Indefinite_Holders;
+with Ada.Containers.Synchronized_Queue_Interfaces;
+with Malef.Events;
 
-separate (Malef.Console_IO.Common)
-   function Get_Interrupts
-      return Interrupt_Array is
-   begin
-      return [Resize_Id => No_Id
-            , Cancel_Id => Ada.Interrupts.Names.SIGINT
-            , Kill_Id   => Ada.Interrupts.Names.SIGTERM
-            ];
-   end Get_Interrupts;
+package Malef.Platform.Events is
+
+   -->> Events <<--
+
+   Max_Events : constant := 1024;
+
+   package Event_Holders is
+      new Ada.Containers.Indefinite_Holders (
+      Element_Type => Malef.Events.Event_Type,
+      "="          => Malef.Events."=");
+
+   package Event_Queue_Interfaces is
+      new Ada.Containers.Synchronized_Queue_Interfaces (
+      Element_Type => Event_Holders.Holder);
+
+   package Event_Queues is
+      new Ada.Containers.Bounded_Synchronized_Queues (
+      Queue_Interfaces => Event_Queue_Interfaces,
+      Default_Capacity => Max_Events);
+
+   function "+" (Right : in Malef.Events.Event_Type)
+      return Event_Holders.Holder
+      renames Event_Holders.To_Holder;
+
+   Queue : aliased Event_Queues.Queue;
+
+end Malef.Platform.Events;

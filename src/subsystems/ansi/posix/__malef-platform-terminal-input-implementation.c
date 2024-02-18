@@ -1,8 +1,11 @@
 /*****************************************************************************\
  *                                                                           *
- *            _ M A L E F - C O N S O L E _ I O - C O M M O N . C            *
+ *                  __MALEF-PLATFORM-INPUT-IMPLEMENTATION.C                  *
  *                                                                           *
  *                                 M A L E F                                 *
+ *                                                                           *
+ *                                  A N S I                                  *
+ *                                 P O S I X                                 *
  *                                                                           *
  *                                C   B O D Y                                *
  *                                                                           *
@@ -28,38 +31,31 @@
 
 #include <termios.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <iso646.h>
 
-#define CONCAT(x,y) x##y
-#define MALEF(name) CONCAT(___c__malef__console_io__common__,name)
+#define CONCAT(x,y)  x##y
+#define MALEF(name) CONCAT(__malef__platform__terminal__input___c_,name)
 
-static struct termios old_termios;
-static bool initialized = false;
+static struct termios old_term;
 unsigned char MALEF(eof_ch) = 0x04;
 
-void MALEF(initialize) (void) {
+void MALEF(prepare) (void) {
+  struct termios new_term;
+  tcgetattr (STDIN_FILENO, &old_term);
+  tcgetattr (STDIN_FILENO, &new_term);
 
-  if (initialized) { return; }
+  new_term.c_lflag &= ~ICANON & ~ECHO;
 
-  struct termios new_termios;
-  tcgetattr (STDIN_FILENO, &old_termios);
-  tcgetattr (STDIN_FILENO, &new_termios);
+  #ifdef VEOF
+    MALEF(eof_ch) = new_term.c_cc[VEOF];
+  #else
+    MALEF(eof_cH) = 0x04;
+  #endif
 
-  new_termios.c_lflag &= ~ICANON & ~ECHO;
-  MALEF(eof_ch) = new_termios.c_cc[VEOF];
-  new_termios.c_cc[VMIN] = 1;
-  new_termios.c_cc[VTIME] = 0;
-  tcsetattr (STDIN_FILENO, TCSANOW, &new_termios);
-
-  initialized = true;
+  new_term.c_cc[VMIN] = 1;
+  new_term.c_cc[VTIME] = 0;
+  tcsetattr (STDIN_FILENO, TCSANOW, &new_term);
 }
 
-void MALEF(finalize) (void) {
-
-  if (not initialized) { return; }
-
-  tcsetattr (STDIN_FILENO, TCSANOW, &old_termios);
-
-  initialized = false;
+void MALEF(restore) (void) {
+  tcsetattr (STDIN_FILENO, TCSANOW, &old_term);
 }

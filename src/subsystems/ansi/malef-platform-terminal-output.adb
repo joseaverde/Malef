@@ -1,10 +1,11 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---    M A L E F - P L A T F O R M - T E R M I N A L - O U T P U T . A D S    --
+--    M A L E F - P L A T F O R M - T E R M I N A L - O U T P U T . A D B    --
 --                                                                           --
 --                                 M A L E F                                 --
+--                                  A N S I                                  --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -30,7 +31,6 @@ with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
 with Malef.Platform.Generic_Buffer;
 with Malef.Platform.Images;
-with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body Malef.Platform.Terminal.Output is
 
@@ -45,82 +45,11 @@ package body Malef.Platform.Terminal.Output is
    Current_Foreground_Id : Palette_Index;
    Opened_Frames         : Natural;
 
-   Capacity : constant := 1024;
-   Stream : constant Ada.Text_IO.Text_Streams.Stream_Access
-      := Ada.Text_IO.Text_Streams.Stream (Ada.Text_IO.Standard_Output);
-
    package Buffer is
-      procedure Flush with
-         Inline => True;
-
-      procedure Put (Item : in Character) with
-         Inline => True;
-
-      procedure Put (Item : in String) with
-         Inline => True;
-
-      procedure Wide_Wide_Put (Item : in Glyph) with
-         Inline => True;
-
-      procedure Wide_Wide_Put (Item : in Glyph_String) with
-         Inline => True;
-   end Buffer;
-
-   package body Buffer is
-      package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-
-      Index : Natural := 0;
-      Data  : String (1 .. Capacity);
-
-      procedure Flush is
-      begin
-         String'Write (Stream, Data (1 .. Index));
-         Index := 0;
-      end Flush;
-
-      procedure Put (Item : in Character) is
-      begin
-         if Index = Capacity then
-            Flush;
-         end if;
-         Index := @ + 1;
-         Data (Index) := Item;
-      end Put;
-
-      procedure Put (Item : in String) is
-      begin
-         if Index + Item'Length > Capacity then
-            Flush;
-         end if;
-         Data (Index + 1 .. Index + Item'Length) := Item;
-         Index := @ + Item'Length;
-      end Put;
-
-      procedure Wide_Wide_Put (Item : in Glyph) is
-      begin
-         -- OPTIMISE: Search a function on character basis instead of strings.
-         case Item is
-            when   Nul  => Put (' ');
-            when   Dbl  => null;
-            when   Bck  => Put ("  ");
-            when others => Put (Unicode.Encode (Item & ""));
-         end case;
-      end Wide_Wide_Put;
-
-      procedure Wide_Wide_Put (Item : in Glyph_String) is
-      begin
-         for Char of Item loop
-            Wide_Wide_Put (Char);
-         end loop;
-      end Wide_Wide_Put;
-
-   end Buffer;
-
-   -- package Buffer is
-   --    new Platform.Generic_Buffer (
-   --    Capacity => 1024,
-   --    Stream   => Ada.Text_IO.Text_Streams.Stream (Ada.Text_IO.Standard_Output)
-   --    );
+      new Platform.Generic_Buffer (
+      Capacity => 1024,
+      Stream   => Ada.Text_IO.Text_Streams.Stream (Ada.Text_IO.Standard_Output)
+      );
 
    -->> Formatting <<--
 

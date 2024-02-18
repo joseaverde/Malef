@@ -1,13 +1,11 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                 MALEF-CONSOLE_IO-COMMON-GET_INTERRUPTS.ADB                --
+--                       M A L E F - P L A T F O R M -                       --
+--             G E N E R I C _ G E T _ I M M E D I A T E . A D S             --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              S E P A R A T E                              --
---                                  U N I X                                  --
---                                                                           --
---                              A D A   B O D Y                              --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -29,14 +27,11 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Interrupts.Names;
+with Interfaces;
 
-separate (Malef.Console_IO.Common)
-   function Get_Interrupts
-      return Interrupt_Array is
-   begin
-      return [Resize_Id => Ada.Interrupts.Names.SIGWINCH
-            , Cancel_Id => Ada.Interrupts.Names.SIGINT
-            , Kill_Id   => Ada.Interrupts.Names.SIGTERM
-            ];
-   end Get_Interrupts;
+generic
+   with procedure Get_Byte_Immediate (Item : out Interfaces.Unsigned_8);
+procedure Malef.Platform.Generic_Get_Immediate (Item : out Glyph);
+-- This procedure implements the `Get_Immediate` function from Ada by reading
+-- a UTF-8 string. This function may change in the function to add support for
+-- other kinds of encoding.

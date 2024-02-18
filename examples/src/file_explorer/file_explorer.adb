@@ -4,6 +4,7 @@ with Malef.Surfaces;
 with Malef.Widgets;
 with Malef.Window;
 with Malef.Groups;
+with Malef.System;
 
 procedure File_Explorer is
    Max_Width  : constant := 80;
@@ -18,7 +19,9 @@ procedure File_Explorer is
    Explorer : constant File_Explorers.File_Explorer_Widget
             := File_Explorers.New_File_Explorer (Home);
 begin
+   Malef.System.Initialize;
    Explorer.On_Draw (Surface, The_Area);
    Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Surface)]);
    Malef.Window.Window.Display;
+   Malef.System.Finalize;
 end File_Explorer;

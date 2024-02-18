@@ -1,10 +1,13 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---    M A L E F - P L A T F O R M - T E R M I N A L - E V E N T S . A D S    --
+--     M A L E F - P L A T F O R M - T E R M I N A L - I N P U T . A D B     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   S P E C                              --
+--                                   A N S I                                 --
+--                                  P O S I X                                --
+--                                                                           --
+--                       A D A   S E P A R A T E   B O D Y                   --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,31 +29,67 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Containers.Bounded_Synchronized_Queues;
-with Ada.Containers.Indefinite_Holders;
-with Ada.Containers.Synchronized_Queue_Interfaces;
-with Malef.Events;
+with System;
+with Interfaces.C;
 
-package Malef.Platform.Terminal.Events is
+separate (Malef.Platform.Terminal.Input)
 
-   -->> Events <<--
+   procedure Get_Byte_Immediate (
+      Item : out Interfaces.Unsigned_8)
+   is
 
-   Max_Events : constant := 1024;
+      use Interfaces;
 
-   package Event_Holders is
-      new Ada.Containers.Indefinite_Holders (
-      Element_Type => Malef.Events.Event_Type,
-      "="          => Malef.Events."=");
+      type FILE is new System.Address;
+      type ssize_t is new C.int;
 
-   package Event_Queue_Interfaces is
-      new Ada.Containers.Synchronized_Queue_Interfaces (
-      Element_Type => Event_Holders.Holder);
+      function ferror (
+         stream : in FILE)
+         return C.int with
+         Import        => True,
+         Convention    => C,
+         External_Name => "ferror";
 
-   package Event_Queues is
-      new Ada.Containers.Bounded_Synchronized_Queues (
-      Queue_Interfaces => Event_Queue_Interfaces,
-      Default_Capacity => Max_Events);
+      function read (
+         fd    : in C.int;
+         buf   : in System.Address;
+         count : in C.size_t)
+         return ssize_t with
+         Import        => True,
+         Convention    => C,
+         External_Name => "read";
 
-   Queue : aliased Event_Queues.Queue;
+      STDIN_FILENO : constant := 1;
 
-end Malef.Platform.Terminal.Events;
+      stdin : aliased constant FILE with
+         Import        => True,
+         Convention    => C,
+         External_Name => "stdin";
+
+      EOF_Ch : aliased constant Unsigned_8 with
+         Import        => True,
+         Convention    => C,
+         External_Name => "__malef__platform__terminal__input___c_eof_ch";
+
+      use type C.int;
+      Buffer : aliased Unsigned_8;
+      Count  : ssize_t;
+
+   begin
+
+      Item := 0;
+      Count := read (STDIN_FILENO, Buffer'Address, 1);
+
+      if Count = -1 then
+         raise Termination_Error;
+      elsif Count = 0 then
+         raise Device_Error;
+      elsif Buffer = EOF_Ch then
+         raise End_Error;
+      elsif ferror (stdin) /= 0 then
+         raise Device_Error;
+      else
+         Item := Buffer;
+      end if;
+
+   end Get_Byte_Immediate;

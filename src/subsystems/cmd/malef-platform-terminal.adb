@@ -1,10 +1,11 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---           M A L E F - C O N S O L E _ I O - C O M M O N . A D S           --
+--           M A L E F - P L A T F O R M - T E R M I N A L . A D B           --
 --                                                                           --
 --                                 M A L E F                                 --
+--                                   C M D                                   --
 --                                                                           --
---                              A D A   S P E C                              --
+--                              A D A   B O D Y                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,48 +27,28 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.IO_Exceptions;
-with Ada.Interrupts;
-with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
-with Ada.Task_Identification;
+with Ada.Calendar;
+with Malef.Platform.Terminal.Input;
+with Malef.Platform.Terminal.Output;
 
-private package Malef.Console_IO.Common is
+package body Malef.Platform.Terminal is
 
-   package Unicode renames Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
+   Start : Ada.Calendar.Time;
 
-   procedure Initialize_For_Task (
-      Id : in Ada.Task_Identification.Task_Id);
+   procedure Initialize is
+   begin
+      Start := Ada.Calendar.Clock;
+      Input.Initialize;
+      Output.Initialize;
+   end Initialize;
 
-   procedure Setup_Interrupts;
+   procedure Finalize is
+   begin
+      Input.Finalize;
+      Output.Finalize;
+   end Finalize;
 
-   procedure Clear_Interrupts;
+   function From_Start return Duration is (
+      Ada.Calendar."-" (Ada.Calendar.Clock, Start));
 
-   procedure Get_Immediate (Item : out Wide_Wide_Character);
-
-   task type Event_Feeder (
-      Process : not null access
-                protected procedure (Event : in Events.Event_Type));
-
-   procedure Start_Timer;
-
-   function From_Start return Duration;
-
-   Termination_Error : exception;
-   Device_Error      : exception renames Ada.IO_Exceptions.Device_Error;
-   End_Error         : exception renames Ada.IO_Exceptions.End_Error;
-
-private
-
-   type Interrupt_Name is (Resize_Id, Kill_Id, Cancel_Id);
-
-   No_Id : constant Ada.Interrupts.Interrupt_ID
-         := Ada.Interrupts.Interrupt_ID'Last;
-
-   type Interrupt_Array is
-      array (Interrupt_Name)
-      of Ada.Interrupts.Interrupt_ID;
-
-   function Get_Interrupts
-      return Interrupt_Array;
-
-end Malef.Console_IO.Common;
+end Malef.Platform.Terminal;

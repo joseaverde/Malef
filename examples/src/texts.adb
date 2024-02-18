@@ -1,4 +1,5 @@
 with Malef;
+with Malef.System;
 with Malef.Labels;
 with Malef.Surfaces;
 with Ada.Wide_Wide_Text_IO; use Ada.Wide_Wide_Text_IO;
@@ -25,6 +26,8 @@ procedure Texts is
       Malef.Labels.New_Label ("Hello, World! ¡Hola Mundo! Bonjour le monde !");
 begin
 
+   Malef.System.Initialize;
+
    Surface.Fill_Background ((60, 60, 60, 255));
    Surface.Fill_Foreground ((160, 160, 160, 255));
    Surface.Put (1, 1, Block);
@@ -43,5 +46,7 @@ begin
    -- Text.On_Draw (Surface, ((2, 2), (Height - 1, Width - 1)));
    -- Put_Line (Surface'Wide_Wide_Image);
    -- New_Line;
+
+   Malef.System.Finalize;
 
 end Texts;
