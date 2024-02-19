@@ -42,6 +42,36 @@ package Malef.Window is
    -- (if you don't know what you are doing). You can only register new
    -- callbacks.
 
+   protected Window is
+
+      procedure Process_Group (
+         Process : not null access
+                   procedure (Object : aliased in out Groups.Group));
+
+      procedure Set_Group (Object : in Groups.Group);
+
+      -- TODO: with move semantics. procedure Set_Group
+
+      procedure Resize (
+         New_Rows : in Positive_Row_Count;
+         New_Cols : in Positive_Col_Count);
+
+      procedure Get_Dimensions (
+         Row_Count : out Positive_Row_Count;
+         Col_Count : out Positive_Col_Count);
+
+      procedure Display;
+
+   private
+      Group     : Groups.Group (1);
+      Rows      : Row_Type;
+      Cols      : Col_Type;
+   end Window;
+
+   --<<----------->>--
+   -->> Callbacks <<--
+   --<<----------->>--
+
    type Event_Observer is limited interface;
 
    type Callback_Type is access
@@ -50,8 +80,6 @@ package Malef.Window is
          Event    :         in     Events.Event_Type);
 
    package Implementation is
-
-      type Window_State is (Idle, Drawing, Resizing);
 
       type Observer_Access is access all Event_Observer'Class;
 
@@ -77,29 +105,7 @@ package Malef.Window is
 
    end Implementation;
 
-   protected Window is
-
-      procedure Process_Group (
-         Process : not null access
-                   procedure (Object : aliased in out Groups.Group));
-
-      procedure Set_Group (Object : in Groups.Group);
-
-      -- TODO: with move semantics. procedure Set_Group
-
-      procedure Resize (
-         New_Rows : in Positive_Row_Count;
-         New_Cols : in Positive_Col_Count);
-
-      procedure Get_Dimensions (
-         Row_Count : out Positive_Row_Count;
-         Col_Count : out Positive_Col_Count);
-
-      procedure Display;
-
-      procedure Redraw;
-
-      -->> Callbacks <<--
+   protected Callbacks is
 
       procedure Process (
          Event : in Events.Event_Type);
@@ -114,15 +120,9 @@ package Malef.Window is
          Observer : not null access Event_Observer'Class);
 
    private
-
       Observers : Implementation.Observer_Vector_By_Event;
-      Group     : Groups.Group (1);
-      Rows      : Row_Type;
-      Cols      : Col_Type;
+   end Callbacks;
 
-   end Window;
-
-   procedure Enqueue_Event (
-      Event : in Events.Event_Type);
+   procedure Enqueue_Event (Event : in Events.Event_Type);
 
 end Malef.Window;

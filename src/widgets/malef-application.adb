@@ -82,7 +82,7 @@ package body Malef.Application is
          App_Task.Start;
          pragma Warnings (On,
             "potentially blocking operation in protected operation");
-         Window.Window.Register (
+         Window.Callbacks.Register (
             Event    => Events.Resize_Event,
             Observer => Observer'Access,
             Callback => When_Resized'Access);

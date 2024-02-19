@@ -113,9 +113,13 @@ package body Malef.Window is
          Col_Count := Cols;
       end Get_Dimensions;
 
-      procedure Redraw is null;
+   end Window;
 
-      -->> Callbacks <<--
+   --<<----------->>--
+   -->> Callbacks <<--
+   --<<----------->>--
+
+   protected body Callbacks is
 
       procedure Process (
          Event : in Events.Event_Type) is
@@ -127,7 +131,7 @@ package body Malef.Window is
 
          case Event.Name is
             when Malef.Events.Resize_Event =>
-               Resize (Event.New_Size.Row, Event.New_Size.Col);
+               Window.Resize (Event.New_Size.Row, Event.New_Size.Col);
             when Malef.Events.Cancel_Event
                | Malef.Events.Kill_Event
                | Malef.Events.Input_Closed =>
@@ -171,7 +175,7 @@ package body Malef.Window is
             Item => Implementation.Observer_Info'(Observer, null)));
       end Unregister;
 
-   end Window;
+   end Callbacks;
 
    procedure Enqueue_Event (
       Event : in Events.Event_Type)
@@ -181,10 +185,13 @@ package body Malef.Window is
       Queue.Enqueue (+Event);
    end Enqueue_Event;
 
-   Rows : Positive_Row_Count := 56;
-   Cols : Positive_Col_Count := 180;
+   -- Elaboration Code
+
+   Init_Rows : Positive_Row_Count := 56;
+   Init_Cols : Positive_Col_Count := 180;
+
 begin
-   Malef.Platform.Terminal.Input.Get_Dimensions (Rows, Cols);
-   Malef.Platform.Events.Register (Window.Process'Access);
-   Window.Resize (Rows, Cols);
+   Malef.Platform.Terminal.Input.Get_Dimensions (Init_Rows, Init_Cols);
+   Malef.Platform.Events.Register (Callbacks.Process'Access);
+   Window.Resize (Init_Rows, Init_Cols);
 end Malef.Window;
