@@ -125,9 +125,9 @@ package body Malef.Window is
          -- no handler for the Kill, Cancel or Input_Closed events, by default
          -- we clean up and terminate the program.
 
-         Ada.Text_IO.Put_Line (Event'Image);
          case Event.Name is
-            when Malef.Events.Resize_Event => null;
+            when Malef.Events.Resize_Event =>
+               Resize (Event.New_Size.Row, Event.New_Size.Col);
             when Malef.Events.Cancel_Event
                | Malef.Events.Kill_Event
                | Malef.Events.Input_Closed =>
@@ -185,6 +185,6 @@ package body Malef.Window is
    Cols : Positive_Col_Count := 180;
 begin
    Malef.Platform.Terminal.Input.Get_Dimensions (Rows, Cols);
-   -- Console_IO.Register_Process (Window.Process'Access);
+   Malef.Platform.Events.Register (Window.Process'Access);
    Window.Resize (Rows, Cols);
 end Malef.Window;

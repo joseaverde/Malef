@@ -45,11 +45,18 @@ package Malef.Application is
       type Boolean_Array is array (1 .. Max_Dialogs) of Boolean;
       type Dialog_Array is array (1 .. Max_Dialogs) of Dialogs.Dialog;
 
+      task type Application_Task is
+         entry Start;
+         entry Stop;
+      end Application_Task;
+
    end Implementation;
 
    protected Application is
 
       procedure Initialize;
+
+      procedure Finalize;
 
       procedure Add (
          Object : in Dialogs.Dialog;
@@ -67,6 +74,7 @@ package Malef.Application is
       Observer     : aliased Implementation.Window_Observer;
       Height       : Positive_Row_Count := 24;
       Width        : Positive_Col_Count := 80;
+      App_Task     : Implementation.Application_Task;
 
    end Application;
 

@@ -27,6 +27,7 @@
 -------------------------------------------------------------------------------
 
 with Ada.Finalization;
+with Malef.Platform.Events;
 with Malef.Platform.Terminal;
 with Malef.Platform.Terminal.Output;
 
@@ -39,6 +40,7 @@ package body Malef.System is
       if Initialised then
          return;
       end if;
+      Malef.Platform.Events.Initialize;
       Malef.Platform.Terminal.Initialize;
       Initialised := True;
    end Initialize;
@@ -49,6 +51,7 @@ package body Malef.System is
          return;
       end if;
       Malef.Platform.Terminal.Finalize;
+      Malef.Platform.Events.Finalize;
       Initialised := False;
    end Finalize;
 

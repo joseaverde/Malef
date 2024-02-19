@@ -34,11 +34,27 @@ with Malef.Groups;
 
 package body Malef.Application is
 
+   package body Implementation is
+
+      task body Application_Task is
+      begin
+         loop
+            select
+               accept Start;
+               Malef.System.Initialize;
+            or
+               terminate;
+            end select;
+            accept Stop;
+            Malef.System.Finalize;
+         end loop;
+      end Application_Task;
+
+   end Implementation;
+
    protected body Application is
 
-      procedure Initialize is
-         use type Groups.Layer_Count;
-
+      procedure Update_Background is
          procedure Set_Background (
             Object : aliased in out Groups.Group)
          is
@@ -48,11 +64,24 @@ package body Malef.Application is
             Surface.Fill_Background (Palettes.Green);
             Object.Insert (1, Surface);
          end Set_Background;
+      begin
+         Window.Window.Process_Group (Set_Background'Access);
+         Window.Window.Display;
+      end Update_Background;
 
+      procedure Initialize is
+         use type Groups.Layer_Count;
       begin
          if Initialized then
             return;
          end if;
+         -- NOTE: It can never be blocking, it can only be initialised once
+         --       (it is in the protected body).
+         pragma Warnings (Off,
+            "potentially blocking operation in protected operation");
+         App_Task.Start;
+         pragma Warnings (On,
+            "potentially blocking operation in protected operation");
          Window.Window.Register (
             Event    => Events.Resize_Event,
             Observer => Observer'Access,
@@ -60,10 +89,22 @@ package body Malef.Application is
          Window.Window.Get_Dimensions (Height, Width);
          Available := [others => False];
          Window.Window.Set_Group (Groups.Empty (Max_Dialogs + 1));
-         Window.Window.Process_Group (Set_Background'Access);
+         Update_Background;
          Initialized := True;
-         Window.Window.Display;
       end Initialize;
+
+      procedure Finalize is
+      begin
+         if not Initialized then
+            return;
+         end if;
+         pragma Warnings (Off,
+            "potentially blocking operation in protected operation");
+         App_Task.Stop;
+         pragma Warnings (On,
+            "potentially blocking operation in protected operation");
+         Initialized := False;
+      end Finalize;
 
       procedure Add (
          Object : in Malef.Dialogs.Dialog;
@@ -100,7 +141,9 @@ package body Malef.Application is
       is
          pragma Unreferenced (Observer);
       begin
-         Ada.Text_IO.Put_Line ("Resized: " & Event'Image);
+         Height := Event.New_Size.Row;
+         Width := Event.New_Size.Col;
+         Update_Background;
       end When_Resized;
 
    end Application;

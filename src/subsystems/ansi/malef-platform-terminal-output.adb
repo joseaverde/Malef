@@ -48,8 +48,8 @@ package body Malef.Platform.Terminal.Output is
    package Buffer is
       new Platform.Generic_Buffer (
       Capacity => 1024,
-      Stream   => Ada.Text_IO.Text_Streams.Stream (Ada.Text_IO.Standard_Output)
-      );
+      Stream   => Ada.Text_IO.Text_Streams.Stream (
+                     Ada.Text_IO.Standard_Output));
 
    -->> Formatting <<--
 

@@ -30,6 +30,7 @@
 with Ada.Calendar;
 with Malef.Platform.Terminal.Input;
 with Malef.Platform.Terminal.Output;
+with Malef.Platform.Interrupts;
 
 package body Malef.Platform.Terminal is
 
@@ -38,12 +39,14 @@ package body Malef.Platform.Terminal is
    procedure Initialize is
    begin
       Start := Ada.Calendar.Clock;
+      Interrupts.Attach;
       Input.Initialize;
       Output.Initialize;
    end Initialize;
 
    procedure Finalize is
    begin
+      Interrupts.Detach;
       Input.Finalize;
       Output.Finalize;
    end Finalize;

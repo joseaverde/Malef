@@ -33,6 +33,16 @@ with Malef.Events;
 
 package Malef.Platform.Events is
 
+   type Window_Queue_Process is access
+      protected procedure (
+         Event : in Malef.Events.Event_Type);
+
+   procedure Register (Process : not null Window_Queue_Process);
+
+   procedure Initialize;
+
+   procedure Finalize;
+
    -->> Events <<--
 
    Max_Events : constant := 1024;
