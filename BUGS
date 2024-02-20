@@ -1,0 +1,2 @@
+[1]   When suspending an application with Ctrl-Z and then resuming it with %1,
+      the terminal configuration from termios is discarded.
