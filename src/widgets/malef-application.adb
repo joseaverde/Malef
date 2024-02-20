@@ -26,7 +26,6 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with Ada.Text_IO;
 with Malef.System;
 with Malef.Palettes;
 with Malef.Surfaces;

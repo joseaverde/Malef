@@ -1,11 +1,12 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---     M A L E F - P L A T F O R M - T E R M I N A L - I N P U T . A D B     --
+--       M A L E F - P L A T F O R M - T E R M I N A L - I N P U T -         --
+--                     G E T _ I M M E D I A T E . A D B                     --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                                   A N S I                                 --
---                                  P O S I X                                --
+--                                  A N S I                                  --
+--                                 P O S I X                                 --
 --                                                                           --
 --                       A D A   S E P A R A T E   B O D Y                   --
 --                                                                           --

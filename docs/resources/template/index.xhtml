@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- THIS FILE IS FROM THE GNATDOC PROJECT FROM ADACORE I'M USING IT AS A
+     TEMPLATE TO CREATE MY OWN STYLE FOR MALEF                             -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tal="http://xml.adacore.com/namespaces/tal">
+  <head>
+    <link rel='stylesheet' href='gnatdoc.css'/>
+  </head>
+  <body class='main'>
+    <div class='side-navigation'>
+      <ul class='tab-bar'>
+        <li class='tab'><a href='#compilation-units'>Compilation Units</a></li>
+        <li class='tab'><a href='#tagged-types'>Tagged Types</a></li>
+      </ul>
+      <div class='content-column'>
+        <h2 id='compilation-units'>Compilation Units</h2>
+        <ul>
+          <li tal:repeat='item gnatdoc/toc'>
+            <a href='error.html' target='document-content' tal:content='item/qualified_name' tal:attributes='href item/full_href'/>
+          </li>
+        </ul>
+        <h2 id='tagged-types'>Tagged types</h2>
+        <ul>
+          <li tal:repeat='item gnatdoc/classes_toc'>
+            <a href='error.html' target='document-content' tal:content='item/qualified_name' tal:attributes='href item/full_href'/>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class='document-content'>
+      <iframe name='document-content'/>
+    </div>
+  </body>
+</html>

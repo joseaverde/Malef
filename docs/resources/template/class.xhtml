@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- THIS FILE IS FROM THE GNATDOC PROJECT FROM ADACORE I'M USING IT AS A
+     TEMPLATE TO CREATE MY OWN STYLE FOR MALEF                             -->
+<html class='main' xmlns="http://www.w3.org/1999/xhtml" xmlns:tal="http://xml.adacore.com/namespaces/tal">
+  <head>
+    <link rel='stylesheet' href='gnatdoc.css'/>
+  </head>
+  <body class='content'>
+    <header>
+      <h1 tal:condition='gnatdoc/entity/is_tagged_type'>Tagged Type <span tal:omit-tag='' tal:content='gnatdoc/entity/name'>NAME</span></h1>
+      <h1 tal:condition='gnatdoc/entity/is_interface_type'>Interface Type <span tal:omit-tag='' tal:content='gnatdoc/entity/name'>NAME</span></h1>
+    </header>
+
+    <p tal:condition='exists:gnatdoc/entity/parent_type' xml:space='preserve'>Parent type:
+      <a tal:condition='gnatdoc/entity/parent_type/is_documented' tal:attributes='href gnatdoc/entity/parent_type/full_href' tal:content='gnatdoc/entity/parent_type/name'>PARENT TYPE NAME</a>
+      <span tal:condition='not:gnatdoc/entity/parent_type/is_documented' tal:content='gnatdoc/entity/parent_type/name'>PARENT TYPE NAME</span>
+    </p>
+
+    <p tal:condition='exists:gnatdoc/entity/progenitor_types' xml:space='preserve'>Progenitor types:
+      <div tal:omit-tag='' tal:repeat='progenitor gnatdoc/entity/progenitor_types'>
+        <a tal:condition='progenitor/is_documented' tal:attributes='href progenitor/full_href' tal:content='progenitor/name'>PROGENIOTOR TYPE NAME</a>
+        <span tal:condition='not:progenitor/is_documented' tal:content='progenitor/name'>PROGENITOR TYPE NAME</span>
+      </div>
+    </p>
+
+    <p tal:condition='exists:gnatdoc/entity/derived_types' xml:space='preserve'>Derived types:
+      <div tal:omit-tag='' tal:repeat='derived gnatdoc/entity/derived_types'>
+        <a tal:condition='derived/is_documented' tal:attributes='href derived/full_href' tal:content='derived/name'>DERIVED TYPE NAME</a>
+        <span tal:condition='not:derived/is_documented' tal:content='derived/name'>DERIVED TYPE NAME</span>
+      </div>
+    </p>
+
+    <p tal:condition='exists:gnatdoc/entity/all_parent_types' xml:space='preserve'>All parent types:
+      <div tal:omit-tag='' tal:repeat='type gnatdoc/entity/all_parent_types'>
+        <a tal:condition='type/is_documented' tal:attributes='href type/full_href' tal:content='type/name'>PARENT TYPE NAME</a>
+        <span tal:condition='not:type/is_documented' tal:content='type/name'>PARENT TYPE NAME</span>
+      </div>
+    </p>
+
+    <p tal:condition='exists:gnatdoc/entity/all_progenitor_types' xml:space='preserve'>All progenitor types:
+      <div tal:omit-tag='' tal:repeat='type gnatdoc/entity/all_progenitor_types'>
+        <a tal:condition='type/is_documented' tal:attributes='href type/full_href' tal:content='type/name'>PARENT TYPE NAME</a>
+        <span tal:condition='not:type/is_documented' tal:content='type/name'>PARENT TYPE NAME</span>
+      </div>
+    </p>
+
+    <p tal:condition='exists:gnatdoc/entity/all_derived_types' xml:space='preserve'>All derived types:
+      <div tal:omit-tag='' tal:repeat='derived gnatdoc/entity/all_derived_types'>
+        <a tal:condition='derived/is_documented' tal:attributes='href derived/full_href' tal:content='derived/name'>DERIVED TYPE NAME</a>
+        <span tal:condition='not:derived/is_documented' tal:content='derived/name'>DERIVED TYPE NAME</span>
+      </div>
+    </p>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/declared_dispatching_subprograms'>
+      <h3>Declared dispatching subprograms</h3>
+
+      <ul>
+        <li tal:repeat='subprogram gnatdoc/entity/declared_dispatching_subprograms'>
+          <a tal:condition='subprogram/is_documented' tal:attributes='href subprogram/local_href' tal:content='subprogram/name'>SUBPROGRAM NAME</a>
+          <span tal:condition='not:subprogram/is_documented' tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+        </li>
+      </ul>
+    </div>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/overrided_dispatching_subprograms'>
+      <h3>Overrided dispatching subprograms</h3>
+
+      <ul>
+        <li tal:repeat='subprogram gnatdoc/entity/overrided_dispatching_subprograms'>
+          <a tal:condition='subprogram/is_documented' tal:attributes='href subprogram/local_href' tal:content='subprogram/name'>SUBPROGRAM NAME</a>
+          <span tal:condition='not:subprogram/is_documented' tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+        </li>
+      </ul>
+    </div>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/inherited_dispatching_subprograms'>
+      <h3>Inherited dispatching subprograms</h3>
+
+      <ul>
+        <li tal:repeat='subprogram gnatdoc/entity/inherited_dispatching_subprograms'>
+          <!--
+          <a tal:condition='subprogram/is_documented' tal:attributes='href subprogram/full_href' tal:content='subprogram/name'>SUBPROGRAM NAME</a>
+          <span tal:condition='not:subprogram/is_documented' tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+          -->
+          <span tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+        </li>
+      </ul>
+    </div>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/declared_prefix_callable_subprograms'>
+      <h3>Declared prefix-callable subprograms</h3>
+
+      <ul>
+        <li tal:repeat='subprogram gnatdoc/entity/declared_prefix_callable_subprograms'>
+          <a tal:condition='subprogram/is_documented' tal:attributes='href subprogram/local_href' tal:content='subprogram/name'>SUBPROGRAM NAME</a>
+          <span tal:condition='not:subprogram/is_documented' tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+        </li>
+      </ul>
+    </div>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/inherited_prefix_callable_subprograms'>
+      <h3>Inherited prefix-callable subprograms</h3>
+
+      <ul>
+        <li tal:repeat='subprogram gnatdoc/entity/inherited_prefix_callable_subprograms'>
+          <a tal:condition='subprogram/is_documented' tal:attributes='href subprogram/full_href' tal:content='subprogram/name'>SUBPROGRAM NAME</a>
+          <span tal:condition='not:subprogram/is_documented' tal:content='subprogram/name'>SUBPROGRAM NAME</span>
+        </li>
+      </ul>
+    </div>
+
+    <h2>Description</h2>
+    <div tal:omit-tag='' tal:content='gnatdoc/entity/documentation/description'>Description of the entity</div>
+
+    <div tal:omit-tag='' tal:condition='gnatdoc/entity/documentation/fields'>
+      <h3>Components and Discriminants</h3>
+      <dl>
+        <div tal:omit-tag='' tal:repeat='component gnatdoc/entity/documentation/fields'>
+          <dt tal:content='component/name'>Name of the field</dt>
+          <dd tal:content='component/description'>Description of the field</dd>
+        </div>
+      </dl>
+    </div>
+
+    <h3 tal:condition='gnatdoc/entity/class_subprograms'>Subprograms</h3>
+
+    <div tal:omit-tag='' tal:repeat='subprogram gnatdoc/entity/class_subprograms'>
+      <p tal:condition='not:subprogram/is_documented'>NOT_DOCUMENTED <span tal:content='subprogram/name'>NAME</span></p>
+      <h4 tal:content='subprogram/name' tal:attributes='id subprogram/id'>Entity Name</h4>
+      <pre class='ada-code-snippet'><code xml:space='preserve' tal:content='subprogram/code'>Source code of the subprogram</code></pre>
+      <div tal:omit-tag='' tal:content='subprogram/documentation/description'>Description of the subprogram</div>
+
+      <div tal:omit-tag='' tal:condition='subprogram/documentation/parameters'>
+        <h5>Parameters</h5>
+        <dl>
+          <div tal:omit-tag='' tal:repeat='parameter subprogram/documentation/parameters'>
+            <dt tal:content='parameter/name'>Name of the parameter</dt>
+            <dd tal:content='parameter/description'>Description of the parameter</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div tal:omit-tag='' tal:condition='subprogram/documentation/returns'>
+        <h5>Return Value</h5>
+        <dl>
+          <div tal:omit-tag='' tal:repeat='return subprogram/documentation/returns'>
+            <dd tal:content='return/description'>Description of the return value</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div tal:omit-tag='' tal:condition='subprogram/documentation/exceptions'>
+        <h5>Raised exceptions</h5>
+        <dl>
+          <div tal:omit-tag='' tal:repeat='exception subprogram/documentation/exceptions'>
+            <dt tal:content='exception/name'>name of the exception</dt>
+            <dd tal:content='exception/description'>description of the exception</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </body>
+</html>
