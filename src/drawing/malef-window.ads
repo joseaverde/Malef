@@ -63,9 +63,9 @@ package Malef.Window is
       procedure Display;
 
    private
-      Group     : Groups.Group (1);
-      Rows      : Row_Type;
-      Cols      : Col_Type;
+      Group : Groups.Group (1);
+      Rows  : Row_Type;
+      Cols  : Col_Type;
    end Window;
 
    --<<----------->>--

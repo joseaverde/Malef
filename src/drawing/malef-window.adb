@@ -90,11 +90,17 @@ package body Malef.Window is
       end Set_Group;
 
       procedure Display is
-         In_Group renames Group.Set_Group (1).Element;
       begin
-         In_Group.Update;
-         Show (Group.Get_Group (1).See_Surface.Element.all,
-               (In_Group.Row, In_Group.Col), (Rows, Cols));
+         if not Group.Contains (1) then
+            return;
+         end if;
+         declare
+            In_Group renames Group.Set_Group (1).Element;
+         begin
+            In_Group.Update;
+            Show (Group.Get_Group (1).See_Surface.Element.all,
+                  (In_Group.Row, In_Group.Col), (Rows, Cols));
+         end;
       end Display;
 
       procedure Resize (

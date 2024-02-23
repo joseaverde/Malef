@@ -112,7 +112,7 @@ package Malef.Styles with Preelaborate is
 
       -->> General <<--
 
-      Background,
+      Background, Foreground,
 
       -->> Borders <<--
 
@@ -122,13 +122,22 @@ package Malef.Styles with Preelaborate is
 
       Text_Background, Text_Foreground);
 
-   type Style_Type is tagged private;
+   type Style is private with
+      Aggregate => (Empty     => Empty,
+                    Add_Named => Set);
+
+   function Empty return Style;
+
+   procedure Set (
+      Object : in out Style;
+      Field  : in     Style_Field;
+      Value  : in     Glyph_String);
 
    -- procedure Load (Stream : not null access Root_Stream_Type'Class);
    -- procedure Load (File : in String);
    -- procedure Dump (Stream : not null access Root_Stream_Type'Class);
    -- procedure Dump (File : in String);
-   -- function "+" (Left, Right : in Style_Type);
+   -- function "+" (Left, Right : in Style);
    -- Subpackage Malef.Styles.Watcher that updates a style if the file has
    -- changed.
    --
@@ -190,6 +199,9 @@ private
    -->> Style Type <<--
    --<<------------>>--
 
-   type Style_Type is tagged null record;
+   type Style is null record;
+
+   function Empty return Style is (
+      Style'(others => <>));
 
 end Malef.Styles;

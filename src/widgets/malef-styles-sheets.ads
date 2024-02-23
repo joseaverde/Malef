@@ -1,10 +1,10 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---                      M A L E F - S T Y L E S . A D B                      --
+--               M A L E F - S T Y L E S - S H E E T S . A D S               --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
---                              A D A   B O D Y                              --
+--                              A D A   S P E C                              --
 --                                                                           --
 -------------------------------------------------------------------------------
 --  Copyright (c) 2021-2024 José Antonio Verde Jiménez  All Rights Reserved  --
@@ -26,66 +26,31 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-package body Malef.Styles is
+private with Ada.Containers.Vectors;
 
-   --<<--------->>--
-   -->> Classes <<--
-   --<<--------->>--
+package Malef.Styles.Sheets with Preelaborate is
 
-   procedure Put_Image (
-      Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
-      Arg    : in     Class_Type) is
-   begin
-      Buffer.Put ("""");
-      if not Arg.Classes.Is_Empty then
-         Buffer.Wide_Wide_Put (Arg.Classes.First_Element);
-         for I in Arg.Classes.First_Index + 1 .. Arg.Classes.Last_Index loop
-            Buffer.Put (" ");
-            Buffer.Wide_Wide_Put (Arg.Classes (I));
-         end loop;
-      end if;
-      Buffer.Put ("""");
-   end Put_Image;
+   type Style_Sheet is tagged private with
+      Aggregate => (Empty     => Empty,
+                    Add_Named => Insert);
 
-   function Value (
-      Item : in Wide_Wide_String)
-      return Class_Type
-   is
-      First : Positive := Item'Last;
-      Last  : Positive := Item'Last;
-   begin
-      return Class : Class_Type do
-         while First in Item'Range loop
-            while First in Item'Range and then Item (First) = ' ' loop
-               First := First + 1;
-            end loop;
-            Last := First;
-            while Last in Item'Range and then Item (Last) /= ' ' loop
-               Last := Last + 1;
-            end loop;
+   function Empty return Style_Sheet;
 
-            if First in Item'Range then
-               if Last in Item'Range then
-                  Class.Classes.Append (Item (First .. Last - 1));
-               else
-                  Class.Classes.Append (Item (First .. Last));
-               end if;
-            end if;
-            First := Last + 1;
-         end loop;
-      end return;
-   end Value;
+   procedure Insert (
+      Sheet    : in out Style_Sheet;
+      Key      : in     Wide_Wide_String;
+      New_Item : in     Style);
 
-   --<<------->>--
-   -->> Style <<--
-   --<<------->>--
+private
 
-   procedure Set (
-      Object : in out Style;
-      Field  : in     Style_Field;
-      Value  : in     Glyph_String) is
-   begin
-      raise Program_Error with "Not implemented!";
-   end Set;
+   package Style_Vectors is
+      new Ada.Containers.Vectors (
+      Index_Type   => Positive,
+      Element_Type => Style);
 
-end Malef.Styles;
+   type Style_Sheet is tagged null record;
+
+   function Empty return Style_Sheet is (
+      Style_Sheet'(others => <>));
+
+end Malef.Styles.Sheets;
