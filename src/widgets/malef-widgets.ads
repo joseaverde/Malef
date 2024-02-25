@@ -26,11 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Finalization;
 with Malef.Surfaces;
+with Malef.Styles.Classes;
 
-package Malef.Widgets with Pure is
+package Malef.Widgets with Preelaborate is
 
-   type Widget is interface;
+   type Widget is abstract
+      new Ada.Finalization.Controlled with
+      private;
 
    type Draw_Area is
       record
@@ -46,6 +50,27 @@ package Malef.Widgets with Pure is
       Pre'Class => True;
    -- TODO: Check unchanged
 
+   function Name (
+      Object : in Widget)
+      return Wide_Wide_String is
+      abstract;
+
+   function Id (
+      Object : in Widget)
+      return Wide_Wide_String is (
+      "");
+
+   function Classes (
+      Object : in Widget)
+      return Malef.Styles.Classes.Style_Class is (
+      "");
+
    type Selectable is interface;
+
+private
+
+   type Widget is abstract
+      new Ada.Finalization.Controlled with
+      null record;
 
 end Malef.Widgets;

@@ -31,6 +31,7 @@ project Malef_Examples is
             , "file_explorer.adb"
             , "video_player.adb"
             , "malef_examples.adb"
+            , "style_example.adb"
             );
       when "windows" =>
          for Main use
@@ -40,6 +41,7 @@ project Malef_Examples is
             , "texts.adb"
             , "file_explorer.adb"   -- TODO: Make it work on windows
             , "malef_examples.adb"
+            , "style_example.adb"
             -- , "video_player.adb"
             );
    end case;

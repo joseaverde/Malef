@@ -90,21 +90,21 @@ package Malef.Palettes with Pure is
       return Palette_Index;
 
    Default_Palette : constant Palette_Type := [
-      0  =>  [31,  41,  59, 255],      -- White
+      0  => [ 31,  41,  59, 255],      -- White
       1  => [192,  48,  96, 255],      -- Red
-      2  =>  [48, 198,  96, 255],      -- Green
+      2  => [ 48, 198,  96, 255],      -- Green
       3  => [192, 192,  48, 255],      -- Yellow
-      4  =>  [48,  96, 192, 255],      -- Blue
+      4  => [ 48,  96, 192, 255],      -- Blue
       5  => [192,  48, 192, 255],      -- Magenta
-      6  =>  [48, 192, 192, 255],      -- Cyan
+      6  => [ 48, 192, 192, 255],      -- Cyan
       7  => [192, 192, 192, 255],      -- Black
-      8  =>  [62,  82, 118, 255],      -- Light White
+      8  => [ 62,  82, 118, 255],      -- Light White
       9  => [255,  64, 128, 255],      -- Light Red
-      10 =>  [64, 255, 128, 255],      -- Light Green
+      10 => [ 64, 255, 128, 255],      -- Light Green
       11 => [255, 255,  64, 255],      -- Light Yello
-      12 =>  [64, 128, 255, 255],      -- Light Blue
+      12 => [ 64, 128, 255, 255],      -- Light Blue
       13 => [255,  64, 255, 255],      -- Light Magen
-      14 =>  [64, 255, 255, 255],      -- Light Cyan
+      14 => [ 64, 255, 255, 255],      -- Light Cyan
       15 => [255, 255, 255, 255]];     -- Light Black
    -- This is the default palette used by surfaces. It uses the common colours
    -- used by terminal for the 16 colours.

@@ -60,7 +60,7 @@ generate_c = false
                    , "-gnatyO"          # Check overriding indicators
                    , "-gnatyp"          # Check pragma casing
                    , "-gnatyr"          # Check casing for identifier references
-                   , "-gnatyt"          # Check token separation rules
+                   # , "-gnatyt"          # Check token separation rules
                    , "-gnatyu"          # Check no unnecessary blank lines
                    , "-gnatyx"          # Check extra parenthesis around conditionals
                    ]

@@ -29,7 +29,7 @@
 with Malef.Widgets;
 with Malef.Surfaces;
 
-package Malef.Empty with Pure is
+package Malef.Empty with Preelaborate is
 
    type Empty_Widget is new Widgets.Widget with null record;
 
@@ -38,5 +38,11 @@ package Malef.Empty with Pure is
       Object  : in     Empty_Widget;
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area) is null;
+
+   overriding
+   function Name (
+      Object : in Empty_Widget)
+      return Wide_Wide_String is (
+      "Empty");
 
 end Malef.Empty;

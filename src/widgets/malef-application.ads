@@ -29,6 +29,8 @@
 with Malef.Window;
 with Malef.Dialogs;
 with Malef.Events;
+with Malef.Styles.Sheets;
+with Malef.Styles.Compat;
 
 package Malef.Application is
 
@@ -58,6 +60,9 @@ package Malef.Application is
 
       procedure Finalize;
 
+      procedure Set_Style_Sheet (
+         Sheet : in Malef.Styles.Sheets.Style_Sheet);
+
       procedure Add (
          Object : in Dialogs.Dialog;
          Modal  : in Boolean := False);
@@ -74,6 +79,8 @@ package Malef.Application is
       Observer     : aliased Implementation.Window_Observer;
       Height       : Positive_Row_Count := 24;
       Width        : Positive_Col_Count := 80;
+      Style        : Malef.Styles.Sheets.Style_Sheet
+                   := Malef.Styles.Compat.Style;
       App_Task     : Implementation.Application_Task;
 
    end Application;

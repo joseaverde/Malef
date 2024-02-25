@@ -62,14 +62,36 @@ package body Malef.Styles.Classes is
 
             if First in Item'Range then
                if Last in Item'Range then
-                  Class.Classes.Append (Item (First .. Last - 1));
-               else
                   Class.Classes.Append (Item (First .. Last));
+               else
+                  Class.Classes.Append (Item (First .. Last - 1));
                end if;
             end if;
             First := Last + 1;
          end loop;
       end return;
    end Value;
+
+   type Iterator (Class : not null access constant Style_Class) is
+      limited new Style_Class_Iterator_Interfaces.Forward_Iterator with
+      null record;
+
+   overriding
+   function First (
+      Object : in Iterator)
+      return Cursor is (
+      Cursor (Object.Class.Classes.First));
+
+   overriding
+   function Next (
+      Object   : in Iterator;
+      Position : in Cursor)
+      return Cursor is (
+      Cursor (Class_Vectors.Next (Class_Vectors.Cursor (Position))));
+
+   function Iterate (
+      Item : aliased in Style_Class)
+      return Style_Class_Iterator_Interfaces.Forward_Iterator'Class is (
+      Iterator'(Class => Item'Access));
 
 end Malef.Styles.Classes;

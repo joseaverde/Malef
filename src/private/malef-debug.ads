@@ -30,10 +30,10 @@ with Malef.Debug_IO;
 
 private package Malef.Debug is
    new Malef.Debug_IO.Debug_IO (
-   Mode     => Malef.Debug_IO.Debug,
-   Name     => ".malef.log",
-   Widget   => False,
-   Severity => Malef.Debug_IO.Warning,
-   Visible  => [others => True]);
+   Mode      => Malef.Debug_IO.Debug,
+   File_Name => ".malef.log",
+   Widget    => False,
+   Severity  => Malef.Debug_IO.Warning,
+   Visible   => [others => True]);
 
 pragma Preelaborate (Malef.Debug);

@@ -22,6 +22,12 @@ package File_Explorers is
       Surface : in out Malef.Surfaces.Surface;
       Area    : in     Malef.Widgets.Draw_Area);
 
+   overriding
+   function Name (
+      Object : in File_Explorer_Widget)
+      return Wide_Wide_String is (
+      "File_Explorer");
+
 private
 
    type File_Explorer_Widget is

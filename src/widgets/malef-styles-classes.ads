@@ -26,15 +26,21 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Ada.Iterator_Interfaces;
+
 private with Ada.Containers.Indefinite_Vectors;
 
 package Malef.Styles.Classes with Preelaborate is
 
+   -- TODO: #id .class widget
+
    type Style_Class is tagged private with
       Put_Image                 => Put_Image,
       String_Literal            => Value,
+      Default_Iterator          => Iterate,
+      Iterator_Element          => Wide_Wide_String,
       Constant_Indexing         => Constant_Reference,
-      Default_Initial_Condition => Length (Style_Class) = 1;
+      Default_Initial_Condition => Length (Style_Class) = 0;
    -- Each widget can be associated to one or many classes (in the later case,
    -- if two classes implement the same property then the latest will be
    -- chosen). Class names are case sensitive. You can define them using a
@@ -62,15 +68,9 @@ package Malef.Styles.Classes with Preelaborate is
    -- Keep in mind that having an elements that belongs to many classes kills
    -- performace, because classes are applyied one after the other.
 
-   function Length (
-      Class : in Style_Class)
-      return Natural with
-      Global => null;
-   -- @param Class
-   -- The Style_Class object that contains the different classes.
-   --
-   -- @return
-   -- Returns the amount of classes that are contained withing the class object
+   --<<--------->>--
+   -->> Aspects <<--
+   --<<--------->>--
 
    procedure Put_Image (
       Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
@@ -80,14 +80,44 @@ package Malef.Styles.Classes with Preelaborate is
       Item : in Wide_Wide_String)
       return Style_Class;
 
-   type Boolean_Constant_Reference_Type (
-      Element : not null access constant Boolean) is
-      limited null record with Implicit_Dereference => Element;
+   type Cursor is private;
+
+   function Has_Element (
+      Item : in Cursor)
+      return Boolean;
+
+   package Style_Class_Iterator_Interfaces is
+      new Ada.Iterator_Interfaces (
+      Cursor      => Cursor,
+      Has_Element => Has_Element);
+
+   function Iterate (
+      Item : aliased in Style_Class)
+      return Style_Class_Iterator_Interfaces.Forward_Iterator'Class;
 
    function Constant_Reference (
       Object : in Style_Class;
       Name   : in Wide_Wide_String)
-      return Boolean_Constant_Reference_Type;
+      return Boolean;
+
+   function Constant_Reference (
+      Object   : in Style_Class;
+      Position : in Cursor)
+      return Wide_Wide_String;
+
+   --<<------------>>--
+   -->> Operations <<--
+   --<<------------>>--
+
+   function Length (
+      Class : in Style_Class)
+      return Natural with
+      Global => null;
+   -- @param Class
+   -- The Style_Class object that contains the different classes.
+   --
+   -- @return
+   -- Returns the amount of classes that are contained withing the class object
 
    function Contains (
       Object : in Style_Class;
@@ -104,13 +134,18 @@ private
       Index_Type   => Positive,
       Element_Type => Wide_Wide_String);
 
-   Aliased_True  : aliased constant Boolean := True;
-   Aliased_False : aliased constant Boolean := False;
-
    type Style_Class is tagged
       record
          Classes : Class_Vectors.Vector;
       end record;
+
+   type Cursor is new Class_Vectors.Cursor;
+
+   overriding
+   function Has_Element (
+      Item : in Cursor)
+      return Boolean is (
+      Class_Vectors.Has_Element (Class_Vectors.Cursor (Item)));
 
    function Length (
       Class : in Style_Class)
@@ -120,10 +155,14 @@ private
    function Constant_Reference (
       Object : in Style_Class;
       Name   : in Wide_Wide_String)
-      return Boolean_Constant_Reference_Type is (
-      (if Contains (Object, Name)
-         then (Element => Aliased_True'Access)
-         else (Element => Aliased_False'Access)));
+      return Boolean is (
+      Contains (Object, Name));
+
+   function Constant_Reference (
+      Object   : in Style_Class;
+      Position : in Cursor)
+      return Wide_Wide_String is (
+      Object.Classes (Class_Vectors.Cursor (Position)));
 
    function Contains (
       Object : in Style_Class;

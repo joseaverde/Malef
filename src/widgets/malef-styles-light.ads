@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --                                                                           --
---               M A L E F - S T Y L E S - S H E E T S . A D S               --
+--                M A L E F - S T Y L E S - L I G H T . A D S                --
 --                                                                           --
 --                                 M A L E F                                 --
 --                                                                           --
@@ -26,38 +26,15 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-private with Ada.Containers.Indefinite_Hashed_Maps;
-private with Ada.Strings.Wide_Wide_Hash;
+with Malef.Styles.Sheets;
 
-package Malef.Styles.Sheets with Preelaborate is
+package Malef.Styles.Light is
 
-   type Style_Sheet is tagged private with
-      Aggregate => (Empty     => Empty,
-                    Add_Named => Insert);
+   Style : constant Sheets.Style_Sheet :=
+      [ "dialog" => [ Background       => "#33FF00"
+                    , Foreground       => "#00FF33"
+                    , Border_Thickness => "Thick"
+                    ]
+      ];
 
-   function Empty return Style_Sheet;
-
-   procedure Insert (
-      Sheet    : in out Style_Sheet;
-      Key      : in     Wide_Wide_String;
-      New_Item : in     Style);
-
-private
-
-   package Style_Maps is
-      new Ada.Containers.Indefinite_Hashed_Maps (
-      Key_Type        => Wide_Wide_String,
-      Element_Type    => Style,
-      Hash            => Ada.Strings.Wide_Wide_Hash,
-      Equivalent_Keys => "=",
-      "="             => "=");
-
-   type Style_Sheet is tagged
-      record
-         Map : Style_Maps.Map;
-      end record;
-
-   function Empty return Style_Sheet is (
-      Style_Sheet'(others => <>));
-
-end Malef.Styles.Sheets;
+end Malef.Styles.Light;

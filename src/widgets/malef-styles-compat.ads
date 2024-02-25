@@ -31,9 +31,10 @@ with Malef.Styles.Sheets;
 package Malef.Styles.Compat is
 
    Style : constant Sheets.Style_Sheet :=
-      ["dialog" => [Background => "#33FF00"
-                  , Foreground => "#00FF33"
-                  ]
+      [ "Dialog" => [ Background       => "#33FF00"
+                    , Foreground       => "#00FF33"
+                    , Border_Thickness => "Thin"
+                    ]
       ];
 
 end Malef.Styles.Compat;

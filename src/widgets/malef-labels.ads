@@ -73,6 +73,12 @@ package Malef.Labels with Preelaborate is
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area);
 
+   overriding
+   function Name (
+      Object : in Label_Widget)
+      return Wide_Wide_String is (
+      "Label");
+
    -->> Setters <<--
 
    procedure Set_Markup (

@@ -24,6 +24,12 @@ package Video_Players is
       Surface : in out Malef.Surfaces.Surface;
       Area    : in     Malef.Widgets.Draw_Area);
 
+   overriding
+   function Name (
+      Object : in Video_Player_Widget)
+      return Wide_Wide_String is (
+      "Video_Player");
+
    function Current_Frame (
       Object : in Video_Player_Widget)
       return Natural;
@@ -70,6 +76,7 @@ private
    function New_Video_Player (
       Path : in String)
       return Video_Player_Widget is (
+      Malef.Widgets.Widget with
       Path   => Ada.Strings.Unbounded.To_Unbounded_String (Path),
       Frames => Count_Frames (Path),
       Image  => Frame_Holders.To_Holder (Empty),

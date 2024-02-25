@@ -86,7 +86,7 @@ package body Malef.Debug_IO is
             return;
          end if;
          if not Widget then
-            Stream_IO.Create (Output, Stream_IO.Out_File, Name);
+            Stream_IO.Create (Output, Stream_IO.Out_File, File_Name);
             Stream := Stream_IO.Stream (Output);
          end if;
       end Check_Open;

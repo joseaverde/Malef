@@ -83,11 +83,11 @@ package Malef.Debug_IO with Preelaborate is
    -- Filter array for message severity levels.
 
    generic
-      Mode     : in Build_Mode       := Debug;
-      Name     : in String           := "";
-      Widget   : in Boolean          := False;
-      Severity : in Message_Severity := Debug;
-      Visible  : in Visible_Messages := [others => True] with Unreferenced;
+      Mode      : in Build_Mode       := Debug;
+      File_Name : in String           := "";
+      Widget    : in Boolean          := False;
+      Severity  : in Message_Severity := Debug;
+      Visible   : in Visible_Messages := [others => True] with Unreferenced;
    package Debug_IO is
 
       -- @param Mode
@@ -111,7 +111,7 @@ package Malef.Debug_IO with Preelaborate is
       -- @param Visible
       -- The default visibility rules of messages.
 
-      pragma Assert (Widget xor Name /= "");
+      pragma Assert (Widget xor File_Name /= "");
 
       package Types renames Malef.Debug_IO;
 
@@ -146,6 +146,12 @@ package Malef.Debug_IO with Preelaborate is
          Object  : in     Debug_Widget;
          Surface : in out Surfaces.Surface;
          Area    : in     Widgets.Draw_Area);
+
+      overriding
+      function Name (
+         Object : in Debug_Widget)
+         return Wide_Wide_String is (
+         "Debug");
 
       function New_Debug
          return Debug_Widget;

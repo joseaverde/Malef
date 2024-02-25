@@ -26,14 +26,32 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with Malef.Styles.Classes;
+
 package body Malef.Styles.Sheets is
 
    procedure Insert (
       Sheet    : in out Style_Sheet;
       Key      : in     Wide_Wide_String;
-      New_Item : in     Style) is
+      New_Item : in     Style)
+   is
+      Position : Style_Maps.Cursor;
+      Inserted : Boolean;
    begin
-      raise Program_Error with "Not implemented!";
+      for Class of Classes.Value (Key) loop
+         Style_Maps.Insert (
+            Container => Sheet.Map,
+            Key       => Class,
+            New_Item  => New_Item,
+            Position  => Position,
+            Inserted  => Inserted);
+         if not Inserted then
+            Style_Maps.Replace_Element (
+               Container => Sheet.Map,
+               Position  => Position,
+               New_Item  => Sheet.Map (Position) + New_Item);
+         end if;
+      end loop;
    end Insert;
 
 end Malef.Styles.Sheets;

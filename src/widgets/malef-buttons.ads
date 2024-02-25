@@ -47,6 +47,12 @@ package Malef.Buttons with Preelaborate is
       Surface : in out Surfaces.Surface;
       Area    : in     Widgets.Draw_Area);
 
+   overriding
+   function Name (
+      Object : in Button_Widget)
+      return Wide_Wide_String is (
+      "Button");
+
    procedure Set_Widget (
       Object : in out Button_Widget;
       Item   : in     Widgets.Widget'Class);

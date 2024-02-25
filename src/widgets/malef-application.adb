@@ -105,6 +105,13 @@ package body Malef.Application is
          Initialized := False;
       end Finalize;
 
+      procedure Set_Style_Sheet (
+         Sheet : in Malef.Styles.Sheets.Style_Sheet) is
+      begin
+         Style := Sheet;
+         -- Update_Dialogs;
+      end Set_Style_Sheet;
+
       procedure Add (
          Object : in Malef.Dialogs.Dialog;
          Modal  : in Boolean := False with Unreferenced)

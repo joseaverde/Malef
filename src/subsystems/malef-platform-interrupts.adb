@@ -82,10 +82,10 @@ package body Malef.Platform.Interrupts is
                   of Ada.Interrupts.Parameterless_Handler;
    New_Handlers : constant array (Interrupt_Name)
                   of Ada.Interrupts.Parameterless_Handler
-                  := [Resize_Id => Event_Handler.On_Resize'Access
-                    , Cancel_Id => Event_Handler.On_Cancel'Access
-                    , Kill_Id   => Event_Handler.On_Kill'Access
-                    ];
+                  := [ Resize_Id => Event_Handler.On_Resize'Access
+                     , Cancel_Id => Event_Handler.On_Cancel'Access
+                     , Kill_Id   => Event_Handler.On_Kill'Access
+                     ];
 
    procedure Attach is
       use type Ada.Interrupts.Interrupt_ID;
