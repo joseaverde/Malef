@@ -27,13 +27,22 @@
 -------------------------------------------------------------------------------
 
 with Malef.Styles.Sheets;
+with Malef.Palettes;
 
 package Malef.Styles.Compat is
 
+   use Palettes;
+
    Style : constant Sheets.Style_Sheet :=
-      [ "Dialog" => [ Background       => "#33FF00"
-                    , Foreground       => "#00FF33"
-                    , Border_Thickness => "Thin"
+      [ "Application" => [ Background => Default_Palette (Palettes.Green)'Image
+                         , Foreground => Default_Palette (Black)'Image
+                         ]
+      , "Dialog" => [ Background        => Default_Palette (White)'Image
+                    , Foreground        => Default_Palette (Black)'Image
+                    , Border_Background => Default_Palette (White)'Image
+                    , Border_Foreground => Default_Palette (Black)'Image
+                    , Border_Thickness  => "Thin"
+                    , Border_Style      => "Square"
                     ]
       ];
 

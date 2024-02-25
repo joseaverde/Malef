@@ -32,6 +32,7 @@ private with Ada.Strings.Wide_Wide_Hash;
 package Malef.Styles.Sheets with Preelaborate is
 
    type Style_Sheet is tagged private with
+      Put_Image => Put_Image,
       Aggregate => (Empty     => Empty,
                     Add_Named => Insert);
 
@@ -41,6 +42,10 @@ package Malef.Styles.Sheets with Preelaborate is
       Sheet    : in out Style_Sheet;
       Key      : in     Wide_Wide_String;
       New_Item : in     Style);
+
+   procedure Put_Image (
+      Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
+      Arg    : in     Style_Sheet);
 
 private
 

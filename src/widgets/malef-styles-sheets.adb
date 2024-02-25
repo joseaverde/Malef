@@ -54,4 +54,16 @@ package body Malef.Styles.Sheets is
       end loop;
    end Insert;
 
+   procedure Put_Image (
+      Buffer : in out Ada.Strings.Text_Buffers.Root_Buffer_Type'Class;
+      Arg    : in     Style_Sheet) is
+   begin
+      for Cursor in Arg.Map.Iterate loop
+         Buffer.Wide_Wide_Put (Style_Maps.Key (Cursor));
+         Buffer.Put (" ");
+         Put_Image (Buffer, Arg.Map (Cursor));
+         Buffer.New_Line;
+      end loop;
+   end Put_Image;
+
 end Malef.Styles.Sheets;

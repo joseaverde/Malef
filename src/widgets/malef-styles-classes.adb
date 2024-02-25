@@ -26,6 +26,8 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
+with GNAT.IO;
+
 package body Malef.Styles.Classes is
 
    procedure Put_Image (
@@ -47,7 +49,7 @@ package body Malef.Styles.Classes is
       Item : in Wide_Wide_String)
       return Style_Class
    is
-      First : Positive := Item'Last;
+      First : Positive := Item'First;
       Last  : Positive := Item'Last;
    begin
       return Class : Style_Class do
