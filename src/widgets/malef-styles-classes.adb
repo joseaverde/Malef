@@ -26,8 +26,6 @@
 --                                                                           --
 -------------------------------------------------------------------------------
 
-with GNAT.IO;
-
 package body Malef.Styles.Classes is
 
    procedure Put_Image (

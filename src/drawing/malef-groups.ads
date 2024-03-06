@@ -147,6 +147,7 @@ package Malef.Groups with Preelaborate is
    pragma Unevaluated_Use_Of_Old (Allow);
 
    type Layer_Mode is (None, Normal, Lighten, Screen, Dodge);
+   for Layer_Mode use (0,    1,      2,       3,      4);
    -- The Layer mode identifyies a function used to combine different layers
    -- together. Some functions are more expensive than others.
    --
