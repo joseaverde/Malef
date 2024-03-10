@@ -47,6 +47,7 @@ begin
    -- Put_Line (Surface'Wide_Wide_Image);
    -- New_Line;
 
+   delay 5.0;
    Malef.System.Finalize;
 
 end Texts;
