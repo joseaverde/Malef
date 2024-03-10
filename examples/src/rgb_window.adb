@@ -23,6 +23,7 @@ begin
    -- to pass a function to the `Process_Group` procedure.
    Malef.Window.Window.Display;
 
+   delay 5.0;
    Malef.System.Finalize;        -- Finalize the subsystem
 
 end RGB_Window;

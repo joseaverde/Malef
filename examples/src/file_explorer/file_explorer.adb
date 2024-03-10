@@ -23,5 +23,6 @@ begin
    Explorer.On_Draw (Surface, The_Area);
    Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Surface)]);
    Malef.Window.Window.Display;
+   delay 5.0;
    Malef.System.Finalize;
 end File_Explorer;

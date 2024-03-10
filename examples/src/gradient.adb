@@ -56,5 +56,6 @@ begin
    Malef.Window.Window.Set_Group ([Malef.Groups.Layer (Col_Surf, (1, 1)),
                                    Malef.Groups.Layer (Pal_Surf, (1, Width))]);
    Malef.Window.Window.Display;
+   delay 5.0;
    Malef.System.Finalize;
 end Gradient;

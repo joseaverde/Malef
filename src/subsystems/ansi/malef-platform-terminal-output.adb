@@ -194,6 +194,7 @@ package body Malef.Platform.Terminal.Output is
    procedure Initialize is
    begin
       -- TODO: Call termios
+      Buffer.Put (ASCII.ESC & "[?1049h");
       Format (7, 0, [others => False]);
       Move_To (1, 1);
       Opened_Frames := 0;
@@ -206,7 +207,8 @@ package body Malef.Platform.Terminal.Output is
       -- TODO: Call termios
       Buffer.Put (ASCII.ESC & "[0m"     -- Clear format
                 & ASCII.ESC & "[?12h"   -- Restore terminal
-                & ASCII.ESC & "[?25h"); -- Make cursor visible
+                & ASCII.ESC & "[?25h"   -- Make cursor visible
+                & ASCII.ESC & "[?1049l");
       Flush;
    end Finalize;
 
